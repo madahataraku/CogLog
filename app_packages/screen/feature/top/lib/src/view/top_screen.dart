@@ -1,6 +1,7 @@
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:screen_navigation/screen_navigation.dart';
 
 import '../strings.dart';
 import '../viewmodel/top_screen_view_model.dart';
@@ -21,7 +22,7 @@ class TopScreen extends HookConsumerWidget {
   /// ```
   const TopScreen({super.key});
 
-  /// 初期化と前面復帰で期間合計とアドバイスを読み、見た目は [TopScreenImpl] に任せる。
+  /// ホームタブ選択・前面復帰で期間合計とアドバイスを読み、見た目は [TopScreenImpl] に任せる。
   ///
   /// Example:
   /// ```dart
@@ -37,25 +38,23 @@ class TopScreen extends HookConsumerWidget {
       strings.screen_feature_top_advice_template_2,
       strings.screen_feature_top_advice_template_3,
     ];
+    final homeTabSelected = (ShellTabIndexScope.maybeOf(context) ?? 0) == 0;
+    final lifecycle = useAppLifecycleState();
     useEffect(() {
+      if (!homeTabSelected) {
+        return null;
+      }
+      // 背面中は読まない。null は起動直後の未通知として前面扱いにする。
+      if (lifecycle != null && lifecycle != AppLifecycleState.resumed) {
+        return null;
+      }
       viewModel.onInitialize(
         locale: locale,
         noExerciseTemplate: noExerciseTemplate,
         fallbackTemplates: fallbackTemplates,
       );
       return null;
-    }, [viewModel]);
-    final lifecycle = useAppLifecycleState();
-    useEffect(() {
-      if (lifecycle == AppLifecycleState.resumed) {
-        viewModel.onInitialize(
-          locale: locale,
-          noExerciseTemplate: noExerciseTemplate,
-          fallbackTemplates: fallbackTemplates,
-        );
-      }
-      return null;
-    }, [lifecycle, viewModel]);
+    }, [viewModel, homeTabSelected, locale, lifecycle]);
     return const TopScreenImpl();
   }
 }

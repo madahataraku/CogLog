@@ -1,3 +1,4 @@
+import 'package:forui/forui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,8 +64,36 @@ void main() {
     expect(find.text('Calories'), findsAtLeastNWidgets(1));
     await tester.tap(find.text('Calories').first);
     await tester.pumpAndSettle();
-    expect(find.text('Distance'), findsAtLeastNWidgets(1));
-    expect(find.text('Exercise time'), findsAtLeastNWidgets(1));
+    final menu = find.byType(FPopover);
+    expect(
+      find.descendant(of: menu, matching: find.text('Distance')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: menu, matching: find.text('Exercise time')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('他タブからホームへ戻ると目標を再読み込みする', (tester) async {
+    tester.platformDispatcher.localesTestValue = const [Locale('ja')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+
+    await pumpTopScreen(tester, preferences: preferences);
+    expect(find.text('目標設定で一日あたりの目標を設定しましょう'), findsNWidgets(3));
+
+    await tester.tap(find.text('目標設定').last);
+    await tester.pumpAndSettle();
+    await preferences.setDouble('daily_goal_calories_kcal', 200);
+
+    await tester.tap(find.text('ホーム'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('目標 200.0'), findsOneWidget);
+    expect(find.text('0%'), findsOneWidget);
+    expect(find.text('目標設定で一日あたりの目標を設定しましょう'), findsNWidgets(2));
   });
 }
 
@@ -76,7 +105,11 @@ Future<void> _chooseMetric(
   // Select 欄が先頭。達成率リング見出しと同文言がある。
   await tester.tap(find.text(current).first);
   await tester.pumpAndSettle();
-  // 開いたあとは候補が先頭、リング見出しが後ろ。
-  await tester.tap(find.text(label).first);
+  final menuOption = find.descendant(
+    of: find.byType(FPopover),
+    matching: find.text(label),
+  );
+  expect(menuOption, findsOneWidget);
+  await tester.tap(menuOption);
   await tester.pumpAndSettle();
 }
