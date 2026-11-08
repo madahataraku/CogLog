@@ -396,20 +396,6 @@ void main() {
     );
     expect(File('${idPath.path}/meter.jpg.staging.tmp').existsSync(), isFalse);
   });
-}
-
-/// `commitStaging` を常に [StateError] で失敗させる写真ストア。
-///
-/// 行更新後の確定失敗でトランザクションが戻ることを検証するために使う。
-final class _ThrowingCommitPhotoStore extends ExerciseHistoryPhotoStore {
-  /// [documentsRoot] を親クラスへ渡す。
-  _ThrowingCommitPhotoStore(super.documentsRoot);
-
-  @override
-  Future<void> commitStaging(String id) async {
-    throw StateError('ステージング確定に失敗: $id');
-  }
-}
 
   test('listPage は現地暦月で絞り作成開始日時降順', () async {
     final older = await repo.create(
@@ -496,3 +482,17 @@ final class _ThrowingCommitPhotoStore extends ExerciseHistoryPhotoStore {
     expect(path, isNotNull);
     expect(File(path!).existsSync(), isTrue);
   });
+}
+
+/// `commitStaging` を常に [StateError] で失敗させる写真ストア。
+///
+/// 行更新後の確定失敗でトランザクションが戻ることを検証するために使う。
+final class _ThrowingCommitPhotoStore extends ExerciseHistoryPhotoStore {
+  /// [documentsRoot] を親クラスへ渡す。
+  _ThrowingCommitPhotoStore(super.documentsRoot);
+
+  @override
+  Future<void> commitStaging(String id) async {
+    throw StateError('ステージング確定に失敗: $id');
+  }
+}
