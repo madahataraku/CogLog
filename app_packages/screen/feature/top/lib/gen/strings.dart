@@ -33,6 +33,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_advice_template_3 =>
       LocalizeStringDelegate.get('screen_feature_top_advice_template_3');
 
+  /// アドバイスキャラクターの代替テキスト
+  String get screen_feature_top_advisor_semantics =>
+      LocalizeStringDelegate.get('screen_feature_top_advisor_semantics');
+
   /// 指標
   String get screen_feature_top_calories =>
       LocalizeStringDelegate.get('screen_feature_top_calories');

@@ -20,7 +20,7 @@ final class TopScreenStateToEntityDelegate {
   /// ```
   const TopScreenStateToEntityDelegate();
 
-  /// [state] の合計と目標達成を、選ばれている指標の表記にする。
+  /// [state] の合計・目標達成・アドバイス本文とトーンを、選ばれている指標の表記にする。
   ///
   /// Example:
   /// ```dart
@@ -40,6 +40,7 @@ final class TopScreenStateToEntityDelegate {
         metric: state.metric,
       ),
       adviceText: state.adviceText,
+      adviceTone: state.adviceTone,
       duration: _ring(
         achievement: achievement.duration,
         actualText: PeriodTotalText.duration(state.today.duration),

@@ -28,6 +28,10 @@ dependencies:
   usecase_load_top_screen: any
   usecase_save_top_screen_metric: any
 
+flutter:
+  assets:
+    - assets/advisor/
+
 dev_dependencies:
   flutter_lints: any
   flutter_test:

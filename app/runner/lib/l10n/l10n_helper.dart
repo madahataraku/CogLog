@@ -289,6 +289,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_top_advice_template_3;
       },
+      'screen_feature_top_advisor_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advisor_semantics;
+      },
       'screen_feature_top_calories': (source) {
         // No Placeholders
         return l10n.screen_feature_top_calories;

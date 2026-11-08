@@ -24,9 +24,10 @@ final class _Load implements LoadTopScreenUsecase {
 }
 
 final class _Advice implements GenerateTopAdviceUsecase {
-  _Advice({this.advice = '定型'});
+  _Advice({this.advice = '定型', this.tone = AdviceTone.fun});
 
   final String advice;
+  final AdviceTone tone;
   var calls = 0;
   GenerateTopAdviceRequest? lastRequest;
 
@@ -36,7 +37,7 @@ final class _Advice implements GenerateTopAdviceUsecase {
   ) async {
     calls += 1;
     lastRequest = request;
-    return GenerateTopAdviceResult(advice: advice);
+    return GenerateTopAdviceResult(advice: advice, tone: tone);
   }
 }
 
@@ -58,6 +59,16 @@ final class _Save implements SaveTopScreenMetricUsecase {
     return SaveTopScreenMetricResult(metric: request.metric);
   }
 }
+
+const _noExercise = AdviceTemplate(
+  text: '今日はまだ運動していません',
+  tone: AdviceTone.realized,
+);
+const _fallbackTemplates = [
+  AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+  AdviceTemplate(text: 'b', tone: AdviceTone.happy),
+  AdviceTemplate(text: 'c', tone: AdviceTone.fun),
+];
 
 const _loadResult = LoadTopScreenResult(
   metric: PeriodTotalMetric.calories,
@@ -86,21 +97,22 @@ void main() {
 
   test('初期化で合計とアドバイスを入れ、loaded にする', () async {
     final load = _Load(_loadResult);
-    final advice = _Advice(advice: '今日はまだ運動していません');
+    final advice = _Advice(advice: '今日はまだ運動していません', tone: AdviceTone.happy);
     await OnInitializeDelegate(
       state: state,
       loadTopScreenUsecase: load,
       generateTopAdviceUsecase: advice,
     ).execute(
       locale: 'ja',
-      noExerciseTemplate: '今日はまだ運動していません',
-      fallbackTemplates: const ['a', 'b', 'c'],
+      noExercise: _noExercise,
+      fallbackTemplates: _fallbackTemplates,
     );
 
     expect(state.state.loaded, isTrue);
     expect(state.state.today.count, 1);
     expect(state.state.goal, DailyGoal.unset);
     expect(state.state.adviceText, '今日はまだ運動していません');
+    expect(state.state.adviceTone, AdviceTone.happy);
     expect(load.calls, 1);
     expect(advice.calls, 1);
     expect(advice.lastRequest?.locale, 'ja');
@@ -116,13 +128,13 @@ void main() {
     );
     await delegate.execute(
       locale: 'ja',
-      noExerciseTemplate: '未運動',
-      fallbackTemplates: const ['a', 'b', 'c'],
+      noExercise: _noExercise,
+      fallbackTemplates: _fallbackTemplates,
     );
     await delegate.execute(
       locale: 'ja',
-      noExerciseTemplate: '未運動',
-      fallbackTemplates: const ['a', 'b', 'c'],
+      noExercise: _noExercise,
+      fallbackTemplates: _fallbackTemplates,
     );
 
     expect(load.calls, 2);
@@ -155,6 +167,7 @@ void main() {
         month: PeriodAggregate.empty,
         goal: DailyGoal(caloriesKcal: 200),
         adviceText: '助言',
+        adviceTone: AdviceTone.confused,
       ),
     );
     final save = _Save();
@@ -167,6 +180,7 @@ void main() {
     expect(state.state.today.distanceKm, 1.25);
     expect(state.state.goal.caloriesKcal, 200);
     expect(state.state.adviceText, '助言');
+    expect(state.state.adviceTone, AdviceTone.confused);
     expect(save.calls, 1);
   });
 
@@ -180,6 +194,7 @@ void main() {
         month: PeriodAggregate.empty,
         goal: DailyGoal.unset,
         adviceText: '',
+        adviceTone: AdviceTone.fun,
       ),
     );
     await expectLater(
@@ -209,11 +224,13 @@ void main() {
         month: PeriodAggregate.empty,
         goal: DailyGoal.unset,
         adviceText: '定型',
+        adviceTone: AdviceTone.realized,
       ),
     );
     expect(entity.todayText, '1.3');
     expect(entity.weekText, '--');
     expect(entity.adviceText, '定型');
+    expect(entity.adviceTone, AdviceTone.realized);
     expect(entity.calories.isUnset, isTrue);
   });
 
@@ -232,6 +249,7 @@ void main() {
         month: PeriodAggregate.empty,
         goal: DailyGoal(caloriesKcal: 200),
         adviceText: '',
+        adviceTone: AdviceTone.fun,
       ),
     );
     expect(entity.calories.percentText, '150%');
@@ -260,6 +278,7 @@ void main() {
           distanceKm: 0,
         ),
         adviceText: '',
+        adviceTone: AdviceTone.fun,
       ),
     );
     expect(entity.duration.percentText, '0%');

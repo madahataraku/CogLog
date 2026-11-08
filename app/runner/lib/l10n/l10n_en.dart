@@ -212,6 +212,9 @@ class L10nEn extends L10n {
       'Small steps add up. Keep your own pace today.';
 
   @override
+  String get screen_feature_top_advisor_semantics => 'Advisor';
+
+  @override
   String get screen_feature_top_calories => 'Calories';
 
   @override
