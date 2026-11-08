@@ -7,6 +7,7 @@
 ```text
 .
 ├── app/                                   # パッケージ app。Flutter アプリケーション
+│   ├── assets/icon/                       # アプリアイコンの原寸（ランタイムでは読まない）
 │   ├── lib/main.dart                      # 起動入口
 │   ├── lib/theme/                         # Forui テーマ
 │   ├── lib/src/                           # アプリ内の非公開実装
