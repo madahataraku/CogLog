@@ -32,9 +32,9 @@ android {
     defaultConfig {
         // applicationId は productFlavors で上書きする。ここは production と同じ値を置く。
         applicationId = "io.github.madahataraku.coglog"
-        // You can update the following values to match your application needs.
+        // minSdk は docs/constraints.md の Android 節に従い 34 以上。
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 34
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
