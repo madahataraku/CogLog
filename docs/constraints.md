@@ -74,6 +74,20 @@ Firebase コンソールでは、Android / iOS それぞれに development（`.d
 
 XcodeGen へ移すときは、署名条件が揃ってから行う。そのときも plist の保管は `app/ios/Configurations/<CONFIGURATION>/GoogleService-Info.plist` とし、ビルド前にアプリバンドルへコピーする。
 
+## PR チェック
+
+`.github/workflows/pr-checks.yml` は、`main` 向けの pull_request で次を実行する。秘密情報や Environment は使わない。
+
+| ジョブ名（必須ステータスチェック名） | 内容 |
+| --- | --- |
+| Format | リポジトリルートで `dart format --output=none --set-exit-if-changed .` |
+| Analyze | リポジトリルートで `flutter pub get` のあと `flutter analyze` |
+| Test | リポジトリルートで `flutter pub get` と `dart run monolith_runner:define` のあと、`test/` がある各パッケージのテストをすべて実行する。`sdk: flutter` を持つパッケージは `flutter test`、それ以外は `dart test`。ユニットテストと Golden Test の両方を含む |
+
+Flutter の版は App Distribution と同じく `3.47.9`（stable）に固定する。外部 Action はコミット SHA にピン留めする。
+
+これらのチェックをマージ条件にするため、Ruleset `mainブランチ` の required status checks に、上表のジョブ名 `Format`・`Analyze`・`Test` を入れる。設定場所は **Settings → Rules → mainブランチ** である。ワークフローを一度 `main` へマージして実行実績が出てから、チェック名を選べる。
+
 ## App Distribution
 
 `.github/workflows/app-distribution.yml` は、`main` への push と、`main` を選んだ手動の `workflow_dispatch` で、Android の release APK と iOS の Ad Hoc IPA を Firebase App Distribution へ出す。ジョブは `github.ref == refs/heads/main` のときだけ動き、Environment `app-distribution` を使う。
