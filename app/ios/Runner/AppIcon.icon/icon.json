@@ -1,0 +1,30 @@
+{
+  "fill" : {
+    "solid" : "srgb:0.96471,0.67843,0.28627,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "glass" : true,
+          "image-name" : "aerobike-foreground.png",
+          "name" : "aerobike",
+          "opacity" : 1
+        }
+      ],
+      "lighting" : "combined",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}
