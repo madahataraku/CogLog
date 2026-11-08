@@ -51,6 +51,18 @@ Monolith が書く次のファイルは手で編集しない。
 
 入力側（`monolith.yaml` と `res/strings.csv`）を変えて、対応するコマンドを再実行する。
 
+## Android
+
+`app/android/app/build.gradle.kts` の SDK は次に固定する。
+
+| 項目 | 値 |
+| --- | --- |
+| `minSdk` | `34` |
+| `compileSdk` | `flutter.compileSdkVersion`（Flutter 3.47 系では 36） |
+| `targetSdk` | `flutter.targetSdkVersion`（Flutter 3.47 系では 36） |
+
+`minSdk` は 34 未満にしない。プラグイン側が `compileSdk` 33 などに固定されていると `checkReleaseAarMetadata` が失敗するため、依存は `compileSdk` 34 以上の版を `dependency_overrides` で選ぶ。
+
 ## iOS
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
