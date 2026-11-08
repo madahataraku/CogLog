@@ -8,7 +8,10 @@
 /// ```
 library;
 
+export 'src/average_speed.dart';
 export 'src/exercise_history.dart';
+export 'src/meter_reading_merger.dart';
+export 'src/meter_reading_values.dart';
 export 'src/period_aggregate.dart';
 export 'src/period_total_metric.dart';
 export 'src/period_total_text.dart';
