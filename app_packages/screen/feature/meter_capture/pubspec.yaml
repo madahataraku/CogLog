@@ -1,5 +1,5 @@
 name: screen_feature_meter_capture
-description: CogLog Meter capture screen.
+description: CogLog Meter record screen.
 publish_to: none
 resolution: workspace
 version: 0.1.0+1

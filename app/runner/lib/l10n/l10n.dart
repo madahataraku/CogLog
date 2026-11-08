@@ -265,10 +265,10 @@ abstract class L10n {
   /// **'運動時間'**
   String get screen_feature_exercise_history_duration;
 
-  /// 空リスト
+  /// 空リストの案内
   ///
   /// In ja, this message translates to:
-  /// **'この月の運動履歴はありません'**
+  /// **'運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。'**
   String get screen_feature_exercise_history_empty;
 
   /// 一覧の読込失敗
@@ -406,13 +406,13 @@ abstract class L10n {
   /// ボトムナビ
   ///
   /// In ja, this message translates to:
-  /// **'メーター撮影'**
+  /// **'メーター記録'**
   String get screen_feature_main_nav_meter_capture;
 
   /// 画面タイトル
   ///
   /// In ja, this message translates to:
-  /// **'メーター撮影'**
+  /// **'メーター記録'**
   String get screen_feature_meter_capture_title;
 
   /// 目標達成率セクションの見出し

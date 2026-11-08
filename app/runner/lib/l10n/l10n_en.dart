@@ -106,7 +106,7 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_exercise_history_empty =>
-      'No exercise history this month';
+      'No exercise history. Create one from Meter record by photographing the meter panel or entering values manually.';
 
   @override
   String get screen_feature_exercise_history_error =>
@@ -184,10 +184,10 @@ class L10nEn extends L10n {
   String get screen_feature_main_nav_home => 'Home';
 
   @override
-  String get screen_feature_main_nav_meter_capture => 'Meter capture';
+  String get screen_feature_main_nav_meter_capture => 'Meter record';
 
   @override
-  String get screen_feature_meter_capture_title => 'Meter capture';
+  String get screen_feature_meter_capture_title => 'Meter record';
 
   @override
   String get screen_feature_top_achievement_title => 'Goal progress';

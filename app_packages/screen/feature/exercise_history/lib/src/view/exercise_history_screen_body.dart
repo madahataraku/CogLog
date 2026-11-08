@@ -109,14 +109,19 @@ class ExerciseHistoryScreenBody extends HookConsumerWidget {
               child: RefreshIndicator(
                 onRefresh: viewModel.onRefresh,
                 child: entity.showEmpty
-                    ? ListView(
+                    ? CustomScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Text(
-                              strings.screen_feature_exercise_history_empty,
-                              textAlign: TextAlign.center,
+                        slivers: [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Text(
+                                  strings.screen_feature_exercise_history_empty,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
                             ),
                           ),
                         ],

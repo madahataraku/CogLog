@@ -1,6 +1,6 @@
 id,ja,en,description
 title,運動履歴,Exercise history,画面タイトル
-empty,この月の運動履歴はありません,No exercise history this month,空リスト
+empty,運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。,"No exercise history. Create one from Meter record by photographing the meter panel or entering values manually.",空リストの案内
 error,運動履歴を読み込めませんでした,Could not load exercise history,一覧の読込失敗
 retry,再試行,Retry,再試行ボタン
 month_label,{year}年{month}月,{year}/{month},月セレクタのラベル

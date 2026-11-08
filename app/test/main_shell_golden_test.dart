@@ -33,10 +33,10 @@ void main() {
     });
   }
 
-  testWidgets('メーター撮影タブの空画面', (tester) async {
+  testWidgets('メーター記録タブの空画面', (tester) async {
     await _pumpTabGolden(
       tester,
-      tab: 'メーター撮影',
+      tab: 'メーター記録',
       golden: 'goldens/main_shell_meter_capture.png',
     );
   });
