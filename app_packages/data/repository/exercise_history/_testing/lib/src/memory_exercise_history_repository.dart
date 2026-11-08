@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
@@ -30,6 +31,71 @@ final class MemoryExerciseHistoryRepository
     final copy = [..._items];
     copy.sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
     return copy;
+  }
+
+  /// 現地暦月で絞り、作成開始日時降順で頁を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.listPage(year: 2026, month: 11, offset: 0, limit: 30);
+  /// ```
+  @override
+  Future<List<ExerciseHistory>> listPage({
+    required int year,
+    required int month,
+    required int offset,
+    required int limit,
+  }) async {
+    final window = PeriodWindow.month(DateTime(year, month));
+    final matched = _items.where((h) => window.contains(h.recordedAt)).toList()
+      ..sort((a, b) {
+        final byCreated = b.creationStartedAt.compareTo(a.creationStartedAt);
+        if (byCreated != 0) {
+          return byCreated;
+        }
+        return b.id.compareTo(a.id);
+      });
+    if (offset >= matched.length) {
+      return const [];
+    }
+    final end = (offset + limit).clamp(0, matched.length);
+    return matched.sublist(offset, end);
+  }
+
+  /// ID で 1 件返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.findById(id);
+  /// ```
+  @override
+  Future<ExerciseHistory?> findById(String id) async {
+    for (final item in _items) {
+      if (item.id == id) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  /// 保持バイトがあれば一時ファイルへ書いて絶対パスを返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.photoAbsolutePath(id);
+  /// ```
+  @override
+  Future<String?> photoAbsolutePath(String id) async {
+    final bytes = _photos[id];
+    if (bytes == null) {
+      return null;
+    }
+    final file = File(
+      '${Directory.systemTemp.path}/coglog_memory_photos/$id.jpg',
+    );
+    await file.parent.create(recursive: true);
+    await file.writeAsBytes(bytes, flush: true);
+    return file.path;
   }
 
   /// 新規作成する。運動時間 0 は [ArgumentError]。

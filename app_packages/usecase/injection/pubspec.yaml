@@ -17,6 +17,10 @@ dependencies:
   usecase_generate_top_advice_impl: any
   usecase_load_daily_goal: any
   usecase_load_daily_goal_impl: any
+  usecase_load_exercise_history_detail: any
+  usecase_load_exercise_history_detail_impl: any
+  usecase_load_exercise_history_page: any
+  usecase_load_exercise_history_page_impl: any
   usecase_load_top_screen: any
   usecase_load_top_screen_impl: any
   usecase_save_daily_goal: any

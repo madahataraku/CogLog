@@ -115,6 +115,186 @@ abstract class L10n {
   /// **'CogLog'**
   String get foundation_resources_app_name;
 
+  /// リスト項目の消費カロリー
+  ///
+  /// In ja, this message translates to:
+  /// **'消費カロリー'**
+  String get screen_feature_exercise_history_calories;
+
+  /// 消費カロリーの単位
+  ///
+  /// In ja, this message translates to:
+  /// **'kcal'**
+  String get screen_feature_exercise_history_calories_unit;
+
+  /// リスト項目の作成開始日時
+  ///
+  /// In ja, this message translates to:
+  /// **'作成開始日時'**
+  String get screen_feature_exercise_history_created_at;
+
+  /// 平均速度のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'平均速度'**
+  String get screen_feature_exercise_history_detail_average_speed;
+
+  /// 平均速度の単位
+  ///
+  /// In ja, this message translates to:
+  /// **'km/h'**
+  String get screen_feature_exercise_history_detail_average_speed_unit;
+
+  /// 不在時の戻るボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_exercise_history_detail_back;
+
+  /// 消費カロリーのラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'消費カロリー'**
+  String get screen_feature_exercise_history_detail_calories;
+
+  /// 消費カロリーの単位
+  ///
+  /// In ja, this message translates to:
+  /// **'kcal'**
+  String get screen_feature_exercise_history_detail_calories_unit;
+
+  /// 撮影日時のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'撮影日時'**
+  String get screen_feature_exercise_history_detail_captured_at;
+
+  /// 作成開始日時のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'作成開始日時'**
+  String get screen_feature_exercise_history_detail_created_at;
+
+  /// 走行距離のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'走行距離'**
+  String get screen_feature_exercise_history_detail_distance;
+
+  /// 走行距離の単位
+  ///
+  /// In ja, this message translates to:
+  /// **'km'**
+  String get screen_feature_exercise_history_detail_distance_unit;
+
+  /// 運動時間のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'運動時間'**
+  String get screen_feature_exercise_history_detail_duration;
+
+  /// 記録日時の手変更サフィックス
+  ///
+  /// In ja, this message translates to:
+  /// **'（編集済み）'**
+  String get screen_feature_exercise_history_detail_edited;
+
+  /// 詳細の読込失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'詳細を読み込めませんでした'**
+  String get screen_feature_exercise_history_detail_error;
+
+  /// 不在
+  ///
+  /// In ja, this message translates to:
+  /// **'この運動履歴はありません'**
+  String get screen_feature_exercise_history_detail_missing;
+
+  /// 写真のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'メーターパネル写真'**
+  String get screen_feature_exercise_history_detail_photo;
+
+  /// 写真の失敗表示
+  ///
+  /// In ja, this message translates to:
+  /// **'写真を表示できません'**
+  String get screen_feature_exercise_history_detail_photo_error;
+
+  /// 記録日時のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'記録日時'**
+  String get screen_feature_exercise_history_detail_recorded_at;
+
+  /// 再試行ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'再試行'**
+  String get screen_feature_exercise_history_detail_retry;
+
+  /// 保存日時のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'保存日時'**
+  String get screen_feature_exercise_history_detail_saved_at;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'運動履歴詳細'**
+  String get screen_feature_exercise_history_detail_title;
+
+  /// リスト項目の走行距離
+  ///
+  /// In ja, this message translates to:
+  /// **'走行距離'**
+  String get screen_feature_exercise_history_distance;
+
+  /// 走行距離の単位
+  ///
+  /// In ja, this message translates to:
+  /// **'km'**
+  String get screen_feature_exercise_history_distance_unit;
+
+  /// リスト項目の運動時間
+  ///
+  /// In ja, this message translates to:
+  /// **'運動時間'**
+  String get screen_feature_exercise_history_duration;
+
+  /// 空リスト
+  ///
+  /// In ja, this message translates to:
+  /// **'この月の運動履歴はありません'**
+  String get screen_feature_exercise_history_empty;
+
+  /// 一覧の読込失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'運動履歴を読み込めませんでした'**
+  String get screen_feature_exercise_history_error;
+
+  /// 追加読込の失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'続きを読み込めませんでした'**
+  String get screen_feature_exercise_history_load_more_error;
+
+  /// 月セレクタのラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'{year}年{month}月'**
+  String screen_feature_exercise_history_month_label(String year, String month);
+
+  /// 再試行ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'再試行'**
+  String get screen_feature_exercise_history_retry;
+
   /// 画面タイトル
   ///
   /// In ja, this message translates to:

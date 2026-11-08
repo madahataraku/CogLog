@@ -1,16 +1,18 @@
-import 'package:forui/forui.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../strings.dart';
+import '../viewmodel/exercise_history_screen_view_model.dart';
+import 'exercise_history_screen_body.dart';
 
-/// 運動履歴の画面。中身は別計画で足す。
+/// 月セレクタ付きの運動履歴一覧画面。
 ///
 /// Example:
 /// ```dart
 /// const ExerciseHistoryScreen();
 /// ```
-class ExerciseHistoryScreen extends StatelessWidget {
-  /// 運動履歴画面を作る。
+class ExerciseHistoryScreen extends HookConsumerWidget {
+  /// 運動履歴一覧画面を作る。
   ///
   /// Example:
   /// ```dart
@@ -18,15 +20,19 @@ class ExerciseHistoryScreen extends StatelessWidget {
   /// ```
   const ExerciseHistoryScreen({super.key});
 
-  /// タイトルだけの空画面を出す。
+  /// 初期化で当月を読み、見た目は [ExerciseHistoryScreenBody] に任せる。
   ///
   /// Example:
   /// ```dart
   /// const ExerciseHistoryScreen();
   /// ```
   @override
-  Widget build(BuildContext context) => FScaffold(
-    header: FHeader(title: Text(strings.screen_feature_exercise_history_title)),
-    child: const SizedBox.shrink(),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(ExerciseHistoryScreenViewModel.provider);
+    useEffect(() {
+      viewModel.onInitialize();
+      return null;
+    }, [viewModel]);
+    return const ExerciseHistoryScreenBody();
+  }
 }

@@ -1,0 +1,33 @@
+name: screen_feature_exercise_history_detail
+description: CogLog Exercise history detail screen.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  domain_exercise_history: any
+  flutter:
+    sdk: flutter
+  flutter_hooks: any
+  forui: any
+  hooks_riverpod: any
+  material_ui: any
+  meta: any
+  monolith_localization_runtime: any
+  riverpod: any
+  screen_navigation: any
+  state_stream: any
+  state_stream_riverpod: any
+  usecase_load_exercise_history_detail: any
+
+dev_dependencies:
+  data_repository_exercise_history_testing: any
+  foundation_resources: any
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  usecase_load_exercise_history_detail_impl: any

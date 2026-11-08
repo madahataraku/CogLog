@@ -396,6 +396,92 @@ void main() {
     );
     expect(File('${idPath.path}/meter.jpg.staging.tmp').existsSync(), isFalse);
   });
+
+  test('listPage は現地暦月で絞り作成開始日時降順', () async {
+    final older = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 1, 8),
+      capturedAt: DateTime.utc(2026, 11, 1, 8),
+      recordedAt: DateTime.utc(2026, 11, 10, 12),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 1),
+      caloriesKcal: 1,
+      averageSpeedKmh: 1,
+      photoBytes: Uint8List.fromList([1]),
+    );
+    final newer = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 2, 8),
+      capturedAt: DateTime.utc(2026, 11, 2, 8),
+      recordedAt: DateTime.utc(2026, 11, 20, 12),
+      recordedAtManuallySet: false,
+      distanceKm: 2,
+      duration: const Duration(minutes: 2),
+      caloriesKcal: 2,
+      averageSpeedKmh: 2,
+      photoBytes: Uint8List.fromList([2]),
+    );
+    await repo.create(
+      creationStartedAt: DateTime.utc(2026, 10, 1, 8),
+      capturedAt: DateTime.utc(2026, 10, 1, 8),
+      recordedAt: DateTime.utc(2026, 10, 15, 12),
+      recordedAtManuallySet: false,
+      distanceKm: 3,
+      duration: const Duration(minutes: 3),
+      caloriesKcal: 3,
+      averageSpeedKmh: 3,
+      photoBytes: Uint8List.fromList([3]),
+    );
+
+    final page = await repo.listPage(
+      year: 2026,
+      month: 11,
+      offset: 0,
+      limit: 30,
+    );
+    expect(page.map((e) => e.id), [newer.id, older.id]);
+  });
+
+  test('listPage の offset/limit と findById / photoAbsolutePath', () async {
+    late String firstId;
+    for (var i = 0; i < 3; i++) {
+      final created = await repo.create(
+        creationStartedAt: DateTime.utc(2026, 11, 1 + i),
+        capturedAt: DateTime.utc(2026, 11, 1 + i),
+        recordedAt: DateTime.utc(2026, 11, 5),
+        recordedAtManuallySet: false,
+        distanceKm: 1,
+        duration: const Duration(minutes: 1),
+        caloriesKcal: 1,
+        averageSpeedKmh: 1,
+        photoBytes: Uint8List.fromList([i]),
+      );
+      if (i == 2) {
+        firstId = created.id;
+      }
+    }
+
+    final page = await repo.listPage(
+      year: 2026,
+      month: 11,
+      offset: 0,
+      limit: 2,
+    );
+    expect(page, hasLength(2));
+    final next = await repo.listPage(
+      year: 2026,
+      month: 11,
+      offset: 2,
+      limit: 2,
+    );
+    expect(next, hasLength(1));
+
+    expect((await repo.findById(firstId))?.id, firstId);
+    expect(await repo.findById('00000000-0000-4000-8000-000000000000'), isNull);
+
+    final path = await repo.photoAbsolutePath(firstId);
+    expect(path, isNotNull);
+    expect(File(path!).existsSync(), isTrue);
+  });
 }
 
 /// `commitStaging` を常に [StateError] で失敗させる写真ストア。

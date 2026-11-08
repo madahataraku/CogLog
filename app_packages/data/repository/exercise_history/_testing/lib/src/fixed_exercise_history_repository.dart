@@ -31,6 +31,63 @@ final class FixedExerciseHistoryRepository
   @override
   Future<List<ExerciseHistory>> list() async => histories;
 
+  /// 現地暦月で絞った頁を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.listPage(year: 2026, month: 11, offset: 0, limit: 30);
+  /// ```
+  @override
+  Future<List<ExerciseHistory>> listPage({
+    required int year,
+    required int month,
+    required int offset,
+    required int limit,
+  }) async {
+    final window = PeriodWindow.month(DateTime(year, month));
+    final matched =
+        histories.where((h) => window.contains(h.recordedAt)).toList()..sort((
+          a,
+          b,
+        ) {
+          final byCreated = b.creationStartedAt.compareTo(a.creationStartedAt);
+          if (byCreated != 0) {
+            return byCreated;
+          }
+          return b.id.compareTo(a.id);
+        });
+    if (offset >= matched.length) {
+      return const [];
+    }
+    final end = (offset + limit).clamp(0, matched.length);
+    return matched.sublist(offset, end);
+  }
+
+  /// [histories] から ID で探す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.findById(id);
+  /// ```
+  @override
+  Future<ExerciseHistory?> findById(String id) async {
+    for (final item in histories) {
+      if (item.id == id) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  /// 実ファイルを持たないため常に null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.photoAbsolutePath(id);
+  /// ```
+  @override
+  Future<String?> photoAbsolutePath(String id) async => null;
+
   /// 読み取り専用のため常に失敗する。
   ///
   /// Example:

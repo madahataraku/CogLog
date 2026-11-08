@@ -49,6 +49,63 @@ final class DriftExerciseHistoryRepository
     return rows.map(_toDomain).toList();
   }
 
+  /// 現地暦月で絞り、作成開始日時降順・ID 降順で頁を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.listPage(year: 2026, month: 11, offset: 0, limit: 30);
+  /// ```
+  @override
+  Future<List<ExerciseHistory>> listPage({
+    required int year,
+    required int month,
+    required int offset,
+    required int limit,
+  }) async {
+    final window = PeriodWindow.month(DateTime(year, month));
+    final rows = await _db.select(_db.exerciseHistories).get();
+    final matched = rows
+        .map(_toDomain)
+        .where((h) => window.contains(h.recordedAt))
+        .toList();
+    matched.sort((a, b) {
+      final byCreated = b.creationStartedAt.compareTo(a.creationStartedAt);
+      if (byCreated != 0) {
+        return byCreated;
+      }
+      return b.id.compareTo(a.id);
+    });
+    if (offset >= matched.length) {
+      return const [];
+    }
+    final end = (offset + limit).clamp(0, matched.length);
+    return matched.sublist(offset, end);
+  }
+
+  /// ID で 1 件返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.findById(id);
+  /// ```
+  @override
+  Future<ExerciseHistory?> findById(String id) => _byId(id);
+
+  /// 写真ファイルの絶対パス。無ければ null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.photoAbsolutePath(id);
+  /// ```
+  @override
+  Future<String?> photoAbsolutePath(String id) async {
+    final file = _photos.fileFor(id);
+    if (!await file.exists()) {
+      return null;
+    }
+    return file.path;
+  }
+
   /// 写真を書いてから行を挿入する。INSERT 失敗時は写真を削除する。
   ///
   /// ID が既存行と衝突する場合は、写真を書かずに失敗する。

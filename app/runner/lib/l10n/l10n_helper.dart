@@ -60,6 +60,131 @@ final class L10nHelper {
         // No Placeholders
         return l10n.foundation_resources_app_name;
       },
+      'screen_feature_exercise_history_calories': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_calories;
+      },
+      'screen_feature_exercise_history_calories_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_calories_unit;
+      },
+      'screen_feature_exercise_history_created_at': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_created_at;
+      },
+      'screen_feature_exercise_history_detail_average_speed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_average_speed;
+      },
+      'screen_feature_exercise_history_detail_average_speed_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_average_speed_unit;
+      },
+      'screen_feature_exercise_history_detail_back': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_back;
+      },
+      'screen_feature_exercise_history_detail_calories': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_calories;
+      },
+      'screen_feature_exercise_history_detail_calories_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_calories_unit;
+      },
+      'screen_feature_exercise_history_detail_captured_at': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_captured_at;
+      },
+      'screen_feature_exercise_history_detail_created_at': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_created_at;
+      },
+      'screen_feature_exercise_history_detail_distance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_distance;
+      },
+      'screen_feature_exercise_history_detail_distance_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_distance_unit;
+      },
+      'screen_feature_exercise_history_detail_duration': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_duration;
+      },
+      'screen_feature_exercise_history_detail_edited': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_edited;
+      },
+      'screen_feature_exercise_history_detail_error': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_error;
+      },
+      'screen_feature_exercise_history_detail_missing': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_missing;
+      },
+      'screen_feature_exercise_history_detail_photo': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_photo;
+      },
+      'screen_feature_exercise_history_detail_photo_error': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_photo_error;
+      },
+      'screen_feature_exercise_history_detail_recorded_at': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_recorded_at;
+      },
+      'screen_feature_exercise_history_detail_retry': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_retry;
+      },
+      'screen_feature_exercise_history_detail_saved_at': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_saved_at;
+      },
+      'screen_feature_exercise_history_detail_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_title;
+      },
+      'screen_feature_exercise_history_distance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_distance;
+      },
+      'screen_feature_exercise_history_distance_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_distance_unit;
+      },
+      'screen_feature_exercise_history_duration': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_duration;
+      },
+      'screen_feature_exercise_history_empty': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_empty;
+      },
+      'screen_feature_exercise_history_error': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_error;
+      },
+      'screen_feature_exercise_history_load_more_error': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_load_more_error;
+      },
+      'screen_feature_exercise_history_month_label': (source) {
+        // Has Placeholders
+        var index = 0;
+        String year = source.arguments[index];
+        index++;
+        String month = source.arguments[index];
+        index++;
+        return l10n.screen_feature_exercise_history_month_label(year, month);
+      },
+      'screen_feature_exercise_history_retry': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_retry;
+      },
       'screen_feature_exercise_history_title': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_title;

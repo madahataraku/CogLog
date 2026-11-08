@@ -20,6 +20,37 @@ abstract interface class ExerciseHistoryRepository {
   /// ```
   Future<List<ExerciseHistory>> list();
 
+  /// [year]/[month] の現地暦月（記録日時）に入る件を、作成開始日時の降順で頁取得する。
+  ///
+  /// 月の境界は [PeriodWindow.month] と同じ半開区間である。[offset] は 0 起点。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.listPage(year: 2026, month: 11, offset: 0, limit: 30);
+  /// ```
+  Future<List<ExerciseHistory>> listPage({
+    required int year,
+    required int month,
+    required int offset,
+    required int limit,
+  });
+
+  /// ID で 1 件返す。無ければ null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.findById(id);
+  /// ```
+  Future<ExerciseHistory?> findById(String id);
+
+  /// メーターパネル写真の絶対パス。ファイルが無ければ null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.photoAbsolutePath(id);
+  /// ```
+  Future<String?> photoAbsolutePath(String id);
+
   /// 新規作成する。運動時間 0 は [ArgumentError]。
   ///
   /// 写真を書いてから行を挿入する。INSERT 失敗時は写真を削除する。
