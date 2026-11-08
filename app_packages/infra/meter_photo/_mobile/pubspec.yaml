@@ -1,0 +1,19 @@
+name: infra_meter_photo_mobile
+description: ImagePicker-backed meter photo source for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  image_picker: any
+  infra_meter_photo: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

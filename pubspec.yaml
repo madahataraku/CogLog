@@ -25,7 +25,19 @@ workspace:
   - app_packages/domain/exercise_history
   - app_packages/foundation/metadata
   - app_packages/foundation/resources
+  - app_packages/infra/app_settings
+  - app_packages/infra/app_settings/_mobile
+  - app_packages/infra/app_settings/_testing
+  - app_packages/infra/health_workout
+  - app_packages/infra/health_workout/_mobile
+  - app_packages/infra/health_workout/_testing
   - app_packages/infra/injection
+  - app_packages/infra/meter_photo
+  - app_packages/infra/meter_photo/_mobile
+  - app_packages/infra/meter_photo/_testing
+  - app_packages/infra/meter_reading
+  - app_packages/infra/meter_reading/_mobile
+  - app_packages/infra/meter_reading/_testing
   - app_packages/infra/on_device_llm
   - app_packages/infra/on_device_llm/_mobile
   - app_packages/infra/on_device_llm/_testing
@@ -57,6 +69,7 @@ workspace:
 
 # 実効バージョンはここで揃える。子パッケージの依存は any。
 dependency_overrides:
+  app_settings: 6.1.1
   build_runner: 2.10.4
   drift: 2.30.0
   drift_dev: 2.30.0
@@ -66,6 +79,7 @@ dependency_overrides:
   forui: ^0.27.7
   go_router: 18.1.3
   hooks_riverpod: 3.4.3
+  image_picker: 1.2.0
   monolith_localization_runtime: ^1.1.0
   monolith_runner: ^1.0.2
   path: 1.9.1
