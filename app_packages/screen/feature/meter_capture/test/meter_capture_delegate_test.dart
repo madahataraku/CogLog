@@ -356,4 +356,15 @@ void main() {
     expect(filled.caloriesText, '100.0');
     expect(filled.recordedAtText, DateTime(2026, 11, 8, 12).toIso8601String());
   });
+
+  test('StateToEntity は UTC の記録日時をローカル時刻に変換する', () {
+    final recordedAt = DateTime.utc(2026, 11, 8, 3);
+    final entity = const MeterCaptureStateToEntityDelegate().execute(
+      MeterCaptureScreenState(
+        step: MeterCaptureStep.edit,
+        recordedAt: recordedAt,
+      ),
+    );
+    expect(entity.recordedAtText, recordedAt.toLocal().toIso8601String());
+  });
 }

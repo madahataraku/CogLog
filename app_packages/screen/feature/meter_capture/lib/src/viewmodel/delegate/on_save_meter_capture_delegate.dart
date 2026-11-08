@@ -48,45 +48,48 @@ final class OnSaveMeterCaptureDelegate {
   /// delegate.execute();
   /// ```
   Future<void> execute() async {
-    final snapshot = state.state;
-    if (snapshot.inputsInvalid ||
-        !canSubmitMeterCapture(
-          distanceKm: snapshot.distanceKm,
-          duration: snapshot.duration,
-          averageSpeedKmh: snapshot.averageSpeedKmh,
-          caloriesKcal: snapshot.caloriesKcal,
-        )) {
-      return;
-    }
-    final photoBytes = snapshot.photoBytes;
-    final creationStartedAt = snapshot.creationStartedAt;
-    final capturedAt = snapshot.capturedAt;
-    final recordedAt = snapshot.recordedAt;
-    if (photoBytes == null ||
-        creationStartedAt == null ||
-        capturedAt == null ||
-        recordedAt == null) {
-      return;
-    }
-
+    SaveMeterCaptureRequest? request;
     await state.updateWithLock((current, emitter) async {
+      if (current.saving ||
+          current.inputsInvalid ||
+          !canSubmitMeterCapture(
+            distanceKm: current.distanceKm,
+            duration: current.duration,
+            averageSpeedKmh: current.averageSpeedKmh,
+            caloriesKcal: current.caloriesKcal,
+          )) {
+        return;
+      }
+      final photoBytes = current.photoBytes;
+      final creationStartedAt = current.creationStartedAt;
+      final capturedAt = current.capturedAt;
+      final recordedAt = current.recordedAt;
+      if (photoBytes == null ||
+          creationStartedAt == null ||
+          capturedAt == null ||
+          recordedAt == null) {
+        return;
+      }
+      request = SaveMeterCaptureRequest(
+        creationStartedAt: creationStartedAt,
+        capturedAt: capturedAt,
+        recordedAt: recordedAt,
+        recordedAtManuallySet: current.recordedAtManuallySet,
+        distanceKm: current.distanceKm!,
+        duration: current.duration!,
+        caloriesKcal: current.caloriesKcal!,
+        averageSpeedKmh: current.averageSpeedKmh!,
+        photoBytes: photoBytes,
+      );
       await emitter.emit(current.copyWith(saving: true, saveError: false));
     });
+    final pending = request;
+    if (pending == null) {
+      return;
+    }
 
     try {
-      final result = await saveMeterCaptureUsecase.execute(
-        SaveMeterCaptureRequest(
-          creationStartedAt: creationStartedAt,
-          capturedAt: capturedAt,
-          recordedAt: recordedAt,
-          recordedAtManuallySet: snapshot.recordedAtManuallySet,
-          distanceKm: snapshot.distanceKm!,
-          duration: snapshot.duration!,
-          caloriesKcal: snapshot.caloriesKcal!,
-          averageSpeedKmh: snapshot.averageSpeedKmh!,
-          photoBytes: photoBytes,
-        ),
-      );
+      final result = await saveMeterCaptureUsecase.execute(pending);
 
       switch (result.outcome) {
         case SaveMeterCaptureOutcome.invalidInput:
