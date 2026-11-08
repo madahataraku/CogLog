@@ -1,0 +1,20 @@
+name: usecase_save_meter_capture_impl
+description: Saves meter captures through history repository and health writer.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_exercise_history: any
+  infra_health_workout: any
+  usecase_save_meter_capture: any
+
+dev_dependencies:
+  data_repository_exercise_history_testing: any
+  domain_exercise_history: any
+  flutter_lints: any
+  infra_health_workout_testing: any
+  test: any

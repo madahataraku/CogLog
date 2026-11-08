@@ -60,8 +60,16 @@ workspace:
   - app_packages/usecase/load_exercise_history_page/_impl
   - app_packages/usecase/load_top_screen
   - app_packages/usecase/load_top_screen/_impl
+  - app_packages/usecase/obtain_meter_photo
+  - app_packages/usecase/obtain_meter_photo/_impl
+  - app_packages/usecase/open_app_settings
+  - app_packages/usecase/open_app_settings/_impl
+  - app_packages/usecase/read_meter_panel
+  - app_packages/usecase/read_meter_panel/_impl
   - app_packages/usecase/save_daily_goal
   - app_packages/usecase/save_daily_goal/_impl
+  - app_packages/usecase/save_meter_capture
+  - app_packages/usecase/save_meter_capture/_impl
   - app_packages/usecase/save_top_screen_metric
   - app_packages/usecase/save_top_screen_metric/_impl
   - app_packages/screen/feature/exercise_history_detail

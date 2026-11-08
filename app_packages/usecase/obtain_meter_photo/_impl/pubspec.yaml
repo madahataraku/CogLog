@@ -1,0 +1,17 @@
+name: usecase_obtain_meter_photo_impl
+description: Obtains meter panel photos through MeterPhotoSource.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_meter_photo: any
+  usecase_obtain_meter_photo: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_meter_photo_testing: any
+  test: any

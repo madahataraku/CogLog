@@ -1,0 +1,18 @@
+name: usecase_read_meter_panel_impl
+description: Chains meter reading engines and merges values.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  domain_exercise_history: any
+  infra_meter_reading: any
+  usecase_read_meter_panel: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_meter_reading_testing: any
+  test: any

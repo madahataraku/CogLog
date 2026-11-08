@@ -1,0 +1,14 @@
+name: usecase_obtain_meter_photo
+description: Obtain a meter panel photo from camera or library.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
