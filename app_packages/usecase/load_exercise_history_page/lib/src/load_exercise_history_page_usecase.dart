@@ -14,7 +14,8 @@ import 'load_exercise_history_page_result.dart';
 abstract interface class LoadExerciseHistoryPageUsecase {
   /// 未接続のときは失敗する注入点。
   static final provider = Provider<LoadExerciseHistoryPageUsecase>(
-    (ref) => throw UnimplementedError('LoadExerciseHistoryPageUsecase.provider'),
+    (ref) =>
+        throw UnimplementedError('LoadExerciseHistoryPageUsecase.provider'),
   );
 
   /// [request] の月・頁で読む。
