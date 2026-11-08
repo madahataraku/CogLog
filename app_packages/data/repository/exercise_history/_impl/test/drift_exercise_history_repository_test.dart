@@ -252,9 +252,8 @@ void main() {
       throwsA(isA<StateError>()),
     );
     expect(await fixed.list(), hasLength(1));
-    final bytes = await File(
-      '${docs.path}/exercise_histories/$id/meter.jpg',
-    ).readAsBytes();
+    final bytes = await File('${docs.path}/exercise_histories/$id/meter.jpg')
+        .readAsBytes();
     expect(bytes, [1, 1, 1]);
   });
 
@@ -318,10 +317,7 @@ void main() {
       photoBytes: Uint8List.fromList([1]),
     );
 
-    for (final duration in const [
-      Duration.zero,
-      Duration(milliseconds: 500),
-    ]) {
+    for (final duration in const [Duration.zero, Duration(milliseconds: 500)]) {
       expect(
         () => repo.update(
           id: created.id,
