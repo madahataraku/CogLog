@@ -21,12 +21,14 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   /// ```dart
   /// GoRouterScreenNavigation();
   /// ```
-  GoRouterScreenNavigation()
-    : router = GoRouter(
-        initialLocation: '/',
-        routes: [
-          StatefulShellRoute.indexedStack(
-            builder: (context, state, navigationShell) => ShellTabIndexScope(
+  GoRouterScreenNavigation() {
+    router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            _shell = navigationShell;
+            return ShellTabIndexScope(
               index: navigationShell.currentIndex,
               child: MainShellScreen(
                 currentIndex: navigationShell.currentIndex,
@@ -36,56 +38,60 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                 ),
                 child: navigationShell,
               ),
+            );
+          },
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/',
+                  builder: (context, state) => const TopScreen(),
+                ),
+              ],
             ),
-            branches: [
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: '/',
-                    builder: (context, state) => const TopScreen(),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: '/meter-capture',
-                    builder: (context, state) => const MeterCaptureScreen(),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: '/exercise-history',
-                    builder: (context, state) => const ExerciseHistoryScreen(),
-                    routes: [
-                      GoRoute(
-                        path: 'detail/:id',
-                        builder: (context, state) =>
-                            ExerciseHistoryDetailScreen(
-                              id: state.pathParameters['id']!,
-                            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/meter-capture',
+                  builder: (context, state) => const MeterCaptureScreen(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/exercise-history',
+                  builder: (context, state) => const ExerciseHistoryScreen(),
+                  routes: [
+                    GoRoute(
+                      path: 'detail/:id',
+                      builder: (context, state) => ExerciseHistoryDetailScreen(
+                        id: state.pathParameters['id']!,
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: '/goal-settings',
-                    builder: (context, state) => const GoalSettingsScreen(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      );
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/goal-settings',
+                  builder: (context, state) => const GoalSettingsScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   /// アプリが使うルーター。
-  final GoRouter router;
+  late final GoRouter router;
+
+  /// タブ切替に使うシェル。初回ビルドまで未設定。
+  StatefulNavigationShell? _shell;
 
   /// 運動履歴詳細をタブ内スタックへ積む。
   ///
@@ -107,5 +113,16 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   @override
   void pop() {
     router.pop();
+  }
+
+  /// ホームタブの初期位置へ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToHomeTab();
+  /// ```
+  @override
+  void goToHomeTab() {
+    _shell?.goBranch(0, initialLocation: true);
   }
 }

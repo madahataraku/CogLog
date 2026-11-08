@@ -18,6 +18,9 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void pop() {}
+
+  @override
+  void goToHomeTab() {}
 }
 
 void main() {

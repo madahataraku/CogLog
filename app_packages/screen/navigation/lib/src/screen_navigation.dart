@@ -27,6 +27,14 @@ abstract interface class ScreenNavigation {
   /// navigation.pop();
   /// ```
   void pop();
+
+  /// ホームタブの初期位置へ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToHomeTab();
+  /// ```
+  void goToHomeTab();
 }
 
 /// 画面遷移の注入点。未接続のときは失敗する。
