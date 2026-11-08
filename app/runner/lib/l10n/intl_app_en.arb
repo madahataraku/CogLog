@@ -221,6 +221,70 @@
   "@screen_feature_main_nav_meter_capture": {
     "description": "ボトムナビ"
   },
+  "screen_feature_meter_capture_average_speed": "Average speed (km/h)",
+  "@screen_feature_meter_capture_average_speed": {
+    "description": "入力ラベル"
+  },
+  "screen_feature_meter_capture_back": "Back",
+  "@screen_feature_meter_capture_back": {
+    "description": "2→1"
+  },
+  "screen_feature_meter_capture_calories": "Calories (kcal)",
+  "@screen_feature_meter_capture_calories": {
+    "description": "入力ラベル"
+  },
+  "screen_feature_meter_capture_capture_photo": "Take photo",
+  "@screen_feature_meter_capture_capture_photo": {
+    "description": "カメラ撮影"
+  },
+  "screen_feature_meter_capture_distance": "Distance (km)",
+  "@screen_feature_meter_capture_distance": {
+    "description": "入力ラベル"
+  },
+  "screen_feature_meter_capture_duration_hours": "Hours",
+  "@screen_feature_meter_capture_duration_hours": {
+    "description": "運動時間・時"
+  },
+  "screen_feature_meter_capture_duration_minutes": "Minutes",
+  "@screen_feature_meter_capture_duration_minutes": {
+    "description": "運動時間・分"
+  },
+  "screen_feature_meter_capture_duration_seconds": "Seconds",
+  "@screen_feature_meter_capture_duration_seconds": {
+    "description": "運動時間・秒"
+  },
+  "screen_feature_meter_capture_open_settings": "Open settings",
+  "@screen_feature_meter_capture_open_settings": {
+    "description": "設定アプリ導線"
+  },
+  "screen_feature_meter_capture_permission_camera": "Camera permission is required",
+  "@screen_feature_meter_capture_permission_camera": {
+    "description": "カメラ権限拒否"
+  },
+  "screen_feature_meter_capture_permission_library": "Photo library permission is required",
+  "@screen_feature_meter_capture_permission_library": {
+    "description": "ライブラリ権限拒否"
+  },
+  "screen_feature_meter_capture_pick_library": "Choose from library",
+  "@screen_feature_meter_capture_pick_library": {
+    "description": "写真ライブラリ"
+  },
+  "screen_feature_meter_capture_reading": "Reading…",
+  "@screen_feature_meter_capture_reading": {
+    "description": "読み取り待機"
+  },
+  "screen_feature_meter_capture_recorded_at": "Recorded at",
+  "@screen_feature_meter_capture_recorded_at": {
+    "description": "記録日時"
+  },
+  "screen_feature_meter_capture_save": "Save",
+  "@screen_feature_meter_capture_save": {
+    "description": "登録ボタン"
+  },
+  "screen_feature_meter_capture_save_failed": "Failed to save",
+  "@screen_feature_meter_capture_save_failed": {
+    "description": "保存失敗"
+  },
   "screen_feature_meter_capture_title": "Meter record",
   "@screen_feature_meter_capture_title": {
     "description": "画面タイトル"

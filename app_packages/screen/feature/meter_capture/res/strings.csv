@@ -1,2 +1,18 @@
 id,ja,en,description
 title,メーター記録,Meter record,画面タイトル
+capture_photo,撮影する,Take photo,カメラ撮影
+pick_library,ライブラリから選ぶ,Choose from library,写真ライブラリ
+permission_camera,カメラの許可が必要です,Camera permission is required,カメラ権限拒否
+permission_library,写真へのアクセス許可が必要です,Photo library permission is required,ライブラリ権限拒否
+open_settings,設定を開く,Open settings,設定アプリ導線
+reading,読み取り中…,Reading…,読み取り待機
+distance,走行距離 (km),Distance (km),入力ラベル
+duration_hours,時間,Hours,運動時間・時
+duration_minutes,分,Minutes,運動時間・分
+duration_seconds,秒,Seconds,運動時間・秒
+average_speed,平均速度 (km/h),Average speed (km/h),入力ラベル
+calories,消費カロリー (kcal),Calories (kcal),入力ラベル
+recorded_at,記録日時,Recorded at,記録日時
+back,戻る,Back,2→1
+save,登録,Save,登録ボタン
+save_failed,保存に失敗しました,Failed to save,保存失敗

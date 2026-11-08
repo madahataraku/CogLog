@@ -175,6 +175,55 @@ class L10nJa extends L10n {
   String get screen_feature_main_nav_meter_capture => 'メーター記録';
 
   @override
+  String get screen_feature_meter_capture_average_speed => '平均速度 (km/h)';
+
+  @override
+  String get screen_feature_meter_capture_back => '戻る';
+
+  @override
+  String get screen_feature_meter_capture_calories => '消費カロリー (kcal)';
+
+  @override
+  String get screen_feature_meter_capture_capture_photo => '撮影する';
+
+  @override
+  String get screen_feature_meter_capture_distance => '走行距離 (km)';
+
+  @override
+  String get screen_feature_meter_capture_duration_hours => '時間';
+
+  @override
+  String get screen_feature_meter_capture_duration_minutes => '分';
+
+  @override
+  String get screen_feature_meter_capture_duration_seconds => '秒';
+
+  @override
+  String get screen_feature_meter_capture_open_settings => '設定を開く';
+
+  @override
+  String get screen_feature_meter_capture_permission_camera => 'カメラの許可が必要です';
+
+  @override
+  String get screen_feature_meter_capture_permission_library =>
+      '写真へのアクセス許可が必要です';
+
+  @override
+  String get screen_feature_meter_capture_pick_library => 'ライブラリから選ぶ';
+
+  @override
+  String get screen_feature_meter_capture_reading => '読み取り中…';
+
+  @override
+  String get screen_feature_meter_capture_recorded_at => '記録日時';
+
+  @override
+  String get screen_feature_meter_capture_save => '登録';
+
+  @override
+  String get screen_feature_meter_capture_save_failed => '保存に失敗しました';
+
+  @override
   String get screen_feature_meter_capture_title => 'メーター記録';
 
   @override

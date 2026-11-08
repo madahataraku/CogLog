@@ -1,15 +1,15 @@
-import 'package:forui/forui.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../strings.dart';
+import 'meter_capture_screen_body.dart';
 
-/// メーター記録の画面。中身は別計画で足す。
+/// メーターパネル写真から運動履歴を作成する画面。
 ///
 /// Example:
 /// ```dart
 /// const MeterCaptureScreen();
 /// ```
-class MeterCaptureScreen extends StatelessWidget {
+class MeterCaptureScreen extends ConsumerWidget {
   /// メーター記録画面を作る。
   ///
   /// Example:
@@ -18,15 +18,13 @@ class MeterCaptureScreen extends StatelessWidget {
   /// ```
   const MeterCaptureScreen({super.key});
 
-  /// タイトルだけの空画面を出す。
+  /// 見た目は [MeterCaptureScreenBody] に任せる。
   ///
   /// Example:
   /// ```dart
   /// const MeterCaptureScreen();
   /// ```
   @override
-  Widget build(BuildContext context) => FScaffold(
-    header: FHeader(title: Text(strings.screen_feature_meter_capture_title)),
-    child: const SizedBox.shrink(),
-  );
+  Widget build(BuildContext context, WidgetRef ref) =>
+      const MeterCaptureScreenBody();
 }
