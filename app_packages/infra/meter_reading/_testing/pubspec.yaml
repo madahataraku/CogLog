@@ -1,0 +1,16 @@
+name: infra_meter_reading_testing
+description: Fake meter reading engines for CogLog tests.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  domain_exercise_history: any
+  infra_meter_reading: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

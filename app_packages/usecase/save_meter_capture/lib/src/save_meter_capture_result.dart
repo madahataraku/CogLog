@@ -1,0 +1,32 @@
+import 'package:domain_exercise_history/domain_exercise_history.dart';
+
+import 'save_meter_capture_outcome.dart';
+
+/// 保存 Usecase の結果。
+///
+/// Example:
+/// ```dart
+/// const SaveMeterCaptureResult(outcome: SaveMeterCaptureOutcome.success);
+/// ```
+final class SaveMeterCaptureResult {
+  /// [outcome] を中心に結果を作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// const SaveMeterCaptureResult(outcome: SaveMeterCaptureOutcome.success);
+  /// ```
+  const SaveMeterCaptureResult({
+    required this.outcome,
+    this.history,
+    this.healthWriteSucceeded = false,
+  });
+
+  /// 成否区分。
+  final SaveMeterCaptureOutcome outcome;
+
+  /// 成功時の永続化結果。
+  final ExerciseHistory? history;
+
+  /// ヘルス書き込みが成功したか。失敗しても [outcome] は success になりうる。
+  final bool healthWriteSucceeded;
+}

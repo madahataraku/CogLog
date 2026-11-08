@@ -409,6 +409,102 @@ abstract class L10n {
   /// **'メーター記録'**
   String get screen_feature_main_nav_meter_capture;
 
+  /// 入力ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'平均速度 (km/h)'**
+  String get screen_feature_meter_capture_average_speed;
+
+  /// 2→1
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_meter_capture_back;
+
+  /// 入力ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'消費カロリー (kcal)'**
+  String get screen_feature_meter_capture_calories;
+
+  /// カメラ撮影
+  ///
+  /// In ja, this message translates to:
+  /// **'撮影する'**
+  String get screen_feature_meter_capture_capture_photo;
+
+  /// 入力ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'走行距離 (km)'**
+  String get screen_feature_meter_capture_distance;
+
+  /// 運動時間・時
+  ///
+  /// In ja, this message translates to:
+  /// **'時間'**
+  String get screen_feature_meter_capture_duration_hours;
+
+  /// 運動時間・分
+  ///
+  /// In ja, this message translates to:
+  /// **'分'**
+  String get screen_feature_meter_capture_duration_minutes;
+
+  /// 運動時間・秒
+  ///
+  /// In ja, this message translates to:
+  /// **'秒'**
+  String get screen_feature_meter_capture_duration_seconds;
+
+  /// 設定アプリ導線
+  ///
+  /// In ja, this message translates to:
+  /// **'設定を開く'**
+  String get screen_feature_meter_capture_open_settings;
+
+  /// カメラ権限拒否
+  ///
+  /// In ja, this message translates to:
+  /// **'カメラの許可が必要です'**
+  String get screen_feature_meter_capture_permission_camera;
+
+  /// ライブラリ権限拒否
+  ///
+  /// In ja, this message translates to:
+  /// **'写真へのアクセス許可が必要です'**
+  String get screen_feature_meter_capture_permission_library;
+
+  /// 写真ライブラリ
+  ///
+  /// In ja, this message translates to:
+  /// **'ライブラリから選ぶ'**
+  String get screen_feature_meter_capture_pick_library;
+
+  /// 読み取り待機
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取り中…'**
+  String get screen_feature_meter_capture_reading;
+
+  /// 記録日時
+  ///
+  /// In ja, this message translates to:
+  /// **'記録日時'**
+  String get screen_feature_meter_capture_recorded_at;
+
+  /// 登録ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'登録'**
+  String get screen_feature_meter_capture_save;
+
+  /// 保存失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'保存に失敗しました'**
+  String get screen_feature_meter_capture_save_failed;
+
   /// 画面タイトル
   ///
   /// In ja, this message translates to:

@@ -1,0 +1,19 @@
+name: infra_app_settings_mobile
+description: app_settings-backed opener for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  app_settings: any
+  flutter:
+    sdk: flutter
+  infra_app_settings: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

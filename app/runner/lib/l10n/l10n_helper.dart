@@ -261,6 +261,70 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_main_nav_meter_capture;
       },
+      'screen_feature_meter_capture_average_speed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_average_speed;
+      },
+      'screen_feature_meter_capture_back': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_back;
+      },
+      'screen_feature_meter_capture_calories': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_calories;
+      },
+      'screen_feature_meter_capture_capture_photo': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_capture_photo;
+      },
+      'screen_feature_meter_capture_distance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_distance;
+      },
+      'screen_feature_meter_capture_duration_hours': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_duration_hours;
+      },
+      'screen_feature_meter_capture_duration_minutes': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_duration_minutes;
+      },
+      'screen_feature_meter_capture_duration_seconds': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_duration_seconds;
+      },
+      'screen_feature_meter_capture_open_settings': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_open_settings;
+      },
+      'screen_feature_meter_capture_permission_camera': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_permission_camera;
+      },
+      'screen_feature_meter_capture_permission_library': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_permission_library;
+      },
+      'screen_feature_meter_capture_pick_library': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_pick_library;
+      },
+      'screen_feature_meter_capture_reading': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_reading;
+      },
+      'screen_feature_meter_capture_recorded_at': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_recorded_at;
+      },
+      'screen_feature_meter_capture_save': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_save;
+      },
+      'screen_feature_meter_capture_save_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_save_failed;
+      },
       'screen_feature_meter_capture_title': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_title;

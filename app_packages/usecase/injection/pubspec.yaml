@@ -11,6 +11,10 @@ dependencies:
   data_repository_daily_goal: any
   data_repository_exercise_history: any
   data_repository_top_screen_metric: any
+  infra_app_settings: any
+  infra_health_workout: any
+  infra_meter_photo: any
+  infra_meter_reading: any
   infra_on_device_llm: any
   riverpod: any
   usecase_generate_top_advice: any
@@ -23,8 +27,16 @@ dependencies:
   usecase_load_exercise_history_page_impl: any
   usecase_load_top_screen: any
   usecase_load_top_screen_impl: any
+  usecase_obtain_meter_photo: any
+  usecase_obtain_meter_photo_impl: any
+  usecase_open_app_settings: any
+  usecase_open_app_settings_impl: any
+  usecase_read_meter_panel: any
+  usecase_read_meter_panel_impl: any
   usecase_save_daily_goal: any
   usecase_save_daily_goal_impl: any
+  usecase_save_meter_capture: any
+  usecase_save_meter_capture_impl: any
   usecase_save_top_screen_metric: any
   usecase_save_top_screen_metric_impl: any
 

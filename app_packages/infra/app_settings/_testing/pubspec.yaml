@@ -1,0 +1,15 @@
+name: infra_app_settings_testing
+description: Fake app settings opener for CogLog tests.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_app_settings: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

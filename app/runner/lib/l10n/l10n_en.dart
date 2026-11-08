@@ -187,6 +187,57 @@ class L10nEn extends L10n {
   String get screen_feature_main_nav_meter_capture => 'Meter record';
 
   @override
+  String get screen_feature_meter_capture_average_speed =>
+      'Average speed (km/h)';
+
+  @override
+  String get screen_feature_meter_capture_back => 'Back';
+
+  @override
+  String get screen_feature_meter_capture_calories => 'Calories (kcal)';
+
+  @override
+  String get screen_feature_meter_capture_capture_photo => 'Take photo';
+
+  @override
+  String get screen_feature_meter_capture_distance => 'Distance (km)';
+
+  @override
+  String get screen_feature_meter_capture_duration_hours => 'Hours';
+
+  @override
+  String get screen_feature_meter_capture_duration_minutes => 'Minutes';
+
+  @override
+  String get screen_feature_meter_capture_duration_seconds => 'Seconds';
+
+  @override
+  String get screen_feature_meter_capture_open_settings => 'Open settings';
+
+  @override
+  String get screen_feature_meter_capture_permission_camera =>
+      'Camera permission is required';
+
+  @override
+  String get screen_feature_meter_capture_permission_library =>
+      'Photo library permission is required';
+
+  @override
+  String get screen_feature_meter_capture_pick_library => 'Choose from library';
+
+  @override
+  String get screen_feature_meter_capture_reading => 'Reading…';
+
+  @override
+  String get screen_feature_meter_capture_recorded_at => 'Recorded at';
+
+  @override
+  String get screen_feature_meter_capture_save => 'Save';
+
+  @override
+  String get screen_feature_meter_capture_save_failed => 'Failed to save';
+
+  @override
   String get screen_feature_meter_capture_title => 'Meter record';
 
   @override

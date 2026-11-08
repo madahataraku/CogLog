@@ -4,6 +4,10 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>メーターパネルを撮影して運動履歴を記録するためにカメラを使います。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>メーターパネル写真を選んで運動履歴を記録するためにフォトライブラリへアクセスします。</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
