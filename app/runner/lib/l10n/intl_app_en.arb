@@ -117,7 +117,7 @@
   "@screen_feature_exercise_history_duration": {
     "description": "リスト項目の運動時間"
   },
-  "screen_feature_exercise_history_empty": "No exercise history. Create one from Meter record by photographing the meter panel or entering values manually.",
+  "screen_feature_exercise_history_empty": "No exercise history this month. Create one from Meter record by photographing the meter panel or entering values manually.",
   "@screen_feature_exercise_history_empty": {
     "description": "空リストの案内"
   },

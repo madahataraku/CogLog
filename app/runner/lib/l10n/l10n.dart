@@ -268,7 +268,7 @@ abstract class L10n {
   /// 空リストの案内
   ///
   /// In ja, this message translates to:
-  /// **'運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。'**
+  /// **'この月の運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。'**
   String get screen_feature_exercise_history_empty;
 
   /// 一覧の読込失敗

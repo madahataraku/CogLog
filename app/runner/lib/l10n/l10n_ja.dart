@@ -98,7 +98,7 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_exercise_history_empty =>
-      '運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。';
+      'この月の運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。';
 
   @override
   String get screen_feature_exercise_history_error => '運動履歴を読み込めませんでした';

@@ -117,7 +117,7 @@
   "@screen_feature_exercise_history_duration": {
     "description": "リスト項目の運動時間"
   },
-  "screen_feature_exercise_history_empty": "運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。",
+  "screen_feature_exercise_history_empty": "この月の運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。",
   "@screen_feature_exercise_history_empty": {
     "description": "空リストの案内"
   },
