@@ -39,7 +39,7 @@ final class MeterCaptureStateToEntityDelegate {
           : '${duration.inSeconds.remainder(60)}',
       averageSpeedText: _optionalNumber(state.averageSpeedKmh),
       caloriesText: _optionalNumber(state.caloriesKcal),
-      recordedAtText: state.recordedAt?.toIso8601String() ?? '',
+      recordedAtText: state.recordedAt?.toLocal().toIso8601String() ?? '',
     );
   }
 

@@ -86,22 +86,36 @@ class MeterCaptureStep2View extends HookConsumerWidget {
     final caloriesController = useTextEditingController();
     final recordedAtController = useTextEditingController();
     final busy = state.reading || state.saving;
-    final canSubmit = canSubmitMeterCapture(
-      distanceKm: state.distanceKm,
-      duration: state.duration,
-      averageSpeedKmh: state.averageSpeedKmh,
-      caloriesKcal: state.caloriesKcal,
-    );
+    final canSubmit =
+        canSubmitMeterCapture(
+          distanceKm: state.distanceKm,
+          duration: state.duration,
+          averageSpeedKmh: state.averageSpeedKmh,
+          caloriesKcal: state.caloriesKcal,
+        ) &&
+        !state.inputsInvalid;
 
     useEffect(
       () {
-        distanceController.text = entity.distanceText;
-        hoursController.text = entity.hoursText;
-        minutesController.text = entity.minutesText;
-        secondsController.text = entity.secondsText;
-        averageSpeedController.text = entity.averageSpeedText;
-        caloriesController.text = entity.caloriesText;
-        recordedAtController.text = entity.recordedAtText;
+        void sync(
+          TextEditingController controller,
+          String text,
+          Object? Function(String) parse,
+        ) {
+          if (parse(controller.text.trim()) != parse(text)) {
+            controller.text = text;
+          }
+        }
+
+        Object? parseNum(String s) => num.tryParse(s);
+        Object? parseTime(String s) => DateTime.tryParse(s)?.toUtc();
+        sync(distanceController, entity.distanceText, parseNum);
+        sync(hoursController, entity.hoursText, parseNum);
+        sync(minutesController, entity.minutesText, parseNum);
+        sync(secondsController, entity.secondsText, parseNum);
+        sync(averageSpeedController, entity.averageSpeedText, parseNum);
+        sync(caloriesController, entity.caloriesText, parseNum);
+        sync(recordedAtController, entity.recordedAtText, parseTime);
         return null;
       },
       [

@@ -30,9 +30,14 @@ Future<void> obtainAndReadMeterPhoto({
     return;
   }
 
-  final result = await obtainMeterPhotoUsecase.execute(
-    ObtainMeterPhotoRequest(source: source),
-  );
+  final ObtainMeterPhotoResult result;
+  try {
+    result = await obtainMeterPhotoUsecase.execute(
+      ObtainMeterPhotoRequest(source: source),
+    );
+  } on Object {
+    return;
+  }
 
   switch (result) {
     case ObtainMeterPhotoCancelled():

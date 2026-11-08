@@ -34,6 +34,7 @@ final class MeterCaptureScreenState {
     this.recordedAt,
     this.recordedAtManuallySet = false,
     this.saveError = false,
+    this.inputsInvalid = false,
   });
 
   /// 初期状態（1 ステップ目）。
@@ -87,6 +88,9 @@ final class MeterCaptureScreenState {
   /// 保存失敗表示。
   final bool saveError;
 
+  /// 入力欄に解析できない文字列があるとき true。登録不可。
+  final bool inputsInvalid;
+
   /// 一部だけ差し替えた新しい状態を返す。
   ///
   /// Example:
@@ -119,6 +123,7 @@ final class MeterCaptureScreenState {
     bool clearRecordedAt = false,
     bool? recordedAtManuallySet,
     bool? saveError,
+    bool? inputsInvalid,
   }) => MeterCaptureScreenState(
     step: step ?? this.step,
     photoBytes: clearPhotoBytes ? null : (photoBytes ?? this.photoBytes),
@@ -145,5 +150,6 @@ final class MeterCaptureScreenState {
     recordedAt: clearRecordedAt ? null : (recordedAt ?? this.recordedAt),
     recordedAtManuallySet: recordedAtManuallySet ?? this.recordedAtManuallySet,
     saveError: saveError ?? this.saveError,
+    inputsInvalid: inputsInvalid ?? this.inputsInvalid,
   );
 }

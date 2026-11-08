@@ -117,6 +117,9 @@ final class OnFieldChangedDelegate {
     try {
       distanceKm = parseNonNegativeDoubleOrNull(raw);
     } on FormatException {
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(current.copyWith(inputsInvalid: true));
+      });
       return;
     }
     await state.updateWithLock((current, emitter) async {
@@ -136,6 +139,7 @@ final class OnFieldChangedDelegate {
           clearAverageSpeedKmh: recalculated.speed == null,
           averageSpeedUserEdited: recalculated.userEdited,
           averageSpeedFromPanel: recalculated.fromPanel,
+          inputsInvalid: false,
         ),
       );
     });
@@ -160,6 +164,9 @@ final class OnFieldChangedDelegate {
         seconds: seconds,
       );
     } on FormatException {
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(current.copyWith(inputsInvalid: true));
+      });
       return;
     }
     await state.updateWithLock((current, emitter) async {
@@ -179,6 +186,7 @@ final class OnFieldChangedDelegate {
           clearAverageSpeedKmh: recalculated.speed == null,
           averageSpeedUserEdited: recalculated.userEdited,
           averageSpeedFromPanel: recalculated.fromPanel,
+          inputsInvalid: false,
         ),
       );
     });
@@ -195,6 +203,9 @@ final class OnFieldChangedDelegate {
     try {
       caloriesKcal = parseNonNegativeDoubleOrNull(raw);
     } on FormatException {
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(current.copyWith(inputsInvalid: true));
+      });
       return;
     }
     await state.updateWithLock((current, emitter) async {
@@ -202,6 +213,7 @@ final class OnFieldChangedDelegate {
         current.copyWith(
           caloriesKcal: caloriesKcal,
           clearCaloriesKcal: caloriesKcal == null,
+          inputsInvalid: false,
         ),
       );
     });
@@ -223,6 +235,9 @@ final class OnFieldChangedDelegate {
       try {
         speed = parseNonNegativeDoubleOrNull(raw);
       } on FormatException {
+        await state.updateWithLock((current, emitter) async {
+          await emitter.emit(current.copyWith(inputsInvalid: true));
+        });
         return;
       }
     }
@@ -241,6 +256,7 @@ final class OnFieldChangedDelegate {
           clearAverageSpeedKmh: recalculated.speed == null,
           averageSpeedUserEdited: recalculated.userEdited,
           averageSpeedFromPanel: recalculated.fromPanel,
+          inputsInvalid: false,
         ),
       );
     });
@@ -255,15 +271,25 @@ final class OnFieldChangedDelegate {
   Future<void> updateRecordedAt(String raw) async {
     final trimmed = raw.trim();
     if (trimmed.isEmpty) {
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(current.copyWith(inputsInvalid: true));
+      });
       return;
     }
     final parsed = DateTime.tryParse(trimmed);
     if (parsed == null) {
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(current.copyWith(inputsInvalid: true));
+      });
       return;
     }
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
-        current.copyWith(recordedAt: parsed, recordedAtManuallySet: true),
+        current.copyWith(
+          recordedAt: parsed,
+          recordedAtManuallySet: true,
+          inputsInvalid: false,
+        ),
       );
     });
   }

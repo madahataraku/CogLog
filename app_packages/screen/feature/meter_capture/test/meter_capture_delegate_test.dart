@@ -195,6 +195,8 @@ void main() {
     expect(nav.homeCalls, 1);
     expect(state.state.saveError, isFalse);
     expect(state.state.saving, isFalse);
+    expect(state.state.step, MeterCaptureStep.photo);
+    expect(state.state.photoBytes, isNull);
   });
 
   test('saveFailed は saveError を立てホームへ行かない', () async {

@@ -49,12 +49,13 @@ final class OnSaveMeterCaptureDelegate {
   /// ```
   Future<void> execute() async {
     final snapshot = state.state;
-    if (!canSubmitMeterCapture(
-      distanceKm: snapshot.distanceKm,
-      duration: snapshot.duration,
-      averageSpeedKmh: snapshot.averageSpeedKmh,
-      caloriesKcal: snapshot.caloriesKcal,
-    )) {
+    if (snapshot.inputsInvalid ||
+        !canSubmitMeterCapture(
+          distanceKm: snapshot.distanceKm,
+          duration: snapshot.duration,
+          averageSpeedKmh: snapshot.averageSpeedKmh,
+          caloriesKcal: snapshot.caloriesKcal,
+        )) {
       return;
     }
     final photoBytes = snapshot.photoBytes;
@@ -100,9 +101,7 @@ final class OnSaveMeterCaptureDelegate {
           });
         case SaveMeterCaptureOutcome.success:
           await state.updateWithLock((current, emitter) async {
-            await emitter.emit(
-              current.copyWith(saving: false, saveError: false),
-            );
+            await emitter.emit(MeterCaptureScreenState.initial);
           });
           navigation.goToHomeTab();
       }
