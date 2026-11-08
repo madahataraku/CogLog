@@ -9,14 +9,25 @@ environment:
   flutter: ">=3.47.0 <4.0.0"
 
 dependencies:
+  domain_exercise_history: any
   flutter:
     sdk: flutter
+  flutter_hooks: any
   forui: any
+  hooks_riverpod: any
   material_ui: any
   meta: any
   monolith_localization_runtime: any
+  riverpod: any
+  screen_navigation: any
+  state_stream: any
+  state_stream_riverpod: any
+  usecase_load_exercise_history_page: any
 
 dev_dependencies:
+  data_repository_exercise_history_testing: any
+  foundation_resources: any
   flutter_lints: any
   flutter_test:
     sdk: flutter
+  usecase_load_exercise_history_page_impl: any

@@ -21,6 +21,96 @@ class L10nJa extends L10n {
   String get foundation_resources_app_name => 'CogLog';
 
   @override
+  String get screen_feature_exercise_history_calories => '消費カロリー';
+
+  @override
+  String get screen_feature_exercise_history_created_at => '作成開始日時';
+
+  @override
+  String get screen_feature_exercise_history_detail_average_speed => '平均速度';
+
+  @override
+  String get screen_feature_exercise_history_detail_average_speed_unit =>
+      'km/h';
+
+  @override
+  String get screen_feature_exercise_history_detail_back => '戻る';
+
+  @override
+  String get screen_feature_exercise_history_detail_calories => '消費カロリー';
+
+  @override
+  String get screen_feature_exercise_history_detail_calories_unit => 'kcal';
+
+  @override
+  String get screen_feature_exercise_history_detail_captured_at => '撮影日時';
+
+  @override
+  String get screen_feature_exercise_history_detail_created_at => '作成開始日時';
+
+  @override
+  String get screen_feature_exercise_history_detail_distance => '走行距離';
+
+  @override
+  String get screen_feature_exercise_history_detail_distance_unit => 'km';
+
+  @override
+  String get screen_feature_exercise_history_detail_duration => '運動時間';
+
+  @override
+  String get screen_feature_exercise_history_detail_edited => '（編集済み）';
+
+  @override
+  String get screen_feature_exercise_history_detail_error => '詳細を読み込めませんでした';
+
+  @override
+  String get screen_feature_exercise_history_detail_missing => 'この運動履歴はありません';
+
+  @override
+  String get screen_feature_exercise_history_detail_photo => 'メーターパネル写真';
+
+  @override
+  String get screen_feature_exercise_history_detail_photo_error => '写真を表示できません';
+
+  @override
+  String get screen_feature_exercise_history_detail_recorded_at => '記録日時';
+
+  @override
+  String get screen_feature_exercise_history_detail_retry => '再試行';
+
+  @override
+  String get screen_feature_exercise_history_detail_saved_at => '保存日時';
+
+  @override
+  String get screen_feature_exercise_history_detail_title => '運動履歴詳細';
+
+  @override
+  String get screen_feature_exercise_history_distance => '走行距離';
+
+  @override
+  String get screen_feature_exercise_history_duration => '運動時間';
+
+  @override
+  String get screen_feature_exercise_history_empty => 'この月の運動履歴はありません';
+
+  @override
+  String get screen_feature_exercise_history_error => '運動履歴を読み込めませんでした';
+
+  @override
+  String get screen_feature_exercise_history_load_more_error => '続きを読み込めませんでした';
+
+  @override
+  String screen_feature_exercise_history_month_label(
+    String year,
+    String month,
+  ) {
+    return '$year年$month月';
+  }
+
+  @override
+  String get screen_feature_exercise_history_retry => '再試行';
+
+  @override
   String get screen_feature_exercise_history_title => '運動履歴';
 
   @override

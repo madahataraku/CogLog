@@ -1,0 +1,18 @@
+name: usecase_load_exercise_history_page_impl
+description: Loads exercise history pages from the repository.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_exercise_history: any
+  usecase_load_exercise_history_page: any
+
+dev_dependencies:
+  data_repository_exercise_history_testing: any
+  domain_exercise_history: any
+  flutter_lints: any
+  test: any

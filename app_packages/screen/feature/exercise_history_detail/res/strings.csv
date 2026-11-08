@@ -1,0 +1,20 @@
+id,ja,en,description
+title,運動履歴詳細,Exercise history detail,画面タイトル
+error,詳細を読み込めませんでした,Could not load detail,詳細の読込失敗
+retry,再試行,Retry,再試行ボタン
+missing,この運動履歴はありません,This exercise history was not found,不在
+back,戻る,Back,不在時の戻るボタン
+photo_error,写真を表示できません,Could not show photo,写真の失敗表示
+edited,（編集済み）,(edited),記録日時の手変更サフィックス
+calories,消費カロリー,Calories,消費カロリーのラベル
+duration,運動時間,Duration,運動時間のラベル
+distance,走行距離,Distance,走行距離のラベル
+created_at,作成開始日時,Created at,作成開始日時のラベル
+captured_at,撮影日時,Captured at,撮影日時のラベル
+average_speed,平均速度,Average speed,平均速度のラベル
+recorded_at,記録日時,Recorded at,記録日時のラベル
+saved_at,保存日時,Saved at,保存日時のラベル
+photo,メーターパネル写真,Meter panel photo,写真のラベル
+calories_unit,kcal,kcal,消費カロリーの単位
+distance_unit,km,km,走行距離の単位
+average_speed_unit,km/h,km/h,平均速度の単位

@@ -21,6 +21,107 @@ class L10nEn extends L10n {
   String get foundation_resources_app_name => 'CogLog';
 
   @override
+  String get screen_feature_exercise_history_calories => 'Calories';
+
+  @override
+  String get screen_feature_exercise_history_created_at => 'Created at';
+
+  @override
+  String get screen_feature_exercise_history_detail_average_speed =>
+      'Average speed';
+
+  @override
+  String get screen_feature_exercise_history_detail_average_speed_unit =>
+      'km/h';
+
+  @override
+  String get screen_feature_exercise_history_detail_back => 'Back';
+
+  @override
+  String get screen_feature_exercise_history_detail_calories => 'Calories';
+
+  @override
+  String get screen_feature_exercise_history_detail_calories_unit => 'kcal';
+
+  @override
+  String get screen_feature_exercise_history_detail_captured_at =>
+      'Captured at';
+
+  @override
+  String get screen_feature_exercise_history_detail_created_at => 'Created at';
+
+  @override
+  String get screen_feature_exercise_history_detail_distance => 'Distance';
+
+  @override
+  String get screen_feature_exercise_history_detail_distance_unit => 'km';
+
+  @override
+  String get screen_feature_exercise_history_detail_duration => 'Duration';
+
+  @override
+  String get screen_feature_exercise_history_detail_edited => '(edited)';
+
+  @override
+  String get screen_feature_exercise_history_detail_error =>
+      'Could not load detail';
+
+  @override
+  String get screen_feature_exercise_history_detail_missing =>
+      'This exercise history was not found';
+
+  @override
+  String get screen_feature_exercise_history_detail_photo =>
+      'Meter panel photo';
+
+  @override
+  String get screen_feature_exercise_history_detail_photo_error =>
+      'Could not show photo';
+
+  @override
+  String get screen_feature_exercise_history_detail_recorded_at =>
+      'Recorded at';
+
+  @override
+  String get screen_feature_exercise_history_detail_retry => 'Retry';
+
+  @override
+  String get screen_feature_exercise_history_detail_saved_at => 'Saved at';
+
+  @override
+  String get screen_feature_exercise_history_detail_title =>
+      'Exercise history detail';
+
+  @override
+  String get screen_feature_exercise_history_distance => 'Distance';
+
+  @override
+  String get screen_feature_exercise_history_duration => 'Duration';
+
+  @override
+  String get screen_feature_exercise_history_empty =>
+      'No exercise history this month';
+
+  @override
+  String get screen_feature_exercise_history_error =>
+      'Could not load exercise history';
+
+  @override
+  String get screen_feature_exercise_history_load_more_error =>
+      'Could not load more';
+
+  @override
+  String screen_feature_exercise_history_month_label(
+    String year,
+    String month,
+  ) {
+    return '$year/$month';
+  }
+
+  @override
+  String get screen_feature_exercise_history_retry => 'Retry';
+
+  @override
   String get screen_feature_exercise_history_title => 'Exercise history';
 
   @override

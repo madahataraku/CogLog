@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:screen_feature_exercise_history/screen_feature_exercise_history.dart';
+import 'package:screen_feature_exercise_history_detail/screen_feature_exercise_history_detail.dart';
 import 'package:screen_feature_goal_settings/screen_feature_goal_settings.dart';
 import 'package:screen_feature_main/screen_feature_main.dart';
 import 'package:screen_feature_meter_capture/screen_feature_meter_capture.dart';
@@ -55,6 +56,15 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                   GoRoute(
                     path: '/exercise-history',
                     builder: (context, state) => const ExerciseHistoryScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'detail/:id',
+                        builder: (context, state) =>
+                            ExerciseHistoryDetailScreen(
+                              id: state.pathParameters['id']!,
+                            ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -73,4 +83,26 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
 
   /// アプリが使うルーター。
   final GoRouter router;
+
+  /// 運動履歴詳細をタブ内スタックへ積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openExerciseHistoryDetail(id: 'id');
+  /// ```
+  @override
+  void openExerciseHistoryDetail({required String id}) {
+    router.push('/exercise-history/detail/$id');
+  }
+
+  /// 現在のスタックを 1 つ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.pop();
+  /// ```
+  @override
+  void pop() {
+    router.pop();
+  }
 }
