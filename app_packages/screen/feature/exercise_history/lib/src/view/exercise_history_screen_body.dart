@@ -160,11 +160,13 @@ class ExerciseHistoryScreenBody extends HookConsumerWidget {
                             title: Text(item.createdAtText),
                             subtitle: Text(
                               '${strings.screen_feature_exercise_history_calories}: '
-                              '${item.caloriesText}\n'
+                              '${item.caloriesText} '
+                              '${strings.screen_feature_exercise_history_calories_unit}\n'
                               '${strings.screen_feature_exercise_history_duration}: '
                               '${item.durationText}\n'
                               '${strings.screen_feature_exercise_history_distance}: '
-                              '${item.distanceText}',
+                              '${item.distanceText} '
+                              '${strings.screen_feature_exercise_history_distance_unit}',
                             ),
                             onPress: () => viewModel.onTapItem(id: item.id),
                           );

@@ -34,6 +34,11 @@ final class MemoryExerciseHistoryRepository
   }
 
   /// 現地暦月で絞り、作成開始日時降順で頁を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.listPage(year: 2026, month: 11, offset: 0, limit: 30);
+  /// ```
   @override
   Future<List<ExerciseHistory>> listPage({
     required int year,
@@ -58,6 +63,11 @@ final class MemoryExerciseHistoryRepository
   }
 
   /// ID で 1 件返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.findById(id);
+  /// ```
   @override
   Future<ExerciseHistory?> findById(String id) async {
     for (final item in _items) {
@@ -69,6 +79,11 @@ final class MemoryExerciseHistoryRepository
   }
 
   /// 保持バイトがあれば一時ファイルへ書いて絶対パスを返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.photoAbsolutePath(id);
+  /// ```
   @override
   Future<String?> photoAbsolutePath(String id) async {
     final bytes = _photos[id];

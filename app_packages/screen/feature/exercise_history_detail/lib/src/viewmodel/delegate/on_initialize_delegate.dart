@@ -80,51 +80,59 @@ Future<void> loadExerciseHistoryDetail({
     final result = await loadDetailUsecase.execute(
       LoadExerciseHistoryDetailRequest(id: id),
     );
-    await state.updateWithLock((current, emitter) async {
-      if (current.id != id) {
-        return;
-      }
-      switch (result) {
-        case LoadExerciseHistoryDetailNotFound():
-          await emitter.emit(
-            current.copyWith(
-              loading: false,
-              missing: true,
-              clearHistory: true,
-              clearPhotoAbsolutePath: true,
-              clearError: true,
-            ),
-          );
-        case LoadExerciseHistoryDetailSuccess(
-          :final history,
-          :final photoAbsolutePath,
-        ):
-          await emitter.emit(
-            current.copyWith(
-              loading: false,
-              missing: false,
-              history: history,
-              photoAbsolutePath: photoAbsolutePath,
-              clearPhotoAbsolutePath: photoAbsolutePath == null,
-              clearError: true,
-            ),
-          );
-      }
-    });
+    try {
+      await state.updateWithLock((current, emitter) async {
+        if (current.id != id) {
+          return;
+        }
+        switch (result) {
+          case LoadExerciseHistoryDetailNotFound():
+            await emitter.emit(
+              current.copyWith(
+                loading: false,
+                missing: true,
+                clearHistory: true,
+                clearPhotoAbsolutePath: true,
+                clearError: true,
+              ),
+            );
+          case LoadExerciseHistoryDetailSuccess(
+            :final history,
+            :final photoAbsolutePath,
+          ):
+            await emitter.emit(
+              current.copyWith(
+                loading: false,
+                missing: false,
+                history: history,
+                photoAbsolutePath: photoAbsolutePath,
+                clearPhotoAbsolutePath: photoAbsolutePath == null,
+                clearError: true,
+              ),
+            );
+        }
+      });
+    } on StateStreamClosedException {
+      return;
+    }
   } catch (error) {
-    await state.updateWithLock((current, emitter) async {
-      if (current.id != id) {
-        return;
-      }
-      await emitter.emit(
-        current.copyWith(
-          loading: false,
-          missing: false,
-          clearHistory: true,
-          clearPhotoAbsolutePath: true,
-          error: error,
-        ),
-      );
-    });
+    try {
+      await state.updateWithLock((current, emitter) async {
+        if (current.id != id) {
+          return;
+        }
+        await emitter.emit(
+          current.copyWith(
+            loading: false,
+            missing: false,
+            clearHistory: true,
+            clearPhotoAbsolutePath: true,
+            error: error,
+          ),
+        );
+      });
+    } on StateStreamClosedException {
+      return;
+    }
   }
 }

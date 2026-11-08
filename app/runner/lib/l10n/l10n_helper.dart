@@ -64,6 +64,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_calories;
       },
+      'screen_feature_exercise_history_calories_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_calories_unit;
+      },
       'screen_feature_exercise_history_created_at': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_created_at;
@@ -147,6 +151,10 @@ final class L10nHelper {
       'screen_feature_exercise_history_distance': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_distance;
+      },
+      'screen_feature_exercise_history_distance_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_distance_unit;
       },
       'screen_feature_exercise_history_duration': (source) {
         // No Placeholders

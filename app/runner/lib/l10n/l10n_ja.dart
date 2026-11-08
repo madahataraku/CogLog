@@ -24,6 +24,9 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_calories => '消費カロリー';
 
   @override
+  String get screen_feature_exercise_history_calories_unit => 'kcal';
+
+  @override
   String get screen_feature_exercise_history_created_at => '作成開始日時';
 
   @override
@@ -86,6 +89,9 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_exercise_history_distance => '走行距離';
+
+  @override
+  String get screen_feature_exercise_history_distance_unit => 'km';
 
   @override
   String get screen_feature_exercise_history_duration => '運動時間';

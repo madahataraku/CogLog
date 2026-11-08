@@ -67,28 +67,44 @@ final class OnLoadMoreDelegate {
           offset: prep.offset,
         ),
       );
-      await state.updateWithLock((current, emitter) async {
-        if (current.year != prep.year || current.month != prep.month) {
-          return;
-        }
-        await emitter.emit(
-          current.copyWith(
-            items: [...current.items, ...result.items],
-            hasMore: result.hasMore,
-            loadingMore: false,
-            clearLoadMoreError: true,
-          ),
-        );
-      });
+      try {
+        await state.updateWithLock((current, emitter) async {
+          if (current.year != prep.year || current.month != prep.month) {
+            return;
+          }
+          if (current.items.length != prep.offset) {
+            await emitter.emit(current.copyWith(loadingMore: false));
+            return;
+          }
+          await emitter.emit(
+            current.copyWith(
+              items: [...current.items, ...result.items],
+              hasMore: result.hasMore,
+              loadingMore: false,
+              clearLoadMoreError: true,
+            ),
+          );
+        });
+      } on StateStreamClosedException {
+        return;
+      }
     } catch (error) {
-      await state.updateWithLock((current, emitter) async {
-        if (current.year != prep.year || current.month != prep.month) {
-          return;
-        }
-        await emitter.emit(
-          current.copyWith(loadingMore: false, loadMoreError: error),
-        );
-      });
+      try {
+        await state.updateWithLock((current, emitter) async {
+          if (current.year != prep.year || current.month != prep.month) {
+            return;
+          }
+          if (current.items.length != prep.offset) {
+            await emitter.emit(current.copyWith(loadingMore: false));
+            return;
+          }
+          await emitter.emit(
+            current.copyWith(loadingMore: false, loadMoreError: error),
+          );
+        });
+      } on StateStreamClosedException {
+        return;
+      }
     }
   }
 }

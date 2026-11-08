@@ -94,35 +94,45 @@ Future<void> _loadFirstPage({
     final result = await loadPageUsecase.execute(
       LoadExerciseHistoryPageRequest(year: year, month: month, offset: 0),
     );
-    await state.updateWithLock((current, emitter) async {
-      if (current.year != year || current.month != month) {
-        return;
-      }
-      await emitter.emit(
-        current.copyWith(
-          items: result.items,
-          hasMore: result.hasMore,
-          loading: false,
-          refreshing: false,
-          clearLoadError: true,
-          clearLoadMoreError: true,
-        ),
-      );
-    });
+    try {
+      await state.updateWithLock((current, emitter) async {
+        if (current.year != year || current.month != month) {
+          return;
+        }
+        await emitter.emit(
+          current.copyWith(
+            items: result.items,
+            hasMore: result.hasMore,
+            loading: false,
+            refreshing: false,
+            loadingMore: false,
+            clearLoadError: true,
+            clearLoadMoreError: true,
+          ),
+        );
+      });
+    } on StateStreamClosedException {
+      return;
+    }
   } catch (error) {
-    await state.updateWithLock((current, emitter) async {
-      if (current.year != year || current.month != month) {
-        return;
-      }
-      await emitter.emit(
-        current.copyWith(
-          loading: false,
-          refreshing: false,
-          loadError: error,
-          clearLoadMoreError: true,
-        ),
-      );
-    });
+    try {
+      await state.updateWithLock((current, emitter) async {
+        if (current.year != year || current.month != month) {
+          return;
+        }
+        await emitter.emit(
+          current.copyWith(
+            loading: false,
+            refreshing: false,
+            loadingMore: false,
+            loadError: error,
+            clearLoadMoreError: true,
+          ),
+        );
+      });
+    } on StateStreamClosedException {
+      return;
+    }
   }
 }
 

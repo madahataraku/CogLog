@@ -47,6 +47,7 @@ final class OnRefreshDelegate {
       await emitter.emit(
         current.copyWith(
           refreshing: true,
+          loadingMore: false,
           clearLoadError: true,
           clearLoadMoreError: true,
         ),

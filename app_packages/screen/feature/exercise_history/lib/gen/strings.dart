@@ -13,6 +13,12 @@ mixin class L10nStringsMixin {
   String get screen_feature_exercise_history_calories =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_calories');
 
+  /// 消費カロリーの単位
+  String get screen_feature_exercise_history_calories_unit =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_calories_unit',
+      );
+
   /// リスト項目の作成開始日時
   String get screen_feature_exercise_history_created_at =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_created_at');
@@ -20,6 +26,12 @@ mixin class L10nStringsMixin {
   /// リスト項目の走行距離
   String get screen_feature_exercise_history_distance =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_distance');
+
+  /// 走行距離の単位
+  String get screen_feature_exercise_history_distance_unit =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_distance_unit',
+      );
 
   /// リスト項目の運動時間
   String get screen_feature_exercise_history_duration =>

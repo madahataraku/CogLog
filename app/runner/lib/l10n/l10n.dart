@@ -121,6 +121,12 @@ abstract class L10n {
   /// **'消費カロリー'**
   String get screen_feature_exercise_history_calories;
 
+  /// 消費カロリーの単位
+  ///
+  /// In ja, this message translates to:
+  /// **'kcal'**
+  String get screen_feature_exercise_history_calories_unit;
+
   /// リスト項目の作成開始日時
   ///
   /// In ja, this message translates to:
@@ -246,6 +252,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'走行距離'**
   String get screen_feature_exercise_history_distance;
+
+  /// 走行距離の単位
+  ///
+  /// In ja, this message translates to:
+  /// **'km'**
+  String get screen_feature_exercise_history_distance_unit;
 
   /// リスト項目の運動時間
   ///

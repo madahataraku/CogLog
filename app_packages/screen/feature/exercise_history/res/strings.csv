@@ -7,5 +7,7 @@ month_label,{year}年{month}月,{year}/{month},月セレクタのラベル
 calories,消費カロリー,Calories,リスト項目の消費カロリー
 duration,運動時間,Duration,リスト項目の運動時間
 distance,走行距離,Distance,リスト項目の走行距離
+calories_unit,kcal,kcal,消費カロリーの単位
+distance_unit,km,km,走行距離の単位
 created_at,作成開始日時,Created at,リスト項目の作成開始日時
 load_more_error,続きを読み込めませんでした,Could not load more,追加読込の失敗

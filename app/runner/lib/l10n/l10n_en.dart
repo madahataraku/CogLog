@@ -24,6 +24,9 @@ class L10nEn extends L10n {
   String get screen_feature_exercise_history_calories => 'Calories';
 
   @override
+  String get screen_feature_exercise_history_calories_unit => 'kcal';
+
+  @override
   String get screen_feature_exercise_history_created_at => 'Created at';
 
   @override
@@ -94,6 +97,9 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_exercise_history_distance => 'Distance';
+
+  @override
+  String get screen_feature_exercise_history_distance_unit => 'km';
 
   @override
   String get screen_feature_exercise_history_duration => 'Duration';

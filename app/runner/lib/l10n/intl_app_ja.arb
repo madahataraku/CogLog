@@ -21,6 +21,10 @@
   "@screen_feature_exercise_history_calories": {
     "description": "リスト項目の消費カロリー"
   },
+  "screen_feature_exercise_history_calories_unit": "kcal",
+  "@screen_feature_exercise_history_calories_unit": {
+    "description": "消費カロリーの単位"
+  },
   "screen_feature_exercise_history_created_at": "作成開始日時",
   "@screen_feature_exercise_history_created_at": {
     "description": "リスト項目の作成開始日時"
@@ -104,6 +108,10 @@
   "screen_feature_exercise_history_distance": "走行距離",
   "@screen_feature_exercise_history_distance": {
     "description": "リスト項目の走行距離"
+  },
+  "screen_feature_exercise_history_distance_unit": "km",
+  "@screen_feature_exercise_history_distance_unit": {
+    "description": "走行距離の単位"
   },
   "screen_feature_exercise_history_duration": "運動時間",
   "@screen_feature_exercise_history_duration": {

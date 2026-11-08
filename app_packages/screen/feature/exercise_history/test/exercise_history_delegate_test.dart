@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
@@ -113,6 +115,58 @@ void main() {
     expect(state.state.items, first);
     expect(state.state.loadingMore, isFalse);
     expect(state.state.loadMoreError, isA<StateError>());
+  });
+
+  test('loadMore 完了時に offset が変わっていれば追記しない', () async {
+    final first = List.generate(
+      30,
+      (i) => _history(
+        id: 'id-$i',
+        creationStartedAt: DateTime(2026, 11, 1).add(Duration(minutes: i)),
+      ),
+    );
+    final refreshed = [
+      _history(id: 'refreshed', creationStartedAt: DateTime(2026, 11, 2)),
+    ];
+    state = MutableStateStream(
+      ExerciseHistoryScreenState(
+        year: 2026,
+        month: 11,
+        items: first,
+        loading: false,
+        refreshing: false,
+        loadingMore: false,
+        hasMore: true,
+        loadError: null,
+        loadMoreError: null,
+      ),
+    );
+    final gate = Completer<void>();
+    final load = _LoadPage((_) async {
+      await gate.future;
+      return LoadExerciseHistoryPageResult(
+        items: [
+          _history(id: 'page2', creationStartedAt: DateTime(2026, 11, 3)),
+        ],
+        hasMore: false,
+      );
+    });
+    final pending = OnLoadMoreDelegate(
+      state: state,
+      loadPageUsecase: load,
+    ).execute();
+    await Future<void>.delayed(Duration.zero);
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(items: refreshed, hasMore: false, loadingMore: true),
+      );
+    });
+    gate.complete();
+    await pending;
+
+    expect(state.state.items, refreshed);
+    expect(state.state.loadingMore, isFalse);
+    expect(state.state.items.any((e) => e.id == 'page2'), isFalse);
   });
 
   test('月切替で items をクリアして読み直す', () async {
