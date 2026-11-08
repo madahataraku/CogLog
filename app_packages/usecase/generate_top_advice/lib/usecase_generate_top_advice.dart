@@ -6,8 +6,11 @@
 /// ```
 library;
 
+export 'src/advice_template.dart';
 export 'src/advice_template_picker.dart';
+export 'src/advice_tone.dart';
 export 'src/generate_top_advice_request.dart';
 export 'src/generate_top_advice_result.dart';
 export 'src/generate_top_advice_usecase.dart';
+export 'src/top_advice_llm_response_parser.dart';
 export 'src/top_advice_prompt_builder.dart';
