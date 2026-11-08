@@ -21,13 +21,20 @@ ExerciseHistory ride({required DateTime recordedAt}) {
   );
 }
 
+const _templateA = AdviceTemplate(text: '定型A', tone: AdviceTone.fun);
+const _templateB = AdviceTemplate(text: '定型B', tone: AdviceTone.happy);
+const _templateC = AdviceTemplate(text: '定型C', tone: AdviceTone.fun);
+
 GenerateTopAdviceRequest request({
   List<ExerciseHistory> histories = const [],
 }) => GenerateTopAdviceRequest(
   histories: histories,
   locale: 'ja',
-  noExerciseTemplate: '今日はまだ運動していません',
-  fallbackTemplates: const ['定型A', '定型B', '定型C'],
+  noExercise: const AdviceTemplate(
+    text: '今日はまだ運動していません',
+    tone: AdviceTone.realized,
+  ),
+  fallbackTemplates: const [_templateA, _templateB, _templateC],
 );
 
 void main() {
@@ -39,11 +46,12 @@ void main() {
     ).execute(request());
 
     expect(result.advice, '今日はまだ運動していません');
+    expect(result.tone, AdviceTone.realized);
     expect(llm.generateCallCount, 0);
   });
 
-  test('LLM 成功時は生成文を返す', () async {
-    final llm = FakeOnDeviceLlm(response: '  よく動けた  ');
+  test('LLM 成功時は TONE/ADVICE 形式を解析して返す', () async {
+    final llm = FakeOnDeviceLlm(response: 'TONE=happy\nADVICE=よく動けた');
     final result =
         await GenerateTopAdviceUsecaseImpl(
           llm: llm,
@@ -53,11 +61,17 @@ void main() {
         );
 
     expect(result.advice, 'よく動けた');
+    expect(result.tone, AdviceTone.happy);
     expect(llm.generateCallCount, 1);
     expect(llm.lastPrompt, contains('locale=ja'));
     expect(llm.lastPrompt, contains('distanceKm=2.0'));
     expect(llm.lastPrompt, contains('caloriesKcal=80.0'));
-    expect(llm.lastPrompt, contains('Reply in the language of locale=ja'));
+    expect(llm.lastPrompt, contains('fun, confused, happy, realized'));
+    expect(llm.lastPrompt, contains('TONE='));
+    expect(
+      llm.lastPrompt,
+      isNot(contains('Reply in the language of locale=ja')),
+    );
   });
 
   test('LLM 失敗時は定型を返す', () async {
@@ -71,6 +85,7 @@ void main() {
         );
 
     expect(result.advice, '定型B');
+    expect(result.tone, AdviceTone.happy);
     expect(llm.generateCallCount, 1);
   });
 
@@ -85,6 +100,7 @@ void main() {
         );
 
     expect(result.advice, '定型A');
+    expect(result.tone, AdviceTone.fun);
     expect(llm.generateCallCount, 0);
   });
 
@@ -99,6 +115,7 @@ void main() {
         );
 
     expect(result.advice, '定型A');
+    expect(result.tone, AdviceTone.fun);
     expect(llm.generateCallCount, 0);
   });
 
@@ -114,6 +131,7 @@ void main() {
         );
 
     expect(result.advice, '定型C');
+    expect(result.tone, AdviceTone.fun);
     expect(llm.generateCallCount, 1);
   });
 }

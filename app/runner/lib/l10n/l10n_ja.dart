@@ -199,6 +199,9 @@ class L10nJa extends L10n {
   String get screen_feature_top_advice_template_3 => '小さな積み重ねが続きます。今日も自分のペースで。';
 
   @override
+  String get screen_feature_top_advisor_semantics => 'アドバイザー';
+
+  @override
   String get screen_feature_top_calories => '消費カロリー';
 
   @override

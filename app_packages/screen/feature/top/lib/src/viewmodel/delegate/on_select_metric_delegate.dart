@@ -34,6 +34,7 @@ final class OnSelectMetricDelegate {
   /// [metric] を保存できたときだけ State の指標を変える。
   ///
   /// まだ読み込んでいないとき、または保存が失敗したときは State を変えない。
+  /// アドバイス本文とトーンは変更しない。
   ///
   /// Example:
   /// ```dart
@@ -56,6 +57,7 @@ final class OnSelectMetricDelegate {
           month: current.month,
           goal: current.goal,
           adviceText: current.adviceText,
+          adviceTone: current.adviceTone,
         ),
       );
     });

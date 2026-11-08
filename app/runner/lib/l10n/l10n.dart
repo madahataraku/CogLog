@@ -451,6 +451,12 @@ abstract class L10n {
   /// **'小さな積み重ねが続きます。今日も自分のペースで。'**
   String get screen_feature_top_advice_template_3;
 
+  /// アドバイスキャラクターの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'アドバイザー'**
+  String get screen_feature_top_advisor_semantics;
+
   /// 指標
   ///
   /// In ja, this message translates to:

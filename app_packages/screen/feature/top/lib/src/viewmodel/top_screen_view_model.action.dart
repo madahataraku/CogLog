@@ -3,20 +3,25 @@ part of 'top_screen_view_model.dart';
 /// トップ画面の操作。
 @internal
 extension TopScreenViewModelActions on TopScreenViewModel {
-  /// 現在時刻で期間合計を読み、アドバイスを再生成する。
+  /// 現在時刻で期間合計を読み、アドバイス本文とトーンを再生成する。
   ///
   /// Example:
   /// ```dart
   /// viewModel.onInitialize(
   ///   locale: 'ja',
-  ///   noExerciseTemplate: '今日はまだ運動していません',
-  ///   fallbackTemplates: const ['a', 'b', 'c'],
+  ///   noExercise: AdviceTemplate(
+  ///     text: '今日はまだ運動していません',
+  ///     tone: AdviceTone.realized,
+  ///   ),
+  ///   fallbackTemplates: const [
+  ///     AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+  ///   ],
   /// );
   /// ```
   Future<void> onInitialize({
     required String locale,
-    required String noExerciseTemplate,
-    required List<String> fallbackTemplates,
+    required AdviceTemplate noExercise,
+    required List<AdviceTemplate> fallbackTemplates,
   }) {
     final delegate = OnInitializeDelegate(
       state: state,
@@ -25,7 +30,7 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     );
     return delegate.execute(
       locale: locale,
-      noExerciseTemplate: noExerciseTemplate,
+      noExercise: noExercise,
       fallbackTemplates: fallbackTemplates,
     );
   }

@@ -1,8 +1,9 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 
 import 'top_goal_ring_entity.dart';
 
-/// トップ画面が表示する文字列と達成率。
+/// トップ画面が表示する文字列、アドバイス吹き出し用の本文とトーン、達成率。
 ///
 /// Example:
 /// ```dart
@@ -12,6 +13,7 @@ import 'top_goal_ring_entity.dart';
 ///   weekText: '--',
 ///   monthText: '--',
 ///   adviceText: '',
+///   adviceTone: AdviceTone.fun,
 ///   duration: const TopGoalRingEntity(
 ///     status: GoalMetricStatus.unset,
 ///     lap1: 0,
@@ -39,7 +41,7 @@ import 'top_goal_ring_entity.dart';
 /// );
 /// ```
 final class TopScreenEntity {
-  /// 指標・期間表記・アドバイス・3 指標の達成を持つ。
+  /// 指標・期間表記・アドバイス本文とトーン・3 指標の達成を持つ。
   ///
   /// Example:
   /// ```dart
@@ -49,6 +51,7 @@ final class TopScreenEntity {
   ///   weekText: '--',
   ///   monthText: '--',
   ///   adviceText: '',
+  ///   adviceTone: AdviceTone.fun,
   ///   duration: ring,
   ///   calories: ring,
   ///   distance: ring,
@@ -60,6 +63,7 @@ final class TopScreenEntity {
     required this.weekText,
     required this.monthText,
     required this.adviceText,
+    required this.adviceTone,
     required this.duration,
     required this.calories,
     required this.distance,
@@ -79,6 +83,9 @@ final class TopScreenEntity {
 
   /// ワンポイントアドバイス。
   final String adviceText;
+
+  /// ワンポイントアドバイスのトーン。
+  final AdviceTone adviceTone;
 
   /// 運動時間の達成リング。
   final TopGoalRingEntity duration;

@@ -8,10 +8,11 @@ import 'package:meta/meta.dart';
 import '../strings.dart';
 import '../viewmodel/entity/top_goal_ring_entity.dart';
 import '../viewmodel/top_screen_view_model.dart';
+import 'advice_speech_panel.dart';
 import 'goal_achievement_ring.dart';
 import 'top_screen_providers.dart';
 
-/// 期間の合計と指標の切り替え、アドバイス、目標達成率。
+/// 期間の合計と指標の切り替え、吹き出し付きアドバイス、目標達成率。
 @internal
 class TopScreenBody extends HookConsumerWidget {
   /// 本文を作る。
@@ -22,7 +23,7 @@ class TopScreenBody extends HookConsumerWidget {
   /// ```
   const TopScreenBody({super.key});
 
-  /// 指標の Select、3 期間、アドバイス、達成率リングを縦に並べる。
+  /// 指標の Select、3 期間、[AdviceSpeechPanel]、達成率リングを縦に並べる。
   ///
   /// Example:
   /// ```dart
@@ -96,7 +97,11 @@ class TopScreenBody extends HookConsumerWidget {
               ],
             ),
             if (entity.adviceText.isNotEmpty)
-              Text(entity.adviceText, style: context.theme.typography.body.sm),
+              AdviceSpeechPanel(
+                adviceText: entity.adviceText,
+                tone: entity.adviceTone,
+                semanticsLabel: strings.screen_feature_top_advisor_semantics,
+              ),
             Text(
               strings.screen_feature_top_achievement_title,
               style: titleStyle,

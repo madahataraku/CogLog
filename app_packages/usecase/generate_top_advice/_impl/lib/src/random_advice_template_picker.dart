@@ -20,14 +20,16 @@ final class RandomAdviceTemplatePicker implements AdviceTemplatePicker {
   /// 選択に使う乱数源。テストでは seed 固定の [Random] を渡せる。
   final Random _random;
 
-  /// [templates] から一様に 1 件選ぶ。
+  /// [templates] から一様に 1 件選ぶ。空の [templates] は [ArgumentError]。
   ///
   /// Example:
   /// ```dart
-  /// RandomAdviceTemplatePicker().pick(const ['a', 'b', 'c']);
+  /// RandomAdviceTemplatePicker().pick(const [
+  ///   AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+  /// ]);
   /// ```
   @override
-  String pick(List<String> templates) {
+  AdviceTemplate pick(List<AdviceTemplate> templates) {
     if (templates.isEmpty) {
       throw ArgumentError.value(templates, 'templates', 'must not be empty');
     }

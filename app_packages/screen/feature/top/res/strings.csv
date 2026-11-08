@@ -15,3 +15,4 @@ achievement_title,目標達成率,Goal progress,目標達成率セクション�
 unset_prompt,目標設定で一日あたりの目標を設定しましょう,Set a daily goal in Goals,目標未設定時の設定促進
 actual_label,実績,Actual,実績のラベル
 goal_label,目標,Goal,目標のラベル
+advisor_semantics,アドバイザー,Advisor,アドバイスキャラクターの代替テキスト

@@ -249,6 +249,10 @@
   "@screen_feature_top_advice_template_3": {
     "description": "LLM不可時の定型3"
   },
+  "screen_feature_top_advisor_semantics": "Advisor",
+  "@screen_feature_top_advisor_semantics": {
+    "description": "アドバイスキャラクターの代替テキスト"
+  },
   "screen_feature_top_calories": "Calories",
   "@screen_feature_top_calories": {
     "description": "指標"

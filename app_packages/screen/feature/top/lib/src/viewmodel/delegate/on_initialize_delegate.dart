@@ -14,8 +14,13 @@ import '../state/top_screen_state.dart';
 ///   generateTopAdviceUsecase: generateTopAdviceUsecase,
 /// ).execute(
 ///   locale: 'ja',
-///   noExerciseTemplate: '今日はまだ運動していません',
-///   fallbackTemplates: const ['a', 'b', 'c'],
+///   noExercise: AdviceTemplate(
+///     text: '今日はまだ運動していません',
+///     tone: AdviceTone.realized,
+///   ),
+///   fallbackTemplates: const [
+///     AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+///   ],
 /// );
 /// ```
 final class OnInitializeDelegate {
@@ -44,20 +49,25 @@ final class OnInitializeDelegate {
   /// ワンポイントアドバイスの生成。
   final GenerateTopAdviceUsecase generateTopAdviceUsecase;
 
-  /// 現在時刻で読み込み、アドバイスを生成して loaded にする。
+  /// 現在時刻で読み込み、アドバイス本文とトーンを生成して loaded にする。
   ///
   /// Example:
   /// ```dart
   /// delegate.execute(
   ///   locale: 'ja',
-  ///   noExerciseTemplate: '今日はまだ運動していません',
-  ///   fallbackTemplates: const ['a', 'b', 'c'],
+  ///   noExercise: AdviceTemplate(
+  ///     text: '今日はまだ運動していません',
+  ///     tone: AdviceTone.realized,
+  ///   ),
+  ///   fallbackTemplates: const [
+  ///     AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+  ///   ],
   /// );
   /// ```
   Future<void> execute({
     required String locale,
-    required String noExerciseTemplate,
-    required List<String> fallbackTemplates,
+    required AdviceTemplate noExercise,
+    required List<AdviceTemplate> fallbackTemplates,
   }) async {
     await state.updateWithLock((_, emitter) async {
       final result = await loadTopScreenUsecase.execute(
@@ -67,7 +77,7 @@ final class OnInitializeDelegate {
         GenerateTopAdviceRequest(
           histories: result.todayHistories,
           locale: locale,
-          noExerciseTemplate: noExerciseTemplate,
+          noExercise: noExercise,
           fallbackTemplates: fallbackTemplates,
         ),
       );
@@ -80,6 +90,7 @@ final class OnInitializeDelegate {
           month: result.month,
           goal: result.goal,
           adviceText: advice.advice,
+          adviceTone: advice.tone,
         ),
       );
     });

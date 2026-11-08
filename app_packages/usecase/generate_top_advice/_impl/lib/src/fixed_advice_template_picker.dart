@@ -20,14 +20,17 @@ final class FixedAdviceTemplatePicker implements AdviceTemplatePicker {
   /// 選ぶ添字。
   final int index;
 
-  /// [templates] の [index] を返す。
+  /// [index] が範囲内ならその要素、範囲外なら先頭を返す。空の [templates] は
+  /// [ArgumentError]。
   ///
   /// Example:
   /// ```dart
-  /// const FixedAdviceTemplatePicker().pick(const ['a', 'b']);
+  /// const FixedAdviceTemplatePicker().pick(const [
+  ///   AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+  /// ]);
   /// ```
   @override
-  String pick(List<String> templates) {
+  AdviceTemplate pick(List<AdviceTemplate> templates) {
     if (templates.isEmpty) {
       throw ArgumentError.value(templates, 'templates', 'must not be empty');
     }

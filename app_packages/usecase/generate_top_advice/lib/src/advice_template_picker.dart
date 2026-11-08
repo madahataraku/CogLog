@@ -1,17 +1,23 @@
+import 'advice_template.dart';
+
 /// 定型アドバイスから 1 件を選ぶ。
 ///
 /// 本番は乱数、テストは固定実装を注入する。
 ///
 /// Example:
 /// ```dart
-/// picker.pick(const ['a', 'b', 'c']);
+/// picker.pick(const [
+///   AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+/// ]);
 /// ```
 abstract interface class AdviceTemplatePicker {
   /// [templates] から 1 件を返す。[templates] は空でないこと。
   ///
   /// Example:
   /// ```dart
-  /// picker.pick(const ['よく歩けた', '水分を取ろう']);
+  /// picker.pick(const [
+  ///   AdviceTemplate(text: 'a', tone: AdviceTone.fun),
+  /// ]);
   /// ```
-  String pick(List<String> templates);
+  AdviceTemplate pick(List<AdviceTemplate> templates);
 }
