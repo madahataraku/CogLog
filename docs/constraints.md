@@ -80,7 +80,7 @@ XcodeGen へ移すときは、署名条件が揃ってから行う。そのと�
 
 | ジョブ名（必須ステータスチェック名） | 内容 |
 | --- | --- |
-| Format | リポジトリルートで `dart format --output=none --set-exit-if-changed .` |
+| Format | リポジトリルートで `flutter pub get` のあと `dart format --output=none --set-exit-if-changed .` |
 | Analyze | リポジトリルートで `flutter pub get` のあと `flutter analyze` |
 | Test | リポジトリルートで `flutter pub get` と `dart run monolith_runner:define` のあと、`test/` がある各パッケージのテストをすべて実行する。`sdk: flutter` を持つパッケージは `flutter test`、それ以外は `dart test`。ユニットテストと Golden Test の両方を含む |
 
