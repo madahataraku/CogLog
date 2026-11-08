@@ -16,7 +16,8 @@ final class DefaultTopAdvicePromptBuilder implements TopAdvicePromptBuilder {
   /// ```
   const DefaultTopAdvicePromptBuilder();
 
-  /// 言語と本日の合計を短く並べたプロンプトを返す。
+  /// 言語・本日の合計を要約し、LLM に `TONE=` / `ADVICE=` の 2 行で返すよう
+  /// 指示したプロンプト文字列を返す。
   ///
   /// Example:
   /// ```dart
@@ -43,7 +44,9 @@ final class DefaultTopAdvicePromptBuilder implements TopAdvicePromptBuilder {
         'distanceKm=${distanceKm.toStringAsFixed(1)}; '
         'caloriesKcal=${caloriesKcal.toStringAsFixed(1)}; '
         'durationMinutes=${duration.inMinutes}. '
-        'Give a short one-point exercise advice. '
-        'Reply in the language of locale=$locale.';
+        'Reply with exactly two lines:\n'
+        'TONE=<one of: fun, confused, happy, realized>\n'
+        'ADVICE=<short one-point exercise advice in the language of locale=$locale>\n'
+        'Use only those four TONE values. Do not add other lines or markdown.';
   }
 }
