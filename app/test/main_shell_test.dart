@@ -12,7 +12,7 @@ void main() {
 
     expect(find.text('本日'), findsOneWidget);
     expect(find.text('ホーム'), findsOneWidget);
-    expect(find.text('メーター撮影'), findsOneWidget);
+    expect(find.text('メーター記録'), findsOneWidget);
     expect(find.text('運動履歴'), findsOneWidget);
     expect(find.text('目標設定'), findsOneWidget);
     expect(find.bySemanticsLabel('メーターパネルを撮影'), findsNothing);
@@ -24,9 +24,9 @@ void main() {
 
     final screens = await pumpTopScreen(tester);
 
-    await tester.tap(find.text('メーター撮影'));
+    await tester.tap(find.text('メーター記録'));
     await tester.pumpAndSettle();
-    expect(find.text('メーター撮影'), findsWidgets);
+    expect(find.text('メーター記録'), findsWidgets);
     expect(screens.router.state.uri.path, '/meter-capture');
     expect(find.text('本日'), findsNothing);
 

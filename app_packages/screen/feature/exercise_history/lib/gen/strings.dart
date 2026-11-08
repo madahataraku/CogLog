@@ -37,7 +37,7 @@ mixin class L10nStringsMixin {
   String get screen_feature_exercise_history_duration =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_duration');
 
-  /// 空リスト
+  /// 空リストの案内
   String get screen_feature_exercise_history_empty =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_empty');
 

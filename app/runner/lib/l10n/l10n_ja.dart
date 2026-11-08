@@ -97,7 +97,8 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_duration => '運動時間';
 
   @override
-  String get screen_feature_exercise_history_empty => 'この月の運動履歴はありません';
+  String get screen_feature_exercise_history_empty =>
+      'この月の運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。';
 
   @override
   String get screen_feature_exercise_history_error => '運動履歴を読み込めませんでした';
@@ -171,10 +172,10 @@ class L10nJa extends L10n {
   String get screen_feature_main_nav_home => 'ホーム';
 
   @override
-  String get screen_feature_main_nav_meter_capture => 'メーター撮影';
+  String get screen_feature_main_nav_meter_capture => 'メーター記録';
 
   @override
-  String get screen_feature_meter_capture_title => 'メーター撮影';
+  String get screen_feature_meter_capture_title => 'メーター記録';
 
   @override
   String get screen_feature_top_achievement_title => '目標達成率';

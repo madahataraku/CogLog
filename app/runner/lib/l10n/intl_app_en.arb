@@ -117,9 +117,9 @@
   "@screen_feature_exercise_history_duration": {
     "description": "リスト項目の運動時間"
   },
-  "screen_feature_exercise_history_empty": "No exercise history this month",
+  "screen_feature_exercise_history_empty": "No exercise history this month. Create one from Meter record by photographing the meter panel or entering values manually.",
   "@screen_feature_exercise_history_empty": {
-    "description": "空リスト"
+    "description": "空リストの案内"
   },
   "screen_feature_exercise_history_error": "Could not load exercise history",
   "@screen_feature_exercise_history_error": {
@@ -217,11 +217,11 @@
   "@screen_feature_main_nav_home": {
     "description": "ボトムナビ"
   },
-  "screen_feature_main_nav_meter_capture": "Meter capture",
+  "screen_feature_main_nav_meter_capture": "Meter record",
   "@screen_feature_main_nav_meter_capture": {
     "description": "ボトムナビ"
   },
-  "screen_feature_meter_capture_title": "Meter capture",
+  "screen_feature_meter_capture_title": "Meter record",
   "@screen_feature_meter_capture_title": {
     "description": "画面タイトル"
   },
