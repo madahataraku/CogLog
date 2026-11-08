@@ -26,13 +26,16 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
         initialLocation: '/',
         routes: [
           StatefulShellRoute.indexedStack(
-            builder: (context, state, navigationShell) => MainShellScreen(
-              currentIndex: navigationShell.currentIndex,
-              onIndexChange: (index) => navigationShell.goBranch(
-                index,
-                initialLocation: index == navigationShell.currentIndex,
+            builder: (context, state, navigationShell) => ShellTabIndexScope(
+              index: navigationShell.currentIndex,
+              child: MainShellScreen(
+                currentIndex: navigationShell.currentIndex,
+                onIndexChange: (index) => navigationShell.goBranch(
+                  index,
+                  initialLocation: index == navigationShell.currentIndex,
+                ),
+                child: navigationShell,
               ),
-              child: navigationShell,
             ),
             branches: [
               StatefulShellBranch(
