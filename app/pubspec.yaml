@@ -19,14 +19,17 @@ dependencies:
   foundation_resources: any
   go_router: any
   infra_injection: any
+  infra_local_notification: any
   material_ui: any
   meta: any
   monolith_localization_runtime: any
   path_provider: any
   screen_injection: any
+  screen_navigation: any
   shared_preferences: any
   sqlite3_flutter_libs: any
   usecase_injection: any
+  usecase_sync_exercise_reminder: any
 
 dev_dependencies:
   data_repository_exercise_history_testing: any

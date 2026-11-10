@@ -1,11 +1,13 @@
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
+import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
+import 'package:infra_local_notification/infra_local_notification.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
@@ -45,10 +47,16 @@ import 'package:usecase_request_health_body_permission/usecase_request_health_bo
 import 'package:usecase_request_health_body_permission_impl/usecase_request_health_body_permission_impl.dart';
 import 'package:usecase_save_daily_goal/usecase_save_daily_goal.dart';
 import 'package:usecase_save_daily_goal_impl/usecase_save_daily_goal_impl.dart';
+import 'package:usecase_load_notification_settings/usecase_load_notification_settings.dart';
+import 'package:usecase_load_notification_settings_impl/usecase_load_notification_settings_impl.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 import 'package:usecase_save_meter_capture_impl/usecase_save_meter_capture_impl.dart';
+import 'package:usecase_save_notification_settings/usecase_save_notification_settings.dart';
+import 'package:usecase_save_notification_settings_impl/usecase_save_notification_settings_impl.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
 import 'package:usecase_save_top_screen_metric_impl/usecase_save_top_screen_metric_impl.dart';
+import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
+import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
 
 /// トップ・推移の読み込み、指標保存、一日あたり目標の読み書き、アドバイス生成、
 /// 端末上 LLM 誘導、運動履歴の一覧・詳細読み込み、メーター記録の写真取得・読み取り・保存・設定起動、
@@ -162,6 +170,26 @@ List<Override> usecaseOverrides({
       engines: ref.watch(meterReadingEnginesProvider),
     ),
   ),
+  SyncExerciseReminderUsecase.provider.overrideWith(
+    (ref) => SyncExerciseReminderUsecaseImpl(
+      settings: ref.watch(notificationSettingsRepositoryProvider),
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+      notifications: ref.watch(localNotificationGatewayProvider),
+    ),
+  ),
+  LoadNotificationSettingsUsecase.provider.overrideWith(
+    (ref) => LoadNotificationSettingsUsecaseImpl(
+      settings: ref.watch(notificationSettingsRepositoryProvider),
+      notifications: ref.watch(localNotificationGatewayProvider),
+    ),
+  ),
+  SaveNotificationSettingsUsecase.provider.overrideWith(
+    (ref) => SaveNotificationSettingsUsecaseImpl(
+      settings: ref.watch(notificationSettingsRepositoryProvider),
+      notifications: ref.watch(localNotificationGatewayProvider),
+      sync: ref.watch(SyncExerciseReminderUsecase.provider),
+    ),
+  ),
   SaveMeterCaptureUsecase.provider.overrideWith(
     (ref) => SaveMeterCaptureUsecaseImpl(
       histories: ref.watch(exerciseHistoryRepositoryProvider),
@@ -169,6 +197,7 @@ List<Override> usecaseOverrides({
       evaluateAutoUpdate: ref.watch(
         EvaluateDailyGoalAutoUpdateUsecase.provider,
       ),
+      syncReminder: ref.watch(SyncExerciseReminderUsecase.provider),
     ),
   ),
 ];

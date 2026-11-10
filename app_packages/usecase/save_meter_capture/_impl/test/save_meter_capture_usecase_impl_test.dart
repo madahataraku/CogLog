@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 import 'package:usecase_save_meter_capture_impl/usecase_save_meter_capture_impl.dart';
+import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 
 final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
   _FakeEvaluate({this.applied = false});
@@ -19,6 +20,24 @@ final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
   ) async {
     callCount += 1;
     return EvaluateDailyGoalAutoUpdateResult(applied: applied);
+  }
+}
+
+final class _FakeSync implements SyncExerciseReminderUsecase {
+  _FakeSync({this.throwOnExecute = false});
+
+  final bool throwOnExecute;
+  int callCount = 0;
+
+  @override
+  Future<SyncExerciseReminderResult> execute(
+    SyncExerciseReminderRequest request,
+  ) async {
+    callCount += 1;
+    if (throwOnExecute) {
+      throw StateError('sync failed');
+    }
+    return const SyncExerciseReminderResult(scheduled: false);
   }
 }
 
@@ -44,11 +63,13 @@ void main() {
     final histories = MemoryExerciseHistoryRepository();
     final health = FakeHealthWorkoutWriter(succeed: false);
     final evaluate = _FakeEvaluate();
+    final sync = _FakeSync();
 
     final result = await SaveMeterCaptureUsecaseImpl(
       histories: histories,
       health: health,
       evaluateAutoUpdate: evaluate,
+      syncReminder: sync,
     ).execute(validRequest());
 
     expect(result.outcome, SaveMeterCaptureOutcome.success);
@@ -58,6 +79,7 @@ void main() {
     expect(result.history!.distanceKm, 12);
     expect(health.writeCallCount, 1);
     expect(evaluate.callCount, 1);
+    expect(sync.callCount, 1);
 
     final listed = await histories.list();
     expect(listed, hasLength(1));
@@ -67,6 +89,7 @@ void main() {
     final histories = MemoryExerciseHistoryRepository();
     final health = FakeHealthWorkoutWriter(succeed: true);
     final evaluate = _FakeEvaluate();
+    final sync = _FakeSync();
     final request = SaveMeterCaptureRequest(
       creationStartedAt: creationStartedAt,
       capturedAt: capturedAt,
@@ -83,12 +106,14 @@ void main() {
       histories: histories,
       health: health,
       evaluateAutoUpdate: evaluate,
+      syncReminder: sync,
     ).execute(request);
 
     expect(result.outcome, SaveMeterCaptureOutcome.invalidInput);
     expect(result.history, isNull);
     expect(health.writeCallCount, 0);
     expect(evaluate.callCount, 0);
+    expect(sync.callCount, 0);
     expect(await histories.list(), isEmpty);
   });
 
@@ -96,6 +121,7 @@ void main() {
     final histories = MemoryExerciseHistoryRepository();
     final health = FakeHealthWorkoutWriter();
     final evaluate = _FakeEvaluate();
+    final sync = _FakeSync();
     final request = SaveMeterCaptureRequest(
       creationStartedAt: creationStartedAt,
       capturedAt: capturedAt,
@@ -112,27 +138,51 @@ void main() {
       histories: histories,
       health: health,
       evaluateAutoUpdate: evaluate,
+      syncReminder: sync,
     ).execute(request);
 
     expect(result.outcome, SaveMeterCaptureOutcome.invalidInput);
     expect(await histories.list(), isEmpty);
     expect(health.writeCallCount, 0);
     expect(evaluate.callCount, 0);
+    expect(sync.callCount, 0);
   });
 
   test('health 成功時は healthWriteSucceeded true', () async {
     final histories = MemoryExerciseHistoryRepository();
     final health = FakeHealthWorkoutWriter(succeed: true);
     final evaluate = _FakeEvaluate(applied: true);
+    final sync = _FakeSync();
 
     final result = await SaveMeterCaptureUsecaseImpl(
       histories: histories,
       health: health,
       evaluateAutoUpdate: evaluate,
+      syncReminder: sync,
     ).execute(validRequest());
 
     expect(result.outcome, SaveMeterCaptureOutcome.success);
     expect(result.healthWriteSucceeded, isTrue);
     expect(result.goalAutoUpdated, isTrue);
+    expect(sync.callCount, 1);
+  });
+
+  test('同期例外でも保存済みなら success', () async {
+    final histories = MemoryExerciseHistoryRepository();
+    final health = FakeHealthWorkoutWriter(succeed: true);
+    final evaluate = _FakeEvaluate();
+    final sync = _FakeSync(throwOnExecute: true);
+
+    final result = await SaveMeterCaptureUsecaseImpl(
+      histories: histories,
+      health: health,
+      evaluateAutoUpdate: evaluate,
+      syncReminder: sync,
+    ).execute(validRequest());
+
+    expect(result.outcome, SaveMeterCaptureOutcome.success);
+    expect(result.history, isNotNull);
+    expect(sync.callCount, 1);
+    expect(await histories.list(), hasLength(1));
   });
 }

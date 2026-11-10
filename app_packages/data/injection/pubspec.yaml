@@ -14,6 +14,8 @@ dependencies:
   data_repository_daily_goal_impl: any
   data_repository_exercise_history: any
   data_repository_exercise_history_impl: any
+  data_repository_notification_settings: any
+  data_repository_notification_settings_impl: any
   data_repository_top_screen_metric: any
   data_repository_top_screen_metric_impl: any
   flutter:

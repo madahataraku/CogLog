@@ -36,6 +36,10 @@ class L10nEn extends L10n {
   String get screen_feature_app_settings_licenses_item => 'Licenses';
 
   @override
+  String get screen_feature_app_settings_notification_item =>
+      'Notification settings';
+
+  @override
   String get screen_feature_app_settings_os_label => 'OS';
 
   @override
@@ -370,6 +374,21 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_meter_capture_title => 'Meter record';
+
+  @override
+  String get screen_feature_notification_settings_back_semantics => 'Back';
+
+  @override
+  String get screen_feature_notification_settings_enabled_item =>
+      'Exercise reminder notifications';
+
+  @override
+  String get screen_feature_notification_settings_permission_guidance =>
+      'Notifications are turned off. Allow CogLog notifications in system settings.';
+
+  @override
+  String get screen_feature_notification_settings_title =>
+      'Notification settings';
 
   @override
   String get screen_feature_oss_licenses_back_semantics => 'Back';

@@ -145,6 +145,12 @@ abstract class L10n {
   /// **'ライセンス'**
   String get screen_feature_app_settings_licenses_item;
 
+  /// 通知設定画面への項目
+  ///
+  /// In ja, this message translates to:
+  /// **'通知設定'**
+  String get screen_feature_app_settings_notification_item;
+
   /// 端末OSの見出し
   ///
   /// In ja, this message translates to:
@@ -756,6 +762,30 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'メーター記録'**
   String get screen_feature_meter_capture_title;
+
+  /// 戻るボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_notification_settings_back_semantics;
+
+  /// ON/OFF項目
+  ///
+  /// In ja, this message translates to:
+  /// **'運動リマインド通知'**
+  String get screen_feature_notification_settings_enabled_item;
+
+  /// 許可拒否時の案内
+  ///
+  /// In ja, this message translates to:
+  /// **'通知の許可がオフです。端末の設定からCogLogの通知を許可してください。'**
+  String get screen_feature_notification_settings_permission_guidance;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'通知設定'**
+  String get screen_feature_notification_settings_title;
 
   /// 戻るボタンの代替テキスト
   ///

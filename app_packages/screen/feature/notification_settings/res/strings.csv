@@ -1,0 +1,5 @@
+id,ja,en,description
+title,通知設定,Notification settings,画面タイトル
+enabled_item,運動リマインド通知,Exercise reminder notifications,ON/OFF項目
+permission_guidance,通知の許可がオフです。端末の設定からCogLogの通知を許可してください。,Notifications are turned off. Allow CogLog notifications in system settings.,許可拒否時の案内
+back_semantics,戻る,Back,戻るボタンの代替テキスト

@@ -1,0 +1,19 @@
+name: usecase_save_notification_settings_impl
+description: Save notification settings implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_notification_settings: any
+  domain_notification_settings: any
+  infra_local_notification: any
+  usecase_save_notification_settings: any
+  usecase_sync_exercise_reminder: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

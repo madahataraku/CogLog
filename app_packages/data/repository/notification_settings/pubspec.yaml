@@ -1,0 +1,16 @@
+name: data_repository_notification_settings
+description: Persist notification settings.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  domain_notification_settings: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

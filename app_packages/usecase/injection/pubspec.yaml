@@ -10,11 +10,13 @@ environment:
 dependencies:
   data_repository_daily_goal: any
   data_repository_exercise_history: any
+  data_repository_notification_settings: any
   data_repository_top_screen_metric: any
   infra_app_runtime_info: any
   infra_app_settings: any
   infra_health_body_metrics: any
   infra_health_workout: any
+  infra_local_notification: any
   infra_meter_photo: any
   infra_meter_reading: any
   infra_oss_license_catalog: any
@@ -57,8 +59,14 @@ dependencies:
   usecase_save_daily_goal_impl: any
   usecase_save_meter_capture: any
   usecase_save_meter_capture_impl: any
+  usecase_save_notification_settings: any
+  usecase_save_notification_settings_impl: any
   usecase_save_top_screen_metric: any
   usecase_save_top_screen_metric_impl: any
+  usecase_sync_exercise_reminder: any
+  usecase_sync_exercise_reminder_impl: any
+  usecase_load_notification_settings: any
+  usecase_load_notification_settings_impl: any
 
 
 dev_dependencies:

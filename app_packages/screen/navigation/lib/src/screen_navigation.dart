@@ -36,6 +36,14 @@ abstract interface class ScreenNavigation {
   /// ```
   void openDebug();
 
+  /// 通知設定画面をアプリ設定の子として積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openNotificationSettings();
+  /// ```
+  void openNotificationSettings();
+
   /// OSS ライセンス一覧をアプリ設定の子として積む。
   ///
   /// Example:

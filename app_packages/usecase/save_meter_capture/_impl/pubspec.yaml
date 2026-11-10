@@ -12,6 +12,7 @@ dependencies:
   infra_health_workout: any
   usecase_evaluate_daily_goal_auto_update: any
   usecase_save_meter_capture: any
+  usecase_sync_exercise_reminder: any
 
 dev_dependencies:
   data_repository_exercise_history_testing: any

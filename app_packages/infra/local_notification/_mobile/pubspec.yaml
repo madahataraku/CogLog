@@ -1,0 +1,22 @@
+name: infra_local_notification_mobile
+description: flutter_local_notifications implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_local_notifications: any
+  flutter_timezone: any
+  infra_local_notification: any
+  timezone: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

@@ -5,6 +5,8 @@ import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_daily_goal_impl/data_repository_daily_goal_impl.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_exercise_history_impl/data_repository_exercise_history_impl.dart';
+import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
+import 'package:data_repository_notification_settings_impl/data_repository_notification_settings_impl.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
 import 'package:data_repository_top_screen_metric_impl/data_repository_top_screen_metric_impl.dart';
 import 'package:riverpod/misc.dart';
@@ -41,5 +43,8 @@ List<Override> dataRepositoryOverrides({
   ),
   dailyGoalRepositoryProvider.overrideWith(
     (ref) => SharedPreferencesDailyGoalRepository(preferences),
+  ),
+  notificationSettingsRepositoryProvider.overrideWith(
+    (ref) => SharedPreferencesNotificationSettingsRepository(preferences),
   ),
 ];
