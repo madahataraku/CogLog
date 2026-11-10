@@ -6,9 +6,7 @@ import 'package:screen_feature_main/screen_feature_main.dart';
 import 'package:app/theme/theme.dart';
 
 void main() {
-  testWidgets('キーボード表示中はボトムナビが無く子の bottom inset は 0', (
-    tester,
-  ) async {
+  testWidgets('キーボード表示中はボトムナビが無く子の bottom inset は 0', (tester) async {
     late double childBottomInset;
     await tester.pumpWidget(
       MediaQuery(
