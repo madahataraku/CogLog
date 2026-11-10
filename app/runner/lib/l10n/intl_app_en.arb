@@ -529,6 +529,14 @@
   "@screen_feature_trends_metric_body_kg": {
     "description": "身体 kg 組"
   },
+  "screen_feature_trends_metric_body_lean_mass": "Lean mass",
+  "@screen_feature_trends_metric_body_lean_mass": {
+    "description": "凡例用の除脂肪体重"
+  },
+  "screen_feature_trends_metric_body_weight": "Weight",
+  "@screen_feature_trends_metric_body_weight": {
+    "description": "凡例用の体重"
+  },
   "screen_feature_trends_metric_calories": "Calories",
   "@screen_feature_trends_metric_calories": {
     "description": "運動指標"
@@ -568,6 +576,10 @@
   "screen_feature_trends_period_label": "Period",
   "@screen_feature_trends_period_label": {
     "description": "期間選択のラベル"
+  },
+  "screen_feature_trends_request_health_history": "Allow health history",
+  "@screen_feature_trends_request_health_history": {
+    "description": "Android 履歴許可の再要求"
   },
   "screen_feature_trends_request_health_permission": "Allow Health access",
   "@screen_feature_trends_request_health_permission": {

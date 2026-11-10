@@ -108,11 +108,29 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
     if (!Platform.isAndroid) {
       return;
     }
-    final authorized = await _health.isHealthDataHistoryAuthorized();
-    if (authorized) {
+    if (await isHistoryAuthorized()) {
       return;
     }
     await _health.requestHealthDataHistoryAuthorization();
+  }
+
+  /// Android の履歴許可を返す。iOS は常に true。失敗時は false。
+  ///
+  /// Example:
+  /// ```dart
+  /// await HealthPackageBodyMetricsSource().isHistoryAuthorized();
+  /// ```
+  @override
+  Future<bool> isHistoryAuthorized() async {
+    if (!Platform.isAndroid) {
+      return true;
+    }
+    try {
+      await _ensureConfigured();
+      return await _health.isHealthDataHistoryAuthorized();
+    } catch (_) {
+      return false;
+    }
   }
 
   /// `[startInclusive, endExclusive)` の計測を返す。失敗時は例外。

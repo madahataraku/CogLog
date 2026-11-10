@@ -232,6 +232,9 @@ void main() {
   });
 
   test('許可リクエスト失敗時は reload せず bodyReadFailed を立てる', () async {
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(current.copyWith(loading: false));
+    });
     final request = _FakeRequestPermission()
       ..throwError = StateError('permission failed');
     await OnRequestHealthPermissionDelegate(
@@ -243,7 +246,21 @@ void main() {
     expect(request.calls, 1);
     expect(load.calls, 0);
     expect(state.state.bodyReadFailed, isTrue);
-    expect(state.state.loading, isTrue);
+    expect(state.state.loading, isFalse);
+  });
+
+  test('履歴制限かつ許可済みなら履歴許可ボタン', () {
+    final entity = const TrendsStateToEntityDelegate().execute(
+      TrendsScreenState.initial.copyWith(
+        group: TrendsMetricGroup.body,
+        metricSet: TrendsMetricSet.bodyKgPair,
+        loading: false,
+        bodyHistoryLimited: true,
+        healthPermissionUi: TrendsHealthPermissionUi.granted,
+      ),
+    );
+    expect(entity.showRequestHistoryButton, isTrue);
+    expect(entity.showRequestPermissionButton, isFalse);
   });
 
   test('OnReloadDelegate は系列と許可を State へ書く', () async {

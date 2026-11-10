@@ -569,6 +569,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_trends_metric_body_kg;
       },
+      'screen_feature_trends_metric_body_lean_mass': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_body_lean_mass;
+      },
+      'screen_feature_trends_metric_body_weight': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_body_weight;
+      },
       'screen_feature_trends_metric_calories': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_metric_calories;
@@ -608,6 +616,10 @@ final class L10nHelper {
       'screen_feature_trends_period_label': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_period_label;
+      },
+      'screen_feature_trends_request_health_history': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_request_health_history;
       },
       'screen_feature_trends_request_health_permission': (source) {
         // No Placeholders

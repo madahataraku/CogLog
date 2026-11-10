@@ -415,6 +415,12 @@ class L10nJa extends L10n {
   String get screen_feature_trends_metric_body_kg => '体重と除脂肪体重';
 
   @override
+  String get screen_feature_trends_metric_body_lean_mass => '除脂肪体重';
+
+  @override
+  String get screen_feature_trends_metric_body_weight => '体重';
+
+  @override
   String get screen_feature_trends_metric_calories => '消費カロリー';
 
   @override
@@ -443,6 +449,9 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_period_label => '期間';
+
+  @override
+  String get screen_feature_trends_request_health_history => 'ヘルスの履歴データを許可';
 
   @override
   String get screen_feature_trends_request_health_permission => 'ヘルスケアを許可';

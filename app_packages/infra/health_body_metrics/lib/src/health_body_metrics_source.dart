@@ -42,6 +42,14 @@ abstract interface class HealthBodyMetricsSource {
     required DateTime startInclusive,
     required DateTime endExclusive,
   });
+
+  /// Android のヘルス履歴許可があるか。iOS は常に true。
+  ///
+  /// Example:
+  /// ```dart
+  /// await source.isHistoryAuthorized();
+  /// ```
+  Future<bool> isHistoryAuthorized();
 }
 
 /// 身体指標ソースの注入点。未接続のときは失敗する。

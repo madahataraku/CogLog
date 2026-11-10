@@ -52,4 +52,13 @@ final class UnavailableHealthBodyMetricsSource
     required DateTime startInclusive,
     required DateTime endExclusive,
   }) async => const [];
+
+  /// 常に true（履歴制限の対象外）。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableHealthBodyMetricsSource().isHistoryAuthorized();
+  /// ```
+  @override
+  Future<bool> isHistoryAuthorized() async => true;
 }

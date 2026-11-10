@@ -75,6 +75,7 @@ final class OnReloadDelegate {
           current.copyWith(
             loading: false,
             bodyReadFailed: result.bodyReadFailed,
+            bodyHistoryLimited: result.bodyHistoryLimited,
             healthPermissionUi: mapTrendsHealthUi(result.healthPermission),
             buckets: result.buckets,
             exerciseSeries: mapTrendsSeries(result.exerciseSeries),
@@ -91,6 +92,7 @@ final class OnReloadDelegate {
           current.copyWith(
             loading: false,
             bodyReadFailed: true,
+            bodyHistoryLimited: false,
             buckets: const [],
             exerciseSeries: const {},
             bodySeries: const {},

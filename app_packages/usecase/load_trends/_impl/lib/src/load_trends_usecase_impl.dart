@@ -87,6 +87,10 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         bodyReadFailed: true,
       );
     }
+    final bodyHistoryLimited = await _bodyHistoryLimited(
+      groupIsBody: request.groupIsBody,
+      period: request.period,
+    );
     // 運動グループでは身体を読まない。iOS は READ が unknown のままなので、
     // 身体グループでは granted / unknown のとき読取を試す。
     final canAttemptBodyRead =
@@ -101,6 +105,7 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         bodySeries: _emptyBodySeries(buckets),
         healthPermission: healthPermission,
         bodyReadFailed: false,
+        bodyHistoryLimited: bodyHistoryLimited,
       );
     }
 
@@ -115,6 +120,7 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         bodySeries: _bodySeries(samples: samples, buckets: buckets),
         healthPermission: healthPermission,
         bodyReadFailed: false,
+        bodyHistoryLimited: bodyHistoryLimited,
       );
     } on HealthBodyMetricsReadException {
       return LoadTrendsResult(
@@ -123,7 +129,23 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         bodySeries: _emptyBodySeries(buckets),
         healthPermission: healthPermission,
         bodyReadFailed: true,
+        bodyHistoryLimited: bodyHistoryLimited,
       );
+    }
+  }
+
+  /// 身体グループかつ 30 日超の期間で履歴許可が無いとき true。
+  Future<bool> _bodyHistoryLimited({
+    required bool groupIsBody,
+    required TrendsPeriodKind period,
+  }) async {
+    if (!groupIsBody || period == TrendsPeriodKind.days30) {
+      return false;
+    }
+    try {
+      return !(await health.isHistoryAuthorized());
+    } catch (_) {
+      return true;
     }
   }
 

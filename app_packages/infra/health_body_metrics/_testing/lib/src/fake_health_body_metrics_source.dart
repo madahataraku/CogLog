@@ -21,6 +21,7 @@ final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
     this.throwOnRead = false,
     this.throwOnPermissionStatus = false,
     this.requestResult,
+    this.historyAuthorized = true,
   }) : samples = List<HealthBodySample>.from(samples);
 
   /// [permissionStatus] が返す許可状態。
@@ -37,6 +38,9 @@ final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
 
   /// [requestPermission] が返す値。null なら granted にする。
   HealthBodyPermissionStatus? requestResult;
+
+  /// [isHistoryAuthorized] が返す値。
+  bool historyAuthorized;
 
   /// [requestPermission] が呼ばれた回数。
   int requestCallCount = 0;
@@ -71,8 +75,18 @@ final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
     requestCallCount += 1;
     final next = requestResult ?? HealthBodyPermissionStatus.granted;
     status = next;
+    historyAuthorized = true;
     return next;
   }
+
+  /// [historyAuthorized] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await FakeHealthBodyMetricsSource().isHistoryAuthorized();
+  /// ```
+  @override
+  Future<bool> isHistoryAuthorized() async => historyAuthorized;
 
   /// [throwOnRead] か、許可時の期間内 [samples] を返す。
   ///

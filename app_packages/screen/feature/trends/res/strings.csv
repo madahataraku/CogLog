@@ -13,8 +13,11 @@ metric_calories,消費カロリー,Calories,運動指標
 metric_duration,運動時間,Duration,運動指標
 metric_distance,走行距離,Distance,運動指標
 metric_body_kg,体重と除脂肪体重,Weight & lean mass,身体 kg 組
+metric_body_weight,体重,Weight,凡例用の体重
+metric_body_lean_mass,除脂肪体重,Lean mass,凡例用の除脂肪体重
 metric_body_fat,体脂肪率,Body fat,身体％
 request_health_permission,ヘルスケアを許可,Allow Health access,身体グループの許可リクエスト
+request_health_history,ヘルスの履歴データを許可,Allow health history,Android 履歴許可の再要求
 open_os_settings,設定を開く,Open Settings,永久拒否時に OS 設定を開く
 retry_load,再試行,Retry,身体指標の再読取
 chart_placeholder,読み込み中,Loading,グラフ領域のロード中表示

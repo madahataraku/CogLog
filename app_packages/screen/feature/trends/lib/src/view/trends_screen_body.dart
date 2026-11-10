@@ -97,6 +97,13 @@ class TrendsScreenBody extends ConsumerWidget {
                   strings.screen_feature_trends_request_health_permission,
                 ),
               ),
+            if (entity.showRequestHistoryButton)
+              FButton(
+                onPress: viewModel.onRequestHealthPermission,
+                child: Text(
+                  strings.screen_feature_trends_request_health_history,
+                ),
+              ),
             if (entity.showOpenSettingsButton)
               FButton(
                 onPress: viewModel.onOpenAppSettings,

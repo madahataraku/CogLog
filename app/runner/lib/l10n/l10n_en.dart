@@ -433,6 +433,12 @@ class L10nEn extends L10n {
   String get screen_feature_trends_metric_body_kg => 'Weight & lean mass';
 
   @override
+  String get screen_feature_trends_metric_body_lean_mass => 'Lean mass';
+
+  @override
+  String get screen_feature_trends_metric_body_weight => 'Weight';
+
+  @override
   String get screen_feature_trends_metric_calories => 'Calories';
 
   @override
@@ -461,6 +467,10 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_period_label => 'Period';
+
+  @override
+  String get screen_feature_trends_request_health_history =>
+      'Allow health history';
 
   @override
   String get screen_feature_trends_request_health_permission =>

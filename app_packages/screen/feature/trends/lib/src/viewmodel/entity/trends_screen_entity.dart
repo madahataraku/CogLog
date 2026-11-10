@@ -12,6 +12,7 @@ import 'trends_visible_series.dart';
 ///   metricSet: TrendsMetricSet.exerciseCalories,
 ///   loading: false,
 ///   showRequestPermissionButton: false,
+///   showRequestHistoryButton: false,
 ///   showOpenSettingsButton: false,
 ///   showRetryButton: false,
 ///   visibleSeries: const [],
@@ -29,6 +30,7 @@ final class TrendsScreenEntity {
   ///   metricSet: TrendsMetricSet.exerciseCalories,
   ///   loading: true,
   ///   showRequestPermissionButton: false,
+  ///   showRequestHistoryButton: false,
   ///   showOpenSettingsButton: false,
   ///   showRetryButton: false,
   ///   visibleSeries: const [],
@@ -41,6 +43,7 @@ final class TrendsScreenEntity {
     required this.metricSet,
     required this.loading,
     required this.showRequestPermissionButton,
+    required this.showRequestHistoryButton,
     required this.showOpenSettingsButton,
     required this.showRetryButton,
     required this.visibleSeries,
@@ -62,10 +65,13 @@ final class TrendsScreenEntity {
   /// 身体グループで許可リクエストボタンを出すか。
   final bool showRequestPermissionButton;
 
+  /// 身体指標は許可済みだが Android 履歴許可が足りないとき出すか。
+  final bool showRequestHistoryButton;
+
   /// 身体グループで OS 設定ボタンを出すか。
   final bool showOpenSettingsButton;
 
-  /// 身体グループで再試行ボタンを出すか。
+  /// 系列の読込失敗時に再試行ボタンを出すか。
   final bool showRetryButton;
 
   /// いま描く 1〜2 本の系列。

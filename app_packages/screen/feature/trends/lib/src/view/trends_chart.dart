@@ -7,7 +7,7 @@ import '../strings.dart';
 import '../viewmodel/entity/trends_visible_series.dart';
 import 'trends_chart_painter.dart';
 
-/// 推移グラフ領域。読込中は文言、それ以外は [CustomPaint]。
+/// 推移グラフ領域。読込中は文言、それ以外は凡例と [CustomPaint]。
 ///
 /// Example:
 /// ```dart
@@ -45,7 +45,7 @@ class TrendsChart extends StatelessWidget {
   /// 描く系列。
   final List<TrendsVisibleSeries> series;
 
-  /// 読込中文言またはグラフを返す。
+  /// 読込中文言または凡例付きグラフを返す。
   ///
   /// Example:
   /// ```dart
@@ -59,17 +59,75 @@ class TrendsChart extends StatelessWidget {
       );
     }
     final colors = context.theme.colors;
-    return CustomPaint(
-      painter: TrendsChartPainter(
-        buckets: buckets,
-        series: series,
-        seriesColors: [colors.primary, colors.mutedForeground],
-        axisColor: colors.mutedForeground,
-        labelStyle: context.theme.typography.body.sm.copyWith(
-          color: colors.mutedForeground,
+    final seriesColors = [colors.primary, colors.mutedForeground];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (series.length > 1) _Legend(series: series, colors: seriesColors),
+        Expanded(
+          child: CustomPaint(
+            painter: TrendsChartPainter(
+              buckets: buckets,
+              series: series,
+              seriesColors: seriesColors,
+              axisColor: colors.mutedForeground,
+              labelStyle: context.theme.typography.body.sm.copyWith(
+                color: colors.mutedForeground,
+              ),
+            ),
+            child: const SizedBox.expand(),
+          ),
         ),
-      ),
-      child: const SizedBox.expand(),
+      ],
     );
   }
+}
+
+/// 複数系列の色と指標名を対応付ける。
+final class _Legend extends StatelessWidget {
+  const _Legend({required this.series, required this.colors});
+
+  final List<TrendsVisibleSeries> series;
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    final typography = context.theme.typography;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 4,
+        children: [
+          for (var i = 0; i < series.length; i++)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ColoredBox(
+                  color: colors[i % colors.length],
+                  child: const SizedBox(width: 12, height: 12),
+                ),
+                const SizedBox(width: 6),
+                Text(_labelFor(series[i].metric), style: typography.body.sm),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _labelFor(TrendsMetricKind metric) => switch (metric) {
+    TrendsMetricKind.exerciseCaloriesKcal =>
+      strings.screen_feature_trends_metric_calories,
+    TrendsMetricKind.exerciseDurationMinutes =>
+      strings.screen_feature_trends_metric_duration,
+    TrendsMetricKind.exerciseDistanceKm =>
+      strings.screen_feature_trends_metric_distance,
+    TrendsMetricKind.bodyWeightKg =>
+      strings.screen_feature_trends_metric_body_weight,
+    TrendsMetricKind.bodyLeanMassKg =>
+      strings.screen_feature_trends_metric_body_lean_mass,
+    TrendsMetricKind.bodyFatPercent =>
+      strings.screen_feature_trends_metric_body_fat,
+  };
 }

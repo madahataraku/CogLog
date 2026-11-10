@@ -240,4 +240,43 @@ void main() {
     expect(result.bodySeries[TrendsMetricKind.bodyFatPercent]!.points, isEmpty);
     expect(result.bodyReadFailed, isFalse);
   });
+
+  test('履歴未許可かつ 90 日なら bodyHistoryLimited', () async {
+    final result =
+        await LoadTrendsUsecaseImpl(
+          histories: const FixedExerciseHistoryRepository([]),
+          health: FakeHealthBodyMetricsSource(
+            status: HealthBodyPermissionStatus.granted,
+            historyAuthorized: false,
+          ),
+        ).execute(
+          LoadTrendsRequest(
+            now: now,
+            period: TrendsPeriodKind.days90,
+            groupIsBody: true,
+          ),
+        );
+
+    expect(result.bodyHistoryLimited, isTrue);
+    expect(result.healthPermission, LoadTrendsHealthPermission.granted);
+  });
+
+  test('履歴未許可でも days30 なら bodyHistoryLimited は false', () async {
+    final result =
+        await LoadTrendsUsecaseImpl(
+          histories: const FixedExerciseHistoryRepository([]),
+          health: FakeHealthBodyMetricsSource(
+            status: HealthBodyPermissionStatus.granted,
+            historyAuthorized: false,
+          ),
+        ).execute(
+          LoadTrendsRequest(
+            now: now,
+            period: TrendsPeriodKind.days30,
+            groupIsBody: true,
+          ),
+        );
+
+    expect(result.bodyHistoryLimited, isFalse);
+  });
 }

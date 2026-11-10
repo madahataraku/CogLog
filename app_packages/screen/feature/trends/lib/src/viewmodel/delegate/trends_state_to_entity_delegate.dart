@@ -75,6 +75,10 @@ final class TrendsStateToEntityDelegate {
           state.healthPermissionUi != TrendsHealthPermissionUi.granted &&
           state.healthPermissionUi !=
               TrendsHealthPermissionUi.permanentlyDenied,
+      showRequestHistoryButton:
+          isBody &&
+          state.bodyHistoryLimited &&
+          state.healthPermissionUi == TrendsHealthPermissionUi.granted,
       showOpenSettingsButton:
           isBody &&
           state.healthPermissionUi ==

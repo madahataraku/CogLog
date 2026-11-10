@@ -33,6 +33,14 @@ mixin class L10nStringsMixin {
   String get screen_feature_trends_metric_body_kg =>
       LocalizeStringDelegate.get('screen_feature_trends_metric_body_kg');
 
+  /// 凡例用の除脂肪体重
+  String get screen_feature_trends_metric_body_lean_mass =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_body_lean_mass');
+
+  /// 凡例用の体重
+  String get screen_feature_trends_metric_body_weight =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_body_weight');
+
   /// 運動指標
   String get screen_feature_trends_metric_calories =>
       LocalizeStringDelegate.get('screen_feature_trends_metric_calories');
@@ -72,6 +80,12 @@ mixin class L10nStringsMixin {
   /// 期間選択のラベル
   String get screen_feature_trends_period_label =>
       LocalizeStringDelegate.get('screen_feature_trends_period_label');
+
+  /// Android 履歴許可の再要求
+  String get screen_feature_trends_request_health_history =>
+      LocalizeStringDelegate.get(
+        'screen_feature_trends_request_health_history',
+      );
 
   /// 身体グループの許可リクエスト
   String get screen_feature_trends_request_health_permission =>

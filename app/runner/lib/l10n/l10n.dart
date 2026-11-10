@@ -871,6 +871,18 @@ abstract class L10n {
   /// **'体重と除脂肪体重'**
   String get screen_feature_trends_metric_body_kg;
 
+  /// 凡例用の除脂肪体重
+  ///
+  /// In ja, this message translates to:
+  /// **'除脂肪体重'**
+  String get screen_feature_trends_metric_body_lean_mass;
+
+  /// 凡例用の体重
+  ///
+  /// In ja, this message translates to:
+  /// **'体重'**
+  String get screen_feature_trends_metric_body_weight;
+
   /// 運動指標
   ///
   /// In ja, this message translates to:
@@ -930,6 +942,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'期間'**
   String get screen_feature_trends_period_label;
+
+  /// Android 履歴許可の再要求
+  ///
+  /// In ja, this message translates to:
+  /// **'ヘルスの履歴データを許可'**
+  String get screen_feature_trends_request_health_history;
 
   /// 身体グループの許可リクエスト
   ///

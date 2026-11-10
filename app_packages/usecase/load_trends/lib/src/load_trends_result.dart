@@ -37,6 +37,7 @@ final class LoadTrendsResult {
     required this.bodySeries,
     required this.healthPermission,
     required this.bodyReadFailed,
+    this.bodyHistoryLimited = false,
   });
 
   /// 古い→新しい順のバケット列。
@@ -53,4 +54,7 @@ final class LoadTrendsResult {
 
   /// 身体指標の読取が例外で失敗したか。
   final bool bodyReadFailed;
+
+  /// Android で履歴許可が無く、直近 30 日より前を読めないか。
+  final bool bodyHistoryLimited;
 }
