@@ -64,9 +64,14 @@ final class SaveDailyGoalUsecaseImpl implements SaveDailyGoalUsecase {
       next = next.copyWith(streakEpochLocalDate: today);
     }
 
-    // 設定を先に書く。目標の書き込みが失敗しても起算日は安全側に進む。
+    // 設定を先に書き、目標の失敗時は設定を変更前へ戻す。
     await goals.writeAutoUpdateSettings(next);
-    await goals.write(request.goal);
+    try {
+      await goals.write(request.goal);
+    } on Object {
+      await goals.writeAutoUpdateSettings(previousSettings);
+      rethrow;
+    }
     return SaveDailyGoalResult(goal: request.goal, autoUpdate: next);
   }
 }

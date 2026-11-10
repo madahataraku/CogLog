@@ -76,4 +76,28 @@ void main() {
         .execute(request(goal: const DailyGoal(caloriesKcal: 100)));
     expect(result.autoUpdate.streakEpochLocalDate, DateTime(2026, 11, 5));
   });
+
+  test('目標書き込み失敗時は自動更新設定を復元する', () async {
+    final goals = _FailingGoalWriteRepository();
+    await goals.writeAutoUpdateSettings(DailyGoalAutoUpdateSettings.defaults);
+
+    await expectLater(
+      SaveDailyGoalUsecaseImpl(goals: goals).execute(
+        request(goal: const DailyGoal(caloriesKcal: 100), enabled: true),
+      ),
+      throwsA(isA<StateError>()),
+    );
+
+    final settings = await goals.readAutoUpdateSettings();
+    expect(settings.enabled, isFalse);
+    expect(settings.enabledOnLocalDate, isNull);
+  });
+}
+
+/// [write] だけ失敗する Repository。
+final class _FailingGoalWriteRepository extends MemoryDailyGoalRepository {
+  @override
+  Future<void> write(DailyGoal goal) async {
+    throw StateError('goal write failed');
+  }
 }
