@@ -28,6 +28,7 @@ workspace:
   - app_packages/infra/local_notification
   - app_packages/infra/local_notification/_mobile
   - app_packages/infra/local_notification/_testing
+  - app_packages/domain/achievement
   - app_packages/domain/daily_goal
   - app_packages/domain/exercise_history
   - app_packages/domain/trends
