@@ -26,7 +26,7 @@ String formatExceptionDetail(Object error) {
   if (detail.length <= formatExceptionDetailMaxLength) {
     return detail;
   }
-  return '${detail.substring(0, formatExceptionDetailMaxLength)}…';
+  return '${detail.substring(0, formatExceptionDetailMaxLength - 1)}…';
 }
 
 String _one(Object error) {

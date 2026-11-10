@@ -40,7 +40,7 @@ void main() {
 
   test('長い詳細は最大長で切り詰める', () {
     final detail = formatExceptionDetail(_Named('x' * 5000));
-    expect(detail.length, formatExceptionDetailMaxLength + 1);
+    expect(detail.length, formatExceptionDetailMaxLength);
     expect(detail.endsWith('…'), isTrue);
   });
 }

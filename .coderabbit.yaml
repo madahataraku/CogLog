@@ -62,8 +62,6 @@ reviews:
     - "!**/*.iml"
     - "!apm_modules/**"
     - "!apm.lock.yaml"
-    # ベンダーした upstream。CogLog の診断向けパッチ以外はレビュー対象外。
-    - "!app_packages_fork/**"
   path_instructions:
     - path: "lib/**/*.dart"
       instructions: |
@@ -106,6 +104,9 @@ reviews:
       mode: warning
       requirements: |
         タイトルは変更内容が分かる1文にする。WIP、仮、テストだけのタイトルは避ける。
+    # ベンダーした flutter_device_ai など、上流コードの docstring 網羅は要求しない。
+    docstrings:
+      mode: off
     custom_checks:
       - name: 運動記録の保全
         mode: warning
