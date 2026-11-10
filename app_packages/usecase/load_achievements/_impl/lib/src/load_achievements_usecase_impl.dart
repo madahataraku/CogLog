@@ -1,30 +1,34 @@
 import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:domain_achievement/domain_achievement.dart';
+import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 
-/// 獲得記録と履歴から一覧行を組み立てる。
+/// 遡及評価のあと、獲得記録と履歴から一覧行を組み立てる。
 ///
 /// Example:
 /// ```dart
 /// LoadAchievementsUsecaseImpl(
 ///   achievements: achievements,
 ///   histories: histories,
+///   evaluate: evaluate,
 /// ).execute(LoadAchievementsRequest(now: DateTime(2026, 11, 10)));
 /// ```
 final class LoadAchievementsUsecaseImpl implements LoadAchievementsUsecase {
-  /// [achievements] と [histories] を読む実装を作る。
+  /// [achievements]・[histories]・[evaluate] を使う実装を作る。
   ///
   /// Example:
   /// ```dart
   /// LoadAchievementsUsecaseImpl(
   ///   achievements: achievements,
   ///   histories: histories,
+  ///   evaluate: evaluate,
   /// );
   /// ```
   const LoadAchievementsUsecaseImpl({
     required this.achievements,
     required this.histories,
+    required this.evaluate,
   });
 
   /// 獲得記録。
@@ -33,7 +37,13 @@ final class LoadAchievementsUsecaseImpl implements LoadAchievementsUsecase {
   /// 運動履歴。
   final ExerciseHistoryRepository histories;
 
+  /// 一覧表示前の遡及評価（トーストなし）。
+  final EvaluateAchievementsUsecase evaluate;
+
   /// 失敗時は [LoadAchievementsFailed]、成功時はカタログ順の行を返す。
+  ///
+  /// 表示前に [evaluate] を `emitNotifications: false` で呼び、過去履歴の
+  /// 充足分を獲得済みへ反映する。
   ///
   /// Example:
   /// ```dart
@@ -44,6 +54,10 @@ final class LoadAchievementsUsecaseImpl implements LoadAchievementsUsecase {
     LoadAchievementsRequest request,
   ) async {
     try {
+      await evaluate.execute(
+        EvaluateAchievementsRequest(now: request.now, emitNotifications: false),
+      );
+
       final unlocks = await achievements.readUnlocks();
       final unlockedIds = {for (final unlock in unlocks) unlock.id};
       final all = await histories.list();

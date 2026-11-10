@@ -11,6 +11,7 @@ dependencies:
   data_repository_achievement: any
   data_repository_exercise_history: any
   domain_achievement: any
+  usecase_evaluate_achievements: any
   usecase_load_achievements: any
 
 dev_dependencies:
@@ -19,3 +20,4 @@ dev_dependencies:
   domain_exercise_history: any
   flutter_lints: any
   test: any
+  usecase_evaluate_achievements_impl: any

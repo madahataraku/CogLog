@@ -7,12 +7,27 @@ import 'package:data_repository_exercise_history_testing/data_repository_exercis
 import 'package:domain_achievement/domain_achievement.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:test/test.dart';
+import 'package:usecase_evaluate_achievements_impl/usecase_evaluate_achievements_impl.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_achievements_impl/usecase_load_achievements_impl.dart';
 
 void main() {
   final now = DateTime(2026, 11, 10, 15);
   final photo = Uint8List.fromList([1]);
+
+  LoadAchievementsUsecaseImpl build({
+    required AchievementRepository achievements,
+    required ExerciseHistoryRepository histories,
+  }) {
+    return LoadAchievementsUsecaseImpl(
+      achievements: achievements,
+      histories: histories,
+      evaluate: EvaluateAchievementsUsecaseImpl(
+        achievements: achievements,
+        histories: histories,
+      ),
+    );
+  }
 
   test('履歴と獲得を合わせて行を返す', () async {
     final achievements = MemoryAchievementRepository();
@@ -35,7 +50,7 @@ void main() {
       photoBytes: photo,
     );
 
-    final result = await LoadAchievementsUsecaseImpl(
+    final result = await build(
       achievements: achievements,
       histories: histories,
     ).execute(LoadAchievementsRequest(now: now));
@@ -49,8 +64,37 @@ void main() {
     expect(first.progressRatio, 1);
   });
 
+  test('獲得が空でも過去履歴の充足分を遡及して開放表示する', () async {
+    final achievements = MemoryAchievementRepository();
+    final histories = MemoryExerciseHistoryRepository();
+    await histories.create(
+      creationStartedAt: DateTime(2026, 11, 10, 10),
+      capturedAt: DateTime(2026, 11, 10, 10),
+      recordedAt: DateTime(2026, 11, 10, 10),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 30),
+      caloriesKcal: 100,
+      averageSpeedKmh: 2,
+      photoBytes: photo,
+    );
+
+    expect(await achievements.readUnlocks(), isEmpty);
+
+    final result = await build(
+      achievements: achievements,
+      histories: histories,
+    ).execute(LoadAchievementsRequest(now: now));
+
+    expect(result, isA<LoadAchievementsSuccess>());
+    final rows = (result as LoadAchievementsSuccess).rows;
+    final first = rows.firstWhere((row) => row.id == 'first_record');
+    expect(first.unlocked, isTrue);
+    expect(await achievements.readUnlocks(), isNotEmpty);
+  });
+
   test('読込例外は failed', () async {
-    final result = await LoadAchievementsUsecaseImpl(
+    final result = await build(
       achievements: _ThrowingAchievementRepository(),
       histories: MemoryExerciseHistoryRepository(),
     ).execute(LoadAchievementsRequest(now: now));
@@ -59,7 +103,7 @@ void main() {
   });
 
   test('履歴読込例外は failed', () async {
-    final result = await LoadAchievementsUsecaseImpl(
+    final result = await build(
       achievements: MemoryAchievementRepository(),
       histories: _ThrowingExerciseHistoryRepository(),
     ).execute(LoadAchievementsRequest(now: now));
@@ -70,6 +114,14 @@ void main() {
 
 /// [readUnlocks] で必ず失敗する。
 final class _ThrowingAchievementRepository implements AchievementRepository {
+  /// 失敗用のリポジトリを作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _ThrowingAchievementRepository();
+  /// ```
+  const _ThrowingAchievementRepository();
+
   @override
   Future<void> mergeUnlocks(List<AchievementUnlock> unlocks) async {}
 
@@ -82,6 +134,14 @@ final class _ThrowingAchievementRepository implements AchievementRepository {
 /// [list] で必ず失敗する。
 final class _ThrowingExerciseHistoryRepository
     implements ExerciseHistoryRepository {
+  /// 失敗用のリポジトリを作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _ThrowingExerciseHistoryRepository();
+  /// ```
+  const _ThrowingExerciseHistoryRepository();
+
   @override
   Future<ExerciseHistory> create({
     required DateTime creationStartedAt,

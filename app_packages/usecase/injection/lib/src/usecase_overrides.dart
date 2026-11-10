@@ -123,6 +123,7 @@ List<Override> usecaseOverrides({
     (ref) => LoadAchievementsUsecaseImpl(
       achievements: ref.watch(achievementRepositoryProvider),
       histories: ref.watch(exerciseHistoryRepositoryProvider),
+      evaluate: ref.watch(EvaluateAchievementsUsecase.provider),
     ),
   ),
   GenerateTopAdviceUsecase.provider.overrideWith(
