@@ -23,7 +23,6 @@ final class _Nav implements ScreenNavigation {
   @override
   void openNotificationSettings() {}
 
-
   @override
   void openOssLicenses() {}
 
