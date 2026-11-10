@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -61,6 +62,11 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     companion object {
         private const val AICORE_PACKAGE = "com.google.android.aicore"
+        /** AICore バインド直後の checkStatus NPE を避けるための待ち時間。 */
+        private const val STATUS_RETRY_DELAY_MS = 200L
+        private const val STATUS_RETRY_COUNT = 3
+        private const val STACK_FRAME_LIMIT = 8
+        private const val THROWABLE_TEXT_LIMIT = 1500
     }
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -93,6 +99,9 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                 job = null
             }
         })
+
+        // AICore のサービスバインドは初回が遅い。診断の直前生成を避ける。
+        warmClient()
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -110,8 +119,18 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun client(): GenerativeModel = model ?: Generation.getClient().also { model = it }
 
-    private fun aiCoreInstalled(): Boolean {
-        val ctx = context ?: return false
+    /** AICore クライアントを先に作り、初回 checkStatus のレースを緩和する。 */
+    private fun warmClient() {
+        runCatching { client() }
+    }
+
+    private fun resetClient() {
+        runCatching { model?.close() }
+        model = null
+    }
+
+    private fun aiCorePackageInfo(): android.content.pm.PackageInfo? {
+        val ctx = context ?: return null
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 ctx.packageManager.getPackageInfo(AICORE_PACKAGE, PackageManager.PackageInfoFlags.of(0))
@@ -119,14 +138,48 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                 @Suppress("DEPRECATION")
                 ctx.packageManager.getPackageInfo(AICORE_PACKAGE, 0)
             }
-            true
-        } catch (e: Exception) {
-            false
+        } catch (_: Exception) {
+            null
         }
+    }
+
+    private fun aiCoreInstalled(): Boolean = aiCorePackageInfo() != null
+
+    private fun aiCoreVersionLabel(): String {
+        val info = aiCorePackageInfo() ?: return "AICore installed: false"
+        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            info.longVersionCode
+        } else {
+            @Suppress("DEPRECATION")
+            info.versionCode.toLong()
+        }
+        return "AICore installed: true, versionName=${info.versionName ?: "?"}, versionCode=$versionCode"
     }
 
     private fun availabilityMap(status: String, reason: String, message: String) =
         mapOf("status" to status, "reason" to reason, "message" to message)
+
+    /**
+     * AICore バインド直後の raw NPE を待ち＋クライアント再生成で避ける。
+     * 既知の genai-prompt / AICore 初期化レース向け。
+     */
+    private suspend fun checkStatusWithRetry(): Int {
+        var lastNpe: NullPointerException? = null
+        repeat(STATUS_RETRY_COUNT) { attempt ->
+            try {
+                return client().checkStatus()
+            } catch (e: NullPointerException) {
+                lastNpe = e
+                delay(STATUS_RETRY_DELAY_MS * (attempt + 1))
+                if (attempt == STATUS_RETRY_COUNT - 2) {
+                    resetClient()
+                    warmClient()
+                    delay(STATUS_RETRY_DELAY_MS)
+                }
+            }
+        }
+        throw lastNpe ?: NullPointerException("checkStatus failed without exception")
+    }
 
     private suspend fun availability(): Map<String, Any> {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -139,7 +192,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             )
         }
         return try {
-            when (client().checkStatus()) {
+            when (checkStatusWithRetry()) {
                 FeatureStatus.AVAILABLE ->
                     availabilityMap("available", "ready", "Gemini Nano is ready.")
                 FeatureStatus.DOWNLOADABLE ->
@@ -158,7 +211,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    /** Class name + message (+ cause chain) so null messages stay diagnosable. */
+    /** Class name + message (+ cause chain + short stack) so null messages stay diagnosable. */
     private fun formatThrowable(e: Throwable): String {
         val parts = mutableListOf<String>()
         var current: Throwable? = e
@@ -173,7 +226,16 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             current = current.cause
             depth++
         }
-        return parts.joinToString(" | cause: ")
+        val summary = parts.joinToString(" | cause: ")
+        val stack = e.stackTrace
+            .take(STACK_FRAME_LIMIT)
+            .joinToString(" <- ") { "${it.className}.${it.methodName}:${it.lineNumber}" }
+        val text = if (stack.isEmpty()) summary else "$summary | stack: $stack"
+        return if (text.length <= THROWABLE_TEXT_LIMIT) {
+            text
+        } else {
+            text.take(THROWABLE_TEXT_LIMIT - 1) + "…"
+        }
     }
 
     private fun post(block: () -> Unit) = main.post(block)
@@ -222,7 +284,8 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                         "supportsPlayStoreRedirect" to true,
                         "supportsExactTokenCounts" to usable,
                         "isConfigured" to true,
-                        "diagnosticNotes" to "Android SDK ${Build.VERSION.SDK_INT}, AICore installed: ${aiCoreInstalled()}"
+                        "diagnosticNotes" to
+                            "Android SDK ${Build.VERSION.SDK_INT}, ${aiCoreVersionLabel()}"
                     )
                 )
             }
