@@ -61,6 +61,9 @@ class L10nEn extends L10n {
   String get screen_feature_debug_platform_notes_label => 'platform notes';
 
   @override
+  String get screen_feature_debug_prepare_error_label => 'prepare error';
+
+  @override
   String get screen_feature_debug_probe_skipped_label => 'probe skipped';
 
   @override
@@ -285,17 +288,22 @@ class L10nEn extends L10n {
   String get screen_feature_main_nav_meter_capture => 'Meter record';
 
   @override
-  String get screen_feature_meter_capture_average_speed =>
-      'Average speed (km/h)';
+  String get screen_feature_main_nav_trends => 'Trends';
 
   @override
-  String get screen_feature_meter_capture_back => 'Back';
+  String get screen_feature_meter_capture_average_speed =>
+      'Average speed (km/h)';
 
   @override
   String get screen_feature_meter_capture_calories => 'Calories (kcal)';
 
   @override
-  String get screen_feature_meter_capture_capture_photo => 'Take photo';
+  String get screen_feature_meter_capture_camera_preview_failed =>
+      'Couldn\'t start the camera. Pick from your library or try again.';
+
+  @override
+  String get screen_feature_meter_capture_capture_failed =>
+      'Couldn\'t take the photo. Try the shutter again or pick from your library.';
 
   @override
   String get screen_feature_meter_capture_distance => 'Distance (km)';
@@ -334,10 +342,16 @@ class L10nEn extends L10n {
   String get screen_feature_meter_capture_recorded_at => 'Recorded at';
 
   @override
+  String get screen_feature_meter_capture_retake => 'Retake';
+
+  @override
   String get screen_feature_meter_capture_save => 'Save';
 
   @override
   String get screen_feature_meter_capture_save_failed => 'Failed to save';
+
+  @override
+  String get screen_feature_meter_capture_shutter => 'Shutter';
 
   @override
   String get screen_feature_meter_capture_title => 'Meter record';
@@ -399,6 +413,36 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
+
+  @override
+  String get screen_feature_trends_chart_placeholder => 'Chart coming soon';
+
+  @override
+  String get screen_feature_trends_group_body => 'Body';
+
+  @override
+  String get screen_feature_trends_group_exercise => 'Exercise';
+
+  @override
+  String get screen_feature_trends_group_label => 'Group';
+
+  @override
+  String get screen_feature_trends_period_days182 => 'Last 6 months';
+
+  @override
+  String get screen_feature_trends_period_days30 => 'Last 30 days';
+
+  @override
+  String get screen_feature_trends_period_days365 => 'Last 1 year';
+
+  @override
+  String get screen_feature_trends_period_days90 => 'Last 3 months';
+
+  @override
+  String get screen_feature_trends_period_label => 'Period';
+
+  @override
+  String get screen_feature_trends_title => 'Trends';
 
   @override
   String get view_model_download_guidance_body =>

@@ -3,6 +3,98 @@ part of 'meter_capture_screen_view_model.dart';
 /// メーター記録画面の操作。
 @internal
 extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
+  /// アプリ内カメラを開始する。
+  ///
+  /// 直前の離脱／停止が完了してから開始し、より新しい操作があれば開始しない。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEnterCamera();
+  /// ```
+  Future<void> onEnterCamera() {
+    final epoch = ++_cameraLifecycleEpoch;
+    return _enqueueCameraLifecycle(() async {
+      if (epoch != _cameraLifecycleEpoch) {
+        return;
+      }
+      await controlMeterInAppCameraUsecase.start();
+    });
+  }
+
+  /// プレビューだけ止める（編集中・背面）。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAppPaused();
+  /// ```
+  Future<void> onAppPaused() {
+    final epoch = ++_cameraLifecycleEpoch;
+    return _enqueueCameraLifecycle(() async {
+      if (epoch != _cameraLifecycleEpoch) {
+        return;
+      }
+      await controlMeterInAppCameraUsecase.stop();
+    });
+  }
+
+  /// 他タブへ離れたとき、世代を進め状態を初期化する。
+  ///
+  /// 復帰などより新しい操作があれば、停止後の初期化は行わない。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onLeaveMeterTab();
+  /// ```
+  Future<void> onLeaveMeterTab() {
+    final epoch = ++_cameraLifecycleEpoch;
+    return _enqueueCameraLifecycle(() async {
+      if (epoch != _cameraLifecycleEpoch) {
+        return;
+      }
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(
+          current.copyWith(
+            cameraSessionGeneration: current.cameraSessionGeneration + 1,
+          ),
+        );
+      });
+      if (epoch != _cameraLifecycleEpoch) {
+        return;
+      }
+      await controlMeterInAppCameraUsecase.stop();
+      if (epoch != _cameraLifecycleEpoch) {
+        return;
+      }
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(
+          MeterCaptureScreenState.initial.copyWith(
+            cameraSessionGeneration: current.cameraSessionGeneration,
+          ),
+        );
+      });
+    });
+  }
+
+  /// カメラ開始／停止／離脱を直列化する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel._enqueueCameraLifecycle(() async {});
+  /// ```
+  Future<void> _enqueueCameraLifecycle(Future<void> Function() action) {
+    final previous = _cameraLifecycle;
+    final run = () async {
+      try {
+        await previous;
+      } on Object {
+        // 直前失敗でも次のライフサイクル操作を続行する。
+      }
+      await action();
+    }();
+    _cameraLifecycle = run;
+    return run;
+  }
+
   /// カメラで写真を撮り、読み取りへ進む。
   ///
   /// Example:
@@ -46,15 +138,16 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
     return delegate.execute();
   }
 
-  /// 1 ステップ目へ戻り、作業中データを破棄する。
+  /// 下書きを破棄してカメラ画面へ戻る。
+  ///
+  /// プレビュー再開は [MeterCaptureScreen] の step 監視に任せる。
   ///
   /// Example:
   /// ```dart
   /// viewModel.onBackToStep1();
   /// ```
-  Future<void> onBackToStep1() {
-    final delegate = OnBackToStep1Delegate(state: state);
-    return delegate.execute();
+  Future<void> onBackToStep1() async {
+    await OnBackToStep1Delegate(state: state).execute();
   }
 
   /// 走行距離を更新する。

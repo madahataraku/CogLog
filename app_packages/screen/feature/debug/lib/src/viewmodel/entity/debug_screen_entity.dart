@@ -14,6 +14,7 @@
 ///   canGenerate: null,
 ///   sampleOutput: '-',
 ///   generateError: '-',
+///   prepareError: '-',
 ///   probeSkipped: '-',
 ///   logLines: [],
 /// );
@@ -35,6 +36,7 @@ final class DebugScreenEntity {
   ///   canGenerate: true,
   ///   sampleOutput: 'hi',
   ///   generateError: '-',
+  ///   prepareError: '-',
   ///   probeSkipped: '-',
   ///   logLines: ['line'],
   /// );
@@ -51,6 +53,7 @@ final class DebugScreenEntity {
     required this.canGenerate,
     required this.sampleOutput,
     required this.generateError,
+    required this.prepareError,
     required this.probeSkipped,
     required this.logLines,
   });
@@ -87,6 +90,9 @@ final class DebugScreenEntity {
 
   /// 生成例外。
   final String generateError;
+
+  /// 準備例外。
+  final String prepareError;
 
   /// プローブ省略理由。
   final String probeSkipped;

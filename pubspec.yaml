@@ -46,6 +46,7 @@ workspace:
   - app_packages/screen/feature/debug
   - app_packages/screen/feature/exercise_history
   - app_packages/screen/feature/goal_settings
+  - app_packages/screen/feature/trends
   - app_packages/screen/feature/main
   - app_packages/screen/feature/meter_capture
   - app_packages/screen/feature/top
@@ -70,6 +71,8 @@ workspace:
   - app_packages/usecase/load_top_screen/_impl
   - app_packages/usecase/obtain_meter_photo
   - app_packages/usecase/obtain_meter_photo/_impl
+  - app_packages/usecase/control_meter_in_app_camera
+  - app_packages/usecase/control_meter_in_app_camera/_impl
   - app_packages/usecase/open_app_settings
   - app_packages/usecase/open_app_settings/_impl
   - app_packages/usecase/on_device_llm_guidance
@@ -91,13 +94,15 @@ dependency_overrides:
   build_runner: 2.10.4
   drift: 2.30.0
   drift_dev: 2.30.0
-  flutter_device_ai: 0.3.0
+  flutter_device_ai:
+    path: app_packages_fork/flutter_device_ai
   flutter_hooks: 0.21.3+1
   flutter_lints: ^6.0.0
   flutter_riverpod: 3.4.3
   forui: ^0.27.7
   go_router: 18.1.3
   hooks_riverpod: 3.4.3
+  camera: 0.12.2
   image_picker: 1.2.0
   monolith_localization_runtime: ^1.1.0
   monolith_runner: ^1.0.2

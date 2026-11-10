@@ -36,7 +36,7 @@ final class DiagnoseOnDeviceLlmUsecaseImpl
   /// 生成プローブ用の短いプロンプト。
   final String probePrompt;
 
-  /// スナップショットを取り、必要なら生成を試す。
+  /// スナップショットを取り、準備と生成を試して例外型名を残す。
   ///
   /// Example:
   /// ```dart
@@ -53,7 +53,7 @@ final class DiagnoseOnDeviceLlmUsecaseImpl
         status: 'error',
         reason: 'exception',
         message: 'availabilitySnapshot failed',
-        error: error.toString(),
+        error: formatExceptionDetail(error),
       );
     }
     log.append(
@@ -68,50 +68,63 @@ final class DiagnoseOnDeviceLlmUsecaseImpl
           '${snapshot.error == null ? '' : '; error=${snapshot.error}'}',
     );
 
+    String? prepareError;
+    try {
+      await llm.prepareModel().timeout(generateTimeout);
+      log.append(
+        tag: 'llm.diagnose',
+        level: AppLogLevel.info,
+        message: 'prepare probe ok',
+      );
+    } on Object catch (error) {
+      prepareError = formatExceptionDetail(error);
+      log.append(
+        tag: 'llm.diagnose',
+        level: AppLogLevel.error,
+        message: 'prepare probe failed: $prepareError',
+      );
+    }
+
     if (!probeGenerate) {
       return DiagnoseOnDeviceLlmResult(
         snapshot: snapshot,
         canGenerate: false,
+        prepareError: prepareError,
         probeSkippedReason: 'probeGenerate=false',
-      );
-    }
-    if (snapshot.readiness != OnDeviceLlmReadiness.ready) {
-      final reason = 'readiness=${snapshot.readiness.name}';
-      log.append(
-        tag: 'llm.diagnose',
-        level: AppLogLevel.warn,
-        message: 'generate probe skipped ($reason)',
-      );
-      return DiagnoseOnDeviceLlmResult(
-        snapshot: snapshot,
-        canGenerate: false,
-        probeSkippedReason: reason,
       );
     }
 
     try {
-      final output = await llm.generate(probePrompt).timeout(generateTimeout);
+      final output = await llm
+          .diagnoseGenerate(probePrompt)
+          .timeout(generateTimeout);
+      final ready = snapshot.readiness == OnDeviceLlmReadiness.ready;
       log.append(
         tag: 'llm.diagnose',
-        level: AppLogLevel.info,
-        message: 'generate probe ok length=${output.length}',
+        level: ready ? AppLogLevel.info : AppLogLevel.warn,
+        message:
+            'generate probe ok length=${output.length}'
+            '${ready ? '' : '; readiness=${snapshot.readiness.name}'}',
       );
       return DiagnoseOnDeviceLlmResult(
         snapshot: snapshot,
         canGenerate: output.trim().isNotEmpty,
         sampleOutput: output,
         generateError: output.trim().isEmpty ? 'empty output' : null,
+        prepareError: prepareError,
       );
     } on Object catch (error) {
+      final detail = formatExceptionDetail(error);
       log.append(
         tag: 'llm.diagnose',
         level: AppLogLevel.error,
-        message: 'generate probe failed: $error',
+        message: 'generate probe failed: $detail',
       );
       return DiagnoseOnDeviceLlmResult(
         snapshot: snapshot,
         canGenerate: false,
-        generateError: error.toString(),
+        generateError: detail,
+        prepareError: prepareError,
       );
     }
   }

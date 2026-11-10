@@ -41,6 +41,14 @@ void main() {
     );
   });
 
+  testWidgets('推移タブの空画面', (tester) async {
+    await _pumpTabGolden(
+      tester,
+      tab: '推移',
+      golden: 'goldens/main_shell_trends.png',
+    );
+  });
+
   testWidgets('運動履歴タブの空画面', (tester) async {
     await _pumpTabGolden(
       tester,
@@ -76,7 +84,9 @@ Future<void> _pumpTabGolden(
   try {
     await pumpTopScreen(tester);
     await tester.tap(find.text(tab).last);
-    await tester.pumpAndSettle();
+    // メーター記録のカメラ初期化中は progress が回り続けるため settle しない。
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     await expectLater(find.byType(MainShellScreen), matchesGoldenFile(golden));
   } finally {
     debugDefaultTargetPlatformOverride = null;

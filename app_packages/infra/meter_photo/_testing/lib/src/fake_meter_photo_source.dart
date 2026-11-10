@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/widgets.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 
 /// テスト用の固定写真ソース。
@@ -20,9 +23,10 @@ final class FakeMeterPhotoSource implements MeterPhotoSource {
     this.libraryCapture,
     this.throwPermissionOnCamera = false,
     this.throwPermissionOnLibrary = false,
+    this.startBehavior = const MeterInAppCameraReady(aspectRatio: 0.75),
   });
 
-  /// [captureWithCamera] が返す値。null はキャンセル。
+  /// [captureWithCamera] が返す値。null はキャンセル／失敗。
   MeterPhotoCapture? cameraCapture;
 
   /// [pickFromLibrary] が返す値。null はキャンセル。
@@ -34,11 +38,92 @@ final class FakeMeterPhotoSource implements MeterPhotoSource {
   /// true のときライブラリで権限拒否例外を投げる。
   bool throwPermissionOnLibrary;
 
+  /// [startInAppCamera] 完了後に出す状態。
+  MeterInAppCameraStatus startBehavior;
+
   /// [captureWithCamera] が呼ばれた回数。
   int captureCallCount = 0;
 
   /// [pickFromLibrary] が呼ばれた回数。
   int pickCallCount = 0;
+
+  /// [startInAppCamera] が呼ばれた回数。
+  int startCallCount = 0;
+
+  /// [stopInAppCamera] が呼ばれた回数。
+  int stopCallCount = 0;
+
+  final StreamController<MeterInAppCameraStatus> _statusController =
+      StreamController<MeterInAppCameraStatus>.broadcast();
+  MeterInAppCameraStatus _current = const MeterInAppCameraIdle();
+
+  /// テストから status を直接流す。
+  ///
+  /// Example:
+  /// ```dart
+  /// fake.emitStatus(const MeterInAppCameraFailed());
+  /// ```
+  void emitStatus(MeterInAppCameraStatus status) {
+    _current = status;
+    if (!_statusController.isClosed) {
+      _statusController.add(status);
+    }
+  }
+
+  /// アプリ内カメラ状態。
+  ///
+  /// Example:
+  /// ```dart
+  /// fake.watchInAppCamera();
+  /// ```
+  @override
+  Stream<MeterInAppCameraStatus> watchInAppCamera() async* {
+    yield _current;
+    yield* _statusController.stream;
+  }
+
+  /// [startBehavior] へ遷移する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await fake.startInAppCamera();
+  /// ```
+  @override
+  Future<void> startInAppCamera() async {
+    startCallCount += 1;
+    emitStatus(const MeterInAppCameraStarting());
+    emitStatus(startBehavior);
+  }
+
+  /// idle へ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await fake.stopInAppCamera();
+  /// ```
+  @override
+  Future<void> stopInAppCamera() async {
+    stopCallCount += 1;
+    emitStatus(const MeterInAppCameraIdle());
+  }
+
+  /// Golden／Widget テスト用の色付きプレビュー。
+  ///
+  /// Example:
+  /// ```dart
+  /// fake.buildInAppPreview();
+  /// ```
+  @override
+  Widget buildInAppPreview({Key? key}) {
+    if (_current is! MeterInAppCameraReady) {
+      return SizedBox.shrink(key: key);
+    }
+    return ColoredBox(
+      key: key,
+      color: const Color(0xFF336699),
+      child: const SizedBox.expand(),
+    );
+  }
 
   /// [cameraCapture] を返すか権限拒否する。
   ///

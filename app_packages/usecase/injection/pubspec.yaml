@@ -32,6 +32,8 @@ dependencies:
   usecase_load_exercise_history_page_impl: any
   usecase_load_top_screen: any
   usecase_load_top_screen_impl: any
+  usecase_control_meter_in_app_camera: any
+  usecase_control_meter_in_app_camera_impl: any
   usecase_obtain_meter_photo: any
   usecase_obtain_meter_photo_impl: any
   usecase_on_device_llm_guidance: any

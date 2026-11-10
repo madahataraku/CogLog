@@ -13,17 +13,19 @@ mixin class L10nStringsMixin {
   String get screen_feature_meter_capture_average_speed =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_average_speed');
 
-  /// 2→1
-  String get screen_feature_meter_capture_back =>
-      LocalizeStringDelegate.get('screen_feature_meter_capture_back');
-
   /// 入力ラベル
   String get screen_feature_meter_capture_calories =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_calories');
 
-  /// カメラ撮影
-  String get screen_feature_meter_capture_capture_photo =>
-      LocalizeStringDelegate.get('screen_feature_meter_capture_capture_photo');
+  /// プレビュー初期化失敗
+  String get screen_feature_meter_capture_camera_preview_failed =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_camera_preview_failed',
+      );
+
+  /// シャッター失敗
+  String get screen_feature_meter_capture_capture_failed =>
+      LocalizeStringDelegate.get('screen_feature_meter_capture_capture_failed');
 
   /// 入力ラベル
   String get screen_feature_meter_capture_distance =>
@@ -79,6 +81,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_meter_capture_recorded_at =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_recorded_at');
 
+  /// 編集からカメラへ戻る
+  String get screen_feature_meter_capture_retake =>
+      LocalizeStringDelegate.get('screen_feature_meter_capture_retake');
+
   /// 登録ボタン
   String get screen_feature_meter_capture_save =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_save');
@@ -86,6 +92,10 @@ mixin class L10nStringsMixin {
   /// 保存失敗
   String get screen_feature_meter_capture_save_failed =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_save_failed');
+
+  /// シャッターボタンの代替テキスト
+  String get screen_feature_meter_capture_shutter =>
+      LocalizeStringDelegate.get('screen_feature_meter_capture_shutter');
 
   /// 画面タイトル
   String get screen_feature_meter_capture_title =>

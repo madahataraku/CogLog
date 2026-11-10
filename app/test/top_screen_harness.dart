@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_injection/infra_injection.dart';
+import 'package:infra_meter_photo_testing/infra_meter_photo_testing.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
 import 'package:screen_injection/screen_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,7 +46,11 @@ Future<ScreenGraph> pumpTopScreen(
         ),
         // Widget テストの既定 OS は Android。本番 DI の FlutterDeviceAi は
         // readiness がチャネル待ちで止まるため、固定 Fake に差し替える。
-        ...infraOverrides(onDeviceLlm: FakeOnDeviceLlm(available: false)),
+        // メーター写真も実カメラ初期化で progress が回り続けるため Fake にする。
+        ...infraOverrides(
+          onDeviceLlm: FakeOnDeviceLlm(available: false),
+          meterPhotoSource: FakeMeterPhotoSource(),
+        ),
         ...usecaseOverrides(
           adviceTemplatePicker: const FixedAdviceTemplatePicker(),
         ),

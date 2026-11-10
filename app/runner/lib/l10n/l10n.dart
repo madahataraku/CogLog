@@ -193,6 +193,12 @@ abstract class L10n {
   /// **'platform notes'**
   String get screen_feature_debug_platform_notes_label;
 
+  /// 準備例外ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'prepare error'**
+  String get screen_feature_debug_prepare_error_label;
+
   /// プローブ省略理由ラベル
   ///
   /// In ja, this message translates to:
@@ -595,17 +601,17 @@ abstract class L10n {
   /// **'メーター記録'**
   String get screen_feature_main_nav_meter_capture;
 
+  /// ボトムナビ
+  ///
+  /// In ja, this message translates to:
+  /// **'推移'**
+  String get screen_feature_main_nav_trends;
+
   /// 入力ラベル
   ///
   /// In ja, this message translates to:
   /// **'平均速度 (km/h)'**
   String get screen_feature_meter_capture_average_speed;
-
-  /// 2→1
-  ///
-  /// In ja, this message translates to:
-  /// **'戻る'**
-  String get screen_feature_meter_capture_back;
 
   /// 入力ラベル
   ///
@@ -613,11 +619,17 @@ abstract class L10n {
   /// **'消費カロリー (kcal)'**
   String get screen_feature_meter_capture_calories;
 
-  /// カメラ撮影
+  /// プレビュー初期化失敗
   ///
   /// In ja, this message translates to:
-  /// **'撮影する'**
-  String get screen_feature_meter_capture_capture_photo;
+  /// **'カメラを開始できませんでした。ライブラリから選ぶか、しばらくしてから撮り直してください。'**
+  String get screen_feature_meter_capture_camera_preview_failed;
+
+  /// シャッター失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'撮影に失敗しました。もう一度シャッターを押すか、ライブラリから選んでください。'**
+  String get screen_feature_meter_capture_capture_failed;
 
   /// 入力ラベル
   ///
@@ -685,6 +697,12 @@ abstract class L10n {
   /// **'記録日時'**
   String get screen_feature_meter_capture_recorded_at;
 
+  /// 編集からカメラへ戻る
+  ///
+  /// In ja, this message translates to:
+  /// **'撮り直す'**
+  String get screen_feature_meter_capture_retake;
+
   /// 登録ボタン
   ///
   /// In ja, this message translates to:
@@ -696,6 +714,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'保存に失敗しました'**
   String get screen_feature_meter_capture_save_failed;
+
+  /// シャッターボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'シャッター'**
+  String get screen_feature_meter_capture_shutter;
 
   /// 画面タイトル
   ///
@@ -810,6 +834,66 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標設定で一日あたりの目標を設定しましょう'**
   String get screen_feature_top_unset_prompt;
+
+  /// Phase1プレースホルダ
+  ///
+  /// In ja, this message translates to:
+  /// **'グラフは準備中です'**
+  String get screen_feature_trends_chart_placeholder;
+
+  /// 指標グループ
+  ///
+  /// In ja, this message translates to:
+  /// **'身体'**
+  String get screen_feature_trends_group_body;
+
+  /// 指標グループ
+  ///
+  /// In ja, this message translates to:
+  /// **'運動'**
+  String get screen_feature_trends_group_exercise;
+
+  /// 指標グループ選択のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'グループ'**
+  String get screen_feature_trends_group_label;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去半年'**
+  String get screen_feature_trends_period_days182;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去30日'**
+  String get screen_feature_trends_period_days30;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去1年'**
+  String get screen_feature_trends_period_days365;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去3カ月'**
+  String get screen_feature_trends_period_days90;
+
+  /// 期間選択のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'期間'**
+  String get screen_feature_trends_period_label;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'推移'**
+  String get screen_feature_trends_title;
 
   /// 誘導本文
   ///

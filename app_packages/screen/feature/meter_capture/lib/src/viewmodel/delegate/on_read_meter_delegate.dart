@@ -45,8 +45,16 @@ final class OnReadMeterDelegate {
   /// ```dart
   /// delegate.execute(photoBytes: Uint8List(0));
   /// ```
-  Future<void> execute({required Uint8List photoBytes}) async {
+  Future<void> execute({
+    required Uint8List photoBytes,
+    int? expectedGeneration,
+  }) async {
+    final generation =
+        expectedGeneration ?? state.state.cameraSessionGeneration;
     await state.updateWithLock((current, emitter) async {
+      if (current.cameraSessionGeneration != generation) {
+        return;
+      }
       await emitter.emit(current.copyWith(reading: true, saveError: false));
     });
 
@@ -64,6 +72,9 @@ final class OnReadMeterDelegate {
 
     final values = result.values;
     await state.updateWithLock((current, emitter) async {
+      if (current.cameraSessionGeneration != generation) {
+        return;
+      }
       await emitter.emit(
         current.copyWith(
           step: MeterCaptureStep.edit,

@@ -13,6 +13,7 @@ void main() {
     expect(find.text('本日'), findsOneWidget);
     expect(find.text('ホーム'), findsOneWidget);
     expect(find.text('メーター記録'), findsOneWidget);
+    expect(find.text('推移'), findsOneWidget);
     expect(find.text('運動履歴'), findsOneWidget);
     expect(find.text('目標設定'), findsOneWidget);
     expect(find.bySemanticsLabel('メーターパネルを撮影'), findsNothing);
@@ -29,6 +30,10 @@ void main() {
     expect(find.text('メーター記録'), findsWidgets);
     expect(screens.router.state.uri.path, '/meter-capture');
     expect(find.text('本日'), findsNothing);
+
+    await tester.tap(find.text('推移'));
+    await tester.pumpAndSettle();
+    expect(screens.router.state.uri.path, '/trends');
 
     await tester.tap(find.text('運動履歴'));
     await tester.pumpAndSettle();
