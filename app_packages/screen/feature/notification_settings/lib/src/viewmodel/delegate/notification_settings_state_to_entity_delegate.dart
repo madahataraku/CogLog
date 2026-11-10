@@ -30,6 +30,7 @@ final class NotificationSettingsStateToEntityDelegate {
     return NotificationSettingsScreenEntity(
       enabled: state.enabled,
       showPermissionGuidance: state.showPermissionGuidance,
+      loaded: state.loaded,
     );
   }
 }

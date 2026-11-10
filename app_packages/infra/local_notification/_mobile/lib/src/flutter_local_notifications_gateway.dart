@@ -54,7 +54,12 @@ final class FlutterLocalNotificationsGateway
     _timezoneReady = await _prepareTimezone();
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const ios = DarwinInitializationSettings();
+    // 起動時は許可を求めず、設定 ON 時の requestPermission に任せる。
+    const ios = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     await _plugin.initialize(
       settings: const InitializationSettings(android: android, iOS: ios),
       onDidReceiveNotificationResponse: _onResponse,

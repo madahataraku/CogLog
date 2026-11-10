@@ -19,17 +19,24 @@ extension NotificationSettingsScreenViewModelAction
   /// await viewModel.onInitialize();
   /// ```
   Future<void> onInitialize() async {
-    final result = await loadUsecase.execute(
-      const LoadNotificationSettingsRequest(),
-    );
-    await state.updateWithLock((_, emitter) async {
-      await emitter.emit(
-        NotificationSettingsScreenState(
-          enabled: result.enabled,
-          permissionGranted: result.permissionGranted,
-          loaded: true,
-        ),
-      );
+    await state.updateWithLock((current, emitter) async {
+      try {
+        final result = await loadUsecase.execute(
+          const LoadNotificationSettingsRequest(),
+        );
+        await emitter.emit(
+          NotificationSettingsScreenState(
+            enabled: result.enabled,
+            permissionGranted: result.permissionGranted,
+            loaded: true,
+          ),
+        );
+      } on Object {
+        // 読み込み失敗時は未読込のままにし、再表示で回復する。
+        if (!current.loaded) {
+          return;
+        }
+      }
     });
   }
 
@@ -40,17 +47,24 @@ extension NotificationSettingsScreenViewModelAction
   /// await viewModel.onToggleEnabled(true);
   /// ```
   Future<void> onToggleEnabled(bool enabled) async {
-    final result = await saveUsecase.execute(
-      SaveNotificationSettingsRequest(enabled: enabled),
-    );
-    await state.updateWithLock((_, emitter) async {
-      await emitter.emit(
-        NotificationSettingsScreenState(
-          enabled: result.enabled,
-          permissionGranted: result.permissionGranted,
-          loaded: true,
-        ),
-      );
+    await state.updateWithLock((current, emitter) async {
+      if (!current.loaded) {
+        return;
+      }
+      try {
+        final result = await saveUsecase.execute(
+          SaveNotificationSettingsRequest(enabled: enabled),
+        );
+        await emitter.emit(
+          NotificationSettingsScreenState(
+            enabled: result.enabled,
+            permissionGranted: result.permissionGranted,
+            loaded: true,
+          ),
+        );
+      } on Object {
+        // 保存失敗時は表示を変えず、元のスイッチ状態を保つ。
+      }
     });
   }
 

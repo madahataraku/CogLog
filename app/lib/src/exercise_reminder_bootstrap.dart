@@ -65,6 +65,7 @@ final class ExerciseReminderBootstrap {
       return;
     }
 
-    await safeSync();
+    // 初回描画を遅らせないよう、履歴同期はバックグラウンドで続ける。
+    unawaited(safeSync());
   }
 }

@@ -21,11 +21,19 @@ final class NotificationSettings {
   /// 通知が有効か。
   final bool enabled;
 
+  /// [enabled] が同じなら等しい。
+  ///
+  /// Example:
+  /// ```dart
+  /// const NotificationSettings(enabled: true) ==
+  ///     const NotificationSettings(enabled: true);
+  /// ```
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is NotificationSettings && other.enabled == enabled;
 
+  /// [enabled] に基づくハッシュ。
   @override
   int get hashCode => enabled.hashCode;
 }

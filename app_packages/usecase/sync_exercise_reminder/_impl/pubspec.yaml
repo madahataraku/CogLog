@@ -10,7 +10,6 @@ environment:
 dependencies:
   data_repository_exercise_history: any
   data_repository_notification_settings: any
-  domain_exercise_history: any
   domain_notification_settings: any
   infra_local_notification: any
   usecase_sync_exercise_reminder: any
@@ -18,6 +17,7 @@ dependencies:
 dev_dependencies:
   data_repository_exercise_history_testing: any
   data_repository_notification_settings_testing: any
+  domain_exercise_history: any
   flutter_lints: any
   infra_local_notification_testing: any
   test: any

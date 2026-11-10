@@ -54,8 +54,8 @@ final class SaveNotificationSettingsUsecaseImpl
     if (request.enabled) {
       await notifications.requestPermission();
     }
-    await settings.write(NotificationSettings(enabled: request.enabled));
     final granted = await notifications.isPermissionGranted();
+    await settings.write(NotificationSettings(enabled: request.enabled));
     try {
       await sync.execute(
         SyncExerciseReminderRequest(now: request.now ?? DateTime.now()),

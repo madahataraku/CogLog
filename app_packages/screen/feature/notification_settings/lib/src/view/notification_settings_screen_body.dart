@@ -1,3 +1,4 @@
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -14,7 +15,7 @@ import 'notification_settings_screen_providers.dart';
 /// const NotificationSettingsScreenBody();
 /// ```
 @internal
-class NotificationSettingsScreenBody extends ConsumerWidget {
+class NotificationSettingsScreenBody extends HookConsumerWidget {
   /// 本文を作る。
   ///
   /// Example:
@@ -33,6 +34,8 @@ class NotificationSettingsScreenBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(NotificationSettingsScreenViewModel.provider);
     final entity = ref.watch(NotificationSettingsScreenProviders.entity);
+    final saving = useState(false);
+    final interactive = entity.loaded && !saving.value;
 
     return FScaffold(
       header: FHeader.nested(
@@ -55,9 +58,17 @@ class NotificationSettingsScreenBody extends ConsumerWidget {
                 ),
                 suffix: FSwitch(
                   value: entity.enabled,
-                  onChange: (value) {
-                    viewModel.onToggleEnabled(value);
-                  },
+                  enabled: interactive,
+                  onChange: interactive
+                      ? (value) async {
+                          saving.value = true;
+                          try {
+                            await viewModel.onToggleEnabled(value);
+                          } finally {
+                            saving.value = false;
+                          }
+                        }
+                      : null,
                 ),
               ),
             ],
