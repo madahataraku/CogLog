@@ -78,7 +78,7 @@ void main() {
     expect(result.autoUpdate.streakEpochLocalDate, DateTime(2026, 11, 5));
   });
 
-  test('目標書き込み失敗時は自動更新設定を復元する', () async {
+  test('目標書き込み失敗時は目標と設定を復元する', () async {
     final goals = _FailingGoalWriteRepository();
     await goals.writeAutoUpdateSettings(DailyGoalAutoUpdateSettings.defaults);
 
@@ -92,25 +92,60 @@ void main() {
     final settings = await goals.readAutoUpdateSettings();
     expect(settings.enabled, isFalse);
     expect(settings.enabledOnLocalDate, isNull);
+    expect(goals.writeCallCount, 2);
   });
 }
 
-/// [write] だけ失敗する Repository。
+/// [write] の初回だけ失敗する Repository。
 final class _FailingGoalWriteRepository implements DailyGoalRepository {
-  DailyGoalAutoUpdateSettings _autoUpdate = DailyGoalAutoUpdateSettings.defaults;
+  /// 失敗前に保持している自動更新設定。
+  DailyGoalAutoUpdateSettings _autoUpdate =
+      DailyGoalAutoUpdateSettings.defaults;
 
+  /// [write] が呼ばれた回数。
+  int writeCallCount = 0;
+
+  /// 未設定の目標を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository.read();
+  /// ```
   @override
   Future<DailyGoal> read() async => DailyGoal.unset;
 
+  /// 初回だけ失敗し、復元の呼び出しは通す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository.write(const DailyGoal(caloriesKcal: 100));
+  /// ```
   @override
   Future<void> write(DailyGoal goal) async {
-    throw StateError('goal write failed');
+    writeCallCount += 1;
+    if (writeCallCount == 1) {
+      throw StateError('goal write failed');
+    }
   }
 
+  /// 保持中の自動更新設定を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository.readAutoUpdateSettings();
+  /// ```
   @override
   Future<DailyGoalAutoUpdateSettings> readAutoUpdateSettings() async =>
       _autoUpdate;
 
+  /// 自動更新設定を上書きする。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository.writeAutoUpdateSettings(
+  ///   DailyGoalAutoUpdateSettings.defaults,
+  /// );
+  /// ```
   @override
   Future<void> writeAutoUpdateSettings(
     DailyGoalAutoUpdateSettings settings,
