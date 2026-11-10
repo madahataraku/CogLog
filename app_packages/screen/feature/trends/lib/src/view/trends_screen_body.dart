@@ -6,9 +6,11 @@ import 'package:meta/meta.dart';
 import '../strings.dart';
 import '../viewmodel/state/trends_screen_state.dart';
 import '../viewmodel/trends_screen_view_model.dart';
+import 'trends_chart.dart';
+import 'trends_metric_select.dart';
 import 'trends_screen_providers.dart';
 
-/// 期間・グループの選択とグラフ準備中プレースホルダ。
+/// 期間・グループ・指標の選択と許可ボタン・グラフ。
 ///
 /// Example:
 /// ```dart
@@ -24,7 +26,7 @@ class TrendsScreenBody extends ConsumerWidget {
   /// ```
   const TrendsScreenBody({super.key});
 
-  /// 期間とグループの [FSelect] とプレースホルダを並べる。
+  /// 選択 UI・条件付きボタン・[TrendsChart] を並べる。
   ///
   /// Example:
   /// ```dart
@@ -33,6 +35,7 @@ class TrendsScreenBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entity = ref.watch(TrendsScreenProviders.entity);
+    final screenState = ref.watch(TrendsScreenProviders.state);
     final viewModel = ref.read(TrendsScreenViewModel.provider);
     return FScaffold(
       header: FHeader(title: Text(strings.screen_feature_trends_title)),
@@ -82,9 +85,33 @@ class TrendsScreenBody extends ConsumerWidget {
                     TrendsMetricGroup.body,
               },
             ),
+            TrendsMetricSelect(
+              group: entity.group,
+              metricSet: entity.metricSet,
+              onChanged: viewModel.onSelectMetricSet,
+            ),
+            if (entity.showRequestPermissionButton)
+              FButton(
+                onPress: viewModel.onRequestHealthPermission,
+                child: Text(
+                  strings.screen_feature_trends_request_health_permission,
+                ),
+              ),
+            if (entity.showOpenSettingsButton)
+              FButton(
+                onPress: viewModel.onOpenAppSettings,
+                child: Text(strings.screen_feature_trends_open_os_settings),
+              ),
+            if (entity.showRetryButton)
+              FButton(
+                onPress: viewModel.onRetry,
+                child: Text(strings.screen_feature_trends_retry_load),
+              ),
             Expanded(
-              child: Center(
-                child: Text(strings.screen_feature_trends_chart_placeholder),
+              child: TrendsChart(
+                loading: entity.loading,
+                buckets: screenState.buckets,
+                series: entity.visibleSeries,
               ),
             ),
           ],

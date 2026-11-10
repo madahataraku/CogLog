@@ -386,7 +386,7 @@ class L10nEn extends L10n {
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
 
   @override
-  String get screen_feature_trends_chart_placeholder => 'Chart coming soon';
+  String get screen_feature_trends_chart_placeholder => 'Loading';
 
   @override
   String get screen_feature_trends_group_body => 'Body';
@@ -396,6 +396,27 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_group_label => 'Group';
+
+  @override
+  String get screen_feature_trends_metric_body_fat => 'Body fat';
+
+  @override
+  String get screen_feature_trends_metric_body_kg => 'Weight & lean mass';
+
+  @override
+  String get screen_feature_trends_metric_calories => 'Calories';
+
+  @override
+  String get screen_feature_trends_metric_distance => 'Distance';
+
+  @override
+  String get screen_feature_trends_metric_duration => 'Duration';
+
+  @override
+  String get screen_feature_trends_metric_label => 'Metric';
+
+  @override
+  String get screen_feature_trends_open_os_settings => 'Open Settings';
 
   @override
   String get screen_feature_trends_period_days182 => 'Last 6 months';
@@ -411,6 +432,13 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_period_label => 'Period';
+
+  @override
+  String get screen_feature_trends_request_health_permission =>
+      'Allow Health access';
+
+  @override
+  String get screen_feature_trends_retry_load => 'Retry';
 
   @override
   String get screen_feature_trends_title => 'Trends';
