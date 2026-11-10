@@ -143,6 +143,15 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
     return response;
   }
 
+  /// [generate] と同じ経路で診断する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.diagnoseGenerate('prompt');
+  /// ```
+  @override
+  Future<String> diagnoseGenerate(String prompt) => generate(prompt);
+
   /// 呼出回数を増やし、設定に応じて失敗する。
   ///
   /// Example:

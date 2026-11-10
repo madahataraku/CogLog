@@ -15,27 +15,52 @@ void main() {
     expect(result.canGenerate, isTrue);
     expect(result.sampleOutput, 'ok');
     expect(result.snapshot.readiness, OnDeviceLlmReadiness.ready);
+    expect(result.prepareError, isNull);
     expect(log.entries, isNotEmpty);
   });
 
-  test('未 ready なら生成をスキップする', () async {
+  test('未 ready でも生成プローブを試し型名付き例外を残す', () async {
     final usecase = DiagnoseOnDeviceLlmUsecaseImpl(
-      llm: FakeOnDeviceLlm(available: false),
+      llm: FakeOnDeviceLlm(available: false, throwOnGenerate: true),
       log: AppLogStore(),
     );
     final result = await usecase.execute();
     expect(result.canGenerate, isFalse);
-    expect(result.probeSkippedReason, contains('unavailable'));
-    expect(result.generateError, isNull);
+    expect(result.probeSkippedReason, isNull);
+    expect(result.generateError, contains('StateError'));
+    expect(result.generateError, contains('generate failed'));
   });
 
-  test('生成失敗を generateError に残す', () async {
+  test('生成失敗を型名付き generateError に残す', () async {
     final usecase = DiagnoseOnDeviceLlmUsecaseImpl(
       llm: FakeOnDeviceLlm(throwOnGenerate: true),
       log: AppLogStore(),
     );
     final result = await usecase.execute();
     expect(result.canGenerate, isFalse);
+    expect(result.generateError, contains('StateError'));
     expect(result.generateError, contains('generate failed'));
+  });
+
+  test('prepare 失敗を型名付き prepareError に残す', () async {
+    final usecase = DiagnoseOnDeviceLlmUsecaseImpl(
+      llm: FakeOnDeviceLlm(throwOnPrepareModel: true),
+      log: AppLogStore(),
+    );
+    final result = await usecase.execute();
+    expect(result.prepareError, contains('StateError'));
+    expect(result.prepareError, contains('prepareModel failed'));
+    expect(result.canGenerate, isTrue);
+  });
+
+  test('probeGenerate=false なら生成をスキップする', () async {
+    final usecase = DiagnoseOnDeviceLlmUsecaseImpl(
+      llm: FakeOnDeviceLlm(response: 'ok'),
+      log: AppLogStore(),
+    );
+    final result = await usecase.execute(probeGenerate: false);
+    expect(result.canGenerate, isFalse);
+    expect(result.probeSkippedReason, 'probeGenerate=false');
+    expect(result.generateError, isNull);
   });
 }

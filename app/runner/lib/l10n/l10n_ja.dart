@@ -61,6 +61,9 @@ class L10nJa extends L10n {
   String get screen_feature_debug_platform_notes_label => 'platform notes';
 
   @override
+  String get screen_feature_debug_prepare_error_label => 'prepare error';
+
+  @override
   String get screen_feature_debug_probe_skipped_label => 'probe skipped';
 
   @override

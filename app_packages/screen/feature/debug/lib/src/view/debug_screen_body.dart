@@ -99,6 +99,10 @@ class DebugScreenBody extends ConsumerWidget {
             entity.generateError,
           ),
           _line(
+            strings.screen_feature_debug_prepare_error_label,
+            entity.prepareError,
+          ),
+          _line(
             strings.screen_feature_debug_probe_skipped_label,
             entity.probeSkipped,
           ),

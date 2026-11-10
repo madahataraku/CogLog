@@ -51,6 +51,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_platform_notes_label =>
       LocalizeStringDelegate.get('screen_feature_debug_platform_notes_label');
 
+  /// 準備例外ラベル
+  String get screen_feature_debug_prepare_error_label =>
+      LocalizeStringDelegate.get('screen_feature_debug_prepare_error_label');
+
   /// プローブ省略理由ラベル
   String get screen_feature_debug_probe_skipped_label =>
       LocalizeStringDelegate.get('screen_feature_debug_probe_skipped_label');

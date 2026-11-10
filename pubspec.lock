@@ -393,10 +393,9 @@ packages:
   flutter_device_ai:
     dependency: "direct overridden"
     description:
-      name: flutter_device_ai
-      sha256: "48895651efca3f1105126c60e5132ef6e603bc96997cd47780d6cd54be3bc0b5"
-      url: "https://pub.dev"
-    source: hosted
+      path: "app_packages_fork/flutter_device_ai"
+      relative: true
+    source: path
     version: "0.3.0"
   flutter_hooks:
     dependency: "direct overridden"

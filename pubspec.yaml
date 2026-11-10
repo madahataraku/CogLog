@@ -89,7 +89,8 @@ dependency_overrides:
   build_runner: 2.10.4
   drift: 2.30.0
   drift_dev: 2.30.0
-  flutter_device_ai: 0.3.0
+  flutter_device_ai:
+    path: app_packages_fork/flutter_device_ai
   flutter_hooks: 0.21.3+1
   flutter_lints: ^6.0.0
   flutter_riverpod: 3.4.3
