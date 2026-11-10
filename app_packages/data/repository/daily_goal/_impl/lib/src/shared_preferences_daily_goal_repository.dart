@@ -139,6 +139,50 @@ final class SharedPreferencesDailyGoalRepository
     await _writeDate(_autoUpdateLastAppliedKey, settings.lastAppliedLocalDate);
   }
 
+  /// 目標と自動更新設定をまとめて書く。失敗時は変更前へ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeGoalAndAutoUpdateSettings(
+  ///   goal: DailyGoal.unset,
+  ///   settings: DailyGoalAutoUpdateSettings.defaults,
+  /// );
+  /// ```
+  @override
+  Future<void> writeGoalAndAutoUpdateSettings({
+    required DailyGoal goal,
+    required DailyGoalAutoUpdateSettings settings,
+  }) async {
+    final previousGoal = await read();
+    final previousSettings = await readAutoUpdateSettings();
+    try {
+      await writeAutoUpdateSettings(settings);
+      await write(goal);
+    } on Object catch (error, stackTrace) {
+      final restoreErrors = <Object>[];
+      try {
+        await write(previousGoal);
+      } on Object catch (restoreError) {
+        restoreErrors.add(restoreError);
+      }
+      try {
+        await writeAutoUpdateSettings(previousSettings);
+      } on Object catch (restoreError) {
+        restoreErrors.add(restoreError);
+      }
+      if (restoreErrors.isNotEmpty) {
+        Error.throwWithStackTrace(
+          StateError(
+            '目標と設定の保存に失敗し、復元にも失敗した。'
+            ' save=$error restore=${restoreErrors.join('; ')}',
+          ),
+          stackTrace,
+        );
+      }
+      Error.throwWithStackTrace(error, stackTrace);
+    }
+  }
+
   /// 保存文字列からレベルを復元する。未知値はふつう。
   ///
   /// Example:
@@ -289,16 +333,20 @@ final class SharedPreferencesDailyGoalRepository
     }
   }
 
-  /// [key] を消す。失敗時は reload して例外を返す。
+  /// [key] を消す。元から無い場合は成功とみなす。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository._remove('daily_goal_calories_kcal');
+  /// ```
   Future<void> _remove(String key) async {
-    var removed = false;
     try {
-      removed = await _preferences.remove(key);
+      await _preferences.remove(key);
     } on Object {
       await _preferences.reload();
       rethrow;
     }
-    if (!removed) {
+    if (_preferences.containsKey(key)) {
       await _preferences.reload();
       throw StateError('$key を削除できなかった。');
     }

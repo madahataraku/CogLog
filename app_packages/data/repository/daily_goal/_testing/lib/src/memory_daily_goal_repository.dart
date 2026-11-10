@@ -63,4 +63,22 @@ final class MemoryDailyGoalRepository implements DailyGoalRepository {
   ) async {
     _autoUpdate = settings;
   }
+
+  /// 目標と自動更新設定をまとめて上書きする。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeGoalAndAutoUpdateSettings(
+  ///   goal: DailyGoal.unset,
+  ///   settings: DailyGoalAutoUpdateSettings.defaults,
+  /// );
+  /// ```
+  @override
+  Future<void> writeGoalAndAutoUpdateSettings({
+    required DailyGoal goal,
+    required DailyGoalAutoUpdateSettings settings,
+  }) async {
+    _goal = goal;
+    _autoUpdate = settings;
+  }
 }

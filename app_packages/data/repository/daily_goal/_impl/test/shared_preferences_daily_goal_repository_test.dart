@@ -103,4 +103,40 @@ void main() {
     expect(settings.streakEpochLocalDate, DateTime(2026, 11, 6));
     expect(settings.lastAppliedLocalDate, DateTime(2026, 11, 5));
   });
+
+  test('目標と自動更新設定をまとめて書いて読める', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final repository = SharedPreferencesDailyGoalRepository(preferences);
+
+    await repository.writeGoalAndAutoUpdateSettings(
+      goal: const DailyGoal(caloriesKcal: 120),
+      settings: DailyGoalAutoUpdateSettings(
+        enabled: true,
+        level: DailyGoalAutoUpdateLevel.slow,
+        enabledOnLocalDate: DateTime(2026, 11, 5),
+      ),
+    );
+
+    final goal = await repository.read();
+    final settings = await repository.readAutoUpdateSettings();
+    expect(goal.caloriesKcal, 120);
+    expect(settings.enabled, isTrue);
+    expect(settings.level, DailyGoalAutoUpdateLevel.slow);
+    expect(settings.enabledOnLocalDate, DateTime(2026, 11, 5));
+  });
+
+  test('未設定を二度書いても例外にならない', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final repository = SharedPreferencesDailyGoalRepository(preferences);
+
+    await repository.write(DailyGoal.unset);
+    await repository.write(DailyGoal.unset);
+
+    final goal = await repository.read();
+    expect(goal.duration, isNull);
+    expect(goal.caloriesKcal, isNull);
+    expect(goal.distanceKm, isNull);
+  });
 }

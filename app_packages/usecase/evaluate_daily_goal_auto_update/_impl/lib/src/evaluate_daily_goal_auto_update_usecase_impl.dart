@@ -80,31 +80,10 @@ final class EvaluateDailyGoalAutoUpdateUsecaseImpl
         lastAppliedLocalDate: today,
         streakEpochLocalDate: DateTime(today.year, today.month, today.day + 1),
       );
-      try {
-        await goals.write(newGoal);
-      } on Object {
-        try {
-          await goals.write(oldGoal);
-        } on Object {
-          // 復元失敗でも未適用として返す。
-        }
-        return const EvaluateDailyGoalAutoUpdateResult(applied: false);
-      }
-      try {
-        await goals.writeAutoUpdateSettings(nextSettings);
-      } on Object {
-        try {
-          await goals.write(oldGoal);
-        } on Object {
-          // 復元失敗でも未適用として返す。
-        }
-        try {
-          await goals.writeAutoUpdateSettings(settings);
-        } on Object {
-          // 復元失敗でも未適用として返す。
-        }
-        return const EvaluateDailyGoalAutoUpdateResult(applied: false);
-      }
+      await goals.writeGoalAndAutoUpdateSettings(
+        goal: newGoal,
+        settings: nextSettings,
+      );
       return EvaluateDailyGoalAutoUpdateResult(applied: true, goal: newGoal);
     } on Object {
       return const EvaluateDailyGoalAutoUpdateResult(applied: false);

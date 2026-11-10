@@ -102,37 +102,36 @@ void main() {
     expect(settings.enabled, isFalse);
     expect(settings.enabledOnLocalDate, isNull);
     expect(settings.level, DailyGoalAutoUpdateLevel.slow);
-    expect(goals.writeCallCount, 2);
-    expect(goals.writtenGoals, [DailyGoal.unset]);
+    final storedGoal = await goals.read();
+    expect(storedGoal.duration, isNull);
+    expect(storedGoal.caloriesKcal, isNull);
+    expect(storedGoal.distanceKm, isNull);
     expect(goals.sawEnabledSettings, isTrue);
   });
 }
 
-/// [write] の初回だけ失敗する Repository。
+/// 目標書き込みだけ失敗し、一括保存の復元経路を通す Repository。
 final class _FailingGoalWriteRepository implements DailyGoalRepository {
+  /// 保持している目標。
+  DailyGoal _goal = DailyGoal.unset;
+
   /// 失敗前に保持している自動更新設定。
   DailyGoalAutoUpdateSettings _autoUpdate =
       DailyGoalAutoUpdateSettings.defaults;
 
-  /// [write] が呼ばれた回数。
-  int writeCallCount = 0;
-
-  /// 成功した [write] に渡された目標。
-  final List<DailyGoal> writtenGoals = [];
-
   /// 有効化後の設定が一度でも書かれたか。
   bool sawEnabledSettings = false;
 
-  /// 未設定の目標を返す。
+  /// 保持中の目標を返す。
   ///
   /// Example:
   /// ```dart
   /// await repository.read();
   /// ```
   @override
-  Future<DailyGoal> read() async => DailyGoal.unset;
+  Future<DailyGoal> read() async => _goal;
 
-  /// 初回だけ失敗し、復元の呼び出しは通す。
+  /// 目標を上書きする。失敗させたい呼び出しでは使わない。
   ///
   /// Example:
   /// ```dart
@@ -140,11 +139,7 @@ final class _FailingGoalWriteRepository implements DailyGoalRepository {
   /// ```
   @override
   Future<void> write(DailyGoal goal) async {
-    writeCallCount += 1;
-    if (writeCallCount == 1) {
-      throw StateError('goal write failed');
-    }
-    writtenGoals.add(goal);
+    _goal = goal;
   }
 
   /// 保持中の自動更新設定を返す。
@@ -173,5 +168,31 @@ final class _FailingGoalWriteRepository implements DailyGoalRepository {
       sawEnabledSettings = true;
     }
     _autoUpdate = settings;
+  }
+
+  /// 設定は書き、目標書き込みで失敗して変更前へ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository.writeGoalAndAutoUpdateSettings(
+  ///   goal: const DailyGoal(caloriesKcal: 100),
+  ///   settings: DailyGoalAutoUpdateSettings.defaults,
+  /// );
+  /// ```
+  @override
+  Future<void> writeGoalAndAutoUpdateSettings({
+    required DailyGoal goal,
+    required DailyGoalAutoUpdateSettings settings,
+  }) async {
+    final previousGoal = _goal;
+    final previousSettings = _autoUpdate;
+    await writeAutoUpdateSettings(settings);
+    try {
+      throw StateError('goal write failed');
+    } on Object catch (error, stackTrace) {
+      await write(previousGoal);
+      await writeAutoUpdateSettings(previousSettings);
+      Error.throwWithStackTrace(error, stackTrace);
+    }
   }
 }
