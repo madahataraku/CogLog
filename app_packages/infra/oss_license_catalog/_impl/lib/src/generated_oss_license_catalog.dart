@@ -31,12 +31,7 @@ final class GeneratedOssLicenseCatalog implements OssLicenseCatalog {
     try {
       final generated = allDependencies
           .where((p) => !_excluded.contains(p.name))
-          .map(
-            (p) => OssLicenseEntry(
-              name: p.name,
-              license: p.license ?? '',
-            ),
-          )
+          .map((p) => OssLicenseEntry(name: p.name, license: p.license ?? ''))
           .where((e) => e.license.isNotEmpty);
       final merged = [...generated, ...extraOssLicenses];
       merged.sort((a, b) => a.name.compareTo(b.name));

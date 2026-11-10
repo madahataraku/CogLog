@@ -5,9 +5,7 @@ import 'package:usecase_load_oss_licenses_impl/usecase_load_oss_licenses_impl.da
 
 void main() {
   test('成功時は一覧を返す', () async {
-    const entries = [
-      OssLicenseEntry(name: 'a', license: 'MIT'),
-    ];
+    const entries = [OssLicenseEntry(name: 'a', license: 'MIT')];
     final usecase = LoadOssLicensesUsecaseImpl(
       catalog: FakeOssLicenseCatalog(entries: entries),
     );
