@@ -1,9 +1,9 @@
-/// image_picker によるメーター写真取得。
+/// アプリ内カメラと image_picker によるメーター写真取得。
 ///
 /// Example:
 /// ```dart
-/// ImagePickerMeterPhotoSource();
+/// MobileMeterPhotoSource();
 /// ```
 library;
 
-export 'src/image_picker_meter_photo_source.dart';
+export 'src/mobile_meter_photo_source.dart';

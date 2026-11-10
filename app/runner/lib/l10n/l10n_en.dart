@@ -21,6 +21,82 @@ class L10nEn extends L10n {
   String get foundation_resources_app_name => 'CogLog';
 
   @override
+  String get screen_feature_app_settings_back_semantics => 'Back';
+
+  @override
+  String get screen_feature_app_settings_debug_item => 'Debug';
+
+  @override
+  String get screen_feature_app_settings_title => 'App settings';
+
+  @override
+  String get screen_feature_debug_availability_error_label =>
+      'availability error';
+
+  @override
+  String get screen_feature_debug_back_semantics => 'Back';
+
+  @override
+  String get screen_feature_debug_backend_label => 'backend';
+
+  @override
+  String get screen_feature_debug_can_generate_label => 'can generate';
+
+  @override
+  String get screen_feature_debug_clear_logs => 'Clear logs';
+
+  @override
+  String get screen_feature_debug_empty_logs => 'No logs yet';
+
+  @override
+  String get screen_feature_debug_generate_error_label => 'generate error';
+
+  @override
+  String get screen_feature_debug_message_label => 'message';
+
+  @override
+  String get screen_feature_debug_no => 'No';
+
+  @override
+  String get screen_feature_debug_platform_notes_label => 'platform notes';
+
+  @override
+  String get screen_feature_debug_probe_skipped_label => 'probe skipped';
+
+  @override
+  String get screen_feature_debug_readiness_label => 'readiness';
+
+  @override
+  String get screen_feature_debug_reason_label => 'reason';
+
+  @override
+  String get screen_feature_debug_run_diagnose => 'Re-diagnose';
+
+  @override
+  String get screen_feature_debug_running => 'Diagnosing…';
+
+  @override
+  String get screen_feature_debug_sample_output_label => 'sample output';
+
+  @override
+  String get screen_feature_debug_section_availability => 'On-device LLM';
+
+  @override
+  String get screen_feature_debug_section_logs => 'App logs';
+
+  @override
+  String get screen_feature_debug_section_probe => 'Generation probe';
+
+  @override
+  String get screen_feature_debug_status_label => 'status';
+
+  @override
+  String get screen_feature_debug_title => 'Debug';
+
+  @override
+  String get screen_feature_debug_yes => 'Yes';
+
+  @override
   String get screen_feature_exercise_history_calories => 'Calories';
 
   @override
@@ -194,13 +270,15 @@ class L10nEn extends L10n {
       'Average speed (km/h)';
 
   @override
-  String get screen_feature_meter_capture_back => 'Back';
-
-  @override
   String get screen_feature_meter_capture_calories => 'Calories (kcal)';
 
   @override
-  String get screen_feature_meter_capture_capture_photo => 'Take photo';
+  String get screen_feature_meter_capture_camera_preview_failed =>
+      'Couldn\'t start the camera. Pick from your library or try again.';
+
+  @override
+  String get screen_feature_meter_capture_capture_failed =>
+      'Couldn\'t take the photo. Try the shutter again or pick from your library.';
 
   @override
   String get screen_feature_meter_capture_distance => 'Distance (km)';
@@ -235,10 +313,16 @@ class L10nEn extends L10n {
   String get screen_feature_meter_capture_recorded_at => 'Recorded at';
 
   @override
+  String get screen_feature_meter_capture_retake => 'Retake';
+
+  @override
   String get screen_feature_meter_capture_save => 'Save';
 
   @override
   String get screen_feature_meter_capture_save_failed => 'Failed to save';
+
+  @override
+  String get screen_feature_meter_capture_shutter => 'Shutter';
 
   @override
   String get screen_feature_meter_capture_title => 'Meter record';
@@ -285,6 +369,9 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_goal_label => 'Goal';
+
+  @override
+  String get screen_feature_top_settings_semantics => 'App settings';
 
   @override
   String get screen_feature_top_this_month => 'This month';

@@ -115,6 +115,156 @@ abstract class L10n {
   /// **'CogLog'**
   String get foundation_resources_app_name;
 
+  /// 戻るボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_app_settings_back_semantics;
+
+  /// デバッグ画面への項目
+  ///
+  /// In ja, this message translates to:
+  /// **'デバッグ'**
+  String get screen_feature_app_settings_debug_item;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'アプリ設定'**
+  String get screen_feature_app_settings_title;
+
+  /// availability 例外ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'availability error'**
+  String get screen_feature_debug_availability_error_label;
+
+  /// 戻るボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_debug_back_semantics;
+
+  /// backend ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'backend'**
+  String get screen_feature_debug_backend_label;
+
+  /// 生成可否ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'can generate'**
+  String get screen_feature_debug_can_generate_label;
+
+  /// ログ消去ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'ログを消去'**
+  String get screen_feature_debug_clear_logs;
+
+  /// ログ空表示
+  ///
+  /// In ja, this message translates to:
+  /// **'ログはまだありません'**
+  String get screen_feature_debug_empty_logs;
+
+  /// 生成例外ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'generate error'**
+  String get screen_feature_debug_generate_error_label;
+
+  /// message ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'message'**
+  String get screen_feature_debug_message_label;
+
+  /// 偽の表示
+  ///
+  /// In ja, this message translates to:
+  /// **'いいえ'**
+  String get screen_feature_debug_no;
+
+  /// platform notes ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'platform notes'**
+  String get screen_feature_debug_platform_notes_label;
+
+  /// プローブ省略理由ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'probe skipped'**
+  String get screen_feature_debug_probe_skipped_label;
+
+  /// readiness ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'readiness'**
+  String get screen_feature_debug_readiness_label;
+
+  /// reason ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'reason'**
+  String get screen_feature_debug_reason_label;
+
+  /// 診断再実行ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'再診断'**
+  String get screen_feature_debug_run_diagnose;
+
+  /// 診断中表示
+  ///
+  /// In ja, this message translates to:
+  /// **'診断中…'**
+  String get screen_feature_debug_running;
+
+  /// 生成本文ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'sample output'**
+  String get screen_feature_debug_sample_output_label;
+
+  /// 可用性セクション見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'端末上 LLM'**
+  String get screen_feature_debug_section_availability;
+
+  /// ログセクション見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'アプリログ'**
+  String get screen_feature_debug_section_logs;
+
+  /// 生成プローブ見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'生成プローブ'**
+  String get screen_feature_debug_section_probe;
+
+  /// status ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'status'**
+  String get screen_feature_debug_status_label;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'デバッグ'**
+  String get screen_feature_debug_title;
+
+  /// 真の表示
+  ///
+  /// In ja, this message translates to:
+  /// **'はい'**
+  String get screen_feature_debug_yes;
+
   /// リスト項目の消費カロリー
   ///
   /// In ja, this message translates to:
@@ -421,23 +571,23 @@ abstract class L10n {
   /// **'平均速度 (km/h)'**
   String get screen_feature_meter_capture_average_speed;
 
-  /// 2→1
-  ///
-  /// In ja, this message translates to:
-  /// **'戻る'**
-  String get screen_feature_meter_capture_back;
-
   /// 入力ラベル
   ///
   /// In ja, this message translates to:
   /// **'消費カロリー (kcal)'**
   String get screen_feature_meter_capture_calories;
 
-  /// カメラ撮影
+  /// プレビュー初期化失敗
   ///
   /// In ja, this message translates to:
-  /// **'撮影する'**
-  String get screen_feature_meter_capture_capture_photo;
+  /// **'カメラを開始できませんでした。ライブラリから選ぶか、しばらくしてから撮り直してください。'**
+  String get screen_feature_meter_capture_camera_preview_failed;
+
+  /// シャッター失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'撮影に失敗しました。もう一度シャッターを押すか、ライブラリから選んでください。'**
+  String get screen_feature_meter_capture_capture_failed;
 
   /// 入力ラベル
   ///
@@ -499,6 +649,12 @@ abstract class L10n {
   /// **'記録日時'**
   String get screen_feature_meter_capture_recorded_at;
 
+  /// 編集からカメラへ戻る
+  ///
+  /// In ja, this message translates to:
+  /// **'撮り直す'**
+  String get screen_feature_meter_capture_retake;
+
   /// 登録ボタン
   ///
   /// In ja, this message translates to:
@@ -510,6 +666,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'保存に失敗しました'**
   String get screen_feature_meter_capture_save_failed;
+
+  /// シャッターボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'シャッター'**
+  String get screen_feature_meter_capture_shutter;
 
   /// 画面タイトル
   ///
@@ -594,6 +756,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標'**
   String get screen_feature_top_goal_label;
+
+  /// ホーム右上の設定ボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'アプリ設定'**
+  String get screen_feature_top_settings_semantics;
 
   /// 集計期間
   ///

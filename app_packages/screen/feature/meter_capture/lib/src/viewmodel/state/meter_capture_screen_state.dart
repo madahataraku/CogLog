@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 
+import 'meter_capture_camera_ui.dart';
 import 'meter_capture_step.dart';
 
 /// メーター記録画面の可変状態。
@@ -35,6 +36,10 @@ final class MeterCaptureScreenState {
     this.recordedAtManuallySet = false,
     this.saveError = false,
     this.inputsInvalid = false,
+    this.cameraUi = MeterCaptureCameraUi.idle,
+    this.previewAspectRatio = 0.75,
+    this.captureError = false,
+    this.cameraSessionGeneration = 0,
   });
 
   /// 初期状態（1 ステップ目）。
@@ -91,6 +96,18 @@ final class MeterCaptureScreenState {
   /// 入力欄に解析できない文字列があるとき true。登録不可。
   final bool inputsInvalid;
 
+  /// アプリ内カメラ UI 状態。
+  final MeterCaptureCameraUi cameraUi;
+
+  /// プレビュー縦横比。
+  final double previewAspectRatio;
+
+  /// シャッター失敗表示。
+  final bool captureError;
+
+  /// タブ離脱などで増える世代。非同期完了の破棄判定に使う。
+  final int cameraSessionGeneration;
+
   /// 一部だけ差し替えた新しい状態を返す。
   ///
   /// Example:
@@ -124,6 +141,10 @@ final class MeterCaptureScreenState {
     bool? recordedAtManuallySet,
     bool? saveError,
     bool? inputsInvalid,
+    MeterCaptureCameraUi? cameraUi,
+    double? previewAspectRatio,
+    bool? captureError,
+    int? cameraSessionGeneration,
   }) => MeterCaptureScreenState(
     step: step ?? this.step,
     photoBytes: clearPhotoBytes ? null : (photoBytes ?? this.photoBytes),
@@ -151,5 +172,10 @@ final class MeterCaptureScreenState {
     recordedAtManuallySet: recordedAtManuallySet ?? this.recordedAtManuallySet,
     saveError: saveError ?? this.saveError,
     inputsInvalid: inputsInvalid ?? this.inputsInvalid,
+    cameraUi: cameraUi ?? this.cameraUi,
+    previewAspectRatio: previewAspectRatio ?? this.previewAspectRatio,
+    captureError: captureError ?? this.captureError,
+    cameraSessionGeneration:
+        cameraSessionGeneration ?? this.cameraSessionGeneration,
   );
 }

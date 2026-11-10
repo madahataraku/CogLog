@@ -1,12 +1,15 @@
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:riverpod/misc.dart';
+import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
+import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
 import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
@@ -17,6 +20,8 @@ import 'package:usecase_load_exercise_history_page/usecase_load_exercise_history
 import 'package:usecase_load_exercise_history_page_impl/usecase_load_exercise_history_page_impl.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_load_top_screen_impl/usecase_load_top_screen_impl.dart';
+import 'package:usecase_control_meter_in_app_camera/usecase_control_meter_in_app_camera.dart';
+import 'package:usecase_control_meter_in_app_camera_impl/usecase_control_meter_in_app_camera_impl.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_obtain_meter_photo_impl/usecase_obtain_meter_photo_impl.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
@@ -68,6 +73,13 @@ List<Override> usecaseOverrides({
     (ref) => GenerateTopAdviceUsecaseImpl(
       llm: ref.watch(onDeviceLlmProvider),
       picker: adviceTemplatePicker,
+      log: ref.watch(appLogStoreProvider),
+    ),
+  ),
+  DiagnoseOnDeviceLlmUsecase.provider.overrideWith(
+    (ref) => DiagnoseOnDeviceLlmUsecaseImpl(
+      llm: ref.watch(onDeviceLlmProvider),
+      log: ref.watch(appLogStoreProvider),
     ),
   ),
   LoadExerciseHistoryPageUsecase.provider.overrideWith(
@@ -82,6 +94,11 @@ List<Override> usecaseOverrides({
   ),
   ObtainMeterPhotoUsecase.provider.overrideWith(
     (ref) => ObtainMeterPhotoUsecaseImpl(
+      source: ref.watch(meterPhotoSourceProvider),
+    ),
+  ),
+  ControlMeterInAppCameraUsecase.provider.overrideWith(
+    (ref) => ControlMeterInAppCameraUsecaseImpl(
       source: ref.watch(meterPhotoSourceProvider),
     ),
   ),

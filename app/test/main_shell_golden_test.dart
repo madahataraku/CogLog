@@ -84,7 +84,9 @@ Future<void> _pumpTabGolden(
   try {
     await pumpTopScreen(tester);
     await tester.tap(find.text(tab).last);
-    await tester.pumpAndSettle();
+    // メーター記録のカメラ初期化中は progress が回り続けるため settle しない。
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     await expectLater(find.byType(MainShellScreen), matchesGoldenFile(golden));
   } finally {
     debugDefaultTargetPlatformOverride = null;

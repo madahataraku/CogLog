@@ -75,4 +75,14 @@ extension TopScreenViewModelActions on TopScreenViewModel {
       prepareOnDeviceLlmModelUsecase: prepareOnDeviceLlmModelUsecase,
     ).execute();
   }
+
+  /// アプリ設定を開く。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onOpenAppSettings();
+  /// ```
+  void onOpenAppSettings() {
+    OnOpenAppSettingsDelegate(navigation: navigation).execute();
+  }
 }

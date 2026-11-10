@@ -23,7 +23,13 @@ class MeterCaptureScreenBody extends ConsumerWidget {
   /// ```dart
   /// const MeterCaptureScreenBody();
   /// ```
-  const MeterCaptureScreenBody({super.key});
+  const MeterCaptureScreenBody({
+    this.debugCameraPlaceholder = false,
+    super.key,
+  });
+
+  /// Golden 用にカメラプレビューを色枠へ差し替える。
+  final bool debugCameraPlaceholder;
 
   /// State と Entity を見て Step1 / Step2 を出す。
   ///
@@ -38,16 +44,16 @@ class MeterCaptureScreenBody extends ConsumerWidget {
 
     return FScaffold(
       header: FHeader(title: Text(strings.screen_feature_meter_capture_title)),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: switch (state.step) {
-          MeterCaptureStep.photo => MeterCaptureStep1View(state: state),
-          MeterCaptureStep.edit => MeterCaptureStep2View(
-            state: state,
-            entity: entity,
-          ),
-        },
-      ),
+      child: switch (state.step) {
+        MeterCaptureStep.photo => MeterCaptureStep1View(
+          state: state,
+          debugPlaceholder: debugCameraPlaceholder,
+        ),
+        MeterCaptureStep.edit => SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: MeterCaptureStep2View(state: state, entity: entity),
+        ),
+      },
     );
   }
 }

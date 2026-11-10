@@ -15,8 +15,11 @@ dependencies:
   infra_health_workout: any
   infra_meter_photo: any
   infra_meter_reading: any
+  foundation_app_log: any
   infra_on_device_llm: any
   riverpod: any
+  usecase_diagnose_on_device_llm: any
+  usecase_diagnose_on_device_llm_impl: any
   usecase_generate_top_advice: any
   usecase_generate_top_advice_impl: any
   usecase_load_daily_goal: any
@@ -27,6 +30,8 @@ dependencies:
   usecase_load_exercise_history_page_impl: any
   usecase_load_top_screen: any
   usecase_load_top_screen_impl: any
+  usecase_control_meter_in_app_camera: any
+  usecase_control_meter_in_app_camera_impl: any
   usecase_obtain_meter_photo: any
   usecase_obtain_meter_photo_impl: any
   usecase_on_device_llm_guidance: any

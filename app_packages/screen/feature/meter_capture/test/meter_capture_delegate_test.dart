@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
@@ -8,6 +9,7 @@ import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_back_to_s
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_capture_photo_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_field_changed_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_save_meter_capture_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_camera_ui.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_screen_state.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_step.dart';
 import 'package:screen_navigation/screen_navigation.dart';
@@ -30,6 +32,21 @@ final class _Obtain implements ObtainMeterPhotoUsecase {
     calls += 1;
     lastSource = request.source;
     return result;
+  }
+}
+
+final class _DeferredObtain implements ObtainMeterPhotoUsecase {
+  _DeferredObtain(this.pending);
+
+  final Completer<ObtainMeterPhotoResult> pending;
+  var calls = 0;
+
+  @override
+  Future<ObtainMeterPhotoResult> execute(
+    ObtainMeterPhotoRequest request,
+  ) async {
+    calls += 1;
+    return pending.future;
   }
 }
 
@@ -69,6 +86,12 @@ final class _Nav implements ScreenNavigation {
   void openExerciseHistoryDetail({required String id}) {}
 
   @override
+  void openAppSettings() {}
+
+  @override
+  void openDebug() {}
+
+  @override
   void pop() {}
 
   @override
@@ -88,7 +111,19 @@ void main() {
     await state.close();
   });
 
-  test('D1: 撮影キャンセルは State を変えない', () async {
+  Future<void> readyCamera() async {
+    await state.updateWithLock((_, emitter) async {
+      await emitter.emit(
+        const MeterCaptureScreenState(
+          step: MeterCaptureStep.photo,
+          cameraUi: MeterCaptureCameraUi.ready,
+        ),
+      );
+    });
+  }
+
+  test('D1: 撮影 null は captureError', () async {
+    await readyCamera();
     final obtain = _Obtain(const ObtainMeterPhotoCancelled());
     final read = _Read(
       const ReadMeterPanelResult(
@@ -108,10 +143,47 @@ void main() {
     expect(read.calls, 0);
     expect(state.state.step, MeterCaptureStep.photo);
     expect(state.state.photoBytes, isNull);
-    expect(state.state.permissionDeniedKind, isNull);
+    expect(state.state.captureError, isTrue);
+  });
+
+  test('離脱で世代が進むと撮影成功を捨てる', () async {
+    await readyCamera();
+    final pending = Completer<ObtainMeterPhotoResult>();
+    final obtain = _DeferredObtain(pending);
+    final read = _Read(
+      const ReadMeterPanelResult(
+        values: MeterReadingValues(),
+        averageSpeedFromPanel: false,
+      ),
+    );
+
+    final capture = OnCapturePhotoDelegate(
+      state: state,
+      obtainMeterPhotoUsecase: obtain,
+      readMeterPanelUsecase: read,
+    ).execute();
+
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          cameraSessionGeneration: current.cameraSessionGeneration + 1,
+        ),
+      );
+    });
+    pending.complete(
+      ObtainMeterPhotoSuccess(bytes: Uint8List.fromList(const [1, 2, 3])),
+    );
+    await capture;
+
+    expect(obtain.calls, 1);
+    expect(read.calls, 0);
+    expect(state.state.step, MeterCaptureStep.photo);
+    expect(state.state.photoBytes, isNull);
+    expect(state.state.captureError, isFalse);
   });
 
   test('D2: 権限拒否は permissionDeniedKind=camera', () async {
+    await readyCamera();
     final obtain = _Obtain(
       const ObtainMeterPhotoPermissionDenied(MeterPhotoPermissionKind.camera),
     );
@@ -249,6 +321,7 @@ void main() {
   });
 
   test('撮影成功で読み取りし edit へ進む', () async {
+    await readyCamera();
     final obtain = _Obtain(
       ObtainMeterPhotoSuccess(bytes: Uint8List.fromList(const [9, 9])),
     );

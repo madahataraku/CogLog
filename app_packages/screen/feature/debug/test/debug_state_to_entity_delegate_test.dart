@@ -1,0 +1,47 @@
+import 'package:foundation_app_log/foundation_app_log.dart';
+import 'package:infra_on_device_llm/infra_on_device_llm.dart';
+import 'package:screen_feature_debug/src/viewmodel/delegate/debug_state_to_entity_delegate.dart';
+import 'package:screen_feature_debug/src/viewmodel/state/debug_screen_state.dart';
+import 'package:test/test.dart';
+import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
+
+void main() {
+  test('結果無しはハイフンと空ログ', () {
+    final entity = const DebugStateToEntityDelegate().execute(
+      DebugScreenState.initial,
+    );
+    expect(entity.readiness, '-');
+    expect(entity.canGenerate, isNull);
+    expect(entity.logLines, isEmpty);
+  });
+
+  test('結果とログを写す', () {
+    final entity = const DebugStateToEntityDelegate().execute(
+      DebugScreenState(
+        running: false,
+        result: const DiagnoseOnDeviceLlmResult(
+          snapshot: OnDeviceLlmAvailabilitySnapshot(
+            readiness: OnDeviceLlmReadiness.ready,
+            status: 'available',
+            reason: 'ready',
+            message: 'ok',
+          ),
+          canGenerate: true,
+          sampleOutput: 'hi',
+        ),
+        logs: [
+          AppLogEntry(
+            at: DateTime.utc(2026, 1, 1, 12, 30, 5),
+            level: AppLogLevel.info,
+            tag: 't',
+            message: 'm',
+          ),
+        ],
+      ),
+    );
+    expect(entity.readiness, 'ready');
+    expect(entity.canGenerate, isTrue);
+    expect(entity.sampleOutput, 'hi');
+    expect(entity.logLines.single, contains('t: m'));
+  });
+}

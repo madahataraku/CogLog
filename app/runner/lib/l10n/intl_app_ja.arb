@@ -17,6 +17,106 @@
   "@foundation_resources_app_name": {
     "description": "アプリケーション名"
   },
+  "screen_feature_app_settings_back_semantics": "戻る",
+  "@screen_feature_app_settings_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_app_settings_debug_item": "デバッグ",
+  "@screen_feature_app_settings_debug_item": {
+    "description": "デバッグ画面への項目"
+  },
+  "screen_feature_app_settings_title": "アプリ設定",
+  "@screen_feature_app_settings_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_debug_availability_error_label": "availability error",
+  "@screen_feature_debug_availability_error_label": {
+    "description": "availability 例外ラベル"
+  },
+  "screen_feature_debug_back_semantics": "戻る",
+  "@screen_feature_debug_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_debug_backend_label": "backend",
+  "@screen_feature_debug_backend_label": {
+    "description": "backend ラベル"
+  },
+  "screen_feature_debug_can_generate_label": "can generate",
+  "@screen_feature_debug_can_generate_label": {
+    "description": "生成可否ラベル"
+  },
+  "screen_feature_debug_clear_logs": "ログを消去",
+  "@screen_feature_debug_clear_logs": {
+    "description": "ログ消去ボタン"
+  },
+  "screen_feature_debug_empty_logs": "ログはまだありません",
+  "@screen_feature_debug_empty_logs": {
+    "description": "ログ空表示"
+  },
+  "screen_feature_debug_generate_error_label": "generate error",
+  "@screen_feature_debug_generate_error_label": {
+    "description": "生成例外ラベル"
+  },
+  "screen_feature_debug_message_label": "message",
+  "@screen_feature_debug_message_label": {
+    "description": "message ラベル"
+  },
+  "screen_feature_debug_no": "いいえ",
+  "@screen_feature_debug_no": {
+    "description": "偽の表示"
+  },
+  "screen_feature_debug_platform_notes_label": "platform notes",
+  "@screen_feature_debug_platform_notes_label": {
+    "description": "platform notes ラベル"
+  },
+  "screen_feature_debug_probe_skipped_label": "probe skipped",
+  "@screen_feature_debug_probe_skipped_label": {
+    "description": "プローブ省略理由ラベル"
+  },
+  "screen_feature_debug_readiness_label": "readiness",
+  "@screen_feature_debug_readiness_label": {
+    "description": "readiness ラベル"
+  },
+  "screen_feature_debug_reason_label": "reason",
+  "@screen_feature_debug_reason_label": {
+    "description": "reason ラベル"
+  },
+  "screen_feature_debug_run_diagnose": "再診断",
+  "@screen_feature_debug_run_diagnose": {
+    "description": "診断再実行ボタン"
+  },
+  "screen_feature_debug_running": "診断中…",
+  "@screen_feature_debug_running": {
+    "description": "診断中表示"
+  },
+  "screen_feature_debug_sample_output_label": "sample output",
+  "@screen_feature_debug_sample_output_label": {
+    "description": "生成本文ラベル"
+  },
+  "screen_feature_debug_section_availability": "端末上 LLM",
+  "@screen_feature_debug_section_availability": {
+    "description": "可用性セクション見出し"
+  },
+  "screen_feature_debug_section_logs": "アプリログ",
+  "@screen_feature_debug_section_logs": {
+    "description": "ログセクション見出し"
+  },
+  "screen_feature_debug_section_probe": "生成プローブ",
+  "@screen_feature_debug_section_probe": {
+    "description": "生成プローブ見出し"
+  },
+  "screen_feature_debug_status_label": "status",
+  "@screen_feature_debug_status_label": {
+    "description": "status ラベル"
+  },
+  "screen_feature_debug_title": "デバッグ",
+  "@screen_feature_debug_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_debug_yes": "はい",
+  "@screen_feature_debug_yes": {
+    "description": "真の表示"
+  },
   "screen_feature_exercise_history_calories": "消費カロリー",
   "@screen_feature_exercise_history_calories": {
     "description": "リスト項目の消費カロリー"
@@ -229,17 +329,17 @@
   "@screen_feature_meter_capture_average_speed": {
     "description": "入力ラベル"
   },
-  "screen_feature_meter_capture_back": "戻る",
-  "@screen_feature_meter_capture_back": {
-    "description": "2→1"
-  },
   "screen_feature_meter_capture_calories": "消費カロリー (kcal)",
   "@screen_feature_meter_capture_calories": {
     "description": "入力ラベル"
   },
-  "screen_feature_meter_capture_capture_photo": "撮影する",
-  "@screen_feature_meter_capture_capture_photo": {
-    "description": "カメラ撮影"
+  "screen_feature_meter_capture_camera_preview_failed": "カメラを開始できませんでした。ライブラリから選ぶか、しばらくしてから撮り直してください。",
+  "@screen_feature_meter_capture_camera_preview_failed": {
+    "description": "プレビュー初期化失敗"
+  },
+  "screen_feature_meter_capture_capture_failed": "撮影に失敗しました。もう一度シャッターを押すか、ライブラリから選んでください。",
+  "@screen_feature_meter_capture_capture_failed": {
+    "description": "シャッター失敗"
   },
   "screen_feature_meter_capture_distance": "走行距離 (km)",
   "@screen_feature_meter_capture_distance": {
@@ -281,6 +381,10 @@
   "@screen_feature_meter_capture_recorded_at": {
     "description": "記録日時"
   },
+  "screen_feature_meter_capture_retake": "撮り直す",
+  "@screen_feature_meter_capture_retake": {
+    "description": "編集からカメラへ戻る"
+  },
   "screen_feature_meter_capture_save": "登録",
   "@screen_feature_meter_capture_save": {
     "description": "登録ボタン"
@@ -288,6 +392,10 @@
   "screen_feature_meter_capture_save_failed": "保存に失敗しました",
   "@screen_feature_meter_capture_save_failed": {
     "description": "保存失敗"
+  },
+  "screen_feature_meter_capture_shutter": "シャッター",
+  "@screen_feature_meter_capture_shutter": {
+    "description": "シャッターボタンの代替テキスト"
   },
   "screen_feature_meter_capture_title": "メーター記録",
   "@screen_feature_meter_capture_title": {
@@ -344,6 +452,10 @@
   "screen_feature_top_goal_label": "目標",
   "@screen_feature_top_goal_label": {
     "description": "目標のラベル"
+  },
+  "screen_feature_top_settings_semantics": "アプリ設定",
+  "@screen_feature_top_settings_semantics": {
+    "description": "ホーム右上の設定ボタンの代替テキスト"
   },
   "screen_feature_top_this_month": "今月",
   "@screen_feature_top_this_month": {

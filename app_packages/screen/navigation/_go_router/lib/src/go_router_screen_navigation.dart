@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:screen_feature_app_settings/screen_feature_app_settings.dart';
+import 'package:screen_feature_debug/screen_feature_debug.dart';
 import 'package:screen_feature_exercise_history/screen_feature_exercise_history.dart';
 import 'package:screen_feature_exercise_history_detail/screen_feature_exercise_history_detail.dart';
 import 'package:screen_feature_goal_settings/screen_feature_goal_settings.dart';
@@ -47,6 +49,18 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                 GoRoute(
                   path: '/',
                   builder: (context, state) => const TopScreen(),
+                  routes: [
+                    GoRoute(
+                      path: 'settings',
+                      builder: (context, state) => const AppSettingsScreen(),
+                      routes: [
+                        GoRoute(
+                          path: 'debug',
+                          builder: (context, state) => const DebugScreen(),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -111,6 +125,28 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   @override
   void openExerciseHistoryDetail({required String id}) {
     router.push('/exercise-history/detail/$id');
+  }
+
+  /// アプリ設定をホームタブのスタックへ積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openAppSettings();
+  /// ```
+  @override
+  void openAppSettings() {
+    router.push('/settings');
+  }
+
+  /// デバッグ画面を積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openDebug();
+  /// ```
+  @override
+  void openDebug() {
+    router.push('/settings/debug');
   }
 
   /// 現在のスタックを 1 つ戻す。

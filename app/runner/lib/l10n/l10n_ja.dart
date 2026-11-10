@@ -21,6 +21,82 @@ class L10nJa extends L10n {
   String get foundation_resources_app_name => 'CogLog';
 
   @override
+  String get screen_feature_app_settings_back_semantics => '戻る';
+
+  @override
+  String get screen_feature_app_settings_debug_item => 'デバッグ';
+
+  @override
+  String get screen_feature_app_settings_title => 'アプリ設定';
+
+  @override
+  String get screen_feature_debug_availability_error_label =>
+      'availability error';
+
+  @override
+  String get screen_feature_debug_back_semantics => '戻る';
+
+  @override
+  String get screen_feature_debug_backend_label => 'backend';
+
+  @override
+  String get screen_feature_debug_can_generate_label => 'can generate';
+
+  @override
+  String get screen_feature_debug_clear_logs => 'ログを消去';
+
+  @override
+  String get screen_feature_debug_empty_logs => 'ログはまだありません';
+
+  @override
+  String get screen_feature_debug_generate_error_label => 'generate error';
+
+  @override
+  String get screen_feature_debug_message_label => 'message';
+
+  @override
+  String get screen_feature_debug_no => 'いいえ';
+
+  @override
+  String get screen_feature_debug_platform_notes_label => 'platform notes';
+
+  @override
+  String get screen_feature_debug_probe_skipped_label => 'probe skipped';
+
+  @override
+  String get screen_feature_debug_readiness_label => 'readiness';
+
+  @override
+  String get screen_feature_debug_reason_label => 'reason';
+
+  @override
+  String get screen_feature_debug_run_diagnose => '再診断';
+
+  @override
+  String get screen_feature_debug_running => '診断中…';
+
+  @override
+  String get screen_feature_debug_sample_output_label => 'sample output';
+
+  @override
+  String get screen_feature_debug_section_availability => '端末上 LLM';
+
+  @override
+  String get screen_feature_debug_section_logs => 'アプリログ';
+
+  @override
+  String get screen_feature_debug_section_probe => '生成プローブ';
+
+  @override
+  String get screen_feature_debug_status_label => 'status';
+
+  @override
+  String get screen_feature_debug_title => 'デバッグ';
+
+  @override
+  String get screen_feature_debug_yes => 'はい';
+
+  @override
   String get screen_feature_exercise_history_calories => '消費カロリー';
 
   @override
@@ -181,13 +257,15 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_average_speed => '平均速度 (km/h)';
 
   @override
-  String get screen_feature_meter_capture_back => '戻る';
-
-  @override
   String get screen_feature_meter_capture_calories => '消費カロリー (kcal)';
 
   @override
-  String get screen_feature_meter_capture_capture_photo => '撮影する';
+  String get screen_feature_meter_capture_camera_preview_failed =>
+      'カメラを開始できませんでした。ライブラリから選ぶか、しばらくしてから撮り直してください。';
+
+  @override
+  String get screen_feature_meter_capture_capture_failed =>
+      '撮影に失敗しました。もう一度シャッターを押すか、ライブラリから選んでください。';
 
   @override
   String get screen_feature_meter_capture_distance => '走行距離 (km)';
@@ -221,10 +299,16 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_recorded_at => '記録日時';
 
   @override
+  String get screen_feature_meter_capture_retake => '撮り直す';
+
+  @override
   String get screen_feature_meter_capture_save => '登録';
 
   @override
   String get screen_feature_meter_capture_save_failed => '保存に失敗しました';
+
+  @override
+  String get screen_feature_meter_capture_shutter => 'シャッター';
 
   @override
   String get screen_feature_meter_capture_title => 'メーター記録';
@@ -270,6 +354,9 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_goal_label => '目標';
+
+  @override
+  String get screen_feature_top_settings_semantics => 'アプリ設定';
 
   @override
   String get screen_feature_top_this_month => '今月';

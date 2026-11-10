@@ -4,9 +4,11 @@ import 'package:data_database/data_database.dart';
 import 'package:data_injection/data_injection.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_injection/infra_injection.dart';
+import 'package:infra_meter_photo_testing/infra_meter_photo_testing.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
 import 'package:screen_injection/screen_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +16,8 @@ import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_imp
 import 'package:usecase_injection/usecase_injection.dart';
 
 import 'package:app/main.dart';
+
+const _advisorTones = ['fun', 'confused', 'happy', 'realized'];
 
 /// トップ画面を、テスト用の履歴付きで起動する。
 Future<ScreenGraph> pumpTopScreen(
@@ -42,7 +46,11 @@ Future<ScreenGraph> pumpTopScreen(
         ),
         // Widget テストの既定 OS は Android。本番 DI の FlutterDeviceAi は
         // readiness がチャネル待ちで止まるため、固定 Fake に差し替える。
-        ...infraOverrides(onDeviceLlm: FakeOnDeviceLlm(available: false)),
+        // メーター写真も実カメラ初期化で progress が回り続けるため Fake にする。
+        ...infraOverrides(
+          onDeviceLlm: FakeOnDeviceLlm(available: false),
+          meterPhotoSource: FakeMeterPhotoSource(),
+        ),
         ...usecaseOverrides(
           adviceTemplatePicker: const FixedAdviceTemplatePicker(),
         ),
@@ -52,7 +60,22 @@ Future<ScreenGraph> pumpTopScreen(
     ),
   );
   await tester.pumpAndSettle();
+  await _precacheAdvisorImages(tester);
+  await tester.pumpAndSettle();
   return screens;
+}
+
+/// アドバイザー PNG を先に読み、Golden のレースを防ぐ。
+Future<void> _precacheAdvisorImages(WidgetTester tester) async {
+  final context = tester.element(find.byType(Application));
+  await tester.runAsync(() async {
+    for (final tone in _advisorTones) {
+      await precacheImage(
+        AssetImage('assets/advisor/$tone.png', package: 'screen_feature_top'),
+        context,
+      );
+    }
+  });
 }
 
 Future<SharedPreferences> _newPreferences() async {
