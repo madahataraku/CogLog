@@ -198,6 +198,29 @@ void main() {
     });
 
     // テスト対象:
+    // AchievementLocalDate.calendarDaysBetween
+    //
+    // テスト内容:
+    // 絶対時刻差が 23 時間でも、年月日が 1 日進めば暦日差は 1 になる。
+    test('暦日差は絶対時刻が 23 時間でも年月日差を返す', () {
+      final dayBefore = DateTime(2026, 3, 7);
+      final almostNextLocalMidnight = dayBefore.add(const Duration(hours: 23));
+      expect(
+        almostNextLocalMidnight.difference(dayBefore).inDays,
+        0,
+        reason: '前提: 23 時間差の inDays は 0 であること',
+      );
+      expect(
+        AchievementLocalDate.calendarDaysBetween(
+          dayBefore,
+          DateTime(2026, 3, 8),
+        ),
+        1,
+        reason: '隣接する年月日の暦日差は 1 であること',
+      );
+    });
+
+    // テスト対象:
     // AchievementEvaluator.evaluate / leapDay
     //
     // テスト内容:

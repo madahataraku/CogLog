@@ -47,13 +47,18 @@ final class OnRetryDelegate {
   /// await delegate.execute();
   /// ```
   Future<void> execute() async {
-    final shouldLoad = await state.updateWithLock((current, emitter) async {
-      if (current is! AchievementScreenFailed) {
-        return false;
-      }
-      await emitter.emit(const AchievementScreenLoading());
-      return true;
-    });
+    final bool shouldLoad;
+    try {
+      shouldLoad = await state.updateWithLock((current, emitter) async {
+        if (current is! AchievementScreenFailed) {
+          return false;
+        }
+        await emitter.emit(const AchievementScreenLoading());
+        return true;
+      });
+    } on StateStreamClosedException {
+      return;
+    }
     if (!shouldLoad) {
       return;
     }

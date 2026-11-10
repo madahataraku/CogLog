@@ -125,7 +125,7 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_achievement_condition_gap_restart_30 =>
-      'Resume exercise after a 30+ day gap';
+      'Resume exercise after more than 30 days without exercise';
 
   @override
   String get screen_feature_achievement_condition_leap_day =>

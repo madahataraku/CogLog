@@ -312,7 +312,10 @@ final class _Metrics {
     var best = 1;
     var run = 1;
     for (var i = 1; i < sortedDays.length; i++) {
-      final gap = sortedDays[i].difference(sortedDays[i - 1]).inDays;
+      final gap = AchievementLocalDate.calendarDaysBetween(
+        sortedDays[i - 1],
+        sortedDays[i],
+      );
       if (gap == 1) {
         run += 1;
         if (run > best) {
@@ -377,7 +380,10 @@ final class _Metrics {
     }
     var maxGap = 0;
     for (var i = 1; i < sortedDays.length; i++) {
-      final gap = sortedDays[i].difference(sortedDays[i - 1]).inDays;
+      final gap = AchievementLocalDate.calendarDaysBetween(
+        sortedDays[i - 1],
+        sortedDays[i],
+      );
       if (gap > maxGap) {
         maxGap = gap;
       }

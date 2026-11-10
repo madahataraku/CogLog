@@ -87,7 +87,7 @@ condition_best_distance,2件目以降の運動で過去最高走行距離を更�
 name_best_duration,自己ベスト更新,New personal best,アチーブメント名 best_duration
 condition_best_duration,2件目以降の運動で過去最高運動時間を更新する,Beat your best duration on a later ride,達成条件 best_duration
 name_gap_restart_30,復活のライダー,Comeback rider,アチーブメント名 gap_restart_30
-condition_gap_restart_30,記録日間隔が30日超の空白のあと運動を再開する,Resume exercise after a 30+ day gap,達成条件 gap_restart_30
+condition_gap_restart_30,記録日間隔が30日超の空白のあと運動を再開する,Resume exercise after more than 30 days without exercise,達成条件 gap_restart_30
 name_leap_day,うるう年ライダー,Leap day rider,アチーブメント名 leap_day
 condition_leap_day,2月29日に運動する,Exercise on February 29,達成条件 leap_day
 name_day_11_11,ゾロ目記念日,Double-11 day,アチーブメント名 day_11_11

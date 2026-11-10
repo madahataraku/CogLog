@@ -121,7 +121,7 @@
   "@screen_feature_achievement_condition_first_record": {
     "description": "達成条件 first_record"
   },
-  "screen_feature_achievement_condition_gap_restart_30": "Resume exercise after a 30+ day gap",
+  "screen_feature_achievement_condition_gap_restart_30": "Resume exercise after more than 30 days without exercise",
   "@screen_feature_achievement_condition_gap_restart_30": {
     "description": "達成条件 gap_restart_30"
   },

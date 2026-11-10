@@ -54,4 +54,23 @@ final class AchievementLocalDate {
     final sorted = days.toList()..sort();
     return sorted;
   }
+
+  /// 現地の年月日だけを持つ [a] と [b] の暦日差を返す。
+  ///
+  /// DST で 1 日が 23/25 時間でも、壁時計の日付差になる。
+  ///
+  /// Example:
+  /// ```dart
+  /// AchievementLocalDate.calendarDaysBetween(
+  ///   DateTime(2026, 3, 7),
+  ///   DateTime(2026, 3, 8),
+  /// );
+  /// ```
+  static int calendarDaysBetween(DateTime a, DateTime b) {
+    return DateTime.utc(
+      b.year,
+      b.month,
+      b.day,
+    ).difference(DateTime.utc(a.year, a.month, a.day)).inDays;
+  }
 }
