@@ -12,6 +12,9 @@ workspace:
   - app/runner
   - app_packages/data/database
   - app_packages/data/injection
+  - app_packages/data/repository/achievement
+  - app_packages/data/repository/achievement/_impl
+  - app_packages/data/repository/achievement/_testing
   - app_packages/data/repository/daily_goal
   - app_packages/data/repository/daily_goal/_impl
   - app_packages/data/repository/daily_goal/_testing
@@ -74,6 +77,8 @@ workspace:
   - app_packages/screen/injection
   - app_packages/screen/navigation
   - app_packages/screen/navigation/_go_router
+  - app_packages/usecase/evaluate_achievements
+  - app_packages/usecase/evaluate_achievements/_impl
   - app_packages/usecase/evaluate_daily_goal_auto_update
   - app_packages/usecase/evaluate_daily_goal_auto_update/_impl
   - app_packages/usecase/diagnose_on_device_llm
@@ -81,6 +86,8 @@ workspace:
   - app_packages/usecase/generate_top_advice
   - app_packages/usecase/generate_top_advice/_impl
   - app_packages/usecase/injection
+  - app_packages/usecase/load_achievements
+  - app_packages/usecase/load_achievements/_impl
   - app_packages/usecase/load_daily_goal
   - app_packages/usecase/load_daily_goal/_impl
   - app_packages/usecase/load_exercise_history_detail

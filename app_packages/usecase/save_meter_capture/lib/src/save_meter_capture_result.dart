@@ -1,3 +1,4 @@
+import 'package:domain_achievement/domain_achievement.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 
 import 'save_meter_capture_outcome.dart';
@@ -20,6 +21,7 @@ final class SaveMeterCaptureResult {
     this.history,
     this.healthWriteSucceeded = false,
     this.goalAutoUpdated = false,
+    this.newlyUnlockedAchievements = const [],
   });
 
   /// 成否区分。
@@ -33,4 +35,7 @@ final class SaveMeterCaptureResult {
 
   /// 保存後の目標自動更新が適用されたか。
   final bool goalAutoUpdated;
+
+  /// 保存直後の評価でトースト対象となった新規獲得。評価失敗時は空。
+  final List<AchievementUnlock> newlyUnlockedAchievements;
 }
