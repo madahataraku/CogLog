@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
+import 'package:infra_app_runtime_info_mobile/infra_app_runtime_info_mobile.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_app_settings_mobile/infra_app_settings_mobile.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
@@ -52,6 +54,9 @@ List<Override> infraOverrides({
   ),
   appSettingsOpenerProvider.overrideWith(
     (ref) => const AppSettingsPackageOpener(),
+  ),
+  AppRuntimeInfoReader.provider.overrideWith(
+    (ref) => const PackageDeviceAppRuntimeInfoReader(),
   ),
   OssLicenseCatalog.provider.overrideWith(
     (ref) => const GeneratedOssLicenseCatalog(),

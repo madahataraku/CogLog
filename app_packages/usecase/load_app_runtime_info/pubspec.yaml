@@ -1,0 +1,15 @@
+name: usecase_load_app_runtime_info
+description: Load app runtime info for settings footer.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_app_runtime_info: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

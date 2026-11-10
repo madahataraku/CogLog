@@ -68,9 +68,29 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_app_settings_debug_item;
       },
+      'screen_feature_app_settings_info_loading': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_info_loading;
+      },
+      'screen_feature_app_settings_info_unavailable': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_info_unavailable;
+      },
+      'screen_feature_app_settings_licenses_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_licenses_item;
+      },
+      'screen_feature_app_settings_os_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_os_label;
+      },
       'screen_feature_app_settings_title': (source) {
         // No Placeholders
         return l10n.screen_feature_app_settings_title;
+      },
+      'screen_feature_app_settings_version_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_version_label;
       },
       'screen_feature_debug_availability_error_label': (source) {
         // No Placeholders
@@ -444,6 +464,22 @@ final class L10nHelper {
       'screen_feature_meter_capture_title': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_title;
+      },
+      'screen_feature_oss_licenses_back_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_oss_licenses_back_semantics;
+      },
+      'screen_feature_oss_licenses_detail_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_oss_licenses_detail_title;
+      },
+      'screen_feature_oss_licenses_empty': (source) {
+        // No Placeholders
+        return l10n.screen_feature_oss_licenses_empty;
+      },
+      'screen_feature_oss_licenses_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_oss_licenses_title;
       },
       'screen_feature_top_achievement_title': (source) {
         // No Placeholders

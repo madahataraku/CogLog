@@ -61,11 +61,11 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                               const OssLicensesScreen(),
                           routes: [
                             GoRoute(
-                              path: 'detail/:packageName',
+                              path: 'detail',
                               builder: (context, state) =>
                                   OssLicenseDetailScreen(
                                     packageName:
-                                        state.pathParameters['packageName']!,
+                                        state.uri.queryParameters['name'] ?? '',
                                   ),
                             ),
                           ],
@@ -184,7 +184,12 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   /// ```
   @override
   void openOssLicenseDetail({required String packageName}) {
-    router.push('/settings/licenses/detail/$packageName');
+    router.push(
+      Uri(
+        path: '/settings/licenses/detail',
+        queryParameters: {'name': packageName},
+      ).toString(),
+    );
   }
 
   /// 現在のスタックを 1 つ戻す。

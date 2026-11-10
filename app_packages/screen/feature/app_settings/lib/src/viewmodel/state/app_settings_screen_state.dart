@@ -1,18 +1,26 @@
-/// アプリ設定画面の状態（表示項目は固定のため空）。
+import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
+
+/// アプリ設定画面の読込状態と実行情報。
 ///
 /// Example:
 /// ```dart
 /// AppSettingsScreenState.initial;
 /// ```
 final class AppSettingsScreenState {
-  /// 初期状態を作る。
+  /// [loading] 中は [info] をまだ確定させない。
   ///
   /// Example:
   /// ```dart
-  /// AppSettingsScreenState.initial;
+  /// const AppSettingsScreenState(loading: true, info: null);
   /// ```
-  const AppSettingsScreenState();
+  const AppSettingsScreenState({required this.loading, this.info});
 
   /// 初期状態。
-  static const initial = AppSettingsScreenState();
+  static const initial = AppSettingsScreenState(loading: true);
+
+  /// 実行情報の読込中なら true。
+  final bool loading;
+
+  /// 取得できたときのアプリ実行情報。
+  final AppRuntimeInfo? info;
 }

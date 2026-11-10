@@ -11,6 +11,7 @@ dependencies:
   data_repository_daily_goal: any
   data_repository_exercise_history: any
   data_repository_top_screen_metric: any
+  infra_app_runtime_info: any
   infra_app_settings: any
   infra_health_workout: any
   infra_meter_photo: any
@@ -23,6 +24,8 @@ dependencies:
   usecase_diagnose_on_device_llm_impl: any
   usecase_generate_top_advice: any
   usecase_generate_top_advice_impl: any
+  usecase_load_app_runtime_info: any
+  usecase_load_app_runtime_info_impl: any
   usecase_load_daily_goal: any
   usecase_load_daily_goal_impl: any
   usecase_load_exercise_history_detail: any

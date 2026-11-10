@@ -27,7 +27,22 @@ class L10nJa extends L10n {
   String get screen_feature_app_settings_debug_item => 'デバッグ';
 
   @override
+  String get screen_feature_app_settings_info_loading => '…';
+
+  @override
+  String get screen_feature_app_settings_info_unavailable => '—';
+
+  @override
+  String get screen_feature_app_settings_licenses_item => 'ライセンス';
+
+  @override
+  String get screen_feature_app_settings_os_label => 'OS';
+
+  @override
   String get screen_feature_app_settings_title => 'アプリ設定';
+
+  @override
+  String get screen_feature_app_settings_version_label => 'バージョン';
 
   @override
   String get screen_feature_debug_availability_error_label =>
@@ -315,6 +330,18 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_meter_capture_title => 'メーター記録';
+
+  @override
+  String get screen_feature_oss_licenses_back_semantics => '戻る';
+
+  @override
+  String get screen_feature_oss_licenses_detail_title => 'ライセンス詳細';
+
+  @override
+  String get screen_feature_oss_licenses_empty => '表示できるライセンスがありません。';
+
+  @override
+  String get screen_feature_oss_licenses_title => 'ライセンス';
 
   @override
   String get screen_feature_top_achievement_title => '目標達成率';

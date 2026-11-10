@@ -127,11 +127,41 @@ abstract class L10n {
   /// **'デバッグ'**
   String get screen_feature_app_settings_debug_item;
 
+  /// アプリ情報の読込中表示
+  ///
+  /// In ja, this message translates to:
+  /// **'…'**
+  String get screen_feature_app_settings_info_loading;
+
+  /// アプリ情報の取得失敗表示
+  ///
+  /// In ja, this message translates to:
+  /// **'—'**
+  String get screen_feature_app_settings_info_unavailable;
+
+  /// OSSライセンス画面への項目
+  ///
+  /// In ja, this message translates to:
+  /// **'ライセンス'**
+  String get screen_feature_app_settings_licenses_item;
+
+  /// 端末OSの見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'OS'**
+  String get screen_feature_app_settings_os_label;
+
   /// 画面タイトル
   ///
   /// In ja, this message translates to:
   /// **'アプリ設定'**
   String get screen_feature_app_settings_title;
+
+  /// アプリバージョンの見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'バージョン'**
+  String get screen_feature_app_settings_version_label;
 
   /// availability 例外ラベル
   ///
@@ -684,6 +714,30 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'メーター記録'**
   String get screen_feature_meter_capture_title;
+
+  /// 戻るボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_oss_licenses_back_semantics;
+
+  /// 詳細画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'ライセンス詳細'**
+  String get screen_feature_oss_licenses_detail_title;
+
+  /// 空状態メッセージ
+  ///
+  /// In ja, this message translates to:
+  /// **'表示できるライセンスがありません。'**
+  String get screen_feature_oss_licenses_empty;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'ライセンス'**
+  String get screen_feature_oss_licenses_title;
 
   /// 目標達成率セクションの見出し
   ///

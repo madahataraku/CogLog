@@ -29,6 +29,9 @@ workspace:
   - app_packages/infra/app_settings
   - app_packages/infra/app_settings/_mobile
   - app_packages/infra/app_settings/_testing
+  - app_packages/infra/app_runtime_info
+  - app_packages/infra/app_runtime_info/_mobile
+  - app_packages/infra/app_runtime_info/_testing
   - app_packages/infra/oss_license_catalog
   - app_packages/infra/oss_license_catalog/_impl
   - app_packages/infra/oss_license_catalog/_testing
@@ -69,6 +72,8 @@ workspace:
   - app_packages/usecase/load_exercise_history_detail/_impl
   - app_packages/usecase/load_exercise_history_page
   - app_packages/usecase/load_exercise_history_page/_impl
+  - app_packages/usecase/load_app_runtime_info
+  - app_packages/usecase/load_app_runtime_info/_impl
   - app_packages/usecase/load_oss_licenses
   - app_packages/usecase/load_oss_licenses/_impl
   - app_packages/usecase/load_top_screen
@@ -108,9 +113,11 @@ dependency_overrides:
   hooks_riverpod: 3.4.3
   camera: 0.12.2
   dart_pubspec_licenses: 3.2.0
+  device_info_plus: 13.3.0
   image_picker: 1.2.0
   monolith_localization_runtime: ^1.1.0
   monolith_runner: ^1.0.2
+  package_info_plus: 10.2.2
   path: 1.9.1
   path_provider: 2.1.5
   riverpod: 3.4.3

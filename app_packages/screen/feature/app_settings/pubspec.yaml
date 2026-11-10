@@ -14,6 +14,7 @@ dependencies:
   flutter_hooks: any
   forui: any
   hooks_riverpod: any
+  infra_app_runtime_info: any
   material_ui: any
   meta: any
   monolith_localization_runtime: any
@@ -21,9 +22,11 @@ dependencies:
   screen_navigation: any
   state_stream: any
   state_stream_riverpod: any
+  usecase_load_app_runtime_info: any
 
 dev_dependencies:
   flutter_lints: any
   flutter_test:
     sdk: flutter
   foundation_resources: any
+  test: any
