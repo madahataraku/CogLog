@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
@@ -46,9 +47,11 @@ final class _Read implements ReadMeterPanelUsecase {
 }
 
 final class _Save implements SaveMeterCaptureUsecase {
-  _Save({this.result});
+  _Save({this.result, this.pending});
 
   final SaveMeterCaptureResult? result;
+  final Future<SaveMeterCaptureResult>? pending;
+  SaveMeterCaptureRequest? lastRequest;
   var calls = 0;
 
   @override
@@ -56,6 +59,10 @@ final class _Save implements SaveMeterCaptureUsecase {
     SaveMeterCaptureRequest request,
   ) async {
     calls += 1;
+    lastRequest = request;
+    if (pending != null) {
+      return pending!;
+    }
     return result ??
         const SaveMeterCaptureResult(outcome: SaveMeterCaptureOutcome.success);
   }
@@ -245,6 +252,104 @@ void main() {
     expect(success, isNull);
     expect(state.state.saveError, isTrue);
     expect(state.state.step, MeterCaptureStep.edit);
+  });
+
+  for (final outcome in SaveMeterCaptureOutcome.values) {
+    test('日付をまたぐセッションの保存結果 ${outcome.name} を処理する', () async {
+      final at = DateTime(2026, 12, 31, 23, 50);
+      final photo = Uint8List.fromList([1, 2]);
+      await state.updateWithLock((_, emitter) async {
+        await emitter.emit(
+          MeterCaptureScreenState(
+            step: MeterCaptureStep.edit,
+            photoBytes: photo,
+            creationStartedAt: at,
+            capturedAt: at,
+            recordedAt: at,
+            recordedAtManuallySet: true,
+            distanceKm: 1,
+            duration: const Duration(minutes: 30),
+            caloriesKcal: 100,
+            averageSpeedKmh: 2,
+          ),
+        );
+      });
+      final save = _Save(
+        result: SaveMeterCaptureResult(
+          outcome: outcome,
+          goalAutoUpdated: true,
+        ),
+      );
+      final result = await OnSaveMeterCaptureDelegate(
+        state: state,
+        saveMeterCaptureUsecase: save,
+      ).execute();
+
+      expect(save.calls, 1);
+      expect(save.lastRequest?.recordedAt, at);
+      expect(save.lastRequest?.duration, const Duration(minutes: 30));
+      expect(save.lastRequest?.recordedAtManuallySet, isTrue);
+      expect(save.lastRequest?.photoBytes, photo);
+      expect(state.state.saving, isFalse);
+      if (outcome == SaveMeterCaptureOutcome.success) {
+        expect(result?.goalAutoUpdated, isTrue);
+        expect(state.state.photoBytes, isNull);
+      } else {
+        expect(result, isNull);
+        expect(state.state.photoBytes, photo);
+        expect(state.state.recordedAt, at);
+        expect(state.state.duration, const Duration(minutes: 30));
+        expect(
+          state.state.saveError,
+          outcome == SaveMeterCaptureOutcome.saveFailed,
+        );
+      }
+    });
+  }
+
+  test('保存中の再実行を拒否し例外後には入力を保持して再試行できる', () async {
+    final at = DateTime(2026, 11, 8, 12);
+    await state.updateWithLock((_, emitter) async {
+      await emitter.emit(
+        MeterCaptureScreenState(
+          step: MeterCaptureStep.edit,
+          photoBytes: Uint8List.fromList([1]),
+          creationStartedAt: at,
+          capturedAt: at,
+          recordedAt: at,
+          distanceKm: 1,
+          duration: const Duration(minutes: 30),
+          caloriesKcal: 100,
+          averageSpeedKmh: 2,
+        ),
+      );
+    });
+    final completion = Completer<SaveMeterCaptureResult>();
+    final save = _Save(pending: completion.future);
+    final delegate = OnSaveMeterCaptureDelegate(
+      state: state,
+      saveMeterCaptureUsecase: save,
+    );
+    final first = delegate.execute();
+    // ロック取得後の呼び出しで、保存中のガードを観測する。
+    final second = await delegate.execute();
+    expect(second, isNull);
+    expect(save.calls, 1);
+    expect(state.state.saving, isTrue);
+    completion.completeError(StateError('save failed'));
+    expect(await first, isNull);
+    expect(state.state.saving, isFalse);
+    expect(state.state.saveError, isTrue);
+    expect(state.state.recordedAt, at);
+
+    final retry = _Save();
+    final result = await OnSaveMeterCaptureDelegate(
+      state: state,
+      saveMeterCaptureUsecase: retry,
+    ).execute();
+    expect(result, isNotNull);
+    expect(retry.calls, 1);
+    expect(state.state.saveError, isFalse);
   });
 
   test('canSubmit 未満の save は usecase を呼ばない', () async {

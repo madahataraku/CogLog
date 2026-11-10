@@ -139,4 +139,101 @@ void main() {
     expect(goal.caloriesKcal, isNull);
     expect(goal.distanceKm, isNull);
   });
+
+  for (final level in DailyGoalAutoUpdateLevel.values) {
+    test('${level.name} の設定は新しい Repository からも復元できる', () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      await SharedPreferencesDailyGoalRepository(preferences)
+          .writeAutoUpdateSettings(
+            DailyGoalAutoUpdateSettings(enabled: true, level: level),
+          );
+
+      final restored = await SharedPreferencesDailyGoalRepository(preferences)
+          .readAutoUpdateSettings();
+      expect(restored.enabled, isTrue);
+      expect(restored.level, level);
+    });
+  }
+
+  test('未知のレベルと解析できない日付は既定値へ戻す', () async {
+    SharedPreferences.setMockInitialValues({
+      'daily_goal_auto_update_enabled': true,
+      'daily_goal_auto_update_level': 'future-level',
+      'daily_goal_auto_update_enabled_on': '',
+      'daily_goal_auto_update_streak_epoch': 'not-a-date',
+      'daily_goal_auto_update_last_applied': '2026/11/05',
+    });
+    final repository = SharedPreferencesDailyGoalRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    final settings = await repository.readAutoUpdateSettings();
+    expect(settings.enabled, isTrue);
+    expect(settings.level, DailyGoalAutoUpdateLevel.normal);
+    expect(settings.enabledOnLocalDate, isNull);
+    expect(settings.streakEpochLocalDate, isNull);
+    expect(settings.lastAppliedLocalDate, isNull);
+  });
+
+  test('日付の時刻を保存せず null への更新では全日付キーを削除する', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final repository = SharedPreferencesDailyGoalRepository(preferences);
+    final date = DateTime(2026, 12, 31, 23, 59, 59);
+    await repository.writeAutoUpdateSettings(
+      DailyGoalAutoUpdateSettings(
+        enabled: true,
+        level: DailyGoalAutoUpdateLevel.slow,
+        enabledOnLocalDate: date,
+        streakEpochLocalDate: date,
+        lastAppliedLocalDate: date,
+      ),
+    );
+    final stored = await repository.readAutoUpdateSettings();
+    expect(stored.enabledOnLocalDate, DateTime(2026, 12, 31));
+    expect(stored.streakEpochLocalDate, DateTime(2026, 12, 31));
+    expect(stored.lastAppliedLocalDate, DateTime(2026, 12, 31));
+
+    await repository.writeAutoUpdateSettings(
+      DailyGoalAutoUpdateSettings.defaults,
+    );
+    await repository.writeAutoUpdateSettings(
+      DailyGoalAutoUpdateSettings.defaults,
+    );
+    for (final suffix in ['enabled_on', 'streak_epoch', 'last_applied']) {
+      expect(preferences.containsKey('daily_goal_auto_update_$suffix'), isFalse);
+    }
+    expect((await repository.readAutoUpdateSettings()).enabled, isFalse);
+  });
+
+  test('一括保存で既存の目標と設定を未設定・既定値へ置き換える', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesDailyGoalRepository(
+      await SharedPreferences.getInstance(),
+    );
+    await repository.writeGoalAndAutoUpdateSettings(
+      goal: const DailyGoal(
+        duration: Duration(seconds: 1),
+        caloriesKcal: 0.000001,
+        distanceKm: 0,
+      ),
+      settings: DailyGoalAutoUpdateSettings(
+        enabled: true,
+        level: DailyGoalAutoUpdateLevel.challenging,
+        enabledOnLocalDate: DateTime(2026, 11, 5),
+      ),
+    );
+    expect((await repository.read()).caloriesKcal, 0.000001);
+    await repository.writeGoalAndAutoUpdateSettings(
+      goal: DailyGoal.unset,
+      settings: DailyGoalAutoUpdateSettings.defaults,
+    );
+    expect((await repository.read()).sameAs(DailyGoal.unset), isTrue);
+    final settings = await repository.readAutoUpdateSettings();
+    expect(settings.enabled, isFalse);
+    expect(settings.level, DailyGoalAutoUpdateLevel.normal);
+    expect(settings.enabledOnLocalDate, isNull);
+  });
+
 }
