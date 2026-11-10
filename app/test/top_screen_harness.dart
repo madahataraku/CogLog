@@ -11,11 +11,12 @@ import 'package:infra_injection/infra_injection.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
 import 'package:screen_injection/screen_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
 import 'package:usecase_injection/usecase_injection.dart';
 
 import 'package:app/main.dart';
+
+const _advisorTones = ['fun', 'confused', 'happy', 'realized'];
 
 /// トップ画面を、テスト用の履歴付きで起動する。
 Future<ScreenGraph> pumpTopScreen(
@@ -63,12 +64,9 @@ Future<ScreenGraph> pumpTopScreen(
 Future<void> _precacheAdvisorImages(WidgetTester tester) async {
   final context = tester.element(find.byType(Application));
   await tester.runAsync(() async {
-    for (final tone in AdviceTone.values) {
+    for (final tone in _advisorTones) {
       await precacheImage(
-        AssetImage(
-          'assets/advisor/${tone.name}.png',
-          package: 'screen_feature_top',
-        ),
+        AssetImage('assets/advisor/$tone.png', package: 'screen_feature_top'),
         context,
       );
     }
