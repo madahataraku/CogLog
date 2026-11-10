@@ -29,6 +29,12 @@ String formatExceptionDetail(Object error) {
   return '${detail.substring(0, formatExceptionDetailMaxLength - 1)}…';
 }
 
+/// [error] を「型名: メッセージ」へ正規化する。
+///
+/// Example:
+/// ```dart
+/// _one(StateError('boom'));
+/// ```
 String _one(Object error) {
   final typeName = error.runtimeType.toString();
   final text = error.toString();
@@ -41,6 +47,12 @@ String _one(Object error) {
   return '$typeName: $text';
 }
 
+/// [ExceptionWithCause] のときだけ cause を返す。
+///
+/// Example:
+/// ```dart
+/// _causeOf(StateError('boom'));
+/// ```
 Object? _causeOf(Object error) {
   if (error is ExceptionWithCause) {
     return error.cause;
