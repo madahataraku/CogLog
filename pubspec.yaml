@@ -29,6 +29,9 @@ workspace:
   - app_packages/infra/app_settings
   - app_packages/infra/app_settings/_mobile
   - app_packages/infra/app_settings/_testing
+  - app_packages/infra/oss_license_catalog
+  - app_packages/infra/oss_license_catalog/_impl
+  - app_packages/infra/oss_license_catalog/_testing
   - app_packages/infra/health_workout
   - app_packages/infra/health_workout/_mobile
   - app_packages/infra/health_workout/_testing
@@ -49,6 +52,7 @@ workspace:
   - app_packages/screen/feature/trends
   - app_packages/screen/feature/main
   - app_packages/screen/feature/meter_capture
+  - app_packages/screen/feature/oss_licenses
   - app_packages/screen/feature/top
   - app_packages/view/model_download_guidance
   - app_packages/screen/injection
@@ -65,6 +69,8 @@ workspace:
   - app_packages/usecase/load_exercise_history_detail/_impl
   - app_packages/usecase/load_exercise_history_page
   - app_packages/usecase/load_exercise_history_page/_impl
+  - app_packages/usecase/load_oss_licenses
+  - app_packages/usecase/load_oss_licenses/_impl
   - app_packages/usecase/load_top_screen
   - app_packages/usecase/load_top_screen/_impl
   - app_packages/usecase/obtain_meter_photo
@@ -101,6 +107,7 @@ dependency_overrides:
   go_router: 18.1.3
   hooks_riverpod: 3.4.3
   camera: 0.12.2
+  dart_pubspec_licenses: 3.2.0
   image_picker: 1.2.0
   monolith_localization_runtime: ^1.1.0
   monolith_runner: ^1.0.2

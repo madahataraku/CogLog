@@ -36,6 +36,22 @@ abstract interface class ScreenNavigation {
   /// ```
   void openDebug();
 
+  /// OSS ライセンス一覧をアプリ設定の子として積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openOssLicenses();
+  /// ```
+  void openOssLicenses();
+
+  /// OSS ライセンス詳細を一覧の子として積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openOssLicenseDetail(packageName: 'riverpod');
+  /// ```
+  void openOssLicenseDetail({required String packageName});
+
   /// 現在のスタックを 1 つ戻す。
   ///
   /// Example:

@@ -24,6 +24,12 @@ final class _Nav implements ScreenNavigation {
   void openDebug() {}
 
   @override
+  void openOssLicenses() {}
+
+  @override
+  void openOssLicenseDetail({required String packageName}) {}
+
+  @override
   void pop() {}
 
   @override

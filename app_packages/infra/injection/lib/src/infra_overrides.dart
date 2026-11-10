@@ -9,6 +9,8 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_meter_reading_mobile/infra_meter_reading_mobile.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_mobile/infra_on_device_llm_mobile.dart';
+import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
+import 'package:infra_oss_license_catalog_impl/infra_oss_license_catalog_impl.dart';
 import 'package:riverpod/misc.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
@@ -50,6 +52,9 @@ List<Override> infraOverrides({
   ),
   appSettingsOpenerProvider.overrideWith(
     (ref) => const AppSettingsPackageOpener(),
+  ),
+  OssLicenseCatalog.provider.overrideWith(
+    (ref) => const GeneratedOssLicenseCatalog(),
   ),
 ];
 

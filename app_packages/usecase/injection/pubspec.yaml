@@ -15,6 +15,7 @@ dependencies:
   infra_health_workout: any
   infra_meter_photo: any
   infra_meter_reading: any
+  infra_oss_license_catalog: any
   foundation_app_log: any
   infra_on_device_llm: any
   riverpod: any
@@ -28,6 +29,8 @@ dependencies:
   usecase_load_exercise_history_detail_impl: any
   usecase_load_exercise_history_page: any
   usecase_load_exercise_history_page_impl: any
+  usecase_load_oss_licenses: any
+  usecase_load_oss_licenses_impl: any
   usecase_load_top_screen: any
   usecase_load_top_screen_impl: any
   usecase_control_meter_in_app_camera: any

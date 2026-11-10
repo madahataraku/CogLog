@@ -7,6 +7,7 @@ import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
+import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 import 'package:riverpod/misc.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
@@ -18,6 +19,8 @@ import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_histo
 import 'package:usecase_load_exercise_history_detail_impl/usecase_load_exercise_history_detail_impl.dart';
 import 'package:usecase_load_exercise_history_page/usecase_load_exercise_history_page.dart';
 import 'package:usecase_load_exercise_history_page_impl/usecase_load_exercise_history_page_impl.dart';
+import 'package:usecase_load_oss_licenses/usecase_load_oss_licenses.dart';
+import 'package:usecase_load_oss_licenses_impl/usecase_load_oss_licenses_impl.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_load_top_screen_impl/usecase_load_top_screen_impl.dart';
 import 'package:usecase_control_meter_in_app_camera/usecase_control_meter_in_app_camera.dart';
@@ -90,6 +93,11 @@ List<Override> usecaseOverrides({
   LoadExerciseHistoryDetailUsecase.provider.overrideWith(
     (ref) => LoadExerciseHistoryDetailUsecaseImpl(
       histories: ref.watch(exerciseHistoryRepositoryProvider),
+    ),
+  ),
+  LoadOssLicensesUsecase.provider.overrideWith(
+    (ref) => LoadOssLicensesUsecaseImpl(
+      catalog: ref.watch(OssLicenseCatalog.provider),
     ),
   ),
   ObtainMeterPhotoUsecase.provider.overrideWith(
