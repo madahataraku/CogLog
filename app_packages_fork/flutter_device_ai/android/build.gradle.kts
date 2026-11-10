@@ -60,5 +60,6 @@ dependencies {
     // Match Gemini Nano Playground: beta3/4 request AICore features many devices lack.
     // See googlesamples/mlkit#1061 (feature 648 vs shipping 636).
     implementation("com.google.mlkit:genai-prompt:1.0.0-beta2")
+    implementation("com.google.mlkit:common:18.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 }
