@@ -72,6 +72,10 @@ class MainShellScreen extends StatelessWidget {
             label: Text(strings.screen_feature_main_nav_meter_capture),
           ),
           FBottomNavigationBarItem(
+            icon: const Icon(FLucideIcons.chartLine),
+            label: Text(strings.screen_feature_main_nav_trends),
+          ),
+          FBottomNavigationBarItem(
             icon: const Icon(FLucideIcons.history),
             label: Text(strings.screen_feature_main_nav_exercise_history),
           ),

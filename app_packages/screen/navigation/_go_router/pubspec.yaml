@@ -19,6 +19,7 @@ dependencies:
   screen_feature_main: any
   screen_feature_meter_capture: any
   screen_feature_top: any
+  screen_feature_trends: any
   screen_navigation: any
 
 dev_dependencies:

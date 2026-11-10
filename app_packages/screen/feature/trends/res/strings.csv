@@ -1,0 +1,9 @@
+id,ja,en,description
+title,推移,Trends,画面タイトル
+period_days30,過去30日,Last 30 days,期間
+period_days90,過去3カ月,Last 3 months,期間
+period_days182,過去半年,Last 6 months,期間
+period_days365,過去1年,Last 1 year,期間
+group_exercise,運動,Exercise,指標グループ
+group_body,身体,Body,指標グループ
+chart_placeholder,グラフは準備中です,Chart coming soon,Phase1プレースホルダ

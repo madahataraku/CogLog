@@ -5,9 +5,10 @@ import 'package:screen_feature_goal_settings/screen_feature_goal_settings.dart';
 import 'package:screen_feature_main/screen_feature_main.dart';
 import 'package:screen_feature_meter_capture/screen_feature_meter_capture.dart';
 import 'package:screen_feature_top/screen_feature_top.dart';
+import 'package:screen_feature_trends/screen_feature_trends.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 
-/// ボトムナビ 4 タブを [StatefulShellRoute.indexedStack] で組む。
+/// ボトムナビ 5 タブを [StatefulShellRoute.indexedStack] で組む。
 ///
 /// Example:
 /// ```dart
@@ -54,6 +55,14 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                 GoRoute(
                   path: '/meter-capture',
                   builder: (context, state) => const MeterCaptureScreen(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/trends',
+                  builder: (context, state) => const TrendsScreen(),
                 ),
               ],
             ),

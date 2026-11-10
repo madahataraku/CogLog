@@ -187,6 +187,9 @@ class L10nEn extends L10n {
   String get screen_feature_main_nav_meter_capture => 'Meter record';
 
   @override
+  String get screen_feature_main_nav_trends => 'Trends';
+
+  @override
   String get screen_feature_meter_capture_average_speed =>
       'Average speed (km/h)';
 
@@ -294,6 +297,30 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
+
+  @override
+  String get screen_feature_trends_chart_placeholder => 'Chart coming soon';
+
+  @override
+  String get screen_feature_trends_group_body => 'Body';
+
+  @override
+  String get screen_feature_trends_group_exercise => 'Exercise';
+
+  @override
+  String get screen_feature_trends_period_days182 => 'Last 6 months';
+
+  @override
+  String get screen_feature_trends_period_days30 => 'Last 30 days';
+
+  @override
+  String get screen_feature_trends_period_days365 => 'Last 1 year';
+
+  @override
+  String get screen_feature_trends_period_days90 => 'Last 3 months';
+
+  @override
+  String get screen_feature_trends_title => 'Trends';
 
   @override
   String get view_model_download_guidance_body =>

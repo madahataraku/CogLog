@@ -221,6 +221,10 @@
   "@screen_feature_main_nav_meter_capture": {
     "description": "ボトムナビ"
   },
+  "screen_feature_main_nav_trends": "推移",
+  "@screen_feature_main_nav_trends": {
+    "description": "ボトムナビ"
+  },
   "screen_feature_meter_capture_average_speed": "平均速度 (km/h)",
   "@screen_feature_meter_capture_average_speed": {
     "description": "入力ラベル"
@@ -356,6 +360,38 @@
   "screen_feature_top_unset_prompt": "目標設定で一日あたりの目標を設定しましょう",
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
+  },
+  "screen_feature_trends_chart_placeholder": "グラフは準備中です",
+  "@screen_feature_trends_chart_placeholder": {
+    "description": "Phase1プレースホルダ"
+  },
+  "screen_feature_trends_group_body": "身体",
+  "@screen_feature_trends_group_body": {
+    "description": "指標グループ"
+  },
+  "screen_feature_trends_group_exercise": "運動",
+  "@screen_feature_trends_group_exercise": {
+    "description": "指標グループ"
+  },
+  "screen_feature_trends_period_days182": "過去半年",
+  "@screen_feature_trends_period_days182": {
+    "description": "期間"
+  },
+  "screen_feature_trends_period_days30": "過去30日",
+  "@screen_feature_trends_period_days30": {
+    "description": "期間"
+  },
+  "screen_feature_trends_period_days365": "過去1年",
+  "@screen_feature_trends_period_days365": {
+    "description": "期間"
+  },
+  "screen_feature_trends_period_days90": "過去3カ月",
+  "@screen_feature_trends_period_days90": {
+    "description": "期間"
+  },
+  "screen_feature_trends_title": "推移",
+  "@screen_feature_trends_title": {
+    "description": "画面タイトル"
   },
   "view_model_download_guidance_body": "ワンポイントアドバイス等に使うモデルが端末にありません。準備を開始できます。準備中もアプリは利用できます。",
   "@view_model_download_guidance_body": {

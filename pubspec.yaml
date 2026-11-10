@@ -43,6 +43,7 @@ workspace:
   - app_packages/infra/on_device_llm/_testing
   - app_packages/screen/feature/exercise_history
   - app_packages/screen/feature/goal_settings
+  - app_packages/screen/feature/trends
   - app_packages/screen/feature/main
   - app_packages/screen/feature/meter_capture
   - app_packages/screen/feature/top
