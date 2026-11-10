@@ -25,9 +25,29 @@
   "@screen_feature_app_settings_debug_item": {
     "description": "デバッグ画面への項目"
   },
+  "screen_feature_app_settings_info_loading": "…",
+  "@screen_feature_app_settings_info_loading": {
+    "description": "アプリ情報の読込中表示"
+  },
+  "screen_feature_app_settings_info_unavailable": "—",
+  "@screen_feature_app_settings_info_unavailable": {
+    "description": "アプリ情報の取得失敗表示"
+  },
+  "screen_feature_app_settings_licenses_item": "ライセンス",
+  "@screen_feature_app_settings_licenses_item": {
+    "description": "OSSライセンス画面への項目"
+  },
+  "screen_feature_app_settings_os_label": "OS",
+  "@screen_feature_app_settings_os_label": {
+    "description": "端末OSの見出し"
+  },
   "screen_feature_app_settings_title": "アプリ設定",
   "@screen_feature_app_settings_title": {
     "description": "画面タイトル"
+  },
+  "screen_feature_app_settings_version_label": "バージョン",
+  "@screen_feature_app_settings_version_label": {
+    "description": "アプリバージョンの見出し"
   },
   "screen_feature_debug_availability_error_label": "availability error",
   "@screen_feature_debug_availability_error_label": {
@@ -431,6 +451,22 @@
   },
   "screen_feature_meter_capture_title": "メーター記録",
   "@screen_feature_meter_capture_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_oss_licenses_back_semantics": "戻る",
+  "@screen_feature_oss_licenses_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_oss_licenses_detail_title": "ライセンス詳細",
+  "@screen_feature_oss_licenses_detail_title": {
+    "description": "詳細画面タイトル"
+  },
+  "screen_feature_oss_licenses_empty": "表示できるライセンスがありません。",
+  "@screen_feature_oss_licenses_empty": {
+    "description": "空状態メッセージ"
+  },
+  "screen_feature_oss_licenses_title": "ライセンス",
+  "@screen_feature_oss_licenses_title": {
     "description": "画面タイトル"
   },
   "screen_feature_top_achievement_title": "目標達成率",

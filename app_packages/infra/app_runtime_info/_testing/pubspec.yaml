@@ -1,0 +1,14 @@
+name: infra_app_runtime_info_testing
+description: Fake app runtime info reader for CogLog tests.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_app_runtime_info: any
+
+dev_dependencies:
+  flutter_lints: any

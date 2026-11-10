@@ -1,0 +1,15 @@
+name: infra_oss_license_catalog_impl
+description: Generated OSS license catalog for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_oss_license_catalog: any
+
+dev_dependencies:
+  dart_pubspec_licenses: any
+  flutter_lints: any

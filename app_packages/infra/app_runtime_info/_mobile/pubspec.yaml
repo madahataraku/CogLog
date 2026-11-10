@@ -1,0 +1,20 @@
+name: infra_app_runtime_info_mobile
+description: package_info_plus and device_info_plus backed runtime info.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  device_info_plus: any
+  flutter:
+    sdk: flutter
+  infra_app_runtime_info: any
+  package_info_plus: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

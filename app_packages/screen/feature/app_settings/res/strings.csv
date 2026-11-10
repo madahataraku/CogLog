@@ -1,4 +1,9 @@
 id,ja,en,description
 title,アプリ設定,App settings,画面タイトル
+licenses_item,ライセンス,Licenses,OSSライセンス画面への項目
 debug_item,デバッグ,Debug,デバッグ画面への項目
 back_semantics,戻る,Back,戻るボタンの代替テキスト
+version_label,バージョン,Version,アプリバージョンの見出し
+os_label,OS,OS,端末OSの見出し
+info_loading,…,…,アプリ情報の読込中表示
+info_unavailable,—,—,アプリ情報の取得失敗表示

@@ -17,7 +17,29 @@ mixin class L10nStringsMixin {
   String get screen_feature_app_settings_debug_item =>
       LocalizeStringDelegate.get('screen_feature_app_settings_debug_item');
 
+  /// アプリ情報の読込中表示
+  String get screen_feature_app_settings_info_loading =>
+      LocalizeStringDelegate.get('screen_feature_app_settings_info_loading');
+
+  /// アプリ情報の取得失敗表示
+  String get screen_feature_app_settings_info_unavailable =>
+      LocalizeStringDelegate.get(
+        'screen_feature_app_settings_info_unavailable',
+      );
+
+  /// OSSライセンス画面への項目
+  String get screen_feature_app_settings_licenses_item =>
+      LocalizeStringDelegate.get('screen_feature_app_settings_licenses_item');
+
+  /// 端末OSの見出し
+  String get screen_feature_app_settings_os_label =>
+      LocalizeStringDelegate.get('screen_feature_app_settings_os_label');
+
   /// 画面タイトル
   String get screen_feature_app_settings_title =>
       LocalizeStringDelegate.get('screen_feature_app_settings_title');
+
+  /// アプリバージョンの見出し
+  String get screen_feature_app_settings_version_label =>
+      LocalizeStringDelegate.get('screen_feature_app_settings_version_label');
 }
