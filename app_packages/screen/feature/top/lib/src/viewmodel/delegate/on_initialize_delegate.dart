@@ -65,7 +65,7 @@ final class OnInitializeDelegate {
   /// プロセス内の誘導再表示抑制。
   final OnDeviceLlmGuidanceSession guidanceSession;
 
-  /// 現在時刻で読み込み、アドバイス本文とトーンを生成して loaded にする。
+  /// 期間合計とアドバイスを先に出し、誘導判定は後から反映する。
   ///
   /// Example:
   /// ```dart
@@ -99,10 +99,7 @@ final class OnInitializeDelegate {
           fallbackTemplates: fallbackTemplates,
         ),
       );
-      // 既に提示済みならネイティブ readiness を呼ばず、業務表示を遅らせない。
-      final pending =
-          guidanceSession.shouldShow &&
-          (await evaluateOnDeviceLlmGuidanceUsecase.execute()).shouldShow;
+      // 期間合計と助言は誘導判定を待たず先に出す。
       await emitter.emit(
         TopScreenState(
           loaded: true,
@@ -113,7 +110,33 @@ final class OnInitializeDelegate {
           goal: result.goal,
           adviceText: advice.advice,
           adviceTone: advice.tone,
-          pendingModelDownloadGuidance: pending,
+          pendingModelDownloadGuidance: false,
+        ),
+      );
+    });
+
+    if (!guidanceSession.shouldShow) {
+      return;
+    }
+    final decision = await evaluateOnDeviceLlmGuidanceUsecase.execute();
+    if (!decision.shouldShow || !guidanceSession.shouldShow) {
+      return;
+    }
+    await state.updateWithLock((current, emitter) async {
+      if (!guidanceSession.shouldShow) {
+        return;
+      }
+      await emitter.emit(
+        TopScreenState(
+          loaded: current.loaded,
+          metric: current.metric,
+          today: current.today,
+          week: current.week,
+          month: current.month,
+          goal: current.goal,
+          adviceText: current.adviceText,
+          adviceTone: current.adviceTone,
+          pendingModelDownloadGuidance: true,
         ),
       );
     });

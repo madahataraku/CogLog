@@ -64,14 +64,18 @@ final class _Save implements SaveTopScreenMetricUsecase {
 }
 
 final class _Evaluate implements EvaluateOnDeviceLlmGuidanceUsecase {
-  _Evaluate({this.shouldShow = false});
+  _Evaluate({this.shouldShow = false, this.delay = Duration.zero});
 
   final bool shouldShow;
+  final Duration delay;
   var calls = 0;
 
   @override
   Future<OnDeviceLlmGuidanceDecision> execute() async {
     calls += 1;
+    if (delay > Duration.zero) {
+      await Future<void>.delayed(delay);
+    }
     return OnDeviceLlmGuidanceDecision(shouldShow: shouldShow);
   }
 }
@@ -175,6 +179,35 @@ void main() {
       noExercise: _noExercise,
       fallbackTemplates: _fallbackTemplates,
     );
+    expect(state.state.loaded, isTrue);
+    expect(state.state.pendingModelDownloadGuidance, isTrue);
+  });
+
+  test('期間合計は誘導判定より先に loaded になる', () async {
+    final evaluate = _Evaluate(
+      shouldShow: true,
+      delay: const Duration(milliseconds: 50),
+    );
+    final future =
+        OnInitializeDelegate(
+          state: state,
+          loadTopScreenUsecase: _Load(_loadResult),
+          generateTopAdviceUsecase: _Advice(advice: '助言'),
+          evaluateOnDeviceLlmGuidanceUsecase: evaluate,
+          guidanceSession: OnDeviceLlmGuidanceSession(),
+        ).execute(
+          locale: 'ja',
+          noExercise: _noExercise,
+          fallbackTemplates: _fallbackTemplates,
+        );
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    expect(state.state.loaded, isTrue);
+    expect(state.state.adviceText, '助言');
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(evaluate.calls, 1);
+
+    await future;
     expect(state.state.pendingModelDownloadGuidance, isTrue);
   });
 
