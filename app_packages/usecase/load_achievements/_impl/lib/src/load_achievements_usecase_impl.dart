@@ -62,10 +62,6 @@ final class LoadAchievementsUsecaseImpl implements LoadAchievementsUsecase {
       final unlockedIds = {for (final unlock in unlocks) unlock.id};
       final all = await histories.list();
       final progress = AchievementEvaluator.evaluate(all, request.now);
-      final definitionsById = {
-        for (final definition in AchievementCatalog.all)
-          definition.id: definition,
-      };
 
       final rows = [
         for (final item in progress)
@@ -75,7 +71,7 @@ final class LoadAchievementsUsecaseImpl implements LoadAchievementsUsecase {
             current: item.current,
             target: item.target,
             progressRatio: item.ratio,
-            binaryProgress: definitionsById[item.id]?.binaryProgress ?? false,
+            binaryProgress: item.binaryProgress,
           ),
       ];
       return LoadAchievementsSuccess(rows);

@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 
@@ -71,6 +72,7 @@ final class OnInitializeDelegate {
 ///   now: DateTime(2026, 11, 10),
 /// );
 /// ```
+@internal
 Future<void> loadAchievementsIntoState({
   required MutableStateStream<AchievementScreenState> state,
   required LoadAchievementsUsecase loadUsecase,

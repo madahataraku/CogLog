@@ -70,6 +70,7 @@ final class AchievementEvaluator {
       target: definition.target,
       ratio: ratio,
       achieved: achieved,
+      binaryProgress: definition.binaryProgress,
     );
   }
 

@@ -62,6 +62,7 @@ void main() {
     final first = rows.firstWhere((row) => row.id == 'first_record');
     expect(first.unlocked, isTrue);
     expect(first.progressRatio, 1);
+    expect(first.binaryProgress, isTrue);
   });
 
   test('獲得が空でも過去履歴の充足分を遡及して開放表示する', () async {

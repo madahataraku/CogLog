@@ -121,4 +121,38 @@ void main() {
       closeTo(1 / 3, 1e-9),
     );
   });
+
+  test('ready 後の再初期化でも loading 経由で ready に戻る', () async {
+    final load = _FakeLoad(
+      result: const LoadAchievementsSuccess([
+        AchievementRow(
+          id: 'first_record',
+          unlocked: true,
+          current: 1,
+          target: 1,
+          progressRatio: 1,
+          binaryProgress: true,
+        ),
+      ]),
+    );
+    final container = ProviderContainer(
+      overrides: [
+        screenNavigationProvider.overrideWith((ref) => _Nav()),
+        LoadAchievementsUsecase.provider.overrideWith((ref) => load),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final viewModel = container.read(AchievementScreenViewModel.provider);
+    await viewModel.onInitialize();
+    expect(viewModel.state.state, isA<AchievementScreenReady>());
+    expect(load.calls, 1);
+
+    final second = viewModel.onInitialize();
+    await Future<void>.value();
+    expect(viewModel.state.state, isA<AchievementScreenLoading>());
+    await second;
+    expect(viewModel.state.state, isA<AchievementScreenReady>());
+    expect(load.calls, 2);
+  });
 }
