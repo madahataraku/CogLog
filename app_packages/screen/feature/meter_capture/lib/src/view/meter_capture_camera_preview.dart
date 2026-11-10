@@ -61,6 +61,11 @@ class MeterCaptureCameraPreview extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final ratio = aspectRatio > 0 ? aspectRatio : (3 / 4);
+        if (!constraints.hasBoundedWidth || !constraints.hasBoundedHeight) {
+          return Center(
+            child: AspectRatio(aspectRatio: ratio, child: preview),
+          );
+        }
         final maxWidth = constraints.maxWidth;
         final maxHeight = constraints.maxHeight;
         var width = maxWidth;
@@ -73,7 +78,12 @@ class MeterCaptureCameraPreview extends StatelessWidget {
           child: SizedBox(
             width: maxWidth,
             height: maxHeight,
-            child: Center(
+            child: OverflowBox(
+              minWidth: width,
+              maxWidth: width,
+              minHeight: height,
+              maxHeight: height,
+              alignment: Alignment.center,
               child: SizedBox(width: width, height: height, child: preview),
             ),
           ),

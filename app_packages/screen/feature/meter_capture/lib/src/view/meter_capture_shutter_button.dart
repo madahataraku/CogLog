@@ -33,10 +33,7 @@ class MeterCaptureShutterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onPress != null;
     final colors = context.theme.colors;
-    final ring = enabled
-        ? colors.foreground
-        : colors.disable(colors.foreground);
-    final fill = enabled
+    final paint = enabled
         ? colors.foreground
         : colors.disable(colors.foreground);
 
@@ -55,14 +52,14 @@ class MeterCaptureShutterButton extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: ring, width: 4),
+                border: Border.all(color: paint, width: 4),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(6),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: fill,
+                    color: paint,
                   ),
                 ),
               ),

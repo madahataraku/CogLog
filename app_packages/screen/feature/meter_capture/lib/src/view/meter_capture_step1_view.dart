@@ -87,19 +87,21 @@ class MeterCaptureStep1View extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
           child: SizedBox(
             height: 72,
-            child: Stack(
-              alignment: Alignment.center,
+            child: Row(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: UnconstrainedBox(
-                    constrainedAxis: Axis.vertical,
-                    child: FButton(
-                      onPress: libraryEnabled
-                          ? viewModel.onPickLibraryPhoto
-                          : null,
-                      child: Text(
-                        strings.screen_feature_meter_capture_pick_library,
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: FButton(
+                        onPress: libraryEnabled
+                            ? viewModel.onPickLibraryPhoto
+                            : null,
+                        child: Text(
+                          strings.screen_feature_meter_capture_pick_library,
+                        ),
                       ),
                     ),
                   ),
@@ -107,6 +109,7 @@ class MeterCaptureStep1View extends ConsumerWidget {
                 MeterCaptureShutterButton(
                   onPress: shutterEnabled ? viewModel.onCapturePhoto : null,
                 ),
+                const Expanded(child: SizedBox.shrink()),
               ],
             ),
           ),
