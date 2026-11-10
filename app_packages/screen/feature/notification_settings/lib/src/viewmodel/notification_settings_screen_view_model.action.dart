@@ -19,7 +19,7 @@ extension NotificationSettingsScreenViewModelAction
   /// await viewModel.onInitialize();
   /// ```
   Future<void> onInitialize() async {
-    await state.updateWithLock((current, emitter) async {
+    await state.updateWithLock((_, emitter) async {
       try {
         final result = await loadUsecase.execute(
           const LoadNotificationSettingsRequest(),
@@ -32,10 +32,7 @@ extension NotificationSettingsScreenViewModelAction
           ),
         );
       } on Object {
-        // 読み込み失敗時は未読込のままにし、再表示で回復する。
-        if (!current.loaded) {
-          return;
-        }
+        // 読み込み失敗時は state を変えない。未読込なら再表示で回復する。
       }
     });
   }

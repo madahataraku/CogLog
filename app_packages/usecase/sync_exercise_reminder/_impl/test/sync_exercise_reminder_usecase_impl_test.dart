@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
 
-import '../lib/src/exercise_reminder_copy.dart';
+import 'package:usecase_sync_exercise_reminder_impl/src/exercise_reminder_copy.dart';
 
 ExerciseHistory history({
   required String id,
