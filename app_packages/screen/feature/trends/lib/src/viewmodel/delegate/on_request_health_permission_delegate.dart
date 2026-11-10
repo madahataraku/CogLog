@@ -61,10 +61,18 @@ final class OnRequestHealthPermissionDelegate {
       await requestHealthPermissionUsecase.execute();
     } catch (_) {
       await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(bodyReadFailed: true));
+        await emitter.emit(
+          current.copyWith(
+            bodyReadFailed: true,
+            healthPermissionRequested: true,
+          ),
+        );
       });
       return;
     }
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(current.copyWith(healthPermissionRequested: true));
+    });
     await OnReloadDelegate(
       state: state,
       loadTrendsUsecase: loadTrendsUsecase,

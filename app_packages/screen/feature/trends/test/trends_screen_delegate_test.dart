@@ -263,6 +263,46 @@ void main() {
     expect(entity.showRequestPermissionButton, isFalse);
   });
 
+  test('リクエスト後に unknown なら設定ボタンだけ', () {
+    final entity = const TrendsStateToEntityDelegate().execute(
+      TrendsScreenState.initial.copyWith(
+        group: TrendsMetricGroup.body,
+        metricSet: TrendsMetricSet.bodyKgPair,
+        loading: false,
+        healthPermissionRequested: true,
+        healthPermissionUi: TrendsHealthPermissionUi.unknown,
+      ),
+    );
+    expect(entity.showRequestPermissionButton, isFalse);
+    expect(entity.showOpenSettingsButton, isTrue);
+  });
+
+  test('部分許可なら許可ボタンを残す', () {
+    final entity = const TrendsStateToEntityDelegate().execute(
+      TrendsScreenState.initial.copyWith(
+        group: TrendsMetricGroup.body,
+        metricSet: TrendsMetricSet.bodyKgPair,
+        loading: false,
+        healthPermissionRequested: true,
+        bodyPermissionIncomplete: true,
+        healthPermissionUi: TrendsHealthPermissionUi.granted,
+      ),
+    );
+    expect(entity.showRequestPermissionButton, isTrue);
+    expect(entity.showOpenSettingsButton, isFalse);
+  });
+
+  test('許可リクエスト成功後は healthPermissionRequested を立てる', () async {
+    final request = _FakeRequestPermission();
+    await OnRequestHealthPermissionDelegate(
+      state: state,
+      requestHealthPermissionUsecase: request,
+      loadTrendsUsecase: load,
+      now: now,
+    ).execute();
+    expect(state.state.healthPermissionRequested, isTrue);
+  });
+
   test('OnReloadDelegate は系列と許可を State へ書く', () async {
     final buckets = TrendsBucketBuilder.build(
       nowLocal: now,

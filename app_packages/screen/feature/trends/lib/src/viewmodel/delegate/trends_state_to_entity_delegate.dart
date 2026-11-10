@@ -65,24 +65,31 @@ final class TrendsStateToEntityDelegate {
         }
     }
     final isBody = state.group == TrendsMetricGroup.body;
+    final permanentlyDenied =
+        state.healthPermissionUi == TrendsHealthPermissionUi.permanentlyDenied;
+    final granted =
+        state.healthPermissionUi == TrendsHealthPermissionUi.granted;
+    // リクエスト後も granted でない（iOS unknown / Android 全拒否）ときは
+    // 許可ボタンを隠し、OS 設定へ誘導する。部分許可は再リクエストを残す。
+    final showRequestPermissionButton =
+        isBody &&
+        !permanentlyDenied &&
+        (state.bodyPermissionIncomplete ||
+            (!granted && !state.healthPermissionRequested));
+    final showOpenSettingsButton =
+        isBody &&
+        (permanentlyDenied ||
+            (state.healthPermissionRequested &&
+                !granted &&
+                !state.bodyPermissionIncomplete));
     return TrendsScreenEntity(
       period: state.period,
       group: state.group,
       metricSet: state.metricSet,
       loading: state.loading,
-      showRequestPermissionButton:
-          isBody &&
-          state.healthPermissionUi != TrendsHealthPermissionUi.granted &&
-          state.healthPermissionUi !=
-              TrendsHealthPermissionUi.permanentlyDenied,
-      showRequestHistoryButton:
-          isBody &&
-          state.bodyHistoryLimited &&
-          state.healthPermissionUi == TrendsHealthPermissionUi.granted,
-      showOpenSettingsButton:
-          isBody &&
-          state.healthPermissionUi ==
-              TrendsHealthPermissionUi.permanentlyDenied,
+      showRequestPermissionButton: showRequestPermissionButton,
+      showRequestHistoryButton: isBody && state.bodyHistoryLimited && granted,
+      showOpenSettingsButton: showOpenSettingsButton,
       showRetryButton: state.bodyReadFailed,
       visibleSeries: visible,
       bucketCount: state.buckets.length,

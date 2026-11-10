@@ -61,4 +61,13 @@ final class UnavailableHealthBodyMetricsSource
   /// ```
   @override
   Future<bool> isHistoryAuthorized() async => true;
+
+  /// 常に false（利用不可）。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableHealthBodyMetricsSource().areAllMetricsAuthorized();
+  /// ```
+  @override
+  Future<bool> areAllMetricsAuthorized() async => false;
 }

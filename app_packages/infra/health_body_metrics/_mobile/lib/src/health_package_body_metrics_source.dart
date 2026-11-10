@@ -64,6 +64,9 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
 
   /// いまの許可状態を返す。失敗時は unknown。
   ///
+  /// Android は型ごとに判定し、1 つでも許可されていれば granted とする
+  ///（部分許可でも読取を試すため）。
+  ///
   /// Example:
   /// ```dart
   /// await HealthPackageBodyMetricsSource().permissionStatus();
@@ -72,14 +75,18 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   Future<HealthBodyPermissionStatus> permissionStatus() async {
     try {
       await _ensureConfigured();
-      final granted = await _health.hasPermissions(_types);
-      return _mapHasPermissions(granted);
+      if (Platform.isAndroid) {
+        return _mapAndroidPermissionCounts(await _androidPermissionCounts());
+      }
+      return _mapHasPermissions(await _health.hasPermissions(_types));
     } catch (_) {
       return HealthBodyPermissionStatus.unknown;
     }
   }
 
   /// 3 指標まとめて許可を求める。iOS は再実行しても安全で、結果は unknown になり得る。
+  ///
+  /// Android は常に 3 指標のリクエストを出し、未許可分の追加許可を拾う。
   ///
   /// Example:
   /// ```dart
@@ -88,19 +95,43 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   @override
   Future<HealthBodyPermissionStatus> requestPermission() async {
     await _ensureConfigured();
-    if (Platform.isIOS) {
-      await _health.requestAuthorization(_types);
-      return _mapHasPermissions(await _health.hasPermissions(_types));
-    }
-
-    final before = _mapHasPermissions(await _health.hasPermissions(_types));
-    if (before == HealthBodyPermissionStatus.granted) {
+    await _health.requestAuthorization(_types);
+    if (Platform.isAndroid) {
       await _ensureHistoryAuthorization();
+    }
+    return permissionStatus();
+  }
+
+  /// Android で型ごとの hasPermissions を数える。
+  Future<({int granted, int denied, int unknown})>
+  _androidPermissionCounts() async {
+    var granted = 0;
+    var denied = 0;
+    var unknown = 0;
+    for (final type in _types) {
+      final result = await _health.hasPermissions([type]);
+      if (result == true) {
+        granted += 1;
+      } else if (result == false) {
+        denied += 1;
+      } else {
+        unknown += 1;
+      }
+    }
+    return (granted: granted, denied: denied, unknown: unknown);
+  }
+
+  /// 部分許可を granted、全拒否を denied、それ以外を unknown へ写す。
+  HealthBodyPermissionStatus _mapAndroidPermissionCounts(
+    ({int granted, int denied, int unknown}) counts,
+  ) {
+    if (counts.granted > 0) {
       return HealthBodyPermissionStatus.granted;
     }
-    await _health.requestAuthorization(_types);
-    await _ensureHistoryAuthorization();
-    return _mapHasPermissions(await _health.hasPermissions(_types));
+    if (counts.denied > 0 && counts.unknown == 0) {
+      return HealthBodyPermissionStatus.denied;
+    }
+    return HealthBodyPermissionStatus.unknown;
   }
 
   /// Android の履歴許可が未取得なら要求する。
@@ -136,6 +167,7 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   /// `[startInclusive, endExclusive)` の計測を返す。失敗時は例外。
   ///
   /// Android で履歴許可が無いときは開始を直近 30 暦日に切り詰める。
+  /// Android は許可済みの型だけを読む。iOS は 3 指標すべてを試す。
   ///
   /// Example:
   /// ```dart
@@ -151,6 +183,10 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   }) async {
     try {
       await _ensureConfigured();
+      final types = await _readableTypes();
+      if (types.isEmpty) {
+        return const [];
+      }
       var start = startInclusive;
       if (Platform.isAndroid) {
         final historyOk = await _health.isHealthDataHistoryAuthorized();
@@ -166,9 +202,13 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
           }
         }
       }
+      final preferredUnits = {
+        for (final type in types)
+          if (_preferredUnits.containsKey(type)) type: _preferredUnits[type]!,
+      };
       final points = await _health.getHealthDataFromTypes(
-        types: _types,
-        preferredUnits: _preferredUnits,
+        types: types,
+        preferredUnits: preferredUnits,
         startTime: start,
         endTime: endExclusive,
       );
@@ -189,6 +229,40 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
       rethrow;
     } catch (error) {
       throw HealthBodyMetricsReadException(error.toString());
+    }
+  }
+
+  /// 読む対象の型。Android は許可済みのみ、それ以外は全型。
+  Future<List<HealthDataType>> _readableTypes() async {
+    if (!Platform.isAndroid) {
+      return _types;
+    }
+    final allowed = <HealthDataType>[];
+    for (final type in _types) {
+      if (await _health.hasPermissions([type]) == true) {
+        allowed.add(type);
+      }
+    }
+    return allowed;
+  }
+
+  /// Android で 3 指標すべてが許可済みなら true。iOS は常に true。
+  ///
+  /// Example:
+  /// ```dart
+  /// await HealthPackageBodyMetricsSource().areAllMetricsAuthorized();
+  /// ```
+  @override
+  Future<bool> areAllMetricsAuthorized() async {
+    if (!Platform.isAndroid) {
+      return true;
+    }
+    try {
+      await _ensureConfigured();
+      final counts = await _androidPermissionCounts();
+      return counts.granted == _types.length;
+    } catch (_) {
+      return false;
     }
   }
 

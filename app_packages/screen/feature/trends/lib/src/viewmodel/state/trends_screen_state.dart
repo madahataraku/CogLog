@@ -48,6 +48,8 @@ final class TrendsScreenState {
     required this.loading,
     required this.bodyReadFailed,
     this.bodyHistoryLimited = false,
+    this.bodyPermissionIncomplete = false,
+    this.healthPermissionRequested = false,
     required this.healthPermissionUi,
     required this.buckets,
     required this.exerciseSeries,
@@ -86,6 +88,12 @@ final class TrendsScreenState {
   /// Android で履歴許可が無く、直近 30 日より前の身体計測を読めないか。
   final bool bodyHistoryLimited;
 
+  /// Android で身体指標の一部だけが許可されているか。
+  final bool bodyPermissionIncomplete;
+
+  /// この画面でヘルス許可リクエストを一度でも実行したか。
+  final bool healthPermissionRequested;
+
   /// ヘルス許可の表示用状態。
   final TrendsHealthPermissionUi healthPermissionUi;
 
@@ -114,6 +122,8 @@ final class TrendsScreenState {
     bool? loading,
     bool? bodyReadFailed,
     bool? bodyHistoryLimited,
+    bool? bodyPermissionIncomplete,
+    bool? healthPermissionRequested,
     TrendsHealthPermissionUi? healthPermissionUi,
     List<TrendsBucket>? buckets,
     Map<TrendsMetricKind, TrendsVisibleSeries>? exerciseSeries,
@@ -126,6 +136,10 @@ final class TrendsScreenState {
     loading: loading ?? this.loading,
     bodyReadFailed: bodyReadFailed ?? this.bodyReadFailed,
     bodyHistoryLimited: bodyHistoryLimited ?? this.bodyHistoryLimited,
+    bodyPermissionIncomplete:
+        bodyPermissionIncomplete ?? this.bodyPermissionIncomplete,
+    healthPermissionRequested:
+        healthPermissionRequested ?? this.healthPermissionRequested,
     healthPermissionUi: healthPermissionUi ?? this.healthPermissionUi,
     buckets: buckets ?? this.buckets,
     exerciseSeries: exerciseSeries ?? this.exerciseSeries,

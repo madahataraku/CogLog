@@ -85,11 +85,26 @@ class TrendsChart extends StatelessWidget {
 
 /// 複数系列の色と指標名を対応付ける。
 final class _Legend extends StatelessWidget {
+  /// [series] と [colors] を同じ順で並べる。
+  ///
+  /// Example:
+  /// ```dart
+  /// const _Legend(series: [], colors: []);
+  /// ```
   const _Legend({required this.series, required this.colors});
 
+  /// 凡例に出す系列。
   final List<TrendsVisibleSeries> series;
+
+  /// 系列と同じ順の色。足りなければ循環する。
   final List<Color> colors;
 
+  /// 色チップと指標名の行を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// const _Legend(series: [], colors: []).build(context);
+  /// ```
   @override
   Widget build(BuildContext context) {
     final typography = context.theme.typography;
@@ -116,6 +131,12 @@ final class _Legend extends StatelessWidget {
     );
   }
 
+  /// 指標に対応する表示文言を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _labelFor(TrendsMetricKind.bodyWeightKg);
+  /// ```
   String _labelFor(TrendsMetricKind metric) => switch (metric) {
     TrendsMetricKind.exerciseCaloriesKcal =>
       strings.screen_feature_trends_metric_calories,

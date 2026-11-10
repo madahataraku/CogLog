@@ -279,4 +279,23 @@ void main() {
 
     expect(result.bodyHistoryLimited, isFalse);
   });
+
+  test('granted でも全指標未許可なら bodyPermissionIncomplete', () async {
+    final result =
+        await LoadTrendsUsecaseImpl(
+          histories: const FixedExerciseHistoryRepository([]),
+          health: FakeHealthBodyMetricsSource(
+            status: HealthBodyPermissionStatus.granted,
+            allMetricsAuthorized: false,
+          ),
+        ).execute(
+          LoadTrendsRequest(
+            now: now,
+            period: TrendsPeriodKind.days30,
+            groupIsBody: true,
+          ),
+        );
+
+    expect(result.bodyPermissionIncomplete, isTrue);
+  });
 }

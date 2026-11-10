@@ -91,6 +91,10 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
       groupIsBody: request.groupIsBody,
       period: request.period,
     );
+    final bodyPermissionIncomplete = await _bodyPermissionIncomplete(
+      groupIsBody: request.groupIsBody,
+      healthPermission: healthPermission,
+    );
     // 運動グループでは身体を読まない。iOS は READ が unknown のままなので、
     // 身体グループでは granted / unknown のとき読取を試す。
     final canAttemptBodyRead =
@@ -106,6 +110,7 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         healthPermission: healthPermission,
         bodyReadFailed: false,
         bodyHistoryLimited: bodyHistoryLimited,
+        bodyPermissionIncomplete: bodyPermissionIncomplete,
       );
     }
 
@@ -121,6 +126,7 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         healthPermission: healthPermission,
         bodyReadFailed: false,
         bodyHistoryLimited: bodyHistoryLimited,
+        bodyPermissionIncomplete: bodyPermissionIncomplete,
       );
     } on HealthBodyMetricsReadException {
       return LoadTrendsResult(
@@ -130,6 +136,7 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         healthPermission: healthPermission,
         bodyReadFailed: true,
         bodyHistoryLimited: bodyHistoryLimited,
+        bodyPermissionIncomplete: bodyPermissionIncomplete,
       );
     }
   }
@@ -144,6 +151,22 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
     }
     try {
       return !(await health.isHistoryAuthorized());
+    } catch (_) {
+      return true;
+    }
+  }
+
+  /// 身体が granted なのに 3 指標すべてが揃っていないとき true。
+  Future<bool> _bodyPermissionIncomplete({
+    required bool groupIsBody,
+    required LoadTrendsHealthPermission healthPermission,
+  }) async {
+    if (!groupIsBody ||
+        healthPermission != LoadTrendsHealthPermission.granted) {
+      return false;
+    }
+    try {
+      return !(await health.areAllMetricsAuthorized());
     } catch (_) {
       return true;
     }

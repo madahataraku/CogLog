@@ -50,6 +50,16 @@ abstract interface class HealthBodyMetricsSource {
   /// await source.isHistoryAuthorized();
   /// ```
   Future<bool> isHistoryAuthorized();
+
+  /// 体重・体脂肪率・除脂肪体重がすべて許可済みか。
+  ///
+  /// iOS は READ を開示しないため常に true（不完全表示に使わない）。
+  ///
+  /// Example:
+  /// ```dart
+  /// await source.areAllMetricsAuthorized();
+  /// ```
+  Future<bool> areAllMetricsAuthorized();
 }
 
 /// 身体指標ソースの注入点。未接続のときは失敗する。
