@@ -135,14 +135,20 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   }
 
   /// Android の履歴許可が未取得なら要求する。
+  ///
+  /// 失敗しても身体指標の許可結果は落とさない。
   Future<void> _ensureHistoryAuthorization() async {
     if (!Platform.isAndroid) {
       return;
     }
-    if (await isHistoryAuthorized()) {
-      return;
+    try {
+      if (await isHistoryAuthorized()) {
+        return;
+      }
+      await _health.requestHealthDataHistoryAuthorization();
+    } catch (_) {
+      // 履歴許可の失敗で、取得済みの身体指標許可を失敗扱いにしない。
     }
-    await _health.requestHealthDataHistoryAuthorization();
   }
 
   /// Android の履歴許可を返す。iOS は常に true。失敗時は false。
@@ -189,7 +195,7 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
       }
       var start = startInclusive;
       if (Platform.isAndroid) {
-        final historyOk = await _health.isHealthDataHistoryAuthorized();
+        final historyOk = await isHistoryAuthorized();
         if (!historyOk) {
           final localNow = DateTime.now().toLocal();
           final floor = DateTime(
