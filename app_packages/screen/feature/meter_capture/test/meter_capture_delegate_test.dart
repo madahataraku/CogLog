@@ -47,10 +47,22 @@ final class _Read implements ReadMeterPanelUsecase {
 }
 
 final class _Save implements SaveMeterCaptureUsecase {
+  /// [result] か [pending] のどちらかで応答を決める。
+  ///
+  /// Example:
+  /// ```dart
+  /// _Save(result: const SaveMeterCaptureResult(
+  ///   outcome: SaveMeterCaptureOutcome.success,
+  /// ));
+  /// ```
   _Save({this.result, this.pending});
 
   final SaveMeterCaptureResult? result;
+
+  /// 保存中の競合を再現する未完了 Future。
   final Future<SaveMeterCaptureResult>? pending;
+
+  /// 直近の [execute] に渡された要求。
   SaveMeterCaptureRequest? lastRequest;
   var calls = 0;
 

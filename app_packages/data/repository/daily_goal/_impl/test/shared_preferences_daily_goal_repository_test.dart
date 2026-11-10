@@ -2,8 +2,12 @@ import 'package:data_repository_daily_goal_impl/data_repository_daily_goal_impl.
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
+  tearDown(SharedPreferences.resetStatic);
+
   test('未保存は unset', () async {
     SharedPreferences.setMockInitialValues({});
     final preferences = await SharedPreferences.getInstance();
@@ -238,4 +242,146 @@ void main() {
     expect(settings.level, DailyGoalAutoUpdateLevel.normal);
     expect(settings.enabledOnLocalDate, isNull);
   });
+
+  test('一括保存の失敗では目標と設定を変更前へ戻す', () async {
+    final store = _ControllablePrefsStore(
+      data: <String, Object>{
+        'daily_goal_calories_kcal': 50.0,
+        'daily_goal_auto_update_enabled': false,
+        'daily_goal_auto_update_level': 'slow',
+      },
+      failingKeySuffixes: <String>{'daily_goal_calories_kcal'},
+    );
+    SharedPreferencesStorePlatform.instance = store;
+    SharedPreferences.resetStatic();
+    final repository = SharedPreferencesDailyGoalRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    await expectLater(
+      repository.writeGoalAndAutoUpdateSettings(
+        goal: const DailyGoal(caloriesKcal: 100),
+        settings: const DailyGoalAutoUpdateSettings(
+          enabled: true,
+          level: DailyGoalAutoUpdateLevel.challenging,
+        ),
+      ),
+      throwsA(
+        isA<StateError>().having(
+          (error) => error.message,
+          'message',
+          contains('daily_goal_calories_kcal'),
+        ),
+      ),
+    );
+
+    final goal = await repository.read();
+    final settings = await repository.readAutoUpdateSettings();
+    expect(goal.caloriesKcal, 50.0);
+    expect(settings.enabled, isFalse);
+    expect(settings.level, DailyGoalAutoUpdateLevel.slow);
+  });
+
+  test('一括保存の復元失敗では StateError に両方の失敗を含める', () async {
+    final store = _ControllablePrefsStore(
+      data: <String, Object>{
+        'daily_goal_calories_kcal': 50.0,
+        'daily_goal_auto_update_enabled': false,
+        'daily_goal_auto_update_level': 'slow',
+      },
+      failingKeySuffixes: <String>{'daily_goal_calories_kcal'},
+      failAfterFirstFailure: true,
+    );
+    SharedPreferencesStorePlatform.instance = store;
+    SharedPreferences.resetStatic();
+    final repository = SharedPreferencesDailyGoalRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    await expectLater(
+      repository.writeGoalAndAutoUpdateSettings(
+        goal: const DailyGoal(caloriesKcal: 100),
+        settings: const DailyGoalAutoUpdateSettings(
+          enabled: true,
+          level: DailyGoalAutoUpdateLevel.challenging,
+        ),
+      ),
+      throwsA(
+        isA<StateError>().having(
+          (error) => error.message,
+          'message',
+          allOf(contains('復元にも失敗'), contains('save=')),
+        ),
+      ),
+    );
+  });
+}
+
+/// 指定キーの [setValue] を失敗させられる prefs ストア。
+final class _ControllablePrefsStore extends SharedPreferencesStorePlatform {
+  /// [data] を初期値にし、[failingKeySuffixes] への書き込みを失敗させる。
+  ///
+  /// Example:
+  /// ```dart
+  /// _ControllablePrefsStore(
+  ///   data: {'daily_goal_calories_kcal': 50.0},
+  ///   failingKeySuffixes: {'daily_goal_calories_kcal'},
+  /// );
+  /// ```
+  _ControllablePrefsStore({
+    Map<String, Object> data = const <String, Object>{},
+    this.failingKeySuffixes = const <String>{},
+    this.failAfterFirstFailure = false,
+  }) : backend = InMemorySharedPreferencesStore.withData(<String, Object>{
+         for (final entry in data.entries)
+           entry.key.startsWith('flutter.')
+                   ? entry.key
+                   : 'flutter.${entry.key}':
+               entry.value,
+       });
+
+  /// 実際の値を保持するストア。
+  final InMemorySharedPreferencesStore backend;
+
+  /// 書き込みを失敗させるキー末尾。
+  final Set<String> failingKeySuffixes;
+
+  /// 最初の失敗のあとも書き込みを失敗させ続けるか。
+  final bool failAfterFirstFailure;
+
+  /// すでに一度失敗したか。
+  bool _hasFailed = false;
+
+  @override
+  Future<bool> clear() => backend.clear();
+
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) {
+    return backend.clearWithParameters(parameters);
+  }
+
+  @override
+  Future<Map<String, Object>> getAll() => backend.getAll();
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+    GetAllParameters parameters,
+  ) {
+    return backend.getAllWithParameters(parameters);
+  }
+
+  @override
+  Future<bool> remove(String key) => backend.remove(key);
+
+  @override
+  Future<bool> setValue(String valueType, String key, Object value) async {
+    final shouldFail =
+        failingKeySuffixes.any(key.endsWith) &&
+        (!_hasFailed || failAfterFirstFailure);
+    if (shouldFail) {
+      _hasFailed = true;
+      return false;
+    }
+    return backend.setValue(valueType, key, value);
+  }
 }

@@ -340,14 +340,19 @@ final class SharedPreferencesDailyGoalRepository
   /// await repository._remove('daily_goal_calories_kcal');
   /// ```
   Future<void> _remove(String key) async {
+    var removed = false;
     try {
-      await _preferences.remove(key);
+      removed = await _preferences.remove(key);
     } on Object {
       await _preferences.reload();
       rethrow;
     }
+    if (removed) {
+      return;
+    }
+    // false は元からキーが無い場合もある。再読込後も残っていれば失敗とする。
+    await _preferences.reload();
     if (_preferences.containsKey(key)) {
-      await _preferences.reload();
       throw StateError('$key を削除できなかった。');
     }
   }
