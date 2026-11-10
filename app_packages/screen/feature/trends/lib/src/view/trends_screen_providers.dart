@@ -15,6 +15,12 @@ final class TrendsScreenProviders {
     (TrendsScreenViewModel viewModel) => viewModel.entity,
   );
 
+  /// ViewModel の画面状態を監視する。
+  static final state = StateStreamProvider.autoDispose.stateBy(
+    TrendsScreenViewModel.provider,
+    (TrendsScreenViewModel viewModel) => viewModel.screenState,
+  );
+
   /// インスタンス化しない。static のみの束ねである。
   const TrendsScreenProviders._();
 }

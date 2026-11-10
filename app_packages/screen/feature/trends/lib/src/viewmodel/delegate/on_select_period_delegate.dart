@@ -1,39 +1,66 @@
 import 'package:state_stream/state_stream.dart';
+import 'package:usecase_load_trends/usecase_load_trends.dart';
 
 import '../state/trends_screen_state.dart';
+import 'on_reload_delegate.dart';
 
-/// 期間選択を State へ反映する。
+/// 期間選択を State へ反映し、系列を読み直す。
 ///
 /// Example:
 /// ```dart
-/// OnSelectPeriodDelegate(state: state).execute(TrendsPeriod.days90);
+/// OnSelectPeriodDelegate(
+///   state: state,
+///   loadTrendsUsecase: loadTrendsUsecase,
+///   now: DateTime(2026, 11, 10),
+/// ).execute(TrendsPeriod.days90);
 /// ```
 final class OnSelectPeriodDelegate {
-  /// [state] を受け取る。
+  /// [state]・読込 Usecase・基準時刻を受け取る。
   ///
   /// Example:
   /// ```dart
-  /// OnSelectPeriodDelegate(state: state);
+  /// OnSelectPeriodDelegate(
+  ///   state: state,
+  ///   loadTrendsUsecase: loadTrendsUsecase,
+  ///   now: DateTime(2026, 11, 10),
+  /// );
   /// ```
-  const OnSelectPeriodDelegate({required this.state});
+  const OnSelectPeriodDelegate({
+    required this.state,
+    required this.loadTrendsUsecase,
+    required this.now,
+  });
 
   /// 更新する画面状態。
   final MutableStateStream<TrendsScreenState> state;
 
-  /// [period] が現在と違うときだけ置き換える。
+  /// 系列の読み込み。
+  final LoadTrendsUsecase loadTrendsUsecase;
+
+  /// バケット境界に使う時刻。
+  final DateTime now;
+
+  /// [period] が現在と違うときだけ置き換え、その後読み直す。
   ///
   /// Example:
   /// ```dart
   /// delegate.execute(TrendsPeriod.days90);
   /// ```
   Future<void> execute(TrendsPeriod period) async {
-    await state.updateWithLock((current, emitter) async {
+    final changed = await state.updateWithLock((current, emitter) async {
       if (current.period == period) {
-        return;
+        return false;
       }
-      await emitter.emit(
-        TrendsScreenState(period: period, group: current.group),
-      );
+      await emitter.emit(current.copyWith(period: period));
+      return true;
     });
+    if (!changed) {
+      return;
+    }
+    await OnReloadDelegate(
+      state: state,
+      loadTrendsUsecase: loadTrendsUsecase,
+      now: now,
+    ).execute();
   }
 }

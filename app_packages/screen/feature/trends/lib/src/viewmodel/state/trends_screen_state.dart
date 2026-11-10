@@ -1,3 +1,9 @@
+import 'package:domain_trends/domain_trends.dart';
+
+import '../entity/trends_visible_series.dart';
+import 'trends_health_permission_ui.dart';
+import 'trends_metric_set.dart';
+
 /// 推移の集計期間。
 enum TrendsPeriod {
   /// 過去 30 日（本日含む）。
@@ -22,25 +28,42 @@ enum TrendsMetricGroup {
   body,
 }
 
-/// 推移画面が持つ選択中の期間とグループ。
+/// 推移画面が持つ選択・読込・系列状態。
 ///
 /// Example:
 /// ```dart
 /// TrendsScreenState.initial;
 /// ```
 final class TrendsScreenState {
-  /// [period] と [group] を持つ。
+  /// 選択と読込結果を持つ。
   ///
   /// Example:
   /// ```dart
   /// TrendsScreenState.initial;
   /// ```
-  const TrendsScreenState({required this.period, required this.group});
+  const TrendsScreenState({
+    required this.period,
+    required this.group,
+    required this.metricSet,
+    required this.loading,
+    required this.bodyReadFailed,
+    required this.healthPermissionUi,
+    required this.buckets,
+    required this.exerciseSeries,
+    required this.bodySeries,
+  });
 
-  /// 初期は過去 30 日・運動グループ。
+  /// 初期は過去 30 日・運動・消費カロリー・読込中。
   static const initial = TrendsScreenState(
     period: TrendsPeriod.days30,
     group: TrendsMetricGroup.exercise,
+    metricSet: TrendsMetricSet.exerciseCalories,
+    loading: true,
+    bodyReadFailed: false,
+    healthPermissionUi: TrendsHealthPermissionUi.unknown,
+    buckets: [],
+    exerciseSeries: {},
+    bodySeries: {},
   );
 
   /// 選んでいる期間。
@@ -48,4 +71,53 @@ final class TrendsScreenState {
 
   /// 選んでいる指標グループ。
   final TrendsMetricGroup group;
+
+  /// グループ内の指標組。
+  final TrendsMetricSet metricSet;
+
+  /// 系列の読込中か。
+  final bool loading;
+
+  /// 身体指標の読取が失敗したか。
+  final bool bodyReadFailed;
+
+  /// ヘルス許可の表示用状態。
+  final TrendsHealthPermissionUi healthPermissionUi;
+
+  /// 古い→新しい順のバケット列。
+  final List<TrendsBucket> buckets;
+
+  /// 運動 3 指標の系列。
+  final Map<TrendsMetricKind, TrendsVisibleSeries> exerciseSeries;
+
+  /// 身体 3 指標の系列。
+  final Map<TrendsMetricKind, TrendsVisibleSeries> bodySeries;
+
+  /// 指定したフィールドだけ差し替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// TrendsScreenState.initial.copyWith(loading: false);
+  /// ```
+  TrendsScreenState copyWith({
+    TrendsPeriod? period,
+    TrendsMetricGroup? group,
+    TrendsMetricSet? metricSet,
+    bool? loading,
+    bool? bodyReadFailed,
+    TrendsHealthPermissionUi? healthPermissionUi,
+    List<TrendsBucket>? buckets,
+    Map<TrendsMetricKind, TrendsVisibleSeries>? exerciseSeries,
+    Map<TrendsMetricKind, TrendsVisibleSeries>? bodySeries,
+  }) => TrendsScreenState(
+    period: period ?? this.period,
+    group: group ?? this.group,
+    metricSet: metricSet ?? this.metricSet,
+    loading: loading ?? this.loading,
+    bodyReadFailed: bodyReadFailed ?? this.bodyReadFailed,
+    healthPermissionUi: healthPermissionUi ?? this.healthPermissionUi,
+    buckets: buckets ?? this.buckets,
+    exerciseSeries: exerciseSeries ?? this.exerciseSeries,
+    bodySeries: bodySeries ?? this.bodySeries,
+  );
 }
