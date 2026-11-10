@@ -1,15 +1,22 @@
 name: infra_on_device_llm_mobile
-description: Mobile on-device LLM stub that reports unavailable.
+description: Mobile on-device LLM backed by flutter_device_ai.
 publish_to: none
 resolution: workspace
 version: 0.1.0+1
 
 environment:
   sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
 
 dependencies:
+  flutter:
+    sdk: flutter
+  flutter_device_ai: any
   infra_on_device_llm: any
+  meta: any
 
 dev_dependencies:
   flutter_lints: any
+  flutter_test:
+    sdk: flutter
   test: any

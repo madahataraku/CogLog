@@ -1,6 +1,7 @@
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:screen_feature_top/src/viewmodel/delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_initialize_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_select_metric_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/top_screen_state_to_entity_delegate.dart';
@@ -8,7 +9,9 @@ import 'package:screen_feature_top/src/viewmodel/state/top_screen_state.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
+import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
+import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 final class _Load implements LoadTopScreenUsecase {
   _Load(this.result);
@@ -60,6 +63,19 @@ final class _Save implements SaveTopScreenMetricUsecase {
   }
 }
 
+final class _Evaluate implements EvaluateOnDeviceLlmGuidanceUsecase {
+  _Evaluate({this.shouldShow = false});
+
+  final bool shouldShow;
+  var calls = 0;
+
+  @override
+  Future<OnDeviceLlmGuidanceDecision> execute() async {
+    calls += 1;
+    return OnDeviceLlmGuidanceDecision(shouldShow: shouldShow);
+  }
+}
+
 const _noExercise = AdviceTemplate(
   text: '今日はまだ運動していません',
   tone: AdviceTone.realized,
@@ -102,6 +118,8 @@ void main() {
       state: state,
       loadTopScreenUsecase: load,
       generateTopAdviceUsecase: advice,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
     ).execute(
       locale: 'ja',
       noExercise: _noExercise,
@@ -113,6 +131,7 @@ void main() {
     expect(state.state.goal, DailyGoal.unset);
     expect(state.state.adviceText, '今日はまだ運動していません');
     expect(state.state.adviceTone, AdviceTone.happy);
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
     expect(load.calls, 1);
     expect(advice.calls, 1);
     expect(advice.lastRequest?.locale, 'ja');
@@ -125,6 +144,8 @@ void main() {
       state: state,
       loadTopScreenUsecase: load,
       generateTopAdviceUsecase: advice,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
     );
     await delegate.execute(
       locale: 'ja',
@@ -139,6 +160,75 @@ void main() {
 
     expect(load.calls, 2);
     expect(advice.calls, 2);
+  });
+
+  test('未ダウンロードかつ未提示なら pending true', () async {
+    await OnInitializeDelegate(
+      state: state,
+      loadTopScreenUsecase: _Load(_loadResult),
+      generateTopAdviceUsecase: _Advice(),
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(shouldShow: true),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+    ).execute(
+      locale: 'ja',
+      noExercise: _noExercise,
+      fallbackTemplates: _fallbackTemplates,
+    );
+    expect(state.state.pendingModelDownloadGuidance, isTrue);
+  });
+
+  test('markPresented 済みなら pending false', () async {
+    final session = OnDeviceLlmGuidanceSession()..markPresented();
+    await OnInitializeDelegate(
+      state: state,
+      loadTopScreenUsecase: _Load(_loadResult),
+      generateTopAdviceUsecase: _Advice(),
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(shouldShow: true),
+      guidanceSession: session,
+    ).execute(
+      locale: 'ja',
+      noExercise: _noExercise,
+      fallbackTemplates: _fallbackTemplates,
+    );
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+  });
+
+  test('誘導不要なら pending false', () async {
+    await OnInitializeDelegate(
+      state: state,
+      loadTopScreenUsecase: _Load(_loadResult),
+      generateTopAdviceUsecase: _Advice(),
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+    ).execute(
+      locale: 'ja',
+      noExercise: _noExercise,
+      fallbackTemplates: _fallbackTemplates,
+    );
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+  });
+
+  test('acknowledge 後は pending false かつ hasPresented', () async {
+    state = MutableStateStream(
+      const TopScreenState(
+        loaded: true,
+        metric: PeriodTotalMetric.calories,
+        today: PeriodAggregate.empty,
+        week: PeriodAggregate.empty,
+        month: PeriodAggregate.empty,
+        goal: DailyGoal.unset,
+        adviceText: '',
+        adviceTone: AdviceTone.fun,
+        pendingModelDownloadGuidance: true,
+      ),
+    );
+    final session = OnDeviceLlmGuidanceSession();
+    await OnAcknowledgeModelDownloadGuidanceDelegate(
+      state: state,
+      session: session,
+    ).execute();
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(session.hasPresented, isTrue);
   });
 
   test('未読込の指標選択は状態を変えない', () async {
@@ -168,6 +258,7 @@ void main() {
         goal: DailyGoal(caloriesKcal: 200),
         adviceText: '助言',
         adviceTone: AdviceTone.confused,
+        pendingModelDownloadGuidance: false,
       ),
     );
     final save = _Save();
@@ -195,6 +286,7 @@ void main() {
         goal: DailyGoal.unset,
         adviceText: '',
         adviceTone: AdviceTone.fun,
+        pendingModelDownloadGuidance: false,
       ),
     );
     await expectLater(
@@ -225,12 +317,14 @@ void main() {
         goal: DailyGoal.unset,
         adviceText: '定型',
         adviceTone: AdviceTone.realized,
+        pendingModelDownloadGuidance: false,
       ),
     );
     expect(entity.todayText, '1.3');
     expect(entity.weekText, '--');
     expect(entity.adviceText, '定型');
     expect(entity.adviceTone, AdviceTone.realized);
+    expect(entity.pendingModelDownloadGuidance, isFalse);
     expect(entity.calories.isUnset, isTrue);
   });
 
@@ -250,6 +344,7 @@ void main() {
         goal: DailyGoal(caloriesKcal: 200),
         adviceText: '',
         adviceTone: AdviceTone.fun,
+        pendingModelDownloadGuidance: false,
       ),
     );
     expect(entity.calories.percentText, '150%');
@@ -279,6 +374,7 @@ void main() {
         ),
         adviceText: '',
         adviceTone: AdviceTone.fun,
+        pendingModelDownloadGuidance: false,
       ),
     );
     expect(entity.duration.percentText, '0%');

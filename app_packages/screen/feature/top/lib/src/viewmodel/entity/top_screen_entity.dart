@@ -14,6 +14,7 @@ import 'top_goal_ring_entity.dart';
 ///   monthText: '--',
 ///   adviceText: '',
 ///   adviceTone: AdviceTone.fun,
+///   pendingModelDownloadGuidance: false,
 ///   duration: const TopGoalRingEntity(
 ///     status: GoalMetricStatus.unset,
 ///     lap1: 0,
@@ -41,7 +42,7 @@ import 'top_goal_ring_entity.dart';
 /// );
 /// ```
 final class TopScreenEntity {
-  /// 指標・期間表記・アドバイス本文とトーン・3 指標の達成を持つ。
+  /// 指標・期間表記・アドバイス本文とトーン・誘導予約・3 指標の達成を持つ。
   ///
   /// Example:
   /// ```dart
@@ -52,6 +53,7 @@ final class TopScreenEntity {
   ///   monthText: '--',
   ///   adviceText: '',
   ///   adviceTone: AdviceTone.fun,
+  ///   pendingModelDownloadGuidance: false,
   ///   duration: ring,
   ///   calories: ring,
   ///   distance: ring,
@@ -64,6 +66,7 @@ final class TopScreenEntity {
     required this.monthText,
     required this.adviceText,
     required this.adviceTone,
+    required this.pendingModelDownloadGuidance,
     required this.duration,
     required this.calories,
     required this.distance,
@@ -86,6 +89,9 @@ final class TopScreenEntity {
 
   /// ワンポイントアドバイスのトーン。
   final AdviceTone adviceTone;
+
+  /// モデル未ダウンロード誘導を表示予約しているとき true。
+  final bool pendingModelDownloadGuidance;
 
   /// 運動時間の達成リング。
   final TopGoalRingEntity duration;

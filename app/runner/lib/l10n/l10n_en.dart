@@ -294,4 +294,21 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
+
+  @override
+  String get view_model_download_guidance_body =>
+      'The on-device model for tips is not on this device yet. You can start preparing it. You can keep using the app meanwhile.';
+
+  @override
+  String get view_model_download_guidance_dismiss => 'Dismiss';
+
+  @override
+  String get view_model_download_guidance_prepare => 'Prepare model';
+
+  @override
+  String get view_model_download_guidance_prepare_failed =>
+      'Preparation failed. Please try again later.';
+
+  @override
+  String get view_model_download_guidance_title => 'Prepare on-device AI model';
 }

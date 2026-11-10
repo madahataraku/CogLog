@@ -397,6 +397,26 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_top_unset_prompt;
       },
+      'view_model_download_guidance_body': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_body;
+      },
+      'view_model_download_guidance_dismiss': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_dismiss;
+      },
+      'view_model_download_guidance_prepare': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_prepare;
+      },
+      'view_model_download_guidance_prepare_failed': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_prepare_failed;
+      },
+      'view_model_download_guidance_title': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_title;
+      },
     };
 
     LocalizeStringDelegate.delegate = (source) {

@@ -356,5 +356,25 @@
   "screen_feature_top_unset_prompt": "Set a daily goal in Goals",
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
+  },
+  "view_model_download_guidance_body": "The on-device model for tips is not on this device yet. You can start preparing it. You can keep using the app meanwhile.",
+  "@view_model_download_guidance_body": {
+    "description": "誘導本文"
+  },
+  "view_model_download_guidance_dismiss": "Dismiss",
+  "@view_model_download_guidance_dismiss": {
+    "description": "閉じる"
+  },
+  "view_model_download_guidance_prepare": "Prepare model",
+  "@view_model_download_guidance_prepare": {
+    "description": "準備開始"
+  },
+  "view_model_download_guidance_prepare_failed": "Preparation failed. Please try again later.",
+  "@view_model_download_guidance_prepare_failed": {
+    "description": "準備失敗"
+  },
+  "view_model_download_guidance_title": "Prepare on-device AI model",
+  "@view_model_download_guidance_title": {
+    "description": "誘導タイトル"
   }
 }

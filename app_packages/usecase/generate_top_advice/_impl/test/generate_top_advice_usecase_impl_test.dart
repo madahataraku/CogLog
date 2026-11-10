@@ -134,4 +134,18 @@ void main() {
     expect(result.tone, AdviceTone.fun);
     expect(llm.generateCallCount, 1);
   });
+
+  test('解析後本文が空のときは定型へフォールバックする', () async {
+    final llm = FakeOnDeviceLlm(response: 'TONE=happy\nADVICE=');
+    final result =
+        await GenerateTopAdviceUsecaseImpl(
+          llm: llm,
+          picker: const FixedAdviceTemplatePicker(),
+        ).execute(
+          request(histories: [ride(recordedAt: DateTime(2026, 11, 5, 12))]),
+        );
+
+    expect(result.advice, '定型A');
+    expect(result.tone, AdviceTone.fun);
+  });
 }

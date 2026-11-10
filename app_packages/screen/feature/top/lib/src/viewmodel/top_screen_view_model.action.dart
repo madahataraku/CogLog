@@ -27,6 +27,8 @@ extension TopScreenViewModelActions on TopScreenViewModel {
       state: state,
       loadTopScreenUsecase: loadTopScreenUsecase,
       generateTopAdviceUsecase: generateTopAdviceUsecase,
+      evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+      guidanceSession: guidanceSession,
     );
     return delegate.execute(
       locale: locale,
@@ -47,5 +49,30 @@ extension TopScreenViewModelActions on TopScreenViewModel {
       saveTopScreenMetricUsecase: saveTopScreenMetricUsecase,
     );
     return delegate.execute(metric);
+  }
+
+  /// 誘導予約を消費し、同一プロセスでの再表示を止める。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeModelDownloadGuidance();
+  /// ```
+  Future<void> onAcknowledgeModelDownloadGuidance() {
+    return OnAcknowledgeModelDownloadGuidanceDelegate(
+      state: state,
+      session: guidanceSession,
+    ).execute();
+  }
+
+  /// モデル準備を依頼する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onPrepareModelDownloadGuidance();
+  /// ```
+  Future<void> onPrepareModelDownloadGuidance() {
+    return OnPrepareModelDownloadGuidanceDelegate(
+      prepareOnDeviceLlmModelUsecase: prepareOnDeviceLlmModelUsecase,
+    ).execute();
   }
 }

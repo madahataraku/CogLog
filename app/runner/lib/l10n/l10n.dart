@@ -612,6 +612,36 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標設定で一日あたりの目標を設定しましょう'**
   String get screen_feature_top_unset_prompt;
+
+  /// 誘導本文
+  ///
+  /// In ja, this message translates to:
+  /// **'ワンポイントアドバイス等に使うモデルが端末にありません。準備を開始できます。準備中もアプリは利用できます。'**
+  String get view_model_download_guidance_body;
+
+  /// 閉じる
+  ///
+  /// In ja, this message translates to:
+  /// **'閉じる'**
+  String get view_model_download_guidance_dismiss;
+
+  /// 準備開始
+  ///
+  /// In ja, this message translates to:
+  /// **'モデルを準備'**
+  String get view_model_download_guidance_prepare;
+
+  /// 準備失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'準備に失敗しました。しばらくしてから再度お試しください。'**
+  String get view_model_download_guidance_prepare_failed;
+
+  /// 誘導タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'端末上のAIモデルの準備'**
+  String get view_model_download_guidance_title;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

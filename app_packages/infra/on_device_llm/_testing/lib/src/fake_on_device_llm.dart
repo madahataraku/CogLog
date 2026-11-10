@@ -4,31 +4,36 @@ import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
 /// テスト用の固定応答 LLM。
 ///
-/// [throwOnGenerate] で生成失敗を再現できる。
-///
 /// Example:
 /// ```dart
 /// FakeOnDeviceLlm(response: '定型ではない助言');
 /// ```
 final class FakeOnDeviceLlm implements OnDeviceLlm {
-  /// [response] を返し、[available] で利用可否を切り替える。
+  /// [response] を返し、[readiness] で準備状態を切り替える。
   ///
-  /// [throwOnGenerate] が true のときは [generate] で例外を投げる。
+  /// [available] のみ渡したときは ready / unavailable に写す。
   ///
   /// Example:
   /// ```dart
   /// FakeOnDeviceLlm(available: false);
   /// ```
   FakeOnDeviceLlm({
-    this.available = true,
+    bool available = true,
+    OnDeviceLlmReadiness? readiness,
     this.response = 'fake advice',
     this.throwOnGenerate = false,
     this.throwOnIsAvailable = false,
+    this.throwOnReadiness = false,
+    this.throwOnPrepareModel = false,
     this.hangOnGenerate = false,
-  });
+  }) : readinessValue =
+           readiness ??
+           (available
+               ? OnDeviceLlmReadiness.ready
+               : OnDeviceLlmReadiness.unavailable);
 
-  /// [isAvailable] が返す値。
-  final bool available;
+  /// [readiness] が返す値。
+  final OnDeviceLlmReadiness readinessValue;
 
   /// [generate] が返す文。
   final String response;
@@ -39,16 +44,39 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
   /// true のとき [isAvailable] が失敗する。
   final bool throwOnIsAvailable;
 
+  /// true のとき [readiness] が失敗する。
+  final bool throwOnReadiness;
+
+  /// true のとき [prepareModel] が失敗する。
+  final bool throwOnPrepareModel;
+
   /// true のとき [generate] が完了しない。
   final bool hangOnGenerate;
 
   /// [generate] が呼ばれた回数。
   int generateCallCount = 0;
 
+  /// [prepareModel] が呼ばれた回数。
+  int prepareModelCallCount = 0;
+
   /// 最後に渡されたプロンプト。
   String? lastPrompt;
 
-  /// [available] を返す。
+  /// [readinessValue] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.readiness;
+  /// ```
+  @override
+  Future<OnDeviceLlmReadiness> get readiness async {
+    if (throwOnReadiness) {
+      throw StateError('FakeOnDeviceLlm readiness failed');
+    }
+    return readinessValue;
+  }
+
+  /// [readinessValue] が ready のとき true。
   ///
   /// Example:
   /// ```dart
@@ -59,7 +87,7 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
     if (throwOnIsAvailable) {
       throw StateError('FakeOnDeviceLlm isAvailable failed');
     }
-    return available;
+    return readinessValue == OnDeviceLlmReadiness.ready;
   }
 
   /// [response] を返すか、設定に応じて失敗する。
@@ -79,5 +107,19 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
       return Completer<String>().future;
     }
     return response;
+  }
+
+  /// 呼出回数を増やし、設定に応じて失敗する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.prepareModel();
+  /// ```
+  @override
+  Future<void> prepareModel() async {
+    prepareModelCallCount += 1;
+    if (throwOnPrepareModel) {
+      throw StateError('FakeOnDeviceLlm prepareModel failed');
+    }
   }
 }

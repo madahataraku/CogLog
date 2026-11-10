@@ -46,6 +46,7 @@ workspace:
   - app_packages/screen/feature/main
   - app_packages/screen/feature/meter_capture
   - app_packages/screen/feature/top
+  - app_packages/view/model_download_guidance
   - app_packages/screen/injection
   - app_packages/screen/navigation
   - app_packages/screen/navigation/_go_router
@@ -64,6 +65,8 @@ workspace:
   - app_packages/usecase/obtain_meter_photo/_impl
   - app_packages/usecase/open_app_settings
   - app_packages/usecase/open_app_settings/_impl
+  - app_packages/usecase/on_device_llm_guidance
+  - app_packages/usecase/on_device_llm_guidance/_impl
   - app_packages/usecase/read_meter_panel
   - app_packages/usecase/read_meter_panel/_impl
   - app_packages/usecase/save_daily_goal
@@ -81,6 +84,7 @@ dependency_overrides:
   build_runner: 2.10.4
   drift: 2.30.0
   drift_dev: 2.30.0
+  flutter_device_ai: 0.3.0
   flutter_hooks: 0.21.3+1
   flutter_lints: ^6.0.0
   flutter_riverpod: 3.4.3

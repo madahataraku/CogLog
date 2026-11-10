@@ -1,6 +1,9 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
+import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
+import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../state/top_screen_state.dart';
 
@@ -12,6 +15,8 @@ import '../state/top_screen_state.dart';
 ///   state: state,
 ///   loadTopScreenUsecase: loadTopScreenUsecase,
 ///   generateTopAdviceUsecase: generateTopAdviceUsecase,
+///   evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+///   guidanceSession: guidanceSession,
 /// ).execute(
 ///   locale: 'ja',
 ///   noExercise: AdviceTemplate(
@@ -23,8 +28,9 @@ import '../state/top_screen_state.dart';
 ///   ],
 /// );
 /// ```
+@internal
 final class OnInitializeDelegate {
-  /// [state] と読み込み・アドバイス生成 Usecase を受け取る。
+  /// [state] と読み込み・アドバイス生成・誘導判定を受け取る。
   ///
   /// Example:
   /// ```dart
@@ -32,12 +38,16 @@ final class OnInitializeDelegate {
   ///   state: state,
   ///   loadTopScreenUsecase: loadTopScreenUsecase,
   ///   generateTopAdviceUsecase: generateTopAdviceUsecase,
+  ///   evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+  ///   guidanceSession: guidanceSession,
   /// );
   /// ```
   const OnInitializeDelegate({
     required this.state,
     required this.loadTopScreenUsecase,
     required this.generateTopAdviceUsecase,
+    required this.evaluateOnDeviceLlmGuidanceUsecase,
+    required this.guidanceSession,
   });
 
   /// 更新する画面状態。
@@ -48,6 +58,12 @@ final class OnInitializeDelegate {
 
   /// ワンポイントアドバイスの生成。
   final GenerateTopAdviceUsecase generateTopAdviceUsecase;
+
+  /// モデル未ダウンロード誘導の要否。
+  final EvaluateOnDeviceLlmGuidanceUsecase evaluateOnDeviceLlmGuidanceUsecase;
+
+  /// プロセス内の誘導再表示抑制。
+  final OnDeviceLlmGuidanceSession guidanceSession;
 
   /// 現在時刻で読み込み、アドバイス本文とトーンを生成して loaded にする。
   ///
@@ -81,6 +97,8 @@ final class OnInitializeDelegate {
           fallbackTemplates: fallbackTemplates,
         ),
       );
+      final decision = await evaluateOnDeviceLlmGuidanceUsecase.execute();
+      final pending = guidanceSession.shouldShow && decision.shouldShow;
       await emitter.emit(
         TopScreenState(
           loaded: true,
@@ -91,6 +109,7 @@ final class OnInitializeDelegate {
           goal: result.goal,
           adviceText: advice.advice,
           adviceTone: advice.tone,
+          pendingModelDownloadGuidance: pending,
         ),
       );
     });

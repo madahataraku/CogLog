@@ -18,7 +18,18 @@ import 'package:riverpod/misc.dart';
 /// infraOverrides();
 /// ```
 List<Override> infraOverrides() => [
-  onDeviceLlmProvider.overrideWith((ref) => const UnavailableOnDeviceLlm()),
+  onDeviceLlmProvider.overrideWith((ref) {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return FlutterDeviceAiOnDeviceLlm();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableOnDeviceLlm();
+    }
+  }),
   meterPhotoSourceProvider.overrideWith((ref) => ImagePickerMeterPhotoSource()),
   meterReadingEnginesProvider.overrideWith(
     (ref) => _unavailableMeterReadingEngines(),
@@ -49,7 +60,10 @@ List<MeterReadingEngine> _unavailableMeterReadingEngines() {
         UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit),
         UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano),
       ];
-    default:
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
       return const [
         UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit),
         UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano),

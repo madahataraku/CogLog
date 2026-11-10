@@ -29,6 +29,8 @@ dependencies:
   usecase_load_top_screen_impl: any
   usecase_obtain_meter_photo: any
   usecase_obtain_meter_photo_impl: any
+  usecase_on_device_llm_guidance: any
+  usecase_on_device_llm_guidance_impl: any
   usecase_open_app_settings: any
   usecase_open_app_settings_impl: any
   usecase_read_meter_panel: any
