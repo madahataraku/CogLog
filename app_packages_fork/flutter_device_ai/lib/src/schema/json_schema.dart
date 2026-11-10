@@ -185,6 +185,9 @@ class JsonExtractor {
     if (fence != null && fence.group(1)!.trim().isNotEmpty) {
       body = fence.group(1)!.trim();
     }
+    try {
+      return jsonDecode(body);
+    } catch (_) {}
     final start = body.indexOf(RegExp(r'[\{\[]'));
     if (start == -1) return null;
     body = body.substring(start);

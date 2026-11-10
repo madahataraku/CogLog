@@ -465,9 +465,11 @@ class LocalLlmFallbackAdapter extends OnDeviceAiFallbackAdapter {
     late StreamController<String> controller;
     StreamSubscription<String>? sub;
     LlamaEngine? engine;
+    var cancelled = false;
+    var acquired = false;
     var released = false;
     void release() {
-      if (!released && engine != null) {
+      if (!released && acquired) {
         released = true;
         _release();
       }
@@ -477,6 +479,11 @@ class LocalLlmFallbackAdapter extends OnDeviceAiFallbackAdapter {
       onListen: () async {
         try {
           engine = await _acquire();
+          acquired = true;
+          if (cancelled) {
+            release();
+            return;
+          }
           sub = _stream(engine!, messages, config, instructions).listen(
             controller.add,
             onError: controller.addError,
@@ -486,11 +493,13 @@ class LocalLlmFallbackAdapter extends OnDeviceAiFallbackAdapter {
             },
           );
         } catch (e, st) {
+          release();
           controller.addError(e, st);
           await controller.close();
         }
       },
       onCancel: () async {
+        cancelled = true;
         engine?.cancelGeneration();
         await sub?.cancel();
         release();

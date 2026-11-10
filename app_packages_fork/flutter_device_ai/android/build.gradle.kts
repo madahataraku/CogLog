@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 group = "dev.flutter_device_ai"
 version = "0.1.1"
 
@@ -36,10 +38,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
     sourceSets {
         getByName("main") {
             java.srcDirs("src/main/kotlin")
@@ -49,6 +47,12 @@ android {
     defaultConfig {
         // ML Kit GenAI requires API 26.
         minSdk = 26
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 

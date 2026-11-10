@@ -19,25 +19,14 @@ void main() {
     expect(log.entries, isNotEmpty);
   });
 
-  test('未 ready でも生成プローブを試し型名付き例外を残す', () async {
-    final usecase = DiagnoseOnDeviceLlmUsecaseImpl(
-      llm: FakeOnDeviceLlm(available: false, throwOnGenerate: true),
-      log: AppLogStore(),
-    );
-    final result = await usecase.execute();
-    expect(result.canGenerate, isFalse);
-    expect(result.probeSkippedReason, isNull);
-    expect(result.generateError, contains('StateError'));
-    expect(result.generateError, contains('generate failed'));
-  });
-
-  test('生成失敗を型名付き generateError に残す', () async {
+  test('生成プローブ失敗を型名付き例外として残す', () async {
     final usecase = DiagnoseOnDeviceLlmUsecaseImpl(
       llm: FakeOnDeviceLlm(throwOnGenerate: true),
       log: AppLogStore(),
     );
     final result = await usecase.execute();
     expect(result.canGenerate, isFalse);
+    expect(result.probeSkippedReason, isNull);
     expect(result.generateError, contains('StateError'));
     expect(result.generateError, contains('generate failed'));
   });

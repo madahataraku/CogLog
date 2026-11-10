@@ -13,6 +13,10 @@ void main() {
     expect(formatExceptionDetail(_Named('detail')), '_Named: detail');
   });
 
+  test('toString が型名のみのときは Type: null にする', () {
+    expect(formatExceptionDetail(_Empty()), '_Empty: null');
+  });
+
   test('cause 連鎖を残す', () {
     final error = _Chained(
       'outer',
@@ -42,6 +46,11 @@ final class _Named implements Exception {
 
   @override
   String toString() => '_Named: $detail';
+}
+
+final class _Empty implements Exception {
+  @override
+  String toString() => '_Empty';
 }
 
 final class _Chained implements Exception, ExceptionWithCause {

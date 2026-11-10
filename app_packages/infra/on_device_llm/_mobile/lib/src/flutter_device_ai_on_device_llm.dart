@@ -104,17 +104,15 @@ final class FlutterDeviceAiOnDeviceLlm implements OnDeviceLlm {
     return response.text;
   }
 
-  /// 準備状態を問わずネイティブ生成を試し、接続失敗の型名を拾う。
+  /// 準備状態・フォールバックを問わずネイティブ生成を試し、接続失敗の型名を拾う。
   ///
   /// Example:
   /// ```dart
   /// await FlutterDeviceAiOnDeviceLlm().diagnoseGenerate('ping');
   /// ```
   @override
-  Future<String> diagnoseGenerate(String prompt) async {
-    final response = await _ai.generateText(prompt: prompt);
-    return response.text;
-  }
+  Future<String> diagnoseGenerate(String prompt) =>
+      _ai.diagnoseGenerateNative(prompt: prompt);
 
   /// OS にモデル準備を依頼する。
   ///

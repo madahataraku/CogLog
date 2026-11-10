@@ -70,11 +70,12 @@ Use 2 to 5 blocks. Pick only the block types that fit the goal.''';
       instruction.write('\nWrite all user-facing text in ${language.trim()}.');
     }
 
-    final session = await _ai.createSession(
-      systemInstruction: instruction.toString(),
-      tools: tools,
-    );
+    OnDeviceAiSession? session;
     try {
+      session = await _ai.createSession(
+        systemInstruction: instruction.toString(),
+        tools: tools,
+      );
       final caps = await _ai.capabilities();
       final config = GenerationConfig(
         maxTokens: 900,
@@ -100,7 +101,7 @@ Use 2 to 5 blocks. Pick only the block types that fit the goal.''';
       lastError = e.message;
       return null;
     } finally {
-      await session.close();
+      await session?.close();
     }
   }
 }

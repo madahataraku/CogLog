@@ -264,6 +264,30 @@ class FlutterDeviceAi {
     return res.text;
   }
 
+  /// Diagnostic: native generation only (skips readiness gate and fallback).
+  ///
+  /// Used by host apps to surface connection failures even when
+  /// [availability] is not ready.
+  Future<String> diagnoseGenerateNative({
+    required String prompt,
+    GenerationConfig? config,
+  }) async {
+    final sessionId = await _platform.createSession(
+      systemInstruction: _defaultInstructions,
+      config: config,
+    );
+    try {
+      await _platform.sessionAddQuery(sessionId, prompt);
+      final response = await _platform.sessionGetResponse(
+        sessionId,
+        config: config,
+      );
+      return response.text;
+    } finally {
+      await _platform.sessionClose(sessionId);
+    }
+  }
+
   // --- Sessions -------------------------------------------------------------
 
   /// Opens a multi-turn conversation.
