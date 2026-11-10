@@ -28,7 +28,8 @@ final class DiagnoseOnDeviceLlmResult {
   ///     message: 'ok',
   ///   ),
   ///   canGenerate: false,
-  ///   generateError: 'timeout',
+  ///   generateError: 'StateError: timeout',
+  ///   prepareError: 'StateError: prepare failed',
   /// );
   /// ```
   const DiagnoseOnDeviceLlmResult({
@@ -36,6 +37,7 @@ final class DiagnoseOnDeviceLlmResult {
     required this.canGenerate,
     this.sampleOutput,
     this.generateError,
+    this.prepareError,
     this.probeSkippedReason,
   });
 
@@ -48,9 +50,12 @@ final class DiagnoseOnDeviceLlmResult {
   /// 生成プローブの本文。
   final String? sampleOutput;
 
-  /// 生成プローブの例外文字列。
+  /// 生成プローブの例外（型名付き）。
   final String? generateError;
 
-  /// 生成を試さなかった理由（未 ready など）。
+  /// 準備プローブの例外（型名付き）。
+  final String? prepareError;
+
+  /// 生成を試さなかった理由（probeGenerate=false など）。
   final String? probeSkippedReason;
 }

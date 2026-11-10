@@ -44,6 +44,16 @@ abstract interface class OnDeviceLlm {
   /// ```
   Future<String> generate(String prompt);
 
+  /// 診断専用。準備状態を問わず生成を試し、失敗理由を例外で返す。
+  ///
+  /// 業務経路では [generate] を使う。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.diagnoseGenerate('ping');
+  /// ```
+  Future<String> diagnoseGenerate(String prompt);
+
   /// 未ダウンロード時に OS へモデル準備を依頼する。
   ///
   /// [OnDeviceLlmReadiness.ready] のときは何もしない。

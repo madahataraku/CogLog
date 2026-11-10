@@ -1,4 +1,5 @@
 import 'package:flutter_device_ai/flutter_device_ai.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
 import 'map_flutter_device_ai_readiness.dart';
@@ -83,7 +84,7 @@ final class FlutterDeviceAiOnDeviceLlm implements OnDeviceLlm {
         status: 'error',
         reason: 'exception',
         message: 'availability failed',
-        error: error.toString(),
+        error: formatExceptionDetail(error),
       );
     }
   }
@@ -102,6 +103,16 @@ final class FlutterDeviceAiOnDeviceLlm implements OnDeviceLlm {
     final response = await _ai.generateText(prompt: prompt);
     return response.text;
   }
+
+  /// 準備状態・フォールバックを問わずネイティブ生成を試し、接続失敗の型名を拾う。
+  ///
+  /// Example:
+  /// ```dart
+  /// await FlutterDeviceAiOnDeviceLlm().diagnoseGenerate('ping');
+  /// ```
+  @override
+  Future<String> diagnoseGenerate(String prompt) =>
+      _ai.diagnoseGenerateNative(prompt: prompt);
 
   /// OS にモデル準備を依頼する。
   ///
