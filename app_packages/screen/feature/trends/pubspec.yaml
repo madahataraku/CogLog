@@ -1,0 +1,28 @@
+name: screen_feature_trends
+description: CogLog Trends screen.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_hooks: any
+  forui: any
+  hooks_riverpod: any
+  material_ui: any
+  meta: any
+  monolith_localization_runtime: any
+  riverpod: any
+  state_stream: any
+  state_stream_riverpod: any
+
+dev_dependencies:
+  foundation_resources: any
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

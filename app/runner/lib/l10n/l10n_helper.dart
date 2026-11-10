@@ -365,6 +365,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_main_nav_meter_capture;
       },
+      'screen_feature_main_nav_trends': (source) {
+        // No Placeholders
+        return l10n.screen_feature_main_nav_trends;
+      },
       'screen_feature_meter_capture_average_speed': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_average_speed;
@@ -512,6 +516,46 @@ final class L10nHelper {
       'screen_feature_top_unset_prompt': (source) {
         // No Placeholders
         return l10n.screen_feature_top_unset_prompt;
+      },
+      'screen_feature_trends_chart_placeholder': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_chart_placeholder;
+      },
+      'screen_feature_trends_group_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_group_body;
+      },
+      'screen_feature_trends_group_exercise': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_group_exercise;
+      },
+      'screen_feature_trends_group_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_group_label;
+      },
+      'screen_feature_trends_period_days182': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_period_days182;
+      },
+      'screen_feature_trends_period_days30': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_period_days30;
+      },
+      'screen_feature_trends_period_days365': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_period_days365;
+      },
+      'screen_feature_trends_period_days90': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_period_days90;
+      },
+      'screen_feature_trends_period_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_period_label;
+      },
+      'screen_feature_trends_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_title;
       },
       'view_model_download_guidance_body': (source) {
         // No Placeholders
