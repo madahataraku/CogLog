@@ -8,6 +8,9 @@ import android.net.Uri
 /**
  * Creates the shared [GenerativeModel] during app process start, before Flutter
  * attaches plugins, so AICore has time to bind before the first status check.
+ *
+ * Manifest `initOrder` must be lower than ML Kit's `MlKitInitProvider` (99)
+ * so that provider runs first.
  */
 class FlutterDeviceAiInitProvider : ContentProvider() {
     override fun onCreate(): Boolean {

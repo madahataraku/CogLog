@@ -10,6 +10,6 @@
       android:name="dev.flutter_device_ai.FlutterDeviceAiInitProvider"
       android:authorities="${applicationId}.flutterdeviceai.init"
       android:exported="false"
-      android:initOrder="100" />
+      android:initOrder="98" />
   </application>
 </manifest>

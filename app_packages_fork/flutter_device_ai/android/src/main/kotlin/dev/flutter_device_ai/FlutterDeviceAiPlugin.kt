@@ -166,12 +166,12 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             delay(MIN_CLIENT_AGE_BEFORE_STATUS_MS - age)
         }
         var lastNpe: NullPointerException? = null
-        for (waitMs in STATUS_RETRY_DELAYS_MS) {
+        for ((index, waitMs) in STATUS_RETRY_DELAYS_MS.withIndex()) {
             try {
                 return generative.checkStatus()
             } catch (e: NullPointerException) {
                 lastNpe = e
-                delay(waitMs)
+                if (index < STATUS_RETRY_DELAYS_MS.lastIndex) delay(waitMs)
             }
         }
         throw lastNpe ?: NullPointerException("checkStatus failed without exception")
@@ -183,12 +183,12 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
     ): GenerateContentResponse {
         val generative = client()
         var lastNpe: NullPointerException? = null
-        for (waitMs in STATUS_RETRY_DELAYS_MS) {
+        for ((index, waitMs) in STATUS_RETRY_DELAYS_MS.withIndex()) {
             try {
                 return generative.generateContent(request)
             } catch (e: NullPointerException) {
                 lastNpe = e
-                delay(waitMs)
+                if (index < STATUS_RETRY_DELAYS_MS.lastIndex) delay(waitMs)
             }
         }
         throw lastNpe ?: NullPointerException("generateContent failed without exception")
