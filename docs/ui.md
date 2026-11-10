@@ -9,6 +9,12 @@ dart run forui theme create
 
 `dart run forui theme create` は `app/lib/theme/` を上書きする。テーマの調整は生成後の `app/lib/theme/` に対して行う。
 
+色の方針は次のとおり。
+
+- ベースカラーは Forui の Olive（`app/lib/theme/colors.dart`）。
+- アプリの primary は `#F6AD49`。`primaryForeground` はコントラストのため Olive の暗い前景（`#1D1D16`）。
+- `#F6AD49` により合う暖色ニュートラルとして Stone も候補。ベースを差し替えるときは `dart run forui theme create --preset baaaaa` のあと primary を同じ手順で載せる。
+
 ## アプリの根
 
 `app/lib/main.dart` は次の順で組む。
