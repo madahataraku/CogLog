@@ -7,6 +7,7 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_injection/infra_injection.dart';
+import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
 import 'package:screen_injection/screen_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
@@ -39,7 +40,9 @@ Future<ScreenGraph> pumpTopScreen(
           documentsDirectory: documents,
           histories: FixedExerciseHistoryRepository(histories),
         ),
-        ...infraOverrides(),
+        // Widget テストの既定 OS は Android。本番 DI の FlutterDeviceAi は
+        // readiness がチャネル待ちで止まるため、固定 Fake に差し替える。
+        ...infraOverrides(onDeviceLlm: FakeOnDeviceLlm(available: false)),
         ...usecaseOverrides(
           adviceTemplatePicker: const FixedAdviceTemplatePicker(),
         ),

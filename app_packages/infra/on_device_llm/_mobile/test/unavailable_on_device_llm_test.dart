@@ -1,7 +1,15 @@
+import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_mobile/infra_on_device_llm_mobile.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('readiness は unavailable', () async {
+    expect(
+      await const UnavailableOnDeviceLlm().readiness,
+      OnDeviceLlmReadiness.unavailable,
+    );
+  });
+
   test('isAvailable は false', () async {
     expect(await const UnavailableOnDeviceLlm().isAvailable, isFalse);
   });
@@ -11,5 +19,9 @@ void main() {
       const UnavailableOnDeviceLlm().generate('prompt'),
       throwsStateError,
     );
+  });
+
+  test('prepareModel は何もしない', () async {
+    await const UnavailableOnDeviceLlm().prepareModel();
   });
 }

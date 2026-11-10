@@ -356,5 +356,25 @@
   "screen_feature_top_unset_prompt": "目標設定で一日あたりの目標を設定しましょう",
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
+  },
+  "view_model_download_guidance_body": "ワンポイントアドバイス等に使うモデルが端末にありません。準備を開始できます。準備中もアプリは利用できます。",
+  "@view_model_download_guidance_body": {
+    "description": "誘導本文"
+  },
+  "view_model_download_guidance_dismiss": "閉じる",
+  "@view_model_download_guidance_dismiss": {
+    "description": "閉じる"
+  },
+  "view_model_download_guidance_prepare": "モデルを準備",
+  "@view_model_download_guidance_prepare": {
+    "description": "準備開始"
+  },
+  "view_model_download_guidance_prepare_failed": "準備に失敗しました。しばらくしてから再度お試しください。",
+  "@view_model_download_guidance_prepare_failed": {
+    "description": "準備失敗"
+  },
+  "view_model_download_guidance_title": "端末上のAIモデルの準備",
+  "@view_model_download_guidance_title": {
+    "description": "誘導タイトル"
   }
 }

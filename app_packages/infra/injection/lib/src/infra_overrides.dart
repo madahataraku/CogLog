@@ -13,12 +13,29 @@ import 'package:riverpod/misc.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
+/// [onDeviceLlm] を渡すとプラットフォーム分岐を使わず、その実装を使う（Widget テスト用）。
+///
 /// Example:
 /// ```dart
 /// infraOverrides();
 /// ```
-List<Override> infraOverrides() => [
-  onDeviceLlmProvider.overrideWith((ref) => const UnavailableOnDeviceLlm()),
+List<Override> infraOverrides({OnDeviceLlm? onDeviceLlm}) => [
+  onDeviceLlmProvider.overrideWith((ref) {
+    final injected = onDeviceLlm;
+    if (injected != null) {
+      return injected;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return FlutterDeviceAiOnDeviceLlm();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableOnDeviceLlm();
+    }
+  }),
   meterPhotoSourceProvider.overrideWith((ref) => ImagePickerMeterPhotoSource()),
   meterReadingEnginesProvider.overrideWith(
     (ref) => _unavailableMeterReadingEngines(),
@@ -49,7 +66,10 @@ List<MeterReadingEngine> _unavailableMeterReadingEngines() {
         UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit),
         UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano),
       ];
-    default:
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
       return const [
         UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit),
         UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano),

@@ -1,4 +1,5 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
 
@@ -10,6 +11,7 @@ import '../state/top_screen_state.dart';
 /// ```dart
 /// delegate.execute(PeriodTotalMetric.distance);
 /// ```
+@internal
 final class OnSelectMetricDelegate {
   /// [state] と [saveTopScreenMetricUsecase] を受け取る。
   ///
@@ -58,6 +60,7 @@ final class OnSelectMetricDelegate {
           goal: current.goal,
           adviceText: current.adviceText,
           adviceTone: current.adviceTone,
+          pendingModelDownloadGuidance: current.pendingModelDownloadGuidance,
         ),
       );
     });

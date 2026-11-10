@@ -1,0 +1,17 @@
+name: usecase_on_device_llm_guidance_impl
+description: On-device LLM guidance usecase implementations.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_on_device_llm: any
+  usecase_on_device_llm_guidance: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_on_device_llm_testing: any
+  test: any

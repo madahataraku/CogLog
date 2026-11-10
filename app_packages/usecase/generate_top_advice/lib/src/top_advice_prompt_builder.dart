@@ -1,3 +1,4 @@
+import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 
 /// ワンポイントアドバイス用のプロンプトを組み立てる。
@@ -6,17 +7,29 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 ///
 /// Example:
 /// ```dart
-/// builder.build(histories: const [], locale: 'ja');
+/// builder.build(
+///   histories: const [],
+///   locale: 'ja',
+///   goal: DailyGoal.unset,
+///   consecutiveExerciseDays: 0,
+/// );
 /// ```
 abstract interface class TopAdvicePromptBuilder {
-  /// [histories] と [locale] からプロンプト文字列を返す。
+  /// [histories]・[locale]・[goal]・[consecutiveExerciseDays] からプロンプトを返す。
   ///
   /// Example:
   /// ```dart
-  /// builder.build(histories: histories, locale: 'ja');
+  /// builder.build(
+  ///   histories: histories,
+  ///   locale: 'ja',
+  ///   goal: goal,
+  ///   consecutiveExerciseDays: 3,
+  /// );
   /// ```
   String build({
     required List<ExerciseHistory> histories,
     required String locale,
+    required DailyGoal goal,
+    required int consecutiveExerciseDays,
   });
 }

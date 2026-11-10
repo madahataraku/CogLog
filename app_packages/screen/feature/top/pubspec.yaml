@@ -26,7 +26,9 @@ dependencies:
   state_stream_riverpod: any
   usecase_generate_top_advice: any
   usecase_load_top_screen: any
+  usecase_on_device_llm_guidance: any
   usecase_save_top_screen_metric: any
+  view_model_download_guidance: any
 
 flutter:
   assets:

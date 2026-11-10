@@ -1,5 +1,7 @@
 import 'package:riverpod/riverpod.dart';
 
+import 'on_device_llm_readiness.dart';
+
 /// 端末上の LLM への窓口。
 ///
 /// 利用不可や生成失敗の扱いは呼び出し側が決める。
@@ -9,7 +11,15 @@ import 'package:riverpod/riverpod.dart';
 /// final available = await llm.isAvailable;
 /// ```
 abstract interface class OnDeviceLlm {
-  /// モデルが使えるとき true。
+  /// モデルの準備状態。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.readiness;
+  /// ```
+  Future<OnDeviceLlmReadiness> get readiness;
+
+  /// [readiness] が [OnDeviceLlmReadiness.ready] のとき true。
   ///
   /// Example:
   /// ```dart
@@ -24,6 +34,17 @@ abstract interface class OnDeviceLlm {
   /// await llm.generate('今日の運動について短く助言して');
   /// ```
   Future<String> generate(String prompt);
+
+  /// 未ダウンロード時に OS へモデル準備を依頼する。
+  ///
+  /// [OnDeviceLlmReadiness.ready] のときは何もしない。
+  /// [OnDeviceLlmReadiness.unavailable] のときは失敗してよい。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.prepareModel();
+  /// ```
+  Future<void> prepareModel();
 }
 
 /// 端末上 LLM の注入点。未接続のときは失敗する。

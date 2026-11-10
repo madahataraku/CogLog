@@ -19,6 +19,8 @@ import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_load_top_screen_impl/usecase_load_top_screen_impl.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_obtain_meter_photo_impl/usecase_obtain_meter_photo_impl.dart';
+import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
+import 'package:usecase_on_device_llm_guidance_impl/usecase_on_device_llm_guidance_impl.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_open_app_settings_impl/usecase_open_app_settings_impl.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
@@ -31,7 +33,7 @@ import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.da
 import 'package:usecase_save_top_screen_metric_impl/usecase_save_top_screen_metric_impl.dart';
 
 /// トップ画面の読み込みと指標保存、一日あたり目標の読み書き、アドバイス生成、
-/// 運動履歴の一覧・詳細読み込み、メーター記録の写真取得・読み取り・保存・設定起動を上書きする。
+/// 端末上 LLM 誘導、運動履歴の一覧・詳細読み込み、メーター記録の写真取得・読み取り・保存・設定起動を上書きする。
 ///
 /// [adviceTemplatePicker] を渡すと定型選択を差し替える（Golden 用）。
 ///
@@ -82,6 +84,15 @@ List<Override> usecaseOverrides({
     (ref) => ObtainMeterPhotoUsecaseImpl(
       source: ref.watch(meterPhotoSourceProvider),
     ),
+  ),
+  EvaluateOnDeviceLlmGuidanceUsecase.provider.overrideWith(
+    (ref) => EvaluateOnDeviceLlmGuidanceUsecaseImpl(
+      llm: ref.watch(onDeviceLlmProvider),
+    ),
+  ),
+  PrepareOnDeviceLlmModelUsecase.provider.overrideWith(
+    (ref) =>
+        PrepareOnDeviceLlmModelUsecaseImpl(llm: ref.watch(onDeviceLlmProvider)),
   ),
   OpenAppSettingsUsecase.provider.overrideWith(
     (ref) => OpenAppSettingsUsecaseImpl(

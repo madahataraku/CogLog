@@ -66,6 +66,7 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
       month: PeriodAggregate.of(all, PeriodWindow.month(now)),
       goal: goal,
       todayHistories: todayHistories,
+      consecutiveExerciseDays: ConsecutiveExerciseDays.of(all, now),
     );
   }
 }

@@ -1,0 +1,6 @@
+id,ja,en,description
+title,端末上のAIモデルの準備,Prepare on-device AI model,誘導タイトル
+body,ワンポイントアドバイス等に使うモデルが端末にありません。準備を開始できます。準備中もアプリは利用できます。,The on-device model for tips is not on this device yet. You can start preparing it. You can keep using the app meanwhile.,誘導本文
+dismiss,閉じる,Dismiss,閉じる
+prepare,モデルを準備,Prepare model,準備開始
+prepare_failed,準備に失敗しました。しばらくしてから再度お試しください。,Preparation failed. Please try again later.,準備失敗

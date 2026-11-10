@@ -1,3 +1,4 @@
+import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 
 import 'advice_template.dart';
@@ -11,6 +12,8 @@ import 'advice_template.dart';
 /// GenerateTopAdviceRequest(
 ///   histories: const [],
 ///   locale: 'ja',
+///   goal: DailyGoal.unset,
+///   consecutiveExerciseDays: 0,
 ///   noExercise: AdviceTemplate(
 ///     text: '今日はまだ運動していません',
 ///     tone: AdviceTone.realized,
@@ -23,13 +26,15 @@ import 'advice_template.dart';
 /// );
 /// ```
 final class GenerateTopAdviceRequest {
-  /// 本日履歴・言語・未運動定型・フォールバック定型を持つ。
+  /// 本日履歴・言語・目標・連続日数・未運動定型・フォールバック定型を持つ。
   ///
   /// Example:
   /// ```dart
   /// GenerateTopAdviceRequest(
   ///   histories: const [],
   ///   locale: 'ja',
+  ///   goal: DailyGoal.unset,
+  ///   consecutiveExerciseDays: 0,
   ///   noExercise: AdviceTemplate(
   ///     text: '今日はまだ運動していません',
   ///     tone: AdviceTone.realized,
@@ -44,6 +49,8 @@ final class GenerateTopAdviceRequest {
   const GenerateTopAdviceRequest({
     required this.histories,
     required this.locale,
+    required this.goal,
+    required this.consecutiveExerciseDays,
     required this.noExercise,
     required this.fallbackTemplates,
   });
@@ -53,6 +60,12 @@ final class GenerateTopAdviceRequest {
 
   /// 言語コード（例: ja / en）。
   final String locale;
+
+  /// 一日あたり目標。未設定の指標はプロンプトに含めない。
+  final DailyGoal goal;
+
+  /// 本日を起点とした連続運動日数。
+  final int consecutiveExerciseDays;
 
   /// 履歴 0 件のときに返す定型（本文＋トーン）。
   final AdviceTemplate noExercise;

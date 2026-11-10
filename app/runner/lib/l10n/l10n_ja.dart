@@ -279,4 +279,21 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';
+
+  @override
+  String get view_model_download_guidance_body =>
+      'ワンポイントアドバイス等に使うモデルが端末にありません。準備を開始できます。準備中もアプリは利用できます。';
+
+  @override
+  String get view_model_download_guidance_dismiss => '閉じる';
+
+  @override
+  String get view_model_download_guidance_prepare => 'モデルを準備';
+
+  @override
+  String get view_model_download_guidance_prepare_failed =>
+      '準備に失敗しました。しばらくしてから再度お試しください。';
+
+  @override
+  String get view_model_download_guidance_title => '端末上のAIモデルの準備';
 }

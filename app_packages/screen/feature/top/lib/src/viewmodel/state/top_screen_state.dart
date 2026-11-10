@@ -11,7 +11,7 @@ import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 /// TopScreenState.initial;
 /// ```
 final class TopScreenState {
-  /// 読み込み済みフラグ、指標、3 期間の合計、目標、アドバイス本文とトーンを持つ。
+  /// 読み込み済みフラグ、指標、3 期間の合計、目標、アドバイス本文とトーン、誘導予約を持つ。
   ///
   /// Example:
   /// ```dart
@@ -26,6 +26,7 @@ final class TopScreenState {
     required this.goal,
     required this.adviceText,
     required this.adviceTone,
+    required this.pendingModelDownloadGuidance,
   });
 
   /// まだ読み込んでいない状態。指標は消費カロリー。
@@ -38,6 +39,7 @@ final class TopScreenState {
     goal: DailyGoal.unset,
     adviceText: '',
     adviceTone: AdviceTone.fun,
+    pendingModelDownloadGuidance: false,
   );
 
   /// 読み込みが成功したあとに true。
@@ -63,4 +65,7 @@ final class TopScreenState {
 
   /// ワンポイントアドバイスのトーン。
   final AdviceTone adviceTone;
+
+  /// モデル未ダウンロード誘導を表示予約しているとき true。
+  final bool pendingModelDownloadGuidance;
 }

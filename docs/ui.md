@@ -33,4 +33,12 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 
 - 1 画面だけの Widget は、その screen パッケージに置く。
 - 2 画面以上で使う Widget とデザインシステムは `view_*` に置く。
+- モデル未ダウンロード誘導ダイアログは、ホームとメーター記録（後続）で共用するため `view_model_download_guidance` に置く。
 - 起動時のテーマ接続だけを `app` に残す。画面の中身を `app/lib/main.dart` に増やさない。
+
+## モデル未ダウンロード誘導
+
+- Forui の `showFDialog` を使う。
+- `barrierDismissible` は `false`（外側タップでは閉じない）。
+- アクションは縦並びで「閉じる」と「モデルを準備」。
+- DialogRoute の完了（pop）は `ModelDownloadGuidanceLauncher` 内だけが行う。画面から `Navigator` を直接呼ばない。

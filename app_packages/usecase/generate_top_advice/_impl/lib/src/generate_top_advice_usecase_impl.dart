@@ -57,6 +57,8 @@ final class GenerateTopAdviceUsecaseImpl implements GenerateTopAdviceUsecase {
   ///   GenerateTopAdviceRequest(
   ///     histories: const [],
   ///     locale: 'ja',
+  ///     goal: DailyGoal.unset,
+  ///     consecutiveExerciseDays: 0,
   ///     noExercise: AdviceTemplate(
   ///       text: '今日はまだ運動していません',
   ///       tone: AdviceTone.realized,
@@ -83,6 +85,8 @@ final class GenerateTopAdviceUsecaseImpl implements GenerateTopAdviceUsecase {
         final prompt = promptBuilder.build(
           histories: request.histories,
           locale: request.locale,
+          goal: request.goal,
+          consecutiveExerciseDays: request.consecutiveExerciseDays,
         );
         final generated = await llm.generate(prompt).timeout(generateTimeout);
         final parsed = responseParser.parse(generated);

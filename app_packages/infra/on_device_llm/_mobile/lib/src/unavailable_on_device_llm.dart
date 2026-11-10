@@ -1,8 +1,8 @@
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
-/// 初回アプリ向けの未接続 LLM。
+/// 利用不可の端末上 LLM。
 ///
-/// 常に利用不可。Foundation Models / Gemini Nano の実接続は後続で差し替える。
+/// 非モバイルや未対応経路向け。常に [OnDeviceLlmReadiness.unavailable]。
 ///
 /// Example:
 /// ```dart
@@ -16,6 +16,16 @@ final class UnavailableOnDeviceLlm implements OnDeviceLlm {
   /// const UnavailableOnDeviceLlm();
   /// ```
   const UnavailableOnDeviceLlm();
+
+  /// 常に [OnDeviceLlmReadiness.unavailable]。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableOnDeviceLlm().readiness;
+  /// ```
+  @override
+  Future<OnDeviceLlmReadiness> get readiness async =>
+      OnDeviceLlmReadiness.unavailable;
 
   /// 常に false。
   ///
@@ -36,4 +46,13 @@ final class UnavailableOnDeviceLlm implements OnDeviceLlm {
   Future<String> generate(String prompt) async {
     throw StateError('OnDeviceLlm is unavailable');
   }
+
+  /// 利用不可のため何もしない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableOnDeviceLlm().prepareModel();
+  /// ```
+  @override
+  Future<void> prepareModel() async {}
 }
