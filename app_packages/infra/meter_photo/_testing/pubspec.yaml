@@ -8,8 +8,11 @@ environment:
   sdk: ^3.13.7
 
 dependencies:
+  flutter:
+    sdk: flutter
   infra_meter_photo: any
 
 dev_dependencies:
   flutter_lints: any
-  test: any
+  flutter_test:
+    sdk: flutter

@@ -36,7 +36,7 @@ List<Override> infraOverrides({OnDeviceLlm? onDeviceLlm}) => [
         return const UnavailableOnDeviceLlm();
     }
   }),
-  meterPhotoSourceProvider.overrideWith((ref) => ImagePickerMeterPhotoSource()),
+  meterPhotoSourceProvider.overrideWith((ref) => MobileMeterPhotoSource()),
   meterReadingEnginesProvider.overrideWith(
     (ref) => _unavailableMeterReadingEngines(),
   ),

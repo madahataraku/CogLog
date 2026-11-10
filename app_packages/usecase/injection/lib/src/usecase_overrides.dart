@@ -20,6 +20,8 @@ import 'package:usecase_load_exercise_history_page/usecase_load_exercise_history
 import 'package:usecase_load_exercise_history_page_impl/usecase_load_exercise_history_page_impl.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_load_top_screen_impl/usecase_load_top_screen_impl.dart';
+import 'package:usecase_control_meter_in_app_camera/usecase_control_meter_in_app_camera.dart';
+import 'package:usecase_control_meter_in_app_camera_impl/usecase_control_meter_in_app_camera_impl.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_obtain_meter_photo_impl/usecase_obtain_meter_photo_impl.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
@@ -92,6 +94,11 @@ List<Override> usecaseOverrides({
   ),
   ObtainMeterPhotoUsecase.provider.overrideWith(
     (ref) => ObtainMeterPhotoUsecaseImpl(
+      source: ref.watch(meterPhotoSourceProvider),
+    ),
+  ),
+  ControlMeterInAppCameraUsecase.provider.overrideWith(
+    (ref) => ControlMeterInAppCameraUsecaseImpl(
       source: ref.watch(meterPhotoSourceProvider),
     ),
   ),
