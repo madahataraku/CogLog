@@ -29,6 +29,13 @@ dart run forui theme create
 
 Forui の Widget と、Cupertino または Material の Widget は同じ木に置いてよい。
 
+## 推移
+
+- ヘッダは `FHeader`、タイトルは「推移 / Trends」。
+- 期間とグループはそれぞれ `FSelect`。その直下にグループ内の指標 `FSelect` を置く。
+- 身体グループ選択時のみ、指標 Select とグラフのあいだ（グラフ直上）に、許可リクエスト／再試行／OS 設定のいずれかの `FButton` を条件表示する。グラフ上へのオーバーレイはしない。
+- グラフは `Expanded` 内の `CustomPaint`。点と実線／点線。カード化しない。
+
 ## 置き場所
 
 - 1 画面だけの Widget は、その screen パッケージに置く。
