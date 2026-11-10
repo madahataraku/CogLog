@@ -62,6 +62,8 @@ reviews:
     - "!**/*.iml"
     - "!apm_modules/**"
     - "!apm.lock.yaml"
+    # ベンダーした upstream。CogLog の診断向けパッチ以外はレビュー対象外。
+    - "!app_packages_fork/**"
   path_instructions:
     - path: "lib/**/*.dart"
       instructions: |
