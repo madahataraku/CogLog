@@ -63,18 +63,17 @@ class AppSettingsScreenBody extends ConsumerWidget {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(strings.screen_feature_app_settings_version_label),
-                Text(entity.versionText),
-                const SizedBox(height: 12),
-                Text(strings.screen_feature_app_settings_os_label),
-                Text(entity.osText),
-              ],
-            ),
+          FTileGroup(
+            children: [
+              FTile(
+                title: Text(strings.screen_feature_app_settings_version_label),
+                subtitle: Text(entity.versionText),
+              ),
+              FTile(
+                title: Text(strings.screen_feature_app_settings_os_label),
+                subtitle: Text(entity.osText),
+              ),
+            ],
           ),
         ],
       ),

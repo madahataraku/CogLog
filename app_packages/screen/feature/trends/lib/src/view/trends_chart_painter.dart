@@ -39,8 +39,17 @@ final class TrendsChartPainter extends CustomPainter {
     required this.labelStyle,
   });
 
-  /// 描画パディング。
-  static const double padding = 16;
+  /// 上下の描画パディング。
+  static const double paddingY = 16;
+
+  /// 右の描画パディング。
+  static const double paddingRight = 16;
+
+  /// 左の描画パディング（縦軸ラベル幅）。
+  static const double paddingLeft = 48;
+
+  /// 縦軸目盛の目標本数（min/max を含む）。
+  static const int yTickTargetCount = 5;
 
   /// 破線の実線長さ。
   static const double dashOn = 6;
@@ -72,10 +81,10 @@ final class TrendsChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final plot = Rect.fromLTWH(
-      padding,
-      padding,
-      math.max(0, size.width - padding * 2),
-      math.max(0, size.height - padding * 2),
+      paddingLeft,
+      paddingY,
+      math.max(0, size.width - paddingLeft - paddingRight),
+      math.max(0, size.height - paddingY * 2),
     );
     if (plot.width <= 0 || plot.height <= 0) {
       return;
@@ -86,6 +95,9 @@ final class TrendsChartPainter extends CustomPainter {
         for (final p in s.points) p.value,
     ];
     final (:minY, :maxY) = _yRange(values);
+    final ticks = values.length <= 1
+        ? <double>[minY, if (minY != maxY) maxY]
+        : _yTicks(minY, maxY, targetCount: yTickTargetCount);
 
     final indexByDate = <DateTime, int>{
       for (var i = 0; i < buckets.length; i++) buckets[i].representativeDate: i,
@@ -97,7 +109,7 @@ final class TrendsChartPainter extends CustomPainter {
       final dx = slotCount == 1
           ? plot.left + plot.width / 2
           : plot.left + plot.width * (index / (slotCount - 1));
-      final t = (point.value - minY) / (maxY - minY);
+      final t = (maxY - minY) == 0 ? 0.0 : (point.value - minY) / (maxY - minY);
       final dy = plot.bottom - plot.height * t;
       return Offset(dx, dy);
     }
@@ -117,18 +129,22 @@ final class TrendsChartPainter extends CustomPainter {
       axisPaint,
     );
 
-    _drawLabel(
-      canvas,
-      _formatY(maxY),
-      Offset(plot.left, plot.top),
-      alignBottom: false,
-    );
-    _drawLabel(
-      canvas,
-      _formatY(minY),
-      Offset(plot.left, plot.bottom),
-      alignBottom: true,
-    );
+    for (final y in ticks) {
+      final t = (maxY - minY) == 0 ? 0.0 : (y - minY) / (maxY - minY);
+      final dy = plot.bottom - plot.height * t;
+      canvas.drawLine(
+        Offset(plot.left, dy),
+        Offset(plot.left + 4, dy),
+        axisPaint,
+      );
+      _drawLabel(
+        canvas,
+        _formatY(y),
+        Offset(plot.left - 4, dy),
+        alignBottom: true,
+        alignEnd: true,
+      );
+    }
     if (buckets.isNotEmpty) {
       _drawLabel(
         canvas,
@@ -173,6 +189,20 @@ final class TrendsChartPainter extends CustomPainter {
         canvas.drawCircle(pointOffset(point), 3.5, pointPaint);
       }
     }
+  }
+
+  /// [minY]〜[maxY] を端点込みで約 [targetCount] 本に刻む。
+  ///
+  /// Example:
+  /// ```dart
+  /// _yTicks(0, 100, targetCount: 5);
+  /// ```
+  List<double> _yTicks(double minY, double maxY, {required int targetCount}) {
+    if (minY == maxY) {
+      return [minY];
+    }
+    final n = targetCount < 2 ? 2 : targetCount;
+    return [for (var i = 0; i < n; i++) minY + (maxY - minY) * (i / (n - 1))];
   }
 
   /// 点の値から Y 軸の上下限を決める。
