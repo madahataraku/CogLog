@@ -6,6 +6,7 @@ part of 'theme.dart';
 ///
 /// ベースは Forui Olive。primary はブランド色 `#F6AD49`。
 /// `#F6AD49` 上の文字はコントラストのため暗い Olive 前景を使う。
+/// ボトムナビの選択色は `theme.dart` で `foreground` に差し替える。
 final FColors lightColors = FColors(
   brightness: .light,
   systemOverlayStyle: .dark,
