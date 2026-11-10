@@ -150,16 +150,17 @@ void main() {
         ),
       ],
     );
-    final result = await LoadTrendsUsecaseImpl(
-      histories: const FixedExerciseHistoryRepository([]),
-      health: health,
-    ).execute(
-      LoadTrendsRequest(
-        now: now,
-        period: TrendsPeriodKind.days30,
-        groupIsBody: false,
-      ),
-    );
+    final result =
+        await LoadTrendsUsecaseImpl(
+          histories: const FixedExerciseHistoryRepository([]),
+          health: health,
+        ).execute(
+          LoadTrendsRequest(
+            now: now,
+            period: TrendsPeriodKind.days30,
+            groupIsBody: false,
+          ),
+        );
 
     expect(health.readCallCount, 0);
     expect(result.healthPermission, LoadTrendsHealthPermission.granted);
@@ -177,16 +178,17 @@ void main() {
         ),
       ],
     );
-    final result = await LoadTrendsUsecaseImpl(
-      histories: const FixedExerciseHistoryRepository([]),
-      health: health,
-    ).execute(
-      LoadTrendsRequest(
-        now: now,
-        period: TrendsPeriodKind.days30,
-        groupIsBody: true,
-      ),
-    );
+    final result =
+        await LoadTrendsUsecaseImpl(
+          histories: const FixedExerciseHistoryRepository([]),
+          health: health,
+        ).execute(
+          LoadTrendsRequest(
+            now: now,
+            period: TrendsPeriodKind.days30,
+            groupIsBody: true,
+          ),
+        );
 
     expect(health.readCallCount, 1);
     expect(

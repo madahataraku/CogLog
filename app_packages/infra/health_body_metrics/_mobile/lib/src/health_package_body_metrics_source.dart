@@ -6,8 +6,9 @@ import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 /// `health` パッケージ経由の身体指標ソース。
 ///
 /// 体重・体脂肪率・除脂肪体重を READ で扱う。値は kg / % に正規化する。
-/// HealthKit entitlement（`com.apple.developer.healthkit`）は署名準備後に
-/// Runner へ有効化する。未設定のままでも unsigned / 開発ビルドは壊さない。
+/// HealthKit entitlement は `app/ios/Runner/Runner.entitlements` と
+/// Flutter xcconfig の `CODE_SIGN_ENTITLEMENTS` で指定する。Provisioning
+/// Profile 側の HealthKit 有効化は署名準備時に行う。
 ///
 /// Example:
 /// ```dart
