@@ -27,6 +27,12 @@ final class _Nav implements ScreenNavigation {
   void openExerciseHistoryDetail({required String id}) {}
 
   @override
+  void openAppSettings() {}
+
+  @override
+  void openDebug() {}
+
+  @override
   void pop() {}
 
   @override

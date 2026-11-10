@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
@@ -12,6 +13,7 @@ import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import 'delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
+import 'delegate/on_open_app_settings_delegate.dart';
 import 'delegate/on_prepare_model_download_guidance_delegate.dart';
 import 'delegate/on_select_metric_delegate.dart';
 import 'delegate/top_screen_state_to_entity_delegate.dart';
@@ -52,6 +54,7 @@ final class TopScreenViewModel {
           PrepareOnDeviceLlmModelUsecase.provider,
         ),
         guidanceSession: ref.watch(ModelDownloadGuidanceProviders.session),
+        navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const TopScreenStateToEntityDelegate(),
       );
       ref.onDispose(() {
@@ -66,6 +69,7 @@ final class TopScreenViewModel {
       EvaluateOnDeviceLlmGuidanceUsecase.provider,
       PrepareOnDeviceLlmModelUsecase.provider,
       ModelDownloadGuidanceProviders.session,
+      screenNavigationProvider,
     ],
   );
 
@@ -97,6 +101,10 @@ final class TopScreenViewModel {
   @visibleForTesting
   final OnDeviceLlmGuidanceSession guidanceSession;
 
+  /// 画面遷移。
+  @visibleForTesting
+  final ScreenNavigation navigation;
+
   /// State から表示文字列への変換。
   @visibleForTesting
   final TopScreenStateToEntityDelegate stateToEntity;
@@ -115,6 +123,7 @@ final class TopScreenViewModel {
     required this.evaluateOnDeviceLlmGuidanceUsecase,
     required this.prepareOnDeviceLlmModelUsecase,
     required this.guidanceSession,
+    required this.navigation,
     required this.stateToEntity,
   });
 

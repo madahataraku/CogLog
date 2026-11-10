@@ -1,5 +1,6 @@
 import 'package:riverpod/riverpod.dart';
 
+import 'on_device_llm_availability_snapshot.dart';
 import 'on_device_llm_readiness.dart';
 
 /// 端末上の LLM への窓口。
@@ -26,6 +27,14 @@ abstract interface class OnDeviceLlm {
   /// await llm.isAvailable;
   /// ```
   Future<bool> get isAvailable;
+
+  /// デバッグ用の詳細。業務経路では使わない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.availabilitySnapshot;
+  /// ```
+  Future<OnDeviceLlmAvailabilitySnapshot> get availabilitySnapshot;
 
   /// [prompt] から短文を生成する。
   ///

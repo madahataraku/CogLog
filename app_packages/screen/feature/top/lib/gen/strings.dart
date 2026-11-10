@@ -61,6 +61,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_goal_label =>
       LocalizeStringDelegate.get('screen_feature_top_goal_label');
 
+  /// ホーム右上の設定ボタンの代替テキスト
+  String get screen_feature_top_settings_semantics =>
+      LocalizeStringDelegate.get('screen_feature_top_settings_semantics');
+
   /// 集計期間
   String get screen_feature_top_this_month =>
       LocalizeStringDelegate.get('screen_feature_top_this_month');

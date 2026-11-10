@@ -14,6 +14,12 @@ void main() {
     expect(await const UnavailableOnDeviceLlm().isAvailable, isFalse);
   });
 
+  test('availabilitySnapshot は unavailable', () async {
+    final snapshot = await const UnavailableOnDeviceLlm().availabilitySnapshot;
+    expect(snapshot.readiness, OnDeviceLlmReadiness.unavailable);
+    expect(snapshot.status, 'unavailable');
+  });
+
   test('generate は失敗する', () async {
     await expectLater(
       const UnavailableOnDeviceLlm().generate('prompt'),

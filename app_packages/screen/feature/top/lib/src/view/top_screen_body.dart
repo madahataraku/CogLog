@@ -36,8 +36,18 @@ class TopScreenBody extends HookConsumerWidget {
     final titleStyle = context.theme.typography.body.sm.copyWith(
       fontWeight: FontWeight.w600,
     );
+    final viewModel = ref.watch(TopScreenViewModel.provider);
     return FScaffold(
-      header: FHeader(title: Text(strings.foundation_resources_app_name)),
+      header: FHeader(
+        title: Text(strings.foundation_resources_app_name),
+        suffixes: [
+          FHeaderAction(
+            icon: const Icon(FLucideIcons.settings),
+            onPress: viewModel.onOpenAppSettings,
+            semanticsLabel: strings.screen_feature_top_settings_semantics,
+          ),
+        ],
+      ),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

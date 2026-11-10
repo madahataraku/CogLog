@@ -50,6 +50,44 @@ final class FlutterDeviceAiOnDeviceLlm implements OnDeviceLlm {
   Future<bool> get isAvailable async =>
       (await readiness) == OnDeviceLlmReadiness.ready;
 
+  /// ネイティブ availability と platformInfo を診断スナップショットへ写す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await FlutterDeviceAiOnDeviceLlm().availabilitySnapshot;
+  /// ```
+  @override
+  Future<OnDeviceLlmAvailabilitySnapshot> get availabilitySnapshot async {
+    try {
+      final availability = await _ai.availability();
+      String? backend;
+      String? platformNotes;
+      try {
+        final info = await _ai.getPlatformInfo();
+        backend = info.backend.name;
+        platformNotes = info.diagnosticNotes;
+      } on Object {
+        // platformInfo 失敗は availability 本体の診断を優先する。
+      }
+      return OnDeviceLlmAvailabilitySnapshot(
+        readiness: mapFlutterDeviceAiReadiness(availability),
+        status: availability.status.name,
+        reason: availability.reason.name,
+        message: availability.message,
+        backend: backend,
+        platformNotes: platformNotes,
+      );
+    } on Object catch (error) {
+      return OnDeviceLlmAvailabilitySnapshot(
+        readiness: OnDeviceLlmReadiness.unavailable,
+        status: 'error',
+        reason: 'exception',
+        message: 'availability failed',
+        error: error.toString(),
+      );
+    }
+  }
+
   /// ネイティブ生成の本文を返す。ready でなければ失敗する。
   ///
   /// Example:

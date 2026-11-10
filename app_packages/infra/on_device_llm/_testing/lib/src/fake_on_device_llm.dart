@@ -20,20 +20,37 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
   FakeOnDeviceLlm({
     bool available = true,
     OnDeviceLlmReadiness? readiness,
+    OnDeviceLlmAvailabilitySnapshot? availabilitySnapshot,
     this.response = 'fake advice',
     this.throwOnGenerate = false,
     this.throwOnIsAvailable = false,
     this.throwOnReadiness = false,
+    this.throwOnAvailabilitySnapshot = false,
     this.throwOnPrepareModel = false,
     this.hangOnGenerate = false,
   }) : readinessValue =
            readiness ??
            (available
                ? OnDeviceLlmReadiness.ready
-               : OnDeviceLlmReadiness.unavailable);
+               : OnDeviceLlmReadiness.unavailable),
+       availabilitySnapshotValue =
+           availabilitySnapshot ??
+           OnDeviceLlmAvailabilitySnapshot(
+             readiness:
+                 readiness ??
+                 (available
+                     ? OnDeviceLlmReadiness.ready
+                     : OnDeviceLlmReadiness.unavailable),
+             status: available ? 'available' : 'unavailable',
+             reason: available ? 'ready' : 'deviceNotEligible',
+             message: available ? 'Fake ready' : 'Fake unavailable',
+           );
 
   /// [readiness] が返す値。
   final OnDeviceLlmReadiness readinessValue;
+
+  /// [availabilitySnapshot] が返す値。
+  final OnDeviceLlmAvailabilitySnapshot availabilitySnapshotValue;
 
   /// [generate] が返す文。
   final String response;
@@ -46,6 +63,9 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
 
   /// true のとき [readiness] が失敗する。
   final bool throwOnReadiness;
+
+  /// true のとき [availabilitySnapshot] が失敗する。
+  final bool throwOnAvailabilitySnapshot;
 
   /// true のとき [prepareModel] が失敗する。
   final bool throwOnPrepareModel;
@@ -88,6 +108,20 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
       throw StateError('FakeOnDeviceLlm isAvailable failed');
     }
     return readinessValue == OnDeviceLlmReadiness.ready;
+  }
+
+  /// [availabilitySnapshotValue] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.availabilitySnapshot;
+  /// ```
+  @override
+  Future<OnDeviceLlmAvailabilitySnapshot> get availabilitySnapshot async {
+    if (throwOnAvailabilitySnapshot) {
+      throw StateError('FakeOnDeviceLlm availabilitySnapshot failed');
+    }
+    return availabilitySnapshotValue;
   }
 
   /// [response] を返すか、設定に応じて失敗する。

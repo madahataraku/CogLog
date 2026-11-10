@@ -36,6 +36,21 @@ final class UnavailableOnDeviceLlm implements OnDeviceLlm {
   @override
   Future<bool> get isAvailable async => false;
 
+  /// 利用不可の固定スナップショット。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableOnDeviceLlm().availabilitySnapshot;
+  /// ```
+  @override
+  Future<OnDeviceLlmAvailabilitySnapshot> get availabilitySnapshot async =>
+      const OnDeviceLlmAvailabilitySnapshot(
+        readiness: OnDeviceLlmReadiness.unavailable,
+        status: 'unavailable',
+        reason: 'platformUnsupported',
+        message: 'OnDeviceLlm is unavailable on this platform.',
+      );
+
   /// 利用不可のため呼ばない想定。呼ばれたら失敗する。
   ///
   /// Example:

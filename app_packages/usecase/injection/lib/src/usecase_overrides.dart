@@ -1,12 +1,15 @@
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:riverpod/misc.dart';
+import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
+import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
 import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
@@ -68,6 +71,13 @@ List<Override> usecaseOverrides({
     (ref) => GenerateTopAdviceUsecaseImpl(
       llm: ref.watch(onDeviceLlmProvider),
       picker: adviceTemplatePicker,
+      log: ref.watch(appLogStoreProvider),
+    ),
+  ),
+  DiagnoseOnDeviceLlmUsecase.provider.overrideWith(
+    (ref) => DiagnoseOnDeviceLlmUsecaseImpl(
+      llm: ref.watch(onDeviceLlmProvider),
+      log: ref.watch(appLogStoreProvider),
     ),
   ),
   LoadExerciseHistoryPageUsecase.provider.overrideWith(

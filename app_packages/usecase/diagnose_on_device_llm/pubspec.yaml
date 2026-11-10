@@ -1,0 +1,16 @@
+name: usecase_diagnose_on_device_llm
+description: Diagnoses on-device LLM readiness and sample generation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_on_device_llm: any
+  meta: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

@@ -1,0 +1,35 @@
+name: screen_feature_debug
+description: CogLog on-device LLM debug screen.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_hooks: any
+  forui: any
+  foundation_app_log: any
+  hooks_riverpod: any
+  infra_on_device_llm: any
+  material_ui: any
+  meta: any
+  monolith_localization_runtime: any
+  riverpod: any
+  screen_navigation: any
+  state_stream: any
+  state_stream_riverpod: any
+  usecase_diagnose_on_device_llm: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  foundation_resources: any
+  infra_on_device_llm_testing: any
+  test: any
+  usecase_diagnose_on_device_llm_impl: any

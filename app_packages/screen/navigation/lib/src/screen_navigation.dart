@@ -20,6 +20,22 @@ abstract interface class ScreenNavigation {
   /// ```
   void openExerciseHistoryDetail({required String id});
 
+  /// アプリ設定をホームタブのスタックへ積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openAppSettings();
+  /// ```
+  void openAppSettings();
+
+  /// デバッグ画面をアプリ設定の子として積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openDebug();
+  /// ```
+  void openDebug();
+
   /// 現在のスタックを 1 つ戻す。
   ///
   /// Example:

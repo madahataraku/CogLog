@@ -7,4 +7,5 @@
 library;
 
 export 'src/on_device_llm.dart';
+export 'src/on_device_llm_availability_snapshot.dart';
 export 'src/on_device_llm_readiness.dart';
