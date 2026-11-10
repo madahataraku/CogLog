@@ -29,4 +29,3 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   foundation_resources: any
-  test: any

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
@@ -11,26 +9,6 @@ import 'package:monolith_localization_runtime/monolith_localization_runtime.dart
 import 'package:screen_feature_oss_licenses/screen_feature_oss_licenses.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_oss_licenses/usecase_load_oss_licenses.dart';
-
-/// 生成前でも撮れるよう、CSV 文言を [StringsTestHelper.ja] へ足す。
-String _jaArb() {
-  final map = Map<String, dynamic>.from(
-    jsonDecode(StringsTestHelper.ja) as Map<String, dynamic>,
-  );
-  map['screen_feature_oss_licenses_title'] = 'ライセンス';
-  map['@screen_feature_oss_licenses_title'] = {'description': '画面タイトル'};
-  map['screen_feature_oss_licenses_back_semantics'] = '戻る';
-  map['@screen_feature_oss_licenses_back_semantics'] = {
-    'description': '戻るボタンの代替テキスト',
-  };
-  map['screen_feature_oss_licenses_empty'] = '表示できるライセンスがありません。';
-  map['@screen_feature_oss_licenses_empty'] = {'description': '空状態メッセージ'};
-  map['screen_feature_oss_licenses_detail_title'] = 'ライセンス詳細';
-  map['@screen_feature_oss_licenses_detail_title'] = {
-    'description': '詳細画面タイトル',
-  };
-  return jsonEncode(map);
-}
 
 final class _Nav implements ScreenNavigation {
   @override
@@ -76,7 +54,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await LocalizeStringDelegate.injectDelegateForTest(arbJson: _jaArb());
+    await LocalizeStringDelegate.injectDelegateForTest(
+      arbJson: StringsTestHelper.ja,
+    );
     addTearDown(LocalizeStringDelegate.resetDelegateForTest);
 
     try {
@@ -121,7 +101,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await LocalizeStringDelegate.injectDelegateForTest(arbJson: _jaArb());
+    await LocalizeStringDelegate.injectDelegateForTest(
+      arbJson: StringsTestHelper.ja,
+    );
     addTearDown(LocalizeStringDelegate.resetDelegateForTest);
 
     try {
