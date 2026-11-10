@@ -68,6 +68,8 @@ workspace:
   - app_packages/usecase/load_top_screen/_impl
   - app_packages/usecase/obtain_meter_photo
   - app_packages/usecase/obtain_meter_photo/_impl
+  - app_packages/usecase/control_meter_in_app_camera
+  - app_packages/usecase/control_meter_in_app_camera/_impl
   - app_packages/usecase/open_app_settings
   - app_packages/usecase/open_app_settings/_impl
   - app_packages/usecase/on_device_llm_guidance
@@ -97,6 +99,7 @@ dependency_overrides:
   forui: ^0.27.7
   go_router: 18.1.3
   hooks_riverpod: 3.4.3
+  camera: 0.12.2
   image_picker: 1.2.0
   monolith_localization_runtime: ^1.1.0
   monolith_runner: ^1.0.2

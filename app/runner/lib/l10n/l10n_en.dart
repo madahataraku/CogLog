@@ -270,13 +270,15 @@ class L10nEn extends L10n {
       'Average speed (km/h)';
 
   @override
-  String get screen_feature_meter_capture_back => 'Back';
-
-  @override
   String get screen_feature_meter_capture_calories => 'Calories (kcal)';
 
   @override
-  String get screen_feature_meter_capture_capture_photo => 'Take photo';
+  String get screen_feature_meter_capture_camera_preview_failed =>
+      'Couldn\'t start the camera. Pick from your library or try again.';
+
+  @override
+  String get screen_feature_meter_capture_capture_failed =>
+      'Couldn\'t take the photo. Try the shutter again or pick from your library.';
 
   @override
   String get screen_feature_meter_capture_distance => 'Distance (km)';
@@ -311,10 +313,16 @@ class L10nEn extends L10n {
   String get screen_feature_meter_capture_recorded_at => 'Recorded at';
 
   @override
+  String get screen_feature_meter_capture_retake => 'Retake';
+
+  @override
   String get screen_feature_meter_capture_save => 'Save';
 
   @override
   String get screen_feature_meter_capture_save_failed => 'Failed to save';
+
+  @override
+  String get screen_feature_meter_capture_shutter => 'Shutter';
 
   @override
   String get screen_feature_meter_capture_title => 'Meter record';

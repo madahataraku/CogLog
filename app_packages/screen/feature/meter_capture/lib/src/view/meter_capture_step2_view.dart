@@ -245,7 +245,7 @@ class MeterCaptureStep2View extends HookConsumerWidget {
           ),
         FButton(
           onPress: busy ? null : viewModel.onBackToStep1,
-          child: Text(strings.screen_feature_meter_capture_back),
+          child: Text(strings.screen_feature_meter_capture_retake),
         ),
         FButton(
           onPress: !canSubmit || busy ? null : viewModel.onSave,

@@ -369,17 +369,17 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_meter_capture_average_speed;
       },
-      'screen_feature_meter_capture_back': (source) {
-        // No Placeholders
-        return l10n.screen_feature_meter_capture_back;
-      },
       'screen_feature_meter_capture_calories': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_calories;
       },
-      'screen_feature_meter_capture_capture_photo': (source) {
+      'screen_feature_meter_capture_camera_preview_failed': (source) {
         // No Placeholders
-        return l10n.screen_feature_meter_capture_capture_photo;
+        return l10n.screen_feature_meter_capture_camera_preview_failed;
+      },
+      'screen_feature_meter_capture_capture_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_capture_failed;
       },
       'screen_feature_meter_capture_distance': (source) {
         // No Placeholders
@@ -421,6 +421,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_meter_capture_recorded_at;
       },
+      'screen_feature_meter_capture_retake': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_retake;
+      },
       'screen_feature_meter_capture_save': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_save;
@@ -428,6 +432,10 @@ final class L10nHelper {
       'screen_feature_meter_capture_save_failed': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_save_failed;
+      },
+      'screen_feature_meter_capture_shutter': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_shutter;
       },
       'screen_feature_meter_capture_title': (source) {
         // No Placeholders

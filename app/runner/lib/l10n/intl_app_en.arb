@@ -329,17 +329,17 @@
   "@screen_feature_meter_capture_average_speed": {
     "description": "入力ラベル"
   },
-  "screen_feature_meter_capture_back": "Back",
-  "@screen_feature_meter_capture_back": {
-    "description": "2→1"
-  },
   "screen_feature_meter_capture_calories": "Calories (kcal)",
   "@screen_feature_meter_capture_calories": {
     "description": "入力ラベル"
   },
-  "screen_feature_meter_capture_capture_photo": "Take photo",
-  "@screen_feature_meter_capture_capture_photo": {
-    "description": "カメラ撮影"
+  "screen_feature_meter_capture_camera_preview_failed": "Couldn't start the camera. Pick from your library or try again.",
+  "@screen_feature_meter_capture_camera_preview_failed": {
+    "description": "プレビュー初期化失敗"
+  },
+  "screen_feature_meter_capture_capture_failed": "Couldn't take the photo. Try the shutter again or pick from your library.",
+  "@screen_feature_meter_capture_capture_failed": {
+    "description": "シャッター失敗"
   },
   "screen_feature_meter_capture_distance": "Distance (km)",
   "@screen_feature_meter_capture_distance": {
@@ -381,6 +381,10 @@
   "@screen_feature_meter_capture_recorded_at": {
     "description": "記録日時"
   },
+  "screen_feature_meter_capture_retake": "Retake",
+  "@screen_feature_meter_capture_retake": {
+    "description": "編集からカメラへ戻る"
+  },
   "screen_feature_meter_capture_save": "Save",
   "@screen_feature_meter_capture_save": {
     "description": "登録ボタン"
@@ -388,6 +392,10 @@
   "screen_feature_meter_capture_save_failed": "Failed to save",
   "@screen_feature_meter_capture_save_failed": {
     "description": "保存失敗"
+  },
+  "screen_feature_meter_capture_shutter": "Shutter",
+  "@screen_feature_meter_capture_shutter": {
+    "description": "シャッターボタンの代替テキスト"
   },
   "screen_feature_meter_capture_title": "Meter record",
   "@screen_feature_meter_capture_title": {
