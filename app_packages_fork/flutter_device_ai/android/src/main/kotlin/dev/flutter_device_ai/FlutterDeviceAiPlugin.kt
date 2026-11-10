@@ -70,6 +70,11 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         private const val STATUS_RETRY_COUNT = 3
         private const val STACK_FRAME_LIMIT = 8
         private const val THROWABLE_TEXT_LIMIT = 1500
+        /**
+         * Numeric value of `GenAiException.ErrorCode.NOT_SUPPORTED` (genai-common beta4+).
+         * beta2 pulls genai-common beta3, which does not expose the named constant.
+         */
+        private const val ERROR_NOT_SUPPORTED = 16
     }
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -255,7 +260,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             GenAiException.ErrorCode.NOT_ENOUGH_DISK_SPACE ->
                 "UNAVAILABLE" to
                     "Gemini Nano is not available: ${formatThrowable(e)} (code ${e.errorCode})"
-            GenAiException.ErrorCode.NOT_SUPPORTED ->
+            ERROR_NOT_SUPPORTED ->
                 "UNSUPPORTED" to "${e.javaClass.name}: ${e.message ?: "Not supported on this device."}"
             else ->
                 "GENERATION_FAILED" to
