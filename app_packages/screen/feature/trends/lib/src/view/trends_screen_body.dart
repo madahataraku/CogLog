@@ -40,23 +40,13 @@ class TrendsScreenBody extends ConsumerWidget {
     return FScaffold(
       header: FHeader(title: Text(strings.screen_feature_trends_title)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 16,
           children: [
-            FSelect<TrendsPeriod>(
-              label: Text(strings.screen_feature_trends_period_label),
-              control: .lifted(
-                value: entity.period,
-                onChange: (period) async {
-                  if (period == null || period == entity.period) {
-                    return;
-                  }
-                  await viewModel.onSelectPeriod(period);
-                },
-              ),
-              items: {
+            FSelectMenuTile<TrendsPeriod>.fromMap(
+              {
                 strings.screen_feature_trends_period_days30:
                     TrendsPeriod.days30,
                 strings.screen_feature_trends_period_days90:
@@ -66,24 +56,52 @@ class TrendsScreenBody extends ConsumerWidget {
                 strings.screen_feature_trends_period_days365:
                     TrendsPeriod.days365,
               },
+              title: Text(strings.screen_feature_trends_period_label),
+              details: Text(switch (entity.period) {
+                TrendsPeriod.days30 =>
+                  strings.screen_feature_trends_period_days30,
+                TrendsPeriod.days90 =>
+                  strings.screen_feature_trends_period_days90,
+                TrendsPeriod.days182 =>
+                  strings.screen_feature_trends_period_days182,
+                TrendsPeriod.days365 =>
+                  strings.screen_feature_trends_period_days365,
+              }),
+              selectControl: .lifted(
+                value: {entity.period},
+                onChange: (values) async {
+                  final period = values.difference({entity.period}).firstOrNull;
+                  if (period == null || period == entity.period) {
+                    return;
+                  }
+                  await viewModel.onSelectPeriod(period);
+                },
+              ),
             ),
-            FSelect<TrendsMetricGroup>(
-              label: Text(strings.screen_feature_trends_group_label),
-              control: .lifted(
-                value: entity.group,
-                onChange: (group) async {
+            FSelectMenuTile<TrendsMetricGroup>.fromMap(
+              {
+                strings.screen_feature_trends_group_exercise:
+                    TrendsMetricGroup.exercise,
+                strings.screen_feature_trends_group_body:
+                    TrendsMetricGroup.body,
+              },
+              title: Text(strings.screen_feature_trends_group_label),
+              details: Text(switch (entity.group) {
+                TrendsMetricGroup.exercise =>
+                  strings.screen_feature_trends_group_exercise,
+                TrendsMetricGroup.body =>
+                  strings.screen_feature_trends_group_body,
+              }),
+              selectControl: .lifted(
+                value: {entity.group},
+                onChange: (values) async {
+                  final group = values.difference({entity.group}).firstOrNull;
                   if (group == null || group == entity.group) {
                     return;
                   }
                   await viewModel.onSelectGroup(group);
                 },
               ),
-              items: {
-                strings.screen_feature_trends_group_exercise:
-                    TrendsMetricGroup.exercise,
-                strings.screen_feature_trends_group_body:
-                    TrendsMetricGroup.body,
-              },
             ),
             TrendsMetricSelect(
               group: entity.group,

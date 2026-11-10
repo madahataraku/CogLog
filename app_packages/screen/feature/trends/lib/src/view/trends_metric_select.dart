@@ -6,7 +6,7 @@ import '../strings.dart';
 import '../viewmodel/state/trends_metric_set.dart';
 import '../viewmodel/state/trends_screen_state.dart';
 
-/// グループに応じた指標組の [FSelect]。
+/// グループに応じた指標組の [FSelectMenuTile]。
 ///
 /// Example:
 /// ```dart
@@ -71,18 +71,23 @@ class TrendsMetricSelect extends StatelessWidget {
         strings.screen_feature_trends_metric_body_fat: TrendsMetricSet.bodyFat,
       },
     };
-    return FSelect<TrendsMetricSet>(
-      label: Text(strings.screen_feature_trends_metric_label),
-      control: .lifted(
-        value: metricSet,
-        onChange: (value) {
-          if (value == null || value == metricSet) {
+    final detailsLabel = items.entries
+        .firstWhere((entry) => entry.value == metricSet)
+        .key;
+    return FSelectMenuTile<TrendsMetricSet>.fromMap(
+      items,
+      title: Text(strings.screen_feature_trends_metric_label),
+      details: Text(detailsLabel),
+      selectControl: .lifted(
+        value: {metricSet},
+        onChange: (values) {
+          final next = values.difference({metricSet}).firstOrNull;
+          if (next == null || next == metricSet) {
             return;
           }
-          onChanged(value);
+          onChanged(next);
         },
       ),
-      items: items,
     );
   }
 }
