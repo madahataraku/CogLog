@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
@@ -31,6 +32,21 @@ final class _Obtain implements ObtainMeterPhotoUsecase {
     calls += 1;
     lastSource = request.source;
     return result;
+  }
+}
+
+final class _DeferredObtain implements ObtainMeterPhotoUsecase {
+  _DeferredObtain(this.pending);
+
+  final Completer<ObtainMeterPhotoResult> pending;
+  var calls = 0;
+
+  @override
+  Future<ObtainMeterPhotoResult> execute(
+    ObtainMeterPhotoRequest request,
+  ) async {
+    calls += 1;
+    return pending.future;
   }
 }
 
@@ -128,6 +144,42 @@ void main() {
     expect(state.state.step, MeterCaptureStep.photo);
     expect(state.state.photoBytes, isNull);
     expect(state.state.captureError, isTrue);
+  });
+
+  test('離脱で世代が進むと撮影成功を捨てる', () async {
+    await readyCamera();
+    final pending = Completer<ObtainMeterPhotoResult>();
+    final obtain = _DeferredObtain(pending);
+    final read = _Read(
+      const ReadMeterPanelResult(
+        values: MeterReadingValues(),
+        averageSpeedFromPanel: false,
+      ),
+    );
+
+    final capture = OnCapturePhotoDelegate(
+      state: state,
+      obtainMeterPhotoUsecase: obtain,
+      readMeterPanelUsecase: read,
+    ).execute();
+
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          cameraSessionGeneration: current.cameraSessionGeneration + 1,
+        ),
+      );
+    });
+    pending.complete(
+      ObtainMeterPhotoSuccess(bytes: Uint8List.fromList(const [1, 2, 3])),
+    );
+    await capture;
+
+    expect(obtain.calls, 1);
+    expect(read.calls, 0);
+    expect(state.state.step, MeterCaptureStep.photo);
+    expect(state.state.photoBytes, isNull);
+    expect(state.state.captureError, isFalse);
   });
 
   test('D2: 権限拒否は permissionDeniedKind=camera', () async {

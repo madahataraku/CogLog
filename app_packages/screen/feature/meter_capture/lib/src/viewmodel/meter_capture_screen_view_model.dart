@@ -110,6 +110,12 @@ final class MeterCaptureScreenViewModel {
 
   StreamSubscription<MeterInAppCameraUiStatus>? _cameraStatusSubscription;
 
+  /// タブ離脱／復帰と pause の直列化用世代。
+  int _cameraLifecycleEpoch = 0;
+
+  /// 進行中のカメラ開始／停止／離脱処理。
+  Future<void> _cameraLifecycle = Future<void>.value();
+
   /// 注入された依存から ViewModel を作る。
   ///
   /// Example:
