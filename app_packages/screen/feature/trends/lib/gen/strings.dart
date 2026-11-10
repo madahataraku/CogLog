@@ -21,6 +21,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_trends_group_exercise =>
       LocalizeStringDelegate.get('screen_feature_trends_group_exercise');
 
+  /// 指標グループ選択のラベル
+  String get screen_feature_trends_group_label =>
+      LocalizeStringDelegate.get('screen_feature_trends_group_label');
+
   /// 期間
   String get screen_feature_trends_period_days182 =>
       LocalizeStringDelegate.get('screen_feature_trends_period_days182');
@@ -36,6 +40,10 @@ mixin class L10nStringsMixin {
   /// 期間
   String get screen_feature_trends_period_days90 =>
       LocalizeStringDelegate.get('screen_feature_trends_period_days90');
+
+  /// 期間選択のラベル
+  String get screen_feature_trends_period_label =>
+      LocalizeStringDelegate.get('screen_feature_trends_period_label');
 
   /// 画面タイトル
   String get screen_feature_trends_title =>

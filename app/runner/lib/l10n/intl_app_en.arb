@@ -373,6 +373,10 @@
   "@screen_feature_trends_group_exercise": {
     "description": "指標グループ"
   },
+  "screen_feature_trends_group_label": "Group",
+  "@screen_feature_trends_group_label": {
+    "description": "指標グループ選択のラベル"
+  },
   "screen_feature_trends_period_days182": "Last 6 months",
   "@screen_feature_trends_period_days182": {
     "description": "期間"
@@ -388,6 +392,10 @@
   "screen_feature_trends_period_days90": "Last 3 months",
   "@screen_feature_trends_period_days90": {
     "description": "期間"
+  },
+  "screen_feature_trends_period_label": "Period",
+  "@screen_feature_trends_period_label": {
+    "description": "期間選択のラベル"
   },
   "screen_feature_trends_title": "Trends",
   "@screen_feature_trends_title": {

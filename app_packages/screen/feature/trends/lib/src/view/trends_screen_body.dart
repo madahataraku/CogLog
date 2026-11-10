@@ -43,6 +43,7 @@ class TrendsScreenBody extends ConsumerWidget {
           spacing: 16,
           children: [
             FSelect<TrendsPeriod>(
+              label: Text(strings.screen_feature_trends_period_label),
               control: .lifted(
                 value: entity.period,
                 onChange: (period) async {
@@ -64,6 +65,7 @@ class TrendsScreenBody extends ConsumerWidget {
               },
             ),
             FSelect<TrendsMetricGroup>(
+              label: Text(strings.screen_feature_trends_group_label),
               control: .lifted(
                 value: entity.group,
                 onChange: (group) async {

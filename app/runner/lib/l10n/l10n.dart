@@ -637,6 +637,12 @@ abstract class L10n {
   /// **'運動'**
   String get screen_feature_trends_group_exercise;
 
+  /// 指標グループ選択のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'グループ'**
+  String get screen_feature_trends_group_label;
+
   /// 期間
   ///
   /// In ja, this message translates to:
@@ -660,6 +666,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'過去3カ月'**
   String get screen_feature_trends_period_days90;
+
+  /// 期間選択のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'期間'**
+  String get screen_feature_trends_period_label;
 
   /// 画面タイトル
   ///

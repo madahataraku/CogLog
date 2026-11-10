@@ -293,6 +293,9 @@ class L10nJa extends L10n {
   String get screen_feature_trends_group_exercise => '運動';
 
   @override
+  String get screen_feature_trends_group_label => 'グループ';
+
+  @override
   String get screen_feature_trends_period_days182 => '過去半年';
 
   @override
@@ -303,6 +306,9 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_period_days90 => '過去3カ月';
+
+  @override
+  String get screen_feature_trends_period_label => '期間';
 
   @override
   String get screen_feature_trends_title => '推移';

@@ -308,6 +308,9 @@ class L10nEn extends L10n {
   String get screen_feature_trends_group_exercise => 'Exercise';
 
   @override
+  String get screen_feature_trends_group_label => 'Group';
+
+  @override
   String get screen_feature_trends_period_days182 => 'Last 6 months';
 
   @override
@@ -318,6 +321,9 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_period_days90 => 'Last 3 months';
+
+  @override
+  String get screen_feature_trends_period_label => 'Period';
 
   @override
   String get screen_feature_trends_title => 'Trends';

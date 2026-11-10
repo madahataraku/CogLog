@@ -413,6 +413,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_trends_group_exercise;
       },
+      'screen_feature_trends_group_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_group_label;
+      },
       'screen_feature_trends_period_days182': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_period_days182;
@@ -428,6 +432,10 @@ final class L10nHelper {
       'screen_feature_trends_period_days90': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_period_days90;
+      },
+      'screen_feature_trends_period_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_period_label;
       },
       'screen_feature_trends_title': (source) {
         // No Placeholders
