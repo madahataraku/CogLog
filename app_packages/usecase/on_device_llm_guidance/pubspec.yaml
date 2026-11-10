@@ -8,7 +8,6 @@ environment:
   sdk: ^3.13.7
 
 dependencies:
-  infra_on_device_llm: any
   riverpod: any
 
 dev_dependencies:

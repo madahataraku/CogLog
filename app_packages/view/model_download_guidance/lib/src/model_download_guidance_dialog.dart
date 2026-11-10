@@ -93,9 +93,15 @@ final class ModelDownloadGuidanceDialog extends HookWidget {
       errorText.value = null;
       try {
         await onPrepare();
+        if (!context.mounted) {
+          return;
+        }
         onDismiss();
       } on Object {
         // 準備失敗はダイアログを閉じず、利用者へ再試行を促す。
+        if (!context.mounted) {
+          return;
+        }
         preparing.value = false;
         errorText.value = prepareFailedLabel;
       }
@@ -112,8 +118,10 @@ final class ModelDownloadGuidanceDialog extends HookWidget {
             Text(title),
             Text(body),
             if (errorText.value != null) Text(errorText.value!),
+            // 準備中もアプリ利用を続けられるよう閉じるは常に有効。副ボタンにする。
             FButton(
-              onPress: preparing.value ? null : onDismiss,
+              variant: .secondary,
+              onPress: onDismiss,
               child: Text(dismissLabel),
             ),
             FButton(

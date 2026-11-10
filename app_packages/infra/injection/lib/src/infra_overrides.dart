@@ -13,12 +13,18 @@ import 'package:riverpod/misc.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
+/// [onDeviceLlm] を渡すとプラットフォーム分岐を使わず、その実装を使う（Widget テスト用）。
+///
 /// Example:
 /// ```dart
 /// infraOverrides();
 /// ```
-List<Override> infraOverrides() => [
+List<Override> infraOverrides({OnDeviceLlm? onDeviceLlm}) => [
   onDeviceLlmProvider.overrideWith((ref) {
+    final injected = onDeviceLlm;
+    if (injected != null) {
+      return injected;
+    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
       case TargetPlatform.android:

@@ -177,13 +177,14 @@ void main() {
     expect(state.state.pendingModelDownloadGuidance, isTrue);
   });
 
-  test('markPresented 済みなら pending false', () async {
+  test('markPresented 済みなら pending false かつ評価しない', () async {
     final session = OnDeviceLlmGuidanceSession()..markPresented();
+    final evaluate = _Evaluate(shouldShow: true);
     await OnInitializeDelegate(
       state: state,
       loadTopScreenUsecase: _Load(_loadResult),
       generateTopAdviceUsecase: _Advice(),
-      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(shouldShow: true),
+      evaluateOnDeviceLlmGuidanceUsecase: evaluate,
       guidanceSession: session,
     ).execute(
       locale: 'ja',
@@ -191,6 +192,7 @@ void main() {
       fallbackTemplates: _fallbackTemplates,
     );
     expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(evaluate.calls, 0);
   });
 
   test('誘導不要なら pending false', () async {

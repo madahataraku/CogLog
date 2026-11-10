@@ -60,15 +60,20 @@ void main() {
   });
 
   test('prepareModel は download を開始する', () async {
-    final fake = FakeOnDeviceAiPlatform(
-      availability: const OnDeviceAiAvailability(
-        status: ModelFeatureStatus.downloadable,
-        reason: AvailabilityReason.modelNotReady,
-        message: 'need',
-      ),
-    )..downloadEvents = const [
-      ModelDownloadStatus(status: ModelFeatureStatus.available, progress: 1),
-    ];
+    final fake =
+        FakeOnDeviceAiPlatform(
+            availability: const OnDeviceAiAvailability(
+              status: ModelFeatureStatus.downloadable,
+              reason: AvailabilityReason.modelNotReady,
+              message: 'need',
+            ),
+          )
+          ..downloadEvents = const [
+            ModelDownloadStatus(
+              status: ModelFeatureStatus.available,
+              progress: 1,
+            ),
+          ];
     FlutterDeviceAiPlatform.instance = fake;
     await FlutterDeviceAiOnDeviceLlm().prepareModel();
   });

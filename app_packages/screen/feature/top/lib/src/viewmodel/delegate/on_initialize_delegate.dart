@@ -97,8 +97,10 @@ final class OnInitializeDelegate {
           fallbackTemplates: fallbackTemplates,
         ),
       );
-      final decision = await evaluateOnDeviceLlmGuidanceUsecase.execute();
-      final pending = guidanceSession.shouldShow && decision.shouldShow;
+      // 既に提示済みならネイティブ readiness を呼ばず、業務表示を遅らせない。
+      final pending =
+          guidanceSession.shouldShow &&
+          (await evaluateOnDeviceLlmGuidanceUsecase.execute()).shouldShow;
       await emitter.emit(
         TopScreenState(
           loaded: true,
