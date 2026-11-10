@@ -48,6 +48,12 @@ class AppSettingsScreenBody extends ConsumerWidget {
           FTileGroup(
             children: [
               FTile(
+                title: Text(
+                  strings.screen_feature_app_settings_notification_item,
+                ),
+                onPress: viewModel.onOpenNotificationSettings,
+              ),
+              FTile(
                 title: Text(strings.screen_feature_app_settings_licenses_item),
                 onPress: viewModel.onOpenOssLicenses,
               ),

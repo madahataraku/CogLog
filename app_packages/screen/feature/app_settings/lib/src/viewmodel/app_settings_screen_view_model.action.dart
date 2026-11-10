@@ -26,6 +26,16 @@ extension AppSettingsScreenViewModelActions on AppSettingsScreenViewModel {
     OnBackDelegate(navigation: navigation).execute();
   }
 
+  /// 通知設定画面を開く。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onOpenNotificationSettings();
+  /// ```
+  void onOpenNotificationSettings() {
+    OnOpenNotificationSettingsDelegate(navigation: navigation).execute();
+  }
+
   /// OSS ライセンス画面を開く。
   ///
   /// Example:

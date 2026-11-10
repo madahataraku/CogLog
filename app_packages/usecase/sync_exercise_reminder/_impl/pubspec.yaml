@@ -1,0 +1,23 @@
+name: usecase_sync_exercise_reminder_impl
+description: Implementation that schedules or cancels the exercise reminder.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_exercise_history: any
+  data_repository_notification_settings: any
+  domain_exercise_history: any
+  domain_notification_settings: any
+  infra_local_notification: any
+  usecase_sync_exercise_reminder: any
+
+dev_dependencies:
+  data_repository_exercise_history_testing: any
+  data_repository_notification_settings_testing: any
+  flutter_lints: any
+  infra_local_notification_testing: any
+  test: any

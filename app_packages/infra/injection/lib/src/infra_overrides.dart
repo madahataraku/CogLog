@@ -7,6 +7,8 @@ import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_body_metrics_mobile/infra_health_body_metrics_mobile.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_health_workout_mobile/infra_health_workout_mobile.dart';
+import 'package:infra_local_notification/infra_local_notification.dart';
+import 'package:infra_local_notification_mobile/infra_local_notification_mobile.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_photo_mobile/infra_meter_photo_mobile.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
@@ -75,6 +77,18 @@ List<Override> infraOverrides({
   appSettingsOpenerProvider.overrideWith(
     (ref) => const AppSettingsPackageOpener(),
   ),
+  localNotificationGatewayProvider.overrideWith((ref) {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return FlutterLocalNotificationsGateway();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableLocalNotificationGateway();
+    }
+  }),
   AppRuntimeInfoReader.provider.overrideWith(
     (ref) => const PackageDeviceAppRuntimeInfoReader(),
   ),

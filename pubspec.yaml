@@ -21,6 +21,13 @@ workspace:
   - app_packages/data/repository/top_screen_metric
   - app_packages/data/repository/top_screen_metric/_impl
   - app_packages/data/repository/top_screen_metric/_testing
+  - app_packages/data/repository/notification_settings
+  - app_packages/data/repository/notification_settings/_impl
+  - app_packages/data/repository/notification_settings/_testing
+  - app_packages/domain/notification_settings
+  - app_packages/infra/local_notification
+  - app_packages/infra/local_notification/_mobile
+  - app_packages/infra/local_notification/_testing
   - app_packages/domain/daily_goal
   - app_packages/domain/exercise_history
   - app_packages/domain/trends
@@ -53,6 +60,7 @@ workspace:
   - app_packages/infra/oss_license_catalog/_impl
   - app_packages/infra/oss_license_catalog/_testing
   - app_packages/screen/feature/app_settings
+  - app_packages/screen/feature/notification_settings
   - app_packages/screen/feature/debug
   - app_packages/screen/feature/exercise_history
   - app_packages/screen/feature/goal_settings
@@ -104,11 +112,20 @@ workspace:
   - app_packages/usecase/save_meter_capture/_impl
   - app_packages/usecase/save_top_screen_metric
   - app_packages/usecase/save_top_screen_metric/_impl
+  - app_packages/usecase/sync_exercise_reminder
+  - app_packages/usecase/sync_exercise_reminder/_impl
+  - app_packages/usecase/load_notification_settings
+  - app_packages/usecase/load_notification_settings/_impl
+  - app_packages/usecase/save_notification_settings
+  - app_packages/usecase/save_notification_settings/_impl
   - app_packages/screen/feature/exercise_history_detail
 
 
 # 実効バージョンはここで揃える。子パッケージの依存は any。
 dependency_overrides:
+  flutter_local_notifications: 23.0.0
+  flutter_timezone: 5.1.1
+  timezone: 0.11.2
   app_settings: 9.0.1
   build_runner: 2.10.4
   drift: 2.30.0

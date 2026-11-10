@@ -1,0 +1,22 @@
+name: data_repository_notification_settings_impl
+description: SharedPreferences storage for notification settings.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  data_repository_notification_settings: any
+  domain_notification_settings: any
+  flutter:
+    sdk: flutter
+  shared_preferences: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  shared_preferences_platform_interface: any

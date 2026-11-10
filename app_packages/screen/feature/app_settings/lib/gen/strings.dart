@@ -31,6 +31,12 @@ mixin class L10nStringsMixin {
   String get screen_feature_app_settings_licenses_item =>
       LocalizeStringDelegate.get('screen_feature_app_settings_licenses_item');
 
+  /// 通知設定画面への項目
+  String get screen_feature_app_settings_notification_item =>
+      LocalizeStringDelegate.get(
+        'screen_feature_app_settings_notification_item',
+      );
+
   /// 端末OSの見出し
   String get screen_feature_app_settings_os_label =>
       LocalizeStringDelegate.get('screen_feature_app_settings_os_label');

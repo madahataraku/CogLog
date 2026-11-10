@@ -1,5 +1,6 @@
 id,ja,en,description
 title,アプリ設定,App settings,画面タイトル
+notification_item,通知設定,Notification settings,通知設定画面への項目
 licenses_item,ライセンス,Licenses,OSSライセンス画面への項目
 debug_item,デバッグ,Debug,デバッグ画面への項目
 back_semantics,戻る,Back,戻るボタンの代替テキスト

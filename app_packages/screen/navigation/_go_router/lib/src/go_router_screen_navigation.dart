@@ -6,6 +6,7 @@ import 'package:screen_feature_exercise_history_detail/screen_feature_exercise_h
 import 'package:screen_feature_goal_settings/screen_feature_goal_settings.dart';
 import 'package:screen_feature_main/screen_feature_main.dart';
 import 'package:screen_feature_meter_capture/screen_feature_meter_capture.dart';
+import 'package:screen_feature_notification_settings/screen_feature_notification_settings.dart';
 import 'package:screen_feature_oss_licenses/screen_feature_oss_licenses.dart';
 import 'package:screen_feature_top/screen_feature_top.dart';
 import 'package:screen_feature_trends/screen_feature_trends.dart';
@@ -55,6 +56,11 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                       path: 'settings',
                       builder: (context, state) => const AppSettingsScreen(),
                       routes: [
+                        GoRoute(
+                          path: 'notification',
+                          builder: (context, state) =>
+                              const NotificationSettingsScreen(),
+                        ),
                         GoRoute(
                           path: 'licenses',
                           builder: (context, state) =>
@@ -163,6 +169,17 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   @override
   void openDebug() {
     router.push('/settings/debug');
+  }
+
+  /// 通知設定画面を積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openNotificationSettings();
+  /// ```
+  @override
+  void openNotificationSettings() {
+    router.push('/settings/notification');
   }
 
   /// OSS ライセンス一覧を積む。

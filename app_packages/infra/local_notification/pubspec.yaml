@@ -1,0 +1,15 @@
+name: infra_local_notification
+description: Local notification gateway for exercise reminders.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any
