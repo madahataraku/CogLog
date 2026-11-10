@@ -16,3 +16,4 @@ unset_prompt,目標設定で一日あたりの目標を設定しましょう,Set
 actual_label,実績,Actual,実績のラベル
 goal_label,目標,Goal,目標のラベル
 advisor_semantics,アドバイザー,Advisor,アドバイスキャラクターの代替テキスト
+settings_semantics,アプリ設定,App settings,ホーム右上の設定ボタンの代替テキスト

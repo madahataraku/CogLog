@@ -17,6 +17,106 @@
   "@foundation_resources_app_name": {
     "description": "アプリケーション名"
   },
+  "screen_feature_app_settings_back_semantics": "Back",
+  "@screen_feature_app_settings_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_app_settings_debug_item": "Debug",
+  "@screen_feature_app_settings_debug_item": {
+    "description": "デバッグ画面への項目"
+  },
+  "screen_feature_app_settings_title": "App settings",
+  "@screen_feature_app_settings_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_debug_availability_error_label": "availability error",
+  "@screen_feature_debug_availability_error_label": {
+    "description": "availability 例外ラベル"
+  },
+  "screen_feature_debug_back_semantics": "Back",
+  "@screen_feature_debug_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_debug_backend_label": "backend",
+  "@screen_feature_debug_backend_label": {
+    "description": "backend ラベル"
+  },
+  "screen_feature_debug_can_generate_label": "can generate",
+  "@screen_feature_debug_can_generate_label": {
+    "description": "生成可否ラベル"
+  },
+  "screen_feature_debug_clear_logs": "Clear logs",
+  "@screen_feature_debug_clear_logs": {
+    "description": "ログ消去ボタン"
+  },
+  "screen_feature_debug_empty_logs": "No logs yet",
+  "@screen_feature_debug_empty_logs": {
+    "description": "ログ空表示"
+  },
+  "screen_feature_debug_generate_error_label": "generate error",
+  "@screen_feature_debug_generate_error_label": {
+    "description": "生成例外ラベル"
+  },
+  "screen_feature_debug_message_label": "message",
+  "@screen_feature_debug_message_label": {
+    "description": "message ラベル"
+  },
+  "screen_feature_debug_no": "No",
+  "@screen_feature_debug_no": {
+    "description": "偽の表示"
+  },
+  "screen_feature_debug_platform_notes_label": "platform notes",
+  "@screen_feature_debug_platform_notes_label": {
+    "description": "platform notes ラベル"
+  },
+  "screen_feature_debug_probe_skipped_label": "probe skipped",
+  "@screen_feature_debug_probe_skipped_label": {
+    "description": "プローブ省略理由ラベル"
+  },
+  "screen_feature_debug_readiness_label": "readiness",
+  "@screen_feature_debug_readiness_label": {
+    "description": "readiness ラベル"
+  },
+  "screen_feature_debug_reason_label": "reason",
+  "@screen_feature_debug_reason_label": {
+    "description": "reason ラベル"
+  },
+  "screen_feature_debug_run_diagnose": "Re-diagnose",
+  "@screen_feature_debug_run_diagnose": {
+    "description": "診断再実行ボタン"
+  },
+  "screen_feature_debug_running": "Diagnosing…",
+  "@screen_feature_debug_running": {
+    "description": "診断中表示"
+  },
+  "screen_feature_debug_sample_output_label": "sample output",
+  "@screen_feature_debug_sample_output_label": {
+    "description": "生成本文ラベル"
+  },
+  "screen_feature_debug_section_availability": "On-device LLM",
+  "@screen_feature_debug_section_availability": {
+    "description": "可用性セクション見出し"
+  },
+  "screen_feature_debug_section_logs": "App logs",
+  "@screen_feature_debug_section_logs": {
+    "description": "ログセクション見出し"
+  },
+  "screen_feature_debug_section_probe": "Generation probe",
+  "@screen_feature_debug_section_probe": {
+    "description": "生成プローブ見出し"
+  },
+  "screen_feature_debug_status_label": "status",
+  "@screen_feature_debug_status_label": {
+    "description": "status ラベル"
+  },
+  "screen_feature_debug_title": "Debug",
+  "@screen_feature_debug_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_debug_yes": "Yes",
+  "@screen_feature_debug_yes": {
+    "description": "真の表示"
+  },
   "screen_feature_exercise_history_calories": "Calories",
   "@screen_feature_exercise_history_calories": {
     "description": "リスト項目の消費カロリー"
@@ -340,6 +440,10 @@
   "screen_feature_top_goal_label": "Goal",
   "@screen_feature_top_goal_label": {
     "description": "目標のラベル"
+  },
+  "screen_feature_top_settings_semantics": "App settings",
+  "@screen_feature_top_settings_semantics": {
+    "description": "ホーム右上の設定ボタンの代替テキスト"
   },
   "screen_feature_top_this_month": "This month",
   "@screen_feature_top_this_month": {

@@ -1,0 +1,19 @@
+name: usecase_diagnose_on_device_llm_impl
+description: Implementation of on-device LLM diagnosis.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  foundation_app_log: any
+  infra_on_device_llm: any
+  meta: any
+  usecase_diagnose_on_device_llm: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_on_device_llm_testing: any
+  test: any

@@ -60,6 +60,106 @@ final class L10nHelper {
         // No Placeholders
         return l10n.foundation_resources_app_name;
       },
+      'screen_feature_app_settings_back_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_back_semantics;
+      },
+      'screen_feature_app_settings_debug_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_debug_item;
+      },
+      'screen_feature_app_settings_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_title;
+      },
+      'screen_feature_debug_availability_error_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_availability_error_label;
+      },
+      'screen_feature_debug_back_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_back_semantics;
+      },
+      'screen_feature_debug_backend_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_backend_label;
+      },
+      'screen_feature_debug_can_generate_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_can_generate_label;
+      },
+      'screen_feature_debug_clear_logs': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_clear_logs;
+      },
+      'screen_feature_debug_empty_logs': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_empty_logs;
+      },
+      'screen_feature_debug_generate_error_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_generate_error_label;
+      },
+      'screen_feature_debug_message_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_message_label;
+      },
+      'screen_feature_debug_no': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_no;
+      },
+      'screen_feature_debug_platform_notes_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_platform_notes_label;
+      },
+      'screen_feature_debug_probe_skipped_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_probe_skipped_label;
+      },
+      'screen_feature_debug_readiness_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_readiness_label;
+      },
+      'screen_feature_debug_reason_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_reason_label;
+      },
+      'screen_feature_debug_run_diagnose': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_run_diagnose;
+      },
+      'screen_feature_debug_running': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_running;
+      },
+      'screen_feature_debug_sample_output_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_sample_output_label;
+      },
+      'screen_feature_debug_section_availability': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_availability;
+      },
+      'screen_feature_debug_section_logs': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_logs;
+      },
+      'screen_feature_debug_section_probe': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_probe;
+      },
+      'screen_feature_debug_status_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_status_label;
+      },
+      'screen_feature_debug_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_title;
+      },
+      'screen_feature_debug_yes': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_yes;
+      },
       'screen_feature_exercise_history_calories': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_calories;
@@ -380,6 +480,10 @@ final class L10nHelper {
       'screen_feature_top_goal_label': (source) {
         // No Placeholders
         return l10n.screen_feature_top_goal_label;
+      },
+      'screen_feature_top_settings_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_settings_semantics;
       },
       'screen_feature_top_this_month': (source) {
         // No Placeholders

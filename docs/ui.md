@@ -42,3 +42,10 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - `barrierDismissible` は `false`（外側タップでは閉じない）。
 - アクションは縦並びで「閉じる」と「モデルを準備」。
 - DialogRoute の完了（pop）は `ModelDownloadGuidanceLauncher` 内だけが行う。画面から `Navigator` を直接呼ばない。
+
+## アプリ設定とデバッグ
+
+- ホームの `FHeader` 右上（`suffixes`）に設定アクションを置く。押下でアプリ設定へスタック遷移する。
+- アプリ設定・デバッグはホームタブ内の子ルート。`FHeader.nested` と戻るアクションを使う。
+- アプリ設定は設定項目の一覧（当面はデバッグのみ）。デバッグは診断結果とアプリ内ログを縦スクロールで示す。
+- 画面から `Navigator` を直接呼ばない。遷移は `ScreenNavigation` 経由とする。

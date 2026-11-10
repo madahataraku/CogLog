@@ -10,6 +10,7 @@ environment:
 dependencies:
   domain_daily_goal: any
   domain_exercise_history: any
+  foundation_app_log: any
   infra_on_device_llm: any
   meta: any
   usecase_generate_top_advice: any

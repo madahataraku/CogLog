@@ -1,3 +1,4 @@
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 
@@ -27,11 +28,13 @@ final class GenerateTopAdviceUsecaseImpl implements GenerateTopAdviceUsecase {
     TopAdvicePromptBuilder? promptBuilder,
     AdviceTemplatePicker? picker,
     TopAdviceLlmResponseParser? responseParser,
+    AppLogStore? log,
     this.generateTimeout = const Duration(seconds: 10),
   }) : promptBuilder = promptBuilder ?? const DefaultTopAdvicePromptBuilder(),
        picker = picker ?? RandomAdviceTemplatePicker(),
        responseParser =
-           responseParser ?? const TopAdviceLlmResponseParserImpl();
+           responseParser ?? const TopAdviceLlmResponseParserImpl(),
+       log = log ?? AppLogStore();
 
   /// 端末上 LLM。
   final OnDeviceLlm llm;
@@ -44,6 +47,9 @@ final class GenerateTopAdviceUsecaseImpl implements GenerateTopAdviceUsecase {
 
   /// LLM 生出力の `TONE=` / `ADVICE=` 行を [GenerateTopAdviceResult] に変換する。
   final TopAdviceLlmResponseParser responseParser;
+
+  /// フォールバック理由などを残すログ。
+  final AppLogStore log;
 
   /// [OnDeviceLlm.generate] の上限。超過時は定型へフォールバックする。
   final Duration generateTimeout;
@@ -74,6 +80,11 @@ final class GenerateTopAdviceUsecaseImpl implements GenerateTopAdviceUsecase {
     GenerateTopAdviceRequest request,
   ) async {
     if (request.histories.isEmpty) {
+      log.append(
+        tag: 'llm.advice',
+        level: AppLogLevel.info,
+        message: 'no histories; using no-exercise template',
+      );
       return GenerateTopAdviceResult(
         advice: request.noExercise.text,
         tone: request.noExercise.tone,
@@ -91,11 +102,32 @@ final class GenerateTopAdviceUsecaseImpl implements GenerateTopAdviceUsecase {
         final generated = await llm.generate(prompt).timeout(generateTimeout);
         final parsed = responseParser.parse(generated);
         if (parsed.advice.isNotEmpty) {
+          log.append(
+            tag: 'llm.advice',
+            level: AppLogLevel.info,
+            message: 'generated advice length=${parsed.advice.length}',
+          );
           return parsed;
         }
+        log.append(
+          tag: 'llm.advice',
+          level: AppLogLevel.warn,
+          message: 'parsed advice empty; falling back to template',
+        );
+      } else {
+        log.append(
+          tag: 'llm.advice',
+          level: AppLogLevel.warn,
+          message: 'llm not available; falling back to template',
+        );
       }
-    } on Object {
+    } on Object catch (error) {
       // 可否判定の失敗・生成失敗・タイムアウトは定型へフォールバックする。
+      log.append(
+        tag: 'llm.advice',
+        level: AppLogLevel.error,
+        message: 'generate failed; falling back to template: $error',
+      );
     }
 
     final picked = picker.pick(request.fallbackTemplates);

@@ -1,0 +1,23 @@
+id,ja,en,description
+title,デバッグ,Debug,画面タイトル
+back_semantics,戻る,Back,戻るボタンの代替テキスト
+section_availability,端末上 LLM,On-device LLM,可用性セクション見出し
+section_probe,生成プローブ,Generation probe,生成プローブ見出し
+section_logs,アプリログ,App logs,ログセクション見出し
+run_diagnose,再診断,Re-diagnose,診断再実行ボタン
+clear_logs,ログを消去,Clear logs,ログ消去ボタン
+readiness_label,readiness,readiness,readiness ラベル
+status_label,status,status,status ラベル
+reason_label,reason,reason,reason ラベル
+message_label,message,message,message ラベル
+backend_label,backend,backend,backend ラベル
+platform_notes_label,platform notes,platform notes,platform notes ラベル
+availability_error_label,availability error,availability error,availability 例外ラベル
+can_generate_label,can generate,can generate,生成可否ラベル
+sample_output_label,sample output,sample output,生成本文ラベル
+generate_error_label,generate error,generate error,生成例外ラベル
+probe_skipped_label,probe skipped,probe skipped,プローブ省略理由ラベル
+running,診断中…,Diagnosing…,診断中表示
+empty_logs,ログはまだありません,No logs yet,ログ空表示
+yes,はい,Yes,真の表示
+no,いいえ,No,偽の表示
