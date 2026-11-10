@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:infra_local_notification/infra_local_notification.dart';
@@ -125,7 +126,7 @@ final class FlutterLocalNotificationsGateway
     return false;
   }
 
-  /// タイムゾーン準備済みなら [when] に一回予約する。
+  /// タイムゾーン準備済みで未来時刻なら [when] に一回予約する。
   ///
   /// Example:
   /// ```dart
@@ -136,34 +137,52 @@ final class FlutterLocalNotificationsGateway
   /// );
   /// ```
   @override
-  Future<void> scheduleReminder({
+  Future<bool> scheduleReminder({
     required DateTime when,
     required String title,
     required String body,
   }) async {
     if (!_timezoneReady) {
+      debugPrint(
+        'FlutterLocalNotificationsGateway: timezone is not ready; skip schedule',
+      );
       await cancelReminder();
-      return;
+      return false;
     }
-    final scheduled = tz.TZDateTime.from(when.toLocal(), tz.local);
-    await _plugin.zonedSchedule(
-      id: reminderId,
-      title: title,
-      body: body,
-      scheduledDate: scheduled,
-      notificationDetails: NotificationDetails(
-        android: AndroidNotificationDetails(
-          channelId,
-          '運動リマインド',
-          channelDescription: 'そろそろ運動の時間であることを知らせる',
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
+    final localWhen = when.toLocal();
+    if (!localWhen.isAfter(DateTime.now())) {
+      await cancelReminder();
+      return false;
+    }
+    try {
+      final scheduled = tz.TZDateTime.from(localWhen, tz.local);
+      await _plugin.zonedSchedule(
+        id: reminderId,
+        title: title,
+        body: body,
+        scheduledDate: scheduled,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            channelId,
+            '運動リマインド',
+            channelDescription: 'そろそろ運動の時間であることを知らせる',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+          ),
+          iOS: const DarwinNotificationDetails(),
         ),
-        iOS: const DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      payload: homePayload,
-    );
+        // SCHEDULE_EXACT_ALARM を避け、分単位のずれを許容する。
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        payload: homePayload,
+      );
+      return true;
+    } on Object catch (error, stackTrace) {
+      debugPrint(
+        'FlutterLocalNotificationsGateway: schedule failed: $error\n$stackTrace',
+      );
+      await cancelReminder();
+      return false;
+    }
   }
 
   /// 予約を取り消す。
@@ -189,7 +208,10 @@ final class FlutterLocalNotificationsGateway
       final info = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(info.identifier));
       return true;
-    } on Object {
+    } on Object catch (error, stackTrace) {
+      debugPrint(
+        'FlutterLocalNotificationsGateway: timezone init failed: $error\n$stackTrace',
+      );
       return false;
     }
   }

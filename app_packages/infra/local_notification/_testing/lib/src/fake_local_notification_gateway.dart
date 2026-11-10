@@ -13,10 +13,16 @@ final class FakeLocalNotificationGateway implements LocalNotificationGateway {
   /// ```dart
   /// FakeLocalNotificationGateway(permissionGranted: true);
   /// ```
-  FakeLocalNotificationGateway({this.permissionGranted = false});
+  FakeLocalNotificationGateway({
+    this.permissionGranted = false,
+    this.scheduleSucceeds = true,
+  });
 
   /// いまの許可状態。
   bool permissionGranted;
+
+  /// [scheduleReminder] が成功扱いにするか。
+  bool scheduleSucceeds;
 
   /// [initialize] が呼ばれた回数。
   int initializeCount = 0;
@@ -65,7 +71,7 @@ final class FakeLocalNotificationGateway implements LocalNotificationGateway {
   @override
   Future<bool> isPermissionGranted() async => permissionGranted;
 
-  /// 予約を記録する。
+  /// 予約を記録し、[scheduleSucceeds] を返す。
   ///
   /// Example:
   /// ```dart
@@ -76,12 +82,16 @@ final class FakeLocalNotificationGateway implements LocalNotificationGateway {
   /// );
   /// ```
   @override
-  Future<void> scheduleReminder({
+  Future<bool> scheduleReminder({
     required DateTime when,
     required String title,
     required String body,
   }) async {
+    if (!scheduleSucceeds) {
+      return false;
+    }
     scheduled = (when: when, title: title, body: body);
+    return true;
   }
 
   /// 予約を消し、キャンセル回数を増やす。

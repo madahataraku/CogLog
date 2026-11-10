@@ -45,15 +45,26 @@ final class ExerciseReminderBootstrap {
     final notifications = container.read(localNotificationGatewayProvider);
     final sync = container.read(SyncExerciseReminderUsecase.provider);
 
-    await notifications.initialize(
-      onNotificationOpenHome: () {
-        navigation.goToHomeTab();
-        unawaited(
-          sync.execute(SyncExerciseReminderRequest(now: DateTime.now())),
-        );
-      },
-    );
+    Future<void> safeSync() async {
+      try {
+        await sync.execute(SyncExerciseReminderRequest(now: DateTime.now()));
+      } on Object {
+        // 通知の同期失敗でアプリ起動やタップ処理を止めない。
+      }
+    }
 
-    await sync.execute(SyncExerciseReminderRequest(now: DateTime.now()));
+    try {
+      await notifications.initialize(
+        onNotificationOpenHome: () {
+          navigation.goToHomeTab();
+          unawaited(safeSync());
+        },
+      );
+    } on Object {
+      // 初期化失敗でも runApp へ進む。
+      return;
+    }
+
+    await safeSync();
   }
 }

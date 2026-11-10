@@ -77,11 +77,11 @@ final class SyncExerciseReminderUsecaseImpl
     }
 
     final languageCode = Platform.localeName.split('_').first;
-    await notifications.scheduleReminder(
+    final scheduled = await notifications.scheduleReminder(
       when: when,
       title: ExerciseReminderCopy.titleFor(languageCode),
       body: ExerciseReminderCopy.bodyFor(languageCode),
     );
-    return const SyncExerciseReminderResult(scheduled: true);
+    return SyncExerciseReminderResult(scheduled: scheduled);
   }
 }

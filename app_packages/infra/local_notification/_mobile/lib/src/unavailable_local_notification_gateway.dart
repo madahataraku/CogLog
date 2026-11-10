@@ -45,7 +45,7 @@ final class UnavailableLocalNotificationGateway
   @override
   Future<bool> isPermissionGranted() async => false;
 
-  /// 何もしない。
+  /// 常に false。
   ///
   /// Example:
   /// ```dart
@@ -56,11 +56,11 @@ final class UnavailableLocalNotificationGateway
   /// );
   /// ```
   @override
-  Future<void> scheduleReminder({
+  Future<bool> scheduleReminder({
     required DateTime when,
     required String title,
     required String body,
-  }) async {}
+  }) async => false;
 
   /// 何もしない。
   ///

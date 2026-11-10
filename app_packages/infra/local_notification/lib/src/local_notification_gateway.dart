@@ -33,7 +33,7 @@ abstract interface class LocalNotificationGateway {
   /// ```
   Future<bool> isPermissionGranted();
 
-  /// [when] に一回だけリマインドを予約する。
+  /// [when] に一回だけリマインドを予約する。成功なら true。
   ///
   /// Example:
   /// ```dart
@@ -43,7 +43,7 @@ abstract interface class LocalNotificationGateway {
   ///   body: 'body',
   /// );
   /// ```
-  Future<void> scheduleReminder({
+  Future<bool> scheduleReminder({
     required DateTime when,
     required String title,
     required String body,

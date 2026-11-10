@@ -102,7 +102,11 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
       final autoUpdate = await evaluateAutoUpdate.execute(
         EvaluateDailyGoalAutoUpdateRequest(now: now),
       );
-      await syncReminder.execute(SyncExerciseReminderRequest(now: now));
+      try {
+        await syncReminder.execute(SyncExerciseReminderRequest(now: now));
+      } on Object {
+        // 通知の同期失敗で、保存済みの履歴を saveFailed にしない。
+      }
 
       return SaveMeterCaptureResult(
         outcome: SaveMeterCaptureOutcome.success,

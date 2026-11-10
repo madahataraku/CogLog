@@ -66,7 +66,19 @@ final class ExerciseReminderSchedule {
     final avgStart = startSum ~/ n;
     final avgDuration = durationSum ~/ n;
     final offsetSeconds = avgStart - avgDuration;
-    final candidate = today.add(Duration(seconds: offsetSeconds));
+    // 開始平均より運動時間が長い場合は当日 0:00 より前になるため予約しない。
+    if (offsetSeconds < 0) {
+      return null;
+    }
+    // Duration 加算だと DST 切替日に壁時計がずれるため、年月日と秒から組み立てる。
+    final candidate = DateTime(
+      today.year,
+      today.month,
+      today.day,
+      0,
+      0,
+      offsetSeconds,
+    );
     if (!candidate.isAfter(localNow)) {
       return null;
     }

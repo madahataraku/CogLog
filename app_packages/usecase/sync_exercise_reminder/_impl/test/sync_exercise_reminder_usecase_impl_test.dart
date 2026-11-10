@@ -90,4 +90,29 @@ void main() {
     expect(result.scheduled, isFalse);
     expect(notifications.scheduled, isNull);
   });
+
+  test('schedule 失敗なら scheduled false', () async {
+    final settings = MemoryNotificationSettingsRepository();
+    await settings.write(const NotificationSettings(enabled: true));
+    final notifications = FakeLocalNotificationGateway(
+      permissionGranted: true,
+      scheduleSucceeds: false,
+    );
+    final usecase = SyncExerciseReminderUsecaseImpl(
+      settings: settings,
+      histories: FixedExerciseHistoryRepository([
+        history(
+          id: '1',
+          at: DateTime(2026, 11, 9, 18),
+          duration: const Duration(hours: 1),
+        ),
+      ]),
+      notifications: notifications,
+    );
+    final result = await usecase.execute(
+      SyncExerciseReminderRequest(now: DateTime(2026, 11, 10, 8)),
+    );
+    expect(result.scheduled, isFalse);
+    expect(notifications.scheduled, isNull);
+  });
 }

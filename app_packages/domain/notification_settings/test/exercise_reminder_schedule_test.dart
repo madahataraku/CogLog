@@ -121,4 +121,19 @@ void main() {
     );
     expect(result, DateTime(2026, 11, 10, 17, 45));
   });
+
+  test('開始平均より運動時間が長いときは null', () {
+    final now = DateTime(2026, 11, 10, 8);
+    final result = ExerciseReminderSchedule.compute(
+      histories: [
+        _history(
+          id: '1',
+          creationStartedAt: DateTime(2026, 11, 9, 0, 30),
+          duration: const Duration(hours: 1),
+        ),
+      ],
+      now: now,
+    );
+    expect(result, isNull);
+  });
 }

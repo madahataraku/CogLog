@@ -24,6 +24,9 @@ final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
 }
 
 final class _FakeSync implements SyncExerciseReminderUsecase {
+  _FakeSync({this.throwOnExecute = false});
+
+  final bool throwOnExecute;
   int callCount = 0;
 
   @override
@@ -31,6 +34,9 @@ final class _FakeSync implements SyncExerciseReminderUsecase {
     SyncExerciseReminderRequest request,
   ) async {
     callCount += 1;
+    if (throwOnExecute) {
+      throw StateError('sync failed');
+    }
     return const SyncExerciseReminderResult(scheduled: false);
   }
 }
@@ -159,5 +165,24 @@ void main() {
     expect(result.healthWriteSucceeded, isTrue);
     expect(result.goalAutoUpdated, isTrue);
     expect(sync.callCount, 1);
+  });
+
+  test('同期例外でも保存済みなら success', () async {
+    final histories = MemoryExerciseHistoryRepository();
+    final health = FakeHealthWorkoutWriter(succeed: true);
+    final evaluate = _FakeEvaluate();
+    final sync = _FakeSync(throwOnExecute: true);
+
+    final result = await SaveMeterCaptureUsecaseImpl(
+      histories: histories,
+      health: health,
+      evaluateAutoUpdate: evaluate,
+      syncReminder: sync,
+    ).execute(validRequest());
+
+    expect(result.outcome, SaveMeterCaptureOutcome.success);
+    expect(result.history, isNotNull);
+    expect(sync.callCount, 1);
+    expect(await histories.list(), hasLength(1));
   });
 }
