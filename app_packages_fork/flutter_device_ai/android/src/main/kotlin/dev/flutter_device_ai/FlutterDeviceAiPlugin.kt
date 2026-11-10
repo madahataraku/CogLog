@@ -255,8 +255,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             GenAiException.ErrorCode.NOT_ENOUGH_DISK_SPACE ->
                 "UNAVAILABLE" to
                     "Gemini Nano is not available: ${formatThrowable(e)} (code ${e.errorCode})"
-            GenAiException.ErrorCode.NOT_SUPPORTED ->
-                "UNSUPPORTED" to "${e.javaClass.name}: ${e.message ?: "Not supported on this device."}"
+            // NOT_SUPPORTED exists only in genai-common 1.0.0-beta4+; beta2 pulls beta3.
             else ->
                 "GENERATION_FAILED" to
                     "${formatThrowable(e)} (GenAI code ${e.errorCode})"
