@@ -11,8 +11,8 @@ import com.google.mlkit.genai.prompt.GenerativeModel
  *
  * AICore can throw a raw [NullPointerException] when [GenerativeModel.checkStatus]
  * runs immediately after construction (mlkit#1071). Playground avoids this by
- * creating the client after the app is up; we also require [MlKit.initialize]
- * before [Generation.getClient] so MlKitContext is never null.
+ * creating the client after the app is up; we also call [MlKit.initialize]
+ * before [Generation.getClient] so MlKitContext is available when possible.
  */
 internal object SharedGenerativeModel {
     @Volatile
@@ -41,18 +41,23 @@ internal object SharedGenerativeModel {
         }
     }
 
+    private fun formatError(e: Throwable): String =
+        "${e.javaClass.name}: ${e.message ?: ""}".trim()
+
     /**
-     * Ensures ML Kit context exists, then creates the client if needed.
+     * Ensures ML Kit context exists when possible, then creates the client if needed.
      *
-     * @throws Throwable when [Generation.getClient] fails after ML Kit init.
+     * [MlKit.initialize] failures are recorded but do not abort client creation
+     * (the ContentProvider may already have initialized ML Kit).
+     *
+     * @throws Throwable when [Generation.getClient] fails.
      */
     @Synchronized
     fun get(appContext: Context): GenerativeModel {
         markProcessStart()
         model?.let { return it }
         val context = appContext.applicationContext
-        // Safe if MlKitInitProvider already ran; required if it did not.
-        runCatching { MlKit.initialize(context) }
+        val initError = runCatching { MlKit.initialize(context) }.exceptionOrNull()
         return try {
             Generation.getClient().also {
                 model = it
@@ -60,18 +65,26 @@ internal object SharedGenerativeModel {
                 lastError = null
             }
         } catch (e: Throwable) {
-            lastError = "${e.javaClass.name}: ${e.message ?: ""}".trim()
+            lastError = buildString {
+                if (initError != null) {
+                    append("init=${formatError(initError)}")
+                    append(" | ")
+                }
+                append("getClient=${formatError(e)}")
+            }
             throw e
         }
     }
 
-    /** Best-effort early construction. Records [lastError] on failure. */
+    /**
+     * Best-effort early construction.
+     *
+     * Relies on [get] to populate [lastError] (including init + getClient);
+     * does not overwrite that combined message.
+     */
     fun warm(appContext: Context) {
         markProcessStart()
         runCatching { get(appContext) }
-            .onFailure { e ->
-                lastError = "${e.javaClass.name}: ${e.message ?: ""}".trim()
-            }
     }
 
     /** Elapsed ms since construction, or 0 if not yet created. */
