@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_app_settings_mobile/infra_app_settings_mobile.dart';
+import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
+import 'package:infra_health_body_metrics_mobile/infra_health_body_metrics_mobile.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_health_workout_mobile/infra_health_workout_mobile.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
@@ -13,7 +15,8 @@ import 'package:riverpod/misc.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
-/// [onDeviceLlm] / [meterPhotoSource] を渡すと、その実装を使う（Widget テスト用）。
+/// [onDeviceLlm] / [meterPhotoSource] / [healthBodyMetricsSource] を渡すと、
+/// その実装を使う（Widget テスト用）。
 ///
 /// Example:
 /// ```dart
@@ -22,6 +25,7 @@ import 'package:riverpod/misc.dart';
 List<Override> infraOverrides({
   OnDeviceLlm? onDeviceLlm,
   MeterPhotoSource? meterPhotoSource,
+  HealthBodyMetricsSource? healthBodyMetricsSource,
 }) => [
   onDeviceLlmProvider.overrideWith((ref) {
     final injected = onDeviceLlm;
@@ -48,6 +52,22 @@ List<Override> infraOverrides({
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
   ),
+  healthBodyMetricsSourceProvider.overrideWith((ref) {
+    final injected = healthBodyMetricsSource;
+    if (injected != null) {
+      return injected;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return HealthPackageBodyMetricsSource();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableHealthBodyMetricsSource();
+    }
+  }),
   appSettingsOpenerProvider.overrideWith(
     (ref) => const AppSettingsPackageOpener(),
   ),

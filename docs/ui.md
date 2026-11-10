@@ -20,7 +20,7 @@ dart run forui theme create
 
 1. `lightColors` / `darkColors` の `primary` を `#F6AD49`、`primaryForeground` を `#1D1D16` にする。
 2. `darkColors` の `destructiveForeground` と `errorForeground` をどちらも `#171717` に戻す。
-3. `theme.dart` のボトムナビ選択色を `foreground` にする（生成直後は `primary` になる）。
+3. 再生成後の `theme.dart` には選択色の設定が無いので、現在の `_bottomNavigationBarStyle` を復元し、`lightTheme` と `darkTheme` の両方へ渡す。アイコンと文字の選択色はどちらも `foreground` にする。
 
 ## アプリの根
 
@@ -41,6 +41,16 @@ dart run forui theme create
 - `FBottomNavigationBar` を `FScaffold.footer` に置くときは、双方の上ボーダーが二重にならないよう調整する。
 
 Forui の Widget と、Cupertino または Material の Widget は同じ木に置いてよい。
+
+## 推移
+
+- ヘッダは `FHeader`、タイトルは「推移 / Trends」。
+- 期間とグループはそれぞれ `FSelect`。その直下にグループ内の指標 `FSelect` を置く。
+- 指標 Select とグラフのあいだ（グラフ直上）に、条件に応じて `FButton` を置く。グラフ上へのオーバーレイはしない。許可リクエスト・履歴許可・OS 設定は身体グループ選択時のみ。再試行は系列の読込失敗時にグループを問わず出す。
+- 許可リクエスト未実行かつ未許可（または Android の部分許可）のとき許可ボタンを出す。一度リクエストしても granted にならないときは許可ボタンを隠し、OS 設定ボタンを出す。
+- グラフは `Expanded` 内の `CustomPaint`。点と実線／点線。カード化しない。
+- 複数指標を同時表示するときは、指標名と系列色を対応付けた凡例をグラフ領域内（描画の上）に出す。
+- 身体グループで身体指標は許可済みだが Android の履歴許可が無く、表示期間が直近 30 日を超えるときは、履歴許可の再要求ボタンを出す。
 
 ## 置き場所
 

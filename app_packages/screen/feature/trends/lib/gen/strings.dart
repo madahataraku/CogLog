@@ -9,7 +9,7 @@ import 'package:monolith_localization_runtime/src/localize_string_delegate.dart'
 mixin class L10nStringsMixin {
   const L10nStringsMixin();
 
-  /// Phase1プレースホルダ
+  /// グラフ領域のロード中表示
   String get screen_feature_trends_chart_placeholder =>
       LocalizeStringDelegate.get('screen_feature_trends_chart_placeholder');
 
@@ -24,6 +24,42 @@ mixin class L10nStringsMixin {
   /// 指標グループ選択のラベル
   String get screen_feature_trends_group_label =>
       LocalizeStringDelegate.get('screen_feature_trends_group_label');
+
+  /// 身体％
+  String get screen_feature_trends_metric_body_fat =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_body_fat');
+
+  /// 身体 kg 組
+  String get screen_feature_trends_metric_body_kg =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_body_kg');
+
+  /// 凡例用の除脂肪体重
+  String get screen_feature_trends_metric_body_lean_mass =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_body_lean_mass');
+
+  /// 凡例用の体重
+  String get screen_feature_trends_metric_body_weight =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_body_weight');
+
+  /// 運動指標
+  String get screen_feature_trends_metric_calories =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_calories');
+
+  /// 運動指標
+  String get screen_feature_trends_metric_distance =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_distance');
+
+  /// 運動指標
+  String get screen_feature_trends_metric_duration =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_duration');
+
+  /// グループ内の指標選択ラベル
+  String get screen_feature_trends_metric_label =>
+      LocalizeStringDelegate.get('screen_feature_trends_metric_label');
+
+  /// 永久拒否時に OS 設定を開く
+  String get screen_feature_trends_open_os_settings =>
+      LocalizeStringDelegate.get('screen_feature_trends_open_os_settings');
 
   /// 期間
   String get screen_feature_trends_period_days182 =>
@@ -44,6 +80,22 @@ mixin class L10nStringsMixin {
   /// 期間選択のラベル
   String get screen_feature_trends_period_label =>
       LocalizeStringDelegate.get('screen_feature_trends_period_label');
+
+  /// Android 履歴許可の再要求
+  String get screen_feature_trends_request_health_history =>
+      LocalizeStringDelegate.get(
+        'screen_feature_trends_request_health_history',
+      );
+
+  /// 身体グループの許可リクエスト
+  String get screen_feature_trends_request_health_permission =>
+      LocalizeStringDelegate.get(
+        'screen_feature_trends_request_health_permission',
+      );
+
+  /// 身体指標の再読取
+  String get screen_feature_trends_retry_load =>
+      LocalizeStringDelegate.get('screen_feature_trends_retry_load');
 
   /// 画面タイトル
   String get screen_feature_trends_title =>

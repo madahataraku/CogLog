@@ -561,6 +561,42 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_trends_group_label;
       },
+      'screen_feature_trends_metric_body_fat': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_body_fat;
+      },
+      'screen_feature_trends_metric_body_kg': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_body_kg;
+      },
+      'screen_feature_trends_metric_body_lean_mass': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_body_lean_mass;
+      },
+      'screen_feature_trends_metric_body_weight': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_body_weight;
+      },
+      'screen_feature_trends_metric_calories': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_calories;
+      },
+      'screen_feature_trends_metric_distance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_distance;
+      },
+      'screen_feature_trends_metric_duration': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_duration;
+      },
+      'screen_feature_trends_metric_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_metric_label;
+      },
+      'screen_feature_trends_open_os_settings': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_open_os_settings;
+      },
       'screen_feature_trends_period_days182': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_period_days182;
@@ -580,6 +616,18 @@ final class L10nHelper {
       'screen_feature_trends_period_label': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_period_label;
+      },
+      'screen_feature_trends_request_health_history': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_request_health_history;
+      },
+      'screen_feature_trends_request_health_permission': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_request_health_permission;
+      },
+      'screen_feature_trends_retry_load': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_retry_load;
       },
       'screen_feature_trends_title': (source) {
         // No Placeholders
