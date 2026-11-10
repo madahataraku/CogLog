@@ -32,11 +32,23 @@ final class DailyGoalAutoUpdate {
     );
   }
 
+  /// 正の運動時間を [multiplier] 倍し、秒単位へ切り上げる。
+  ///
+  /// Example:
+  /// ```dart
+  /// DailyGoalAutoUpdate.apply(
+  ///   const DailyGoal(duration: Duration(seconds: 3600)),
+  ///   DailyGoalAutoUpdateLevel.normal,
+  /// );
+  /// ```
   static Duration? _scaleDuration(Duration? value, double multiplier) {
     if (value == null || value <= Duration.zero) {
       return value;
     }
-    final scaled = (value.inSeconds * multiplier).ceil();
+    final product = value.inSeconds * multiplier;
+    final nearest = product.round();
+    // 浮動小数の僅差は切り上げず、それ以外は秒単位で切り上げる。
+    final scaled = (product - nearest).abs() < 1e-6 ? nearest : product.ceil();
     return Duration(seconds: scaled < 1 ? 1 : scaled);
   }
 

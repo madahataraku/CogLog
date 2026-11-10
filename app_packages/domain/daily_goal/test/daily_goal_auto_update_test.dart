@@ -27,6 +27,14 @@ void main() {
     );
   });
 
+  test('ふつうで 3600 秒は浮動小数誤差なく 3960 秒になる', () {
+    final updated = DailyGoalAutoUpdate.apply(
+      const DailyGoal(duration: Duration(seconds: 3600)),
+      DailyGoalAutoUpdateLevel.normal,
+    );
+    expect(updated.duration, const Duration(seconds: 3960));
+  });
+
   test('未設定と 0 は変えない', () {
     final updated = DailyGoalAutoUpdate.apply(
       const DailyGoal(caloriesKcal: 0),
