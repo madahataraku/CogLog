@@ -1,0 +1,15 @@
+name: usecase_evaluate_daily_goal_auto_update
+description: Evaluate and apply daily goal auto-update after exercise history changes.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  domain_daily_goal: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

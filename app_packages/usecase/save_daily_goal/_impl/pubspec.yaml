@@ -9,10 +9,10 @@ environment:
 
 dependencies:
   data_repository_daily_goal: any
+  domain_daily_goal: any
   usecase_save_daily_goal: any
 
 dev_dependencies:
   data_repository_daily_goal_testing: any
-  domain_daily_goal: any
   flutter_lints: any
   test: any

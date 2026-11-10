@@ -19,6 +19,7 @@ final class SaveMeterCaptureResult {
     required this.outcome,
     this.history,
     this.healthWriteSucceeded = false,
+    this.goalAutoUpdated = false,
   });
 
   /// 成否区分。
@@ -29,4 +30,7 @@ final class SaveMeterCaptureResult {
 
   /// ヘルス書き込みが成功したか。失敗しても [outcome] は success になりうる。
   final bool healthWriteSucceeded;
+
+  /// 保存後の目標自動更新が適用されたか。
+  final bool goalAutoUpdated;
 }

@@ -10,6 +10,7 @@ environment:
 dependencies:
   data_repository_exercise_history: any
   infra_health_workout: any
+  usecase_evaluate_daily_goal_auto_update: any
   usecase_save_meter_capture: any
 
 dev_dependencies:
@@ -18,3 +19,5 @@ dev_dependencies:
   flutter_lints: any
   infra_health_workout_testing: any
   test: any
+  usecase_evaluate_daily_goal_auto_update_impl: any
+  data_repository_daily_goal_testing: any

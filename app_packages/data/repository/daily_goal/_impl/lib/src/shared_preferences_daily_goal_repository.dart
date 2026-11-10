@@ -27,6 +27,23 @@ final class SharedPreferencesDailyGoalRepository
   /// 走行距離（km）を保存するキー。
   static const _distanceKmKey = 'daily_goal_distance_km';
 
+  /// 自動更新の有効フラグ。
+  static const _autoUpdateEnabledKey = 'daily_goal_auto_update_enabled';
+
+  /// 自動更新レベル。
+  static const _autoUpdateLevelKey = 'daily_goal_auto_update_level';
+
+  /// 有効化した現地日付（yyyy-MM-dd）。
+  static const _autoUpdateEnabledOnKey = 'daily_goal_auto_update_enabled_on';
+
+  /// 連続達成の起算日（yyyy-MM-dd）。
+  static const _autoUpdateStreakEpochKey =
+      'daily_goal_auto_update_streak_epoch';
+
+  /// 直近の上方修正日（yyyy-MM-dd）。
+  static const _autoUpdateLastAppliedKey =
+      'daily_goal_auto_update_last_applied';
+
   /// 読み書き先。
   final SharedPreferences _preferences;
 
@@ -80,6 +97,172 @@ final class SharedPreferencesDailyGoalRepository
     }
   }
 
+  /// キーが無ければ [DailyGoalAutoUpdateSettings.defaults]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readAutoUpdateSettings();
+  /// ```
+  @override
+  Future<DailyGoalAutoUpdateSettings> readAutoUpdateSettings() async {
+    final enabled = _preferences.getBool(_autoUpdateEnabledKey) ?? false;
+    final level = _parseLevel(_preferences.getString(_autoUpdateLevelKey));
+    return DailyGoalAutoUpdateSettings(
+      enabled: enabled,
+      level: level,
+      enabledOnLocalDate: _parseDate(
+        _preferences.getString(_autoUpdateEnabledOnKey),
+      ),
+      streakEpochLocalDate: _parseDate(
+        _preferences.getString(_autoUpdateStreakEpochKey),
+      ),
+      lastAppliedLocalDate: _parseDate(
+        _preferences.getString(_autoUpdateLastAppliedKey),
+      ),
+    );
+  }
+
+  /// 自動更新設定をキーへ書く。null 日付はキー削除。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeAutoUpdateSettings(DailyGoalAutoUpdateSettings.defaults);
+  /// ```
+  @override
+  Future<void> writeAutoUpdateSettings(
+    DailyGoalAutoUpdateSettings settings,
+  ) async {
+    await _setBool(_autoUpdateEnabledKey, settings.enabled);
+    await _setString(_autoUpdateLevelKey, _levelName(settings.level));
+    await _writeDate(_autoUpdateEnabledOnKey, settings.enabledOnLocalDate);
+    await _writeDate(_autoUpdateStreakEpochKey, settings.streakEpochLocalDate);
+    await _writeDate(_autoUpdateLastAppliedKey, settings.lastAppliedLocalDate);
+  }
+
+  /// 目標と自動更新設定をまとめて書く。失敗時は変更前へ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeGoalAndAutoUpdateSettings(
+  ///   goal: DailyGoal.unset,
+  ///   settings: DailyGoalAutoUpdateSettings.defaults,
+  /// );
+  /// ```
+  @override
+  Future<void> writeGoalAndAutoUpdateSettings({
+    required DailyGoal goal,
+    required DailyGoalAutoUpdateSettings settings,
+  }) async {
+    final previousGoal = await read();
+    final previousSettings = await readAutoUpdateSettings();
+    try {
+      await writeAutoUpdateSettings(settings);
+      await write(goal);
+    } on Object catch (error, stackTrace) {
+      final restoreErrors = <Object>[];
+      try {
+        await write(previousGoal);
+      } on Object catch (restoreError) {
+        restoreErrors.add(restoreError);
+      }
+      try {
+        await writeAutoUpdateSettings(previousSettings);
+      } on Object catch (restoreError) {
+        restoreErrors.add(restoreError);
+      }
+      if (restoreErrors.isNotEmpty) {
+        Error.throwWithStackTrace(
+          StateError(
+            '目標と設定の保存に失敗し、復元にも失敗した。'
+            ' save=$error restore=${restoreErrors.join('; ')}',
+          ),
+          stackTrace,
+        );
+      }
+      Error.throwWithStackTrace(error, stackTrace);
+    }
+  }
+
+  /// 保存文字列からレベルを復元する。未知値はふつう。
+  ///
+  /// Example:
+  /// ```dart
+  /// SharedPreferencesDailyGoalRepository._parseLevel('slow');
+  /// ```
+  static DailyGoalAutoUpdateLevel _parseLevel(String? raw) {
+    return switch (raw) {
+      'slow' => DailyGoalAutoUpdateLevel.slow,
+      'challenging' => DailyGoalAutoUpdateLevel.challenging,
+      _ => DailyGoalAutoUpdateLevel.normal,
+    };
+  }
+
+  /// レベルを prefs 用の文字列にする。
+  ///
+  /// Example:
+  /// ```dart
+  /// SharedPreferencesDailyGoalRepository._levelName(
+  ///   DailyGoalAutoUpdateLevel.normal,
+  /// );
+  /// ```
+  static String _levelName(DailyGoalAutoUpdateLevel level) {
+    return switch (level) {
+      DailyGoalAutoUpdateLevel.slow => 'slow',
+      DailyGoalAutoUpdateLevel.normal => 'normal',
+      DailyGoalAutoUpdateLevel.challenging => 'challenging',
+    };
+  }
+
+  /// `yyyy-MM-dd` を現地日付にする。不正なら null。
+  ///
+  /// Example:
+  /// ```dart
+  /// SharedPreferencesDailyGoalRepository._parseDate('2026-11-05');
+  /// ```
+  static DateTime? _parseDate(String? raw) {
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    final parts = raw.split('-');
+    if (parts.length != 3) {
+      return null;
+    }
+    final year = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final day = int.tryParse(parts[2]);
+    if (year == null || month == null || day == null) {
+      return null;
+    }
+    return DateTime(year, month, day);
+  }
+
+  /// 現地日付を `yyyy-MM-dd` にする。
+  ///
+  /// Example:
+  /// ```dart
+  /// SharedPreferencesDailyGoalRepository._formatDate(DateTime(2026, 11, 5));
+  /// ```
+  static String _formatDate(DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
+
+  /// [date] が null なら [key] を消し、あれば `yyyy-MM-dd` で書く。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository._writeDate('k', DateTime(2026, 11, 5));
+  /// ```
+  Future<void> _writeDate(String key, DateTime? date) async {
+    if (date == null) {
+      await _remove(key);
+    } else {
+      await _setString(key, _formatDate(date));
+    }
+  }
+
   /// [key] を整数で書く。失敗時は reload して例外を返す。
   Future<void> _setInt(String key, int value) async {
     var saved = false;
@@ -110,7 +293,52 @@ final class SharedPreferencesDailyGoalRepository
     }
   }
 
-  /// [key] を消す。失敗時は reload して例外を返す。
+  /// [key] を真偽値で書く。失敗時は reload して例外を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository._setBool('daily_goal_auto_update_enabled', true);
+  /// ```
+  Future<void> _setBool(String key, bool value) async {
+    var saved = false;
+    try {
+      saved = await _preferences.setBool(key, value);
+    } on Object {
+      await _preferences.reload();
+      rethrow;
+    }
+    if (!saved) {
+      await _preferences.reload();
+      throw StateError('$key を保存できなかった。');
+    }
+  }
+
+  /// [key] を文字列で書く。失敗時は reload して例外を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository._setString('daily_goal_auto_update_level', 'normal');
+  /// ```
+  Future<void> _setString(String key, String value) async {
+    var saved = false;
+    try {
+      saved = await _preferences.setString(key, value);
+    } on Object {
+      await _preferences.reload();
+      rethrow;
+    }
+    if (!saved) {
+      await _preferences.reload();
+      throw StateError('$key を保存できなかった。');
+    }
+  }
+
+  /// [key] を消す。元から無い場合は成功とみなす。
+  ///
+  /// Example:
+  /// ```dart
+  /// await repository._remove('daily_goal_calories_kcal');
+  /// ```
   Future<void> _remove(String key) async {
     var removed = false;
     try {
@@ -119,8 +347,12 @@ final class SharedPreferencesDailyGoalRepository
       await _preferences.reload();
       rethrow;
     }
-    if (!removed) {
-      await _preferences.reload();
+    if (removed) {
+      return;
+    }
+    // false は元からキーが無い場合もある。再読込後も残っていれば失敗とする。
+    await _preferences.reload();
+    if (_preferences.containsKey(key)) {
       throw StateError('$key を削除できなかった。');
     }
   }

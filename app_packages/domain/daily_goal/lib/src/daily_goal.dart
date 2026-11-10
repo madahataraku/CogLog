@@ -58,4 +58,30 @@ final class DailyGoal {
   /// const DailyGoal(distanceKm: 0).hasDistance;
   /// ```
   bool get hasDistance => distanceKm != null;
+
+  /// 未設定と設定済み（0 含む）の区別を保った等価比較。
+  ///
+  /// Example:
+  /// ```dart
+  /// const DailyGoal(caloriesKcal: 0).sameAs(const DailyGoal(caloriesKcal: 0));
+  /// ```
+  bool sameAs(DailyGoal other) {
+    return _sameDuration(duration, other.duration) &&
+        _sameDouble(caloriesKcal, other.caloriesKcal) &&
+        _sameDouble(distanceKm, other.distanceKm);
+  }
+
+  static bool _sameDuration(Duration? a, Duration? b) {
+    if (a == null || b == null) {
+      return a == null && b == null;
+    }
+    return a.inSeconds == b.inSeconds;
+  }
+
+  static bool _sameDouble(double? a, double? b) {
+    if (a == null || b == null) {
+      return a == null && b == null;
+    }
+    return a == b;
+  }
 }

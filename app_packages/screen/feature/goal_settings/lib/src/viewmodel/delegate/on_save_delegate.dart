@@ -175,7 +175,7 @@ _OptionalDoubleParse _parseOptionalNonNegativeDouble(String raw) {
   return _OptionalDoubleParse.ok(value);
 }
 
-/// 入力文字列を解釈して一日あたり目標を保存する。
+/// 入力文字列を解釈して一日あたり目標と自動更新を保存する。
 ///
 /// Example:
 /// ```dart
@@ -188,6 +188,9 @@ _OptionalDoubleParse _parseOptionalNonNegativeDouble(String raw) {
 ///   seconds: '',
 ///   calories: '',
 ///   distance: '',
+///   autoUpdateEnabled: false,
+///   autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+///   now: DateTime(2026, 11, 5),
 /// );
 /// ```
 final class OnSaveDelegate {
@@ -224,6 +227,9 @@ final class OnSaveDelegate {
   ///   seconds: '0',
   ///   calories: '0',
   ///   distance: '0',
+  ///   autoUpdateEnabled: false,
+  ///   autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+  ///   now: DateTime(2026, 11, 5),
   /// );
   /// ```
   Future<GoalSettingsSaveOutcome> execute({
@@ -232,6 +238,9 @@ final class OnSaveDelegate {
     required String seconds,
     required String calories,
     required String distance,
+    required bool autoUpdateEnabled,
+    required DailyGoalAutoUpdateLevel autoUpdateLevel,
+    required DateTime now,
   }) async {
     var outcome = GoalSettingsSaveOutcome.saveFailed;
     await state.updateWithLock((current, emitter) async {
@@ -252,10 +261,20 @@ final class OnSaveDelegate {
       }
       try {
         final result = await saveDailyGoalUsecase.execute(
-          SaveDailyGoalRequest(goal: goal),
+          SaveDailyGoalRequest(
+            goal: goal,
+            autoUpdateEnabled: autoUpdateEnabled,
+            autoUpdateLevel: autoUpdateLevel,
+            now: now,
+          ),
         );
         await emitter.emit(
-          GoalSettingsScreenState(loaded: true, goal: result.goal),
+          GoalSettingsScreenState(
+            loaded: true,
+            goal: result.goal,
+            autoUpdateEnabled: result.autoUpdate.enabled,
+            autoUpdateLevel: result.autoUpdate.level,
+          ),
         );
         outcome = GoalSettingsSaveOutcome.success;
       } on Object {
