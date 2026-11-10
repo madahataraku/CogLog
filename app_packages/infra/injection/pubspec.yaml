@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   infra_app_settings: any
   infra_app_settings_mobile: any
+  infra_health_body_metrics: any
+  infra_health_body_metrics_mobile: any
   infra_health_workout: any
   infra_health_workout_mobile: any
   infra_meter_photo: any

@@ -1,0 +1,21 @@
+name: usecase_load_trends_impl
+description: Loads trends from exercise history and health body metrics.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_exercise_history: any
+  domain_exercise_history: any
+  domain_trends: any
+  infra_health_body_metrics: any
+  usecase_load_trends: any
+
+dev_dependencies:
+  data_repository_exercise_history_testing: any
+  flutter_lints: any
+  infra_health_body_metrics_testing: any
+  test: any
