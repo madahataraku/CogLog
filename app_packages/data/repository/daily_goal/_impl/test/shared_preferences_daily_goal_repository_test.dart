@@ -315,6 +315,48 @@ void main() {
       ),
     );
   });
+
+  test('削除が false でキーが残る場合は StateError', () async {
+    final store = _ControllablePrefsStore(
+      data: <String, Object>{'daily_goal_calories_kcal': 50.0},
+      failingRemoveSuffixes: <String>{'daily_goal_calories_kcal'},
+    );
+    SharedPreferencesStorePlatform.instance = store;
+    SharedPreferences.resetStatic();
+    final repository = SharedPreferencesDailyGoalRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    await expectLater(
+      repository.write(DailyGoal.unset),
+      throwsA(
+        isA<StateError>().having(
+          (error) => error.message,
+          'message',
+          contains('daily_goal_calories_kcal'),
+        ),
+      ),
+    );
+    expect((await repository.read()).caloriesKcal, 50.0);
+  });
+
+  test('削除が false でもキーが無ければ成功する', () async {
+    final store = _ControllablePrefsStore(
+      failingRemoveSuffixes: <String>{
+        'daily_goal_duration_seconds',
+        'daily_goal_calories_kcal',
+        'daily_goal_distance_km',
+      },
+    );
+    SharedPreferencesStorePlatform.instance = store;
+    SharedPreferences.resetStatic();
+    final repository = SharedPreferencesDailyGoalRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    await repository.write(DailyGoal.unset);
+    expect((await repository.read()).sameAs(DailyGoal.unset), isTrue);
+  });
 }
 
 /// 指定キーの [setValue] を失敗させられる prefs ストア。
@@ -331,6 +373,7 @@ final class _ControllablePrefsStore extends SharedPreferencesStorePlatform {
   _ControllablePrefsStore({
     Map<String, Object> data = const <String, Object>{},
     this.failingKeySuffixes = const <String>{},
+    this.failingRemoveSuffixes = const <String>{},
     this.failAfterFirstFailure = false,
   }) : backend = InMemorySharedPreferencesStore.withData(<String, Object>{
          for (final entry in data.entries)
@@ -345,6 +388,9 @@ final class _ControllablePrefsStore extends SharedPreferencesStorePlatform {
 
   /// 書き込みを失敗させるキー末尾。
   final Set<String> failingKeySuffixes;
+
+  /// 削除を失敗させるキー末尾。値はストアに残す。
+  final Set<String> failingRemoveSuffixes;
 
   /// 最初の失敗のあとも書き込みを失敗させ続けるか。
   final bool failAfterFirstFailure;
@@ -371,7 +417,12 @@ final class _ControllablePrefsStore extends SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<bool> remove(String key) => backend.remove(key);
+  Future<bool> remove(String key) async {
+    if (failingRemoveSuffixes.any(key.endsWith)) {
+      return false;
+    }
+    return backend.remove(key);
+  }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
