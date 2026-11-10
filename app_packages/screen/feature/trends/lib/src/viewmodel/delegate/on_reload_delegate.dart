@@ -88,7 +88,13 @@ final class OnReloadDelegate {
           return;
         }
         await emitter.emit(
-          current.copyWith(loading: false, bodyReadFailed: true),
+          current.copyWith(
+            loading: false,
+            bodyReadFailed: true,
+            buckets: const [],
+            exerciseSeries: const {},
+            bodySeries: const {},
+          ),
         );
       });
     }

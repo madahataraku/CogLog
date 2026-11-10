@@ -202,7 +202,7 @@ void main() {
   });
 
   test('読取失敗なら再試行ボタン', () {
-    final entity = const TrendsStateToEntityDelegate().execute(
+    final body = const TrendsStateToEntityDelegate().execute(
       TrendsScreenState.initial.copyWith(
         group: TrendsMetricGroup.body,
         metricSet: TrendsMetricSet.bodyKgPair,
@@ -211,7 +211,12 @@ void main() {
         healthPermissionUi: TrendsHealthPermissionUi.granted,
       ),
     );
-    expect(entity.showRetryButton, isTrue);
+    expect(body.showRetryButton, isTrue);
+
+    final exercise = const TrendsStateToEntityDelegate().execute(
+      TrendsScreenState.initial.copyWith(loading: false, bodyReadFailed: true),
+    );
+    expect(exercise.showRetryButton, isTrue);
   });
 
   test('許可リクエスト後に reload する', () async {
@@ -274,6 +279,25 @@ void main() {
   });
 
   test('OnReloadDelegate は失敗時に loading を下ろし bodyReadFailed を立てる', () async {
+    final buckets = TrendsBucketBuilder.build(
+      nowLocal: now,
+      spec: TrendsPeriodSpec.days30,
+    );
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          loading: false,
+          buckets: buckets,
+          exerciseSeries: {
+            TrendsMetricKind.exerciseCaloriesKcal: const TrendsVisibleSeries(
+              metric: TrendsMetricKind.exerciseCaloriesKcal,
+              points: [],
+              segments: [],
+            ),
+          },
+        ),
+      );
+    });
     load.throwError = StateError('reload failed');
     await OnReloadDelegate(
       state: state,
@@ -282,6 +306,9 @@ void main() {
     ).execute();
     expect(state.state.loading, isFalse);
     expect(state.state.bodyReadFailed, isTrue);
+    expect(state.state.buckets, isEmpty);
+    expect(state.state.exerciseSeries, isEmpty);
+    expect(state.state.bodySeries, isEmpty);
   });
 
   test('OnReloadDelegate は期間変更後の古い結果を捨てる', () async {

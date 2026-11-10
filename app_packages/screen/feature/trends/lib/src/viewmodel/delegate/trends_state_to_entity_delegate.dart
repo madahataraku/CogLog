@@ -79,7 +79,7 @@ final class TrendsStateToEntityDelegate {
           isBody &&
           state.healthPermissionUi ==
               TrendsHealthPermissionUi.permanentlyDenied,
-      showRetryButton: isBody && state.bodyReadFailed,
+      showRetryButton: state.bodyReadFailed,
       visibleSeries: visible,
       bucketCount: state.buckets.length,
     );
