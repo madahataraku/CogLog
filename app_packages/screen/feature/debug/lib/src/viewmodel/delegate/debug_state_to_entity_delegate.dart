@@ -54,6 +54,7 @@ final class DebugStateToEntityDelegate {
       canGenerate: result?.canGenerate,
       sampleOutput: dash(result?.sampleOutput),
       generateError: dash(result?.generateError),
+      prepareError: dash(result?.prepareError),
       probeSkipped: dash(result?.probeSkippedReason),
       logLines: logLines,
     );

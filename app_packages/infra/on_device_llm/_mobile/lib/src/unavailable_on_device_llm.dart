@@ -62,6 +62,17 @@ final class UnavailableOnDeviceLlm implements OnDeviceLlm {
     throw StateError('OnDeviceLlm is unavailable');
   }
 
+  /// 診断でも利用不可として失敗する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableOnDeviceLlm().diagnoseGenerate('prompt');
+  /// ```
+  @override
+  Future<String> diagnoseGenerate(String prompt) async {
+    throw StateError('OnDeviceLlm is unavailable');
+  }
+
   /// 利用不可のため何もしない。
   ///
   /// Example:

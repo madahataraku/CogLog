@@ -16,6 +16,7 @@ availability_error_label,availability error,availability error,availability 例�
 can_generate_label,can generate,can generate,生成可否ラベル
 sample_output_label,sample output,sample output,生成本文ラベル
 generate_error_label,generate error,generate error,生成例外ラベル
+prepare_error_label,prepare error,prepare error,準備例外ラベル
 probe_skipped_label,probe skipped,probe skipped,プローブ省略理由ラベル
 running,診断中…,Diagnosing…,診断中表示
 empty_logs,ログはまだありません,No logs yet,ログ空表示
