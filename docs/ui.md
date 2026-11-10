@@ -9,6 +9,19 @@ dart run forui theme create
 
 `dart run forui theme create` は `app/lib/theme/` を上書きする。テーマの調整は生成後の `app/lib/theme/` に対して行う。
 
+色の方針は次のとおり。
+
+- ベースカラーは Forui の Olive（`app/lib/theme/colors.dart`）。
+- アプリの primary は `#F6AD49`。`primaryForeground` はコントラストのため Olive の暗い前景（`#1D1D16`）。
+- ボトムナビの選択タブは `primary` ではなく `foreground` を使う（白／暗背景で十分なコントラストを確保するため）。
+- `#F6AD49` により合う暖色ニュートラルとして Stone も候補。ベースを差し替えるときは `dart run forui theme create --preset babbbc` を使う。
+
+`dart run forui theme create --preset eabbbc`（Stone なら `babbbc`）のあと、次を手で戻す。
+
+1. `lightColors` / `darkColors` の `primary` を `#F6AD49`、`primaryForeground` を `#1D1D16` にする。
+2. `darkColors` の `destructiveForeground` と `errorForeground` をどちらも `#171717` に戻す。
+3. 再生成後の `theme.dart` には選択色の設定が無いので、現在の `_bottomNavigationBarStyle` を復元し、`lightTheme` と `darkTheme` の両方へ渡す。アイコンと文字の選択色はどちらも `foreground` にする。
+
 ## アプリの根
 
 `app/lib/main.dart` は次の順で組む。
