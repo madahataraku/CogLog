@@ -213,18 +213,27 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
     return delegate.updateRecordedAt(raw);
   }
 
-  /// 登録可能なら保存し、成功時はホームへ遷移する。
+  /// 登録可能なら保存し、成功時は [OnSaveMeterCaptureSuccess] を返す。
+  ///
+  /// ホーム遷移は呼び出し側がトーストのあとに [goToHomeTab] する。
   ///
   /// Example:
   /// ```dart
   /// viewModel.onSave();
   /// ```
-  Future<void> onSave() {
+  Future<OnSaveMeterCaptureSuccess?> onSave() {
     final delegate = OnSaveMeterCaptureDelegate(
       state: state,
       saveMeterCaptureUsecase: saveMeterCaptureUsecase,
-      navigation: navigation,
     );
     return delegate.execute();
   }
+
+  /// ホームタブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.goToHomeTab();
+  /// ```
+  void goToHomeTab() => navigation.goToHomeTab();
 }

@@ -210,6 +210,28 @@ class L10nEn extends L10n {
   String get screen_feature_exercise_history_title => 'Exercise history';
 
   @override
+  String get screen_feature_goal_settings_auto_update_description =>
+      'Raises goals by level after consecutive achievements';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_enabled =>
+      'Auto-update goals';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level =>
+      'Auto-update level';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level_challenging =>
+      'Challenging';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level_normal => 'Normal';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level_slow => 'Slow';
+
+  @override
   String get screen_feature_goal_settings_calories_label => 'Calories';
 
   @override
@@ -294,6 +316,10 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_meter_capture_duration_seconds => 'Seconds';
+
+  @override
+  String get screen_feature_meter_capture_goal_auto_updated =>
+      'Daily goals were auto-updated';
 
   @override
   String get screen_feature_meter_capture_open_settings => 'Open settings';

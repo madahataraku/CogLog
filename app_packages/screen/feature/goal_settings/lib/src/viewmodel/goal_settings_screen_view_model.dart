@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:state_stream/state_stream.dart';

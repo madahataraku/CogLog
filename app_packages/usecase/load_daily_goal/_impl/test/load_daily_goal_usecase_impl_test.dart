@@ -13,6 +13,8 @@ void main() {
     expect(result.goal.duration, isNull);
     expect(result.goal.caloriesKcal, isNull);
     expect(result.goal.distanceKm, isNull);
+    expect(result.autoUpdate.enabled, isFalse);
+    expect(result.autoUpdate.level, DailyGoalAutoUpdateLevel.normal);
   });
 
   test('保存した目標を再び読む', () async {

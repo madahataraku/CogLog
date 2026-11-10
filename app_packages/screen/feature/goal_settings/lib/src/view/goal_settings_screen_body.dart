@@ -1,3 +1,4 @@
+import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,7 +10,7 @@ import '../viewmodel/delegate/on_save_delegate.dart';
 import '../viewmodel/goal_settings_screen_view_model.dart';
 import 'goal_settings_screen_providers.dart';
 
-/// 運動時間・カロリー・距離の入力と保存。
+/// 運動時間・カロリー・距離・自動更新の入力と保存。
 ///
 /// Example:
 /// ```dart
@@ -25,7 +26,7 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
   /// ```
   const GoalSettingsScreenBody({super.key});
 
-  /// 各欄の controller を Entity と同期し、保存ボタンで [onSave] する。
+  /// 各欄の controller を Entity と同期し、保存ボタンで ViewModel へ渡す。
   ///
   /// Example:
   /// ```dart
@@ -39,6 +40,8 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
     final secondsController = useTextEditingController();
     final caloriesController = useTextEditingController();
     final distanceController = useTextEditingController();
+    final autoUpdateEnabled = useState(entity.autoUpdateEnabled);
+    final autoUpdateLevel = useState(entity.autoUpdateLevel);
     final saving = useState(false);
 
     useEffect(
@@ -51,6 +54,8 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
         secondsController.text = entity.seconds;
         caloriesController.text = entity.calories;
         distanceController.text = entity.distance;
+        autoUpdateEnabled.value = entity.autoUpdateEnabled;
+        autoUpdateLevel.value = entity.autoUpdateLevel;
         return null;
       },
       [
@@ -60,6 +65,8 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
         entity.seconds,
         entity.calories,
         entity.distance,
+        entity.autoUpdateEnabled,
+        entity.autoUpdateLevel,
       ],
     );
 
@@ -128,6 +135,40 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
               ),
               enabled: entity.loaded && !saving.value,
             ),
+            FSwitch(
+              label: Text(
+                strings.screen_feature_goal_settings_auto_update_enabled,
+              ),
+              description: Text(
+                strings.screen_feature_goal_settings_auto_update_description,
+              ),
+              value: autoUpdateEnabled.value,
+              onChange: entity.loaded && !saving.value
+                  ? (value) => autoUpdateEnabled.value = value
+                  : null,
+              enabled: entity.loaded && !saving.value,
+            ),
+            FSelect<DailyGoalAutoUpdateLevel>(
+              enabled: entity.loaded && !saving.value,
+              label: Text(
+                strings.screen_feature_goal_settings_auto_update_level,
+              ),
+              control: .lifted(
+                value: autoUpdateLevel.value,
+                onChange: (level) {
+                  if (level == null ||
+                      level == autoUpdateLevel.value ||
+                      saving.value) {
+                    return;
+                  }
+                  autoUpdateLevel.value = level;
+                },
+              ),
+              items: {
+                for (final level in DailyGoalAutoUpdateLevel.values)
+                  _autoUpdateLevelLabel(level): level,
+              },
+            ),
             Text(
               strings.screen_feature_goal_settings_unset_hint,
               style: context.theme.typography.body.sm.copyWith(
@@ -148,6 +189,8 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
                               seconds: secondsController.text,
                               calories: caloriesController.text,
                               distance: distanceController.text,
+                              autoUpdateEnabled: autoUpdateEnabled.value,
+                              autoUpdateLevel: autoUpdateLevel.value,
                             );
                         if (!context.mounted) {
                           return;
@@ -182,3 +225,18 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
     );
   }
 }
+
+/// [level] の表示名。
+///
+/// Example:
+/// ```dart
+/// _autoUpdateLevelLabel(DailyGoalAutoUpdateLevel.normal);
+/// ```
+String _autoUpdateLevelLabel(DailyGoalAutoUpdateLevel level) => switch (level) {
+  DailyGoalAutoUpdateLevel.slow =>
+    strings.screen_feature_goal_settings_auto_update_level_slow,
+  DailyGoalAutoUpdateLevel.normal =>
+    strings.screen_feature_goal_settings_auto_update_level_normal,
+  DailyGoalAutoUpdateLevel.challenging =>
+    strings.screen_feature_goal_settings_auto_update_level_challenging,
+};

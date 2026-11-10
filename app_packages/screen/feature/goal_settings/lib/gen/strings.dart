@@ -9,6 +9,42 @@ import 'package:monolith_localization_runtime/src/localize_string_delegate.dart'
 mixin class L10nStringsMixin {
   const L10nStringsMixin();
 
+  /// 自動更新の説明
+  String get screen_feature_goal_settings_auto_update_description =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_auto_update_description',
+      );
+
+  /// 自動更新の有効／無効
+  String get screen_feature_goal_settings_auto_update_enabled =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_auto_update_enabled',
+      );
+
+  /// 自動更新レベルの欄
+  String get screen_feature_goal_settings_auto_update_level =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_auto_update_level',
+      );
+
+  /// 自動更新レベル：挑戦的
+  String get screen_feature_goal_settings_auto_update_level_challenging =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_auto_update_level_challenging',
+      );
+
+  /// 自動更新レベル：ふつう
+  String get screen_feature_goal_settings_auto_update_level_normal =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_auto_update_level_normal',
+      );
+
+  /// 自動更新レベル：ゆっくり
+  String get screen_feature_goal_settings_auto_update_level_slow =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_auto_update_level_slow',
+      );
+
   /// 一日あたり消費カロリーの欄
   String get screen_feature_goal_settings_calories_label =>
       LocalizeStringDelegate.get('screen_feature_goal_settings_calories_label');

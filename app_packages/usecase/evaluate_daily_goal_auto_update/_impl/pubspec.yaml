@@ -1,0 +1,21 @@
+name: usecase_evaluate_daily_goal_auto_update_impl
+description: Applies daily goal auto-update through repositories.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_daily_goal: any
+  data_repository_exercise_history: any
+  domain_daily_goal: any
+  usecase_evaluate_daily_goal_auto_update: any
+
+dev_dependencies:
+  data_repository_daily_goal_testing: any
+  data_repository_exercise_history_testing: any
+  domain_exercise_history: any
+  flutter_lints: any
+  test: any

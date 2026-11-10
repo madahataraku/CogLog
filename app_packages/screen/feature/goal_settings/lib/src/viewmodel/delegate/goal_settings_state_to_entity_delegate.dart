@@ -18,7 +18,7 @@ final class GoalSettingsStateToEntityDelegate {
   /// ```
   const GoalSettingsStateToEntityDelegate();
 
-  /// [state] の目標を、未設定は空・設定済みは数値文字にする。
+  /// [state] の目標と自動更新を、未設定は空・設定済みは数値文字にする。
   ///
   /// Example:
   /// ```dart
@@ -36,6 +36,8 @@ final class GoalSettingsStateToEntityDelegate {
       seconds: duration == null ? '' : '${duration.inSeconds.remainder(60)}',
       calories: _optionalNumber(goal.caloriesKcal),
       distance: _optionalNumber(goal.distanceKm),
+      autoUpdateEnabled: state.autoUpdateEnabled,
+      autoUpdateLevel: state.autoUpdateLevel,
     );
   }
 
