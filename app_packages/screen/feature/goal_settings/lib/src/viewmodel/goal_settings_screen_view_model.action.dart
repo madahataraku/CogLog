@@ -3,7 +3,7 @@ part of 'goal_settings_screen_view_model.dart';
 /// 目標設定画面の操作。
 @internal
 extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
-  /// 保存済みの一日あたり目標を読み込む。
+  /// 保存済みの一日あたり目標と自動更新を読み込む。
   ///
   /// Example:
   /// ```dart
@@ -17,7 +17,7 @@ extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
     return delegate.execute();
   }
 
-  /// 入力欄の文字列を解釈して保存し、結果を返す。
+  /// 入力欄の文字列と自動更新を解釈して保存し、結果を返す。
   ///
   /// Example:
   /// ```dart
@@ -27,6 +27,8 @@ extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
   ///   seconds: '0',
   ///   calories: '200',
   ///   distance: '5',
+  ///   autoUpdateEnabled: false,
+  ///   autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
   /// );
   /// ```
   Future<GoalSettingsSaveOutcome> onSave({
@@ -35,6 +37,8 @@ extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
     required String seconds,
     required String calories,
     required String distance,
+    required bool autoUpdateEnabled,
+    required DailyGoalAutoUpdateLevel autoUpdateLevel,
   }) {
     final delegate = OnSaveDelegate(
       state: state,
@@ -46,6 +50,9 @@ extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
       seconds: seconds,
       calories: calories,
       distance: distance,
+      autoUpdateEnabled: autoUpdateEnabled,
+      autoUpdateLevel: autoUpdateLevel,
+      now: DateTime.now(),
     );
   }
 }

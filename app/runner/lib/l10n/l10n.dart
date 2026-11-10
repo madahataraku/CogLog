@@ -457,6 +457,42 @@ abstract class L10n {
   /// **'運動履歴'**
   String get screen_feature_exercise_history_title;
 
+  /// 自動更新の説明
+  ///
+  /// In ja, this message translates to:
+  /// **'連続して目標を達成すると、レベルに応じて目標を上方修正します'**
+  String get screen_feature_goal_settings_auto_update_description;
+
+  /// 自動更新の有効／無効
+  ///
+  /// In ja, this message translates to:
+  /// **'目標の自動更新'**
+  String get screen_feature_goal_settings_auto_update_enabled;
+
+  /// 自動更新レベルの欄
+  ///
+  /// In ja, this message translates to:
+  /// **'自動更新レベル'**
+  String get screen_feature_goal_settings_auto_update_level;
+
+  /// 自動更新レベル：挑戦的
+  ///
+  /// In ja, this message translates to:
+  /// **'挑戦的'**
+  String get screen_feature_goal_settings_auto_update_level_challenging;
+
+  /// 自動更新レベル：ふつう
+  ///
+  /// In ja, this message translates to:
+  /// **'ふつう'**
+  String get screen_feature_goal_settings_auto_update_level_normal;
+
+  /// 自動更新レベル：ゆっくり
+  ///
+  /// In ja, this message translates to:
+  /// **'ゆっくり'**
+  String get screen_feature_goal_settings_auto_update_level_slow;
+
   /// 一日あたり消費カロリーの欄
   ///
   /// In ja, this message translates to:
@@ -618,6 +654,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'秒'**
   String get screen_feature_meter_capture_duration_seconds;
+
+  /// 目標自動更新の通知
+  ///
+  /// In ja, this message translates to:
+  /// **'目標が自動更新されました'**
+  String get screen_feature_meter_capture_goal_auto_updated;
 
   /// 設定アプリ導線
   ///

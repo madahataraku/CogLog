@@ -30,6 +30,7 @@ final class LoadDailyGoalUsecaseImpl implements LoadDailyGoalUsecase {
   @override
   Future<LoadDailyGoalResult> execute(LoadDailyGoalRequest request) async {
     final goal = await goals.read();
-    return LoadDailyGoalResult(goal: goal);
+    final autoUpdate = await goals.readAutoUpdateSettings();
+    return LoadDailyGoalResult(goal: goal, autoUpdate: autoUpdate);
   }
 }

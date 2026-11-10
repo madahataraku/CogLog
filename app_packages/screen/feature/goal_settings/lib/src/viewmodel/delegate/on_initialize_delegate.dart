@@ -3,7 +3,7 @@ import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
 
 import '../state/goal_settings_screen_state.dart';
 
-/// 一日あたり目標を読み、State を置き換える。
+/// 一日あたり目標と自動更新設定を読み、State を置き換える。
 ///
 /// Example:
 /// ```dart
@@ -33,7 +33,7 @@ final class OnInitializeDelegate {
   /// 一日あたり目標の読み込み。
   final LoadDailyGoalUsecase loadDailyGoalUsecase;
 
-  /// 保存済み目標を読み、成功したら loaded にする。
+  /// 保存済み目標と自動更新を読み、成功したら loaded にする。
   ///
   /// Example:
   /// ```dart
@@ -45,7 +45,12 @@ final class OnInitializeDelegate {
         const LoadDailyGoalRequest(),
       );
       await emitter.emit(
-        GoalSettingsScreenState(loaded: true, goal: result.goal),
+        GoalSettingsScreenState(
+          loaded: true,
+          goal: result.goal,
+          autoUpdateEnabled: result.autoUpdate.enabled,
+          autoUpdateLevel: result.autoUpdate.level,
+        ),
       );
     });
   }

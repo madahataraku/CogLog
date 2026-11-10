@@ -11,6 +11,8 @@ import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:riverpod/misc.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
+import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
+import 'package:usecase_evaluate_daily_goal_auto_update_impl/usecase_evaluate_daily_goal_auto_update_impl.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
 import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
@@ -86,6 +88,12 @@ List<Override> usecaseOverrides({
     (ref) =>
         SaveDailyGoalUsecaseImpl(goals: ref.watch(dailyGoalRepositoryProvider)),
   ),
+  EvaluateDailyGoalAutoUpdateUsecase.provider.overrideWith(
+    (ref) => EvaluateDailyGoalAutoUpdateUsecaseImpl(
+      goals: ref.watch(dailyGoalRepositoryProvider),
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+    ),
+  ),
   GenerateTopAdviceUsecase.provider.overrideWith(
     (ref) => GenerateTopAdviceUsecaseImpl(
       llm: ref.watch(onDeviceLlmProvider),
@@ -142,6 +150,9 @@ List<Override> usecaseOverrides({
     (ref) => SaveMeterCaptureUsecaseImpl(
       histories: ref.watch(exerciseHistoryRepositoryProvider),
       health: ref.watch(healthWorkoutWriterProvider),
+      evaluateAutoUpdate: ref.watch(
+        EvaluateDailyGoalAutoUpdateUsecase.provider,
+      ),
     ),
   ),
 ];

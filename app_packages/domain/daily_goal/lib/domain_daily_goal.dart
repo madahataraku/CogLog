@@ -8,7 +8,12 @@
 /// ```
 library;
 
+export 'src/consecutive_goal_achievement_days.dart';
 export 'src/daily_goal.dart';
+export 'src/daily_goal_auto_update.dart';
+export 'src/daily_goal_auto_update_level.dart';
+export 'src/daily_goal_auto_update_settings.dart';
+export 'src/daily_goal_day_achievement.dart';
 export 'src/goal_achievement.dart';
 export 'src/goal_metric_achievement.dart';
 export 'src/goal_metric_status.dart';

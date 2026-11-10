@@ -21,6 +21,8 @@ dependencies:
   riverpod: any
   usecase_diagnose_on_device_llm: any
   usecase_diagnose_on_device_llm_impl: any
+  usecase_evaluate_daily_goal_auto_update: any
+  usecase_evaluate_daily_goal_auto_update_impl: any
   usecase_generate_top_advice: any
   usecase_generate_top_advice_impl: any
   usecase_load_daily_goal: any
