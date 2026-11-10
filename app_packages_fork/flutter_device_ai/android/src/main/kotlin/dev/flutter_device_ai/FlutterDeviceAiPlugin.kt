@@ -12,11 +12,12 @@ import android.os.Looper
 import com.google.mlkit.genai.common.DownloadStatus
 import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.common.GenAiException
-import com.google.mlkit.genai.prompt.Content
 import com.google.mlkit.genai.prompt.GenerateContentRequest
 import com.google.mlkit.genai.prompt.Generation
 import com.google.mlkit.genai.prompt.GenerativeModel
-import com.google.mlkit.genai.prompt.SystemInstruction
+import com.google.mlkit.genai.prompt.ImagePart
+import com.google.mlkit.genai.prompt.PromptPrefix
+import com.google.mlkit.genai.prompt.TextPart
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -29,13 +30,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Android backend: Gemini Nano through Google AICore, using the ML Kit GenAI
- * Prompt API. The Prompt API is stateless, so conversations are kept here and
- * replayed on every turn.
+ * Prompt API (`genai-prompt` 1.0.0-beta2, same as Gemini Nano Playground).
+ * The Prompt API is stateless, so conversations are kept here and replayed
+ * on every turn.
  */
 class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
@@ -61,6 +65,11 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     companion object {
         private const val AICORE_PACKAGE = "com.google.android.aicore"
+        /** AICore バインド直後の checkStatus NPE を避けるための待ち時間。 */
+        private const val STATUS_RETRY_DELAY_MS = 200L
+        private const val STATUS_RETRY_COUNT = 3
+        private const val STACK_FRAME_LIMIT = 8
+        private const val THROWABLE_TEXT_LIMIT = 1500
     }
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -93,6 +102,9 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                 job = null
             }
         })
+
+        // AICore のサービスバインドは初回が遅い。診断の直前生成を避ける。
+        warmClient()
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -110,8 +122,18 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun client(): GenerativeModel = model ?: Generation.getClient().also { model = it }
 
-    private fun aiCoreInstalled(): Boolean {
-        val ctx = context ?: return false
+    /** AICore クライアントを先に作り、初回 checkStatus のレースを緩和する。 */
+    private fun warmClient() {
+        runCatching { client() }
+    }
+
+    private fun resetClient() {
+        runCatching { model?.close() }
+        model = null
+    }
+
+    private fun aiCorePackageInfo(): android.content.pm.PackageInfo? {
+        val ctx = context ?: return null
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 ctx.packageManager.getPackageInfo(AICORE_PACKAGE, PackageManager.PackageInfoFlags.of(0))
@@ -119,14 +141,48 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                 @Suppress("DEPRECATION")
                 ctx.packageManager.getPackageInfo(AICORE_PACKAGE, 0)
             }
-            true
-        } catch (e: Exception) {
-            false
+        } catch (_: Exception) {
+            null
         }
+    }
+
+    private fun aiCoreInstalled(): Boolean = aiCorePackageInfo() != null
+
+    private fun aiCoreVersionLabel(): String {
+        val info = aiCorePackageInfo() ?: return "AICore installed: false"
+        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            info.longVersionCode
+        } else {
+            @Suppress("DEPRECATION")
+            info.versionCode.toLong()
+        }
+        return "AICore installed: true, versionName=${info.versionName ?: "?"}, versionCode=$versionCode"
     }
 
     private fun availabilityMap(status: String, reason: String, message: String) =
         mapOf("status" to status, "reason" to reason, "message" to message)
+
+    /**
+     * AICore バインド直後の raw NPE を待ち＋クライアント再生成で避ける。
+     * 既知の genai-prompt / AICore 初期化レース向け。
+     */
+    private suspend fun checkStatusWithRetry(): Int {
+        var lastNpe: NullPointerException? = null
+        repeat(STATUS_RETRY_COUNT) { attempt ->
+            try {
+                return client().checkStatus()
+            } catch (e: NullPointerException) {
+                lastNpe = e
+                delay(STATUS_RETRY_DELAY_MS * (attempt + 1))
+                if (attempt == STATUS_RETRY_COUNT - 2) {
+                    resetClient()
+                    warmClient()
+                    delay(STATUS_RETRY_DELAY_MS)
+                }
+            }
+        }
+        throw lastNpe ?: NullPointerException("checkStatus failed without exception")
+    }
 
     private suspend fun availability(): Map<String, Any> {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -139,7 +195,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             )
         }
         return try {
-            when (client().checkStatus()) {
+            when (checkStatusWithRetry()) {
                 FeatureStatus.AVAILABLE ->
                     availabilityMap("available", "ready", "Gemini Nano is ready.")
                 FeatureStatus.DOWNLOADABLE ->
@@ -158,7 +214,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    /** Class name + message (+ cause chain) so null messages stay diagnosable. */
+    /** Class name + message (+ cause chain + short stack) so null messages stay diagnosable. */
     private fun formatThrowable(e: Throwable): String {
         val parts = mutableListOf<String>()
         var current: Throwable? = e
@@ -173,7 +229,16 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             current = current.cause
             depth++
         }
-        return parts.joinToString(" | cause: ")
+        val summary = parts.joinToString(" | cause: ")
+        val stack = e.stackTrace
+            .take(STACK_FRAME_LIMIT)
+            .joinToString(" <- ") { "${it.className}.${it.methodName}:${it.lineNumber}" }
+        val text = if (stack.isEmpty()) summary else "$summary | stack: $stack"
+        return if (text.length <= THROWABLE_TEXT_LIMIT) {
+            text
+        } else {
+            text.take(THROWABLE_TEXT_LIMIT - 1) + "…"
+        }
     }
 
     private fun post(block: () -> Unit) = main.post(block)
@@ -208,7 +273,10 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
     override fun onMethodCall(call: MethodCall, result: Result) {
         val id = call.argument<String>("sessionId") ?: ""
         when (call.method) {
-            "getAvailability" -> scope.launch { result.success(availability()) }
+            "getAvailability" -> scope.launch {
+                val snapshot = withContext(Dispatchers.IO) { availability() }
+                result.success(snapshot)
+            }
 
             "getPlatformInfo" -> {
                 val usable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && aiCoreInstalled()
@@ -222,7 +290,8 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                         "supportsPlayStoreRedirect" to true,
                         "supportsExactTokenCounts" to usable,
                         "isConfigured" to true,
-                        "diagnosticNotes" to "Android SDK ${Build.VERSION.SDK_INT}, AICore installed: ${aiCoreInstalled()}"
+                        "diagnosticNotes" to
+                            "Android SDK ${Build.VERSION.SDK_INT}, genai-prompt 1.0.0-beta2, ${aiCoreVersionLabel()}"
                     )
                 )
             }
@@ -247,6 +316,8 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                 if (bitmap == null) {
                     result.error("UNSUPPORTED", "The image bytes could not be decoded.", null)
                 } else {
+                    // beta2 accepts a single ImagePart per request; keep the latest bitmap.
+                    convo.pendingImages.clear()
                     convo.pendingImages.add(bitmap)
                     result.success(null)
                 }
@@ -259,12 +330,15 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                 val convo = sessions[id] ?: return@launch notFound(id, result)
                 try {
                     val text = call.argument<String>("text")
-                    val request = if (text != null) {
-                        GenerateContentRequest.Builder(com.google.mlkit.genai.prompt.TextPart(text)).build()
-                    } else {
-                        buildRequest(convo, call.argument<Map<String, Any?>>("config"), peek = true)
+                    val tokens = withContext(Dispatchers.IO) {
+                        val request = if (text != null) {
+                            GenerateContentRequest.builder(TextPart(text)).build()
+                        } else {
+                            buildRequest(convo, call.argument<Map<String, Any?>>("config"), peek = true)
+                        }
+                        client().countTokens(request).totalTokens
                     }
-                    result.success(client().countTokens(request).totalTokens)
+                    result.success(tokens)
                 } catch (e: Exception) {
                     val (code, message) = errorCode(e)
                     result.error(code, message, null)
@@ -306,7 +380,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     // --- generation -----------------------------------------------------------------
 
-    /** Renders the conversation (and the pending turn) as one request. */
+    /** Renders the conversation (and the pending turn) as one beta2 request. */
     private fun buildRequest(
         convo: Conversation,
         config: Map<String, Any?>?,
@@ -318,13 +392,15 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         val pending = convo.pendingText.joinToString("\n")
         if (hasHistory) prompt.append("User: ").append(pending).append("\nAssistant:") else prompt.append(pending)
 
-        val content = Content.Builder().apply {
-            convo.pendingImages.forEach { image(it) }
-            text(prompt.toString())
-        }.build()
-
-        val builder = GenerateContentRequest.Builder(content)
-        convo.system?.let { builder.systemInstruction = SystemInstruction(it) }
+        val textPart = TextPart(prompt.toString())
+        val image = convo.pendingImages.lastOrNull()
+        val builder = if (image != null) {
+            GenerateContentRequest.builder(ImagePart(image), textPart)
+        } else {
+            GenerateContentRequest.builder(textPart)
+        }
+        // beta2 has no SystemInstruction; map system text to PromptPrefix.
+        convo.system?.let { builder.promptPrefix = PromptPrefix(it) }
         (config?.get("temperature") as? Number)?.let { builder.temperature = it.toFloat() }
         (config?.get("topK") as? Number)?.let { builder.topK = it.toInt() }
         (config?.get("maxTokens") as? Number)?.let { builder.maxOutputTokens = it.toInt() }
@@ -349,21 +425,20 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         }
         val config = call.argument<Map<String, Any?>>("config")
         val started = System.currentTimeMillis()
-        convo.job = scope.launch {
+        convo.job = scope.launch(Dispatchers.IO) {
             try {
                 val response = client().generateContent(buildRequest(convo, config))
                 val text = response.candidates.firstOrNull()?.text.orEmpty()
                 commitTurn(convo, text)
-                result.success(
-                    mapOf(
-                        "text" to text,
-                        "tokenCount" to maxOf(1, text.length / 4),
-                        "generationTimeMs" to (System.currentTimeMillis() - started).toInt()
-                    )
+                val payload = mapOf(
+                    "text" to text,
+                    "tokenCount" to maxOf(1, text.length / 4),
+                    "generationTimeMs" to (System.currentTimeMillis() - started).toInt()
                 )
+                post { result.success(payload) }
             } catch (e: Throwable) {
                 val (code, message) = errorCode(e)
-                result.error(code, message, null)
+                post { result.error(code, message, null) }
             }
         }
     }
@@ -377,7 +452,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             return result.error("EMPTY_TURN", "Nothing to answer: add a query first.", null)
         }
         val config = call.argument<Map<String, Any?>>("config")
-        convo.job = scope.launch {
+        convo.job = scope.launch(Dispatchers.IO) {
             val full = StringBuilder()
             try {
                 client().generateContentStream(buildRequest(convo, config)).collect { response ->
@@ -404,41 +479,41 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
     private suspend fun runDownload(events: EventChannel.EventSink?) {
         fun emit(map: Map<String, Any?>) = post { events?.success(map) }
         try {
-            val current = availability()
-            when (current["status"]) {
-                "available" -> {
-                    emit(mapOf("status" to "available", "progress" to 1.0))
-                    post { events?.endOfStream() }
-                    return
-                }
-                "unavailable" -> {
-                    emit(mapOf("status" to "unavailable", "errorMessage" to current["message"]))
-                    post { events?.endOfStream() }
-                    return
-                }
-            }
-            var total = 0L
-            client().download().collect { status ->
-                when (status) {
-                    is DownloadStatus.DownloadStarted -> {
-                        total = status.bytesToDownload
-                        emit(mapOf("status" to "downloading", "progress" to 0.0, "totalBytes" to total))
-                    }
-                    is DownloadStatus.DownloadProgress -> {
-                        val done = status.totalBytesDownloaded
-                        emit(
-                            mapOf(
-                                "status" to "downloading",
-                                "progress" to if (total > 0) done.toDouble() / total else null,
-                                "bytesDownloaded" to done,
-                                "totalBytes" to total
-                            )
-                        )
-                    }
-                    is DownloadStatus.DownloadCompleted ->
+            withContext(Dispatchers.IO) {
+                val current = availability()
+                when (current["status"]) {
+                    "available" -> {
                         emit(mapOf("status" to "available", "progress" to 1.0))
-                    is DownloadStatus.DownloadFailed ->
-                        emit(mapOf("status" to "unavailable", "errorMessage" to formatThrowable(status.e)))
+                        return@withContext
+                    }
+                    "unavailable" -> {
+                        emit(mapOf("status" to "unavailable", "errorMessage" to current["message"]))
+                        return@withContext
+                    }
+                }
+                var total = 0L
+                client().download().collect { status ->
+                    when (status) {
+                        is DownloadStatus.DownloadStarted -> {
+                            total = status.bytesToDownload
+                            emit(mapOf("status" to "downloading", "progress" to 0.0, "totalBytes" to total))
+                        }
+                        is DownloadStatus.DownloadProgress -> {
+                            val done = status.totalBytesDownloaded
+                            emit(
+                                mapOf(
+                                    "status" to "downloading",
+                                    "progress" to if (total > 0) done.toDouble() / total else null,
+                                    "bytesDownloaded" to done,
+                                    "totalBytes" to total
+                                )
+                            )
+                        }
+                        is DownloadStatus.DownloadCompleted ->
+                            emit(mapOf("status" to "available", "progress" to 1.0))
+                        is DownloadStatus.DownloadFailed ->
+                            emit(mapOf("status" to "unavailable", "errorMessage" to formatThrowable(status.e)))
+                    }
                 }
             }
         } catch (e: CancellationException) {
