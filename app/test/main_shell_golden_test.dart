@@ -41,6 +41,14 @@ void main() {
     );
   });
 
+  testWidgets('推移タブの空画面', (tester) async {
+    await _pumpTabGolden(
+      tester,
+      tab: '推移',
+      golden: 'goldens/main_shell_trends.png',
+    );
+  });
+
   testWidgets('運動履歴タブの空画面', (tester) async {
     await _pumpTabGolden(
       tester,

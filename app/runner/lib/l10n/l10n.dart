@@ -559,6 +559,12 @@ abstract class L10n {
   /// **'メーター記録'**
   String get screen_feature_main_nav_meter_capture;
 
+  /// ボトムナビ
+  ///
+  /// In ja, this message translates to:
+  /// **'推移'**
+  String get screen_feature_main_nav_trends;
+
   /// 入力ラベル
   ///
   /// In ja, this message translates to:
@@ -780,6 +786,66 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標設定で一日あたりの目標を設定しましょう'**
   String get screen_feature_top_unset_prompt;
+
+  /// Phase1プレースホルダ
+  ///
+  /// In ja, this message translates to:
+  /// **'グラフは準備中です'**
+  String get screen_feature_trends_chart_placeholder;
+
+  /// 指標グループ
+  ///
+  /// In ja, this message translates to:
+  /// **'身体'**
+  String get screen_feature_trends_group_body;
+
+  /// 指標グループ
+  ///
+  /// In ja, this message translates to:
+  /// **'運動'**
+  String get screen_feature_trends_group_exercise;
+
+  /// 指標グループ選択のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'グループ'**
+  String get screen_feature_trends_group_label;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去半年'**
+  String get screen_feature_trends_period_days182;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去30日'**
+  String get screen_feature_trends_period_days30;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去1年'**
+  String get screen_feature_trends_period_days365;
+
+  /// 期間
+  ///
+  /// In ja, this message translates to:
+  /// **'過去3カ月'**
+  String get screen_feature_trends_period_days90;
+
+  /// 期間選択のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'期間'**
+  String get screen_feature_trends_period_label;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'推移'**
+  String get screen_feature_trends_title;
 
   /// 誘導本文
   ///

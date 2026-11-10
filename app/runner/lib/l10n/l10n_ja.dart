@@ -251,6 +251,9 @@ class L10nJa extends L10n {
   String get screen_feature_main_nav_meter_capture => 'メーター記録';
 
   @override
+  String get screen_feature_main_nav_trends => '推移';
+
+  @override
   String get screen_feature_meter_capture_average_speed => '平均速度 (km/h)';
 
   @override
@@ -366,6 +369,36 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';
+
+  @override
+  String get screen_feature_trends_chart_placeholder => 'グラフは準備中です';
+
+  @override
+  String get screen_feature_trends_group_body => '身体';
+
+  @override
+  String get screen_feature_trends_group_exercise => '運動';
+
+  @override
+  String get screen_feature_trends_group_label => 'グループ';
+
+  @override
+  String get screen_feature_trends_period_days182 => '過去半年';
+
+  @override
+  String get screen_feature_trends_period_days30 => '過去30日';
+
+  @override
+  String get screen_feature_trends_period_days365 => '過去1年';
+
+  @override
+  String get screen_feature_trends_period_days90 => '過去3カ月';
+
+  @override
+  String get screen_feature_trends_period_label => '期間';
+
+  @override
+  String get screen_feature_trends_title => '推移';
 
   @override
   String get view_model_download_guidance_body =>

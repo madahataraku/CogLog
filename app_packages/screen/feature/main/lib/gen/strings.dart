@@ -24,4 +24,8 @@ mixin class L10nStringsMixin {
   /// ボトムナビ
   String get screen_feature_main_nav_meter_capture =>
       LocalizeStringDelegate.get('screen_feature_main_nav_meter_capture');
+
+  /// ボトムナビ
+  String get screen_feature_main_nav_trends =>
+      LocalizeStringDelegate.get('screen_feature_main_nav_trends');
 }
