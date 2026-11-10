@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_device_ai: any
+  foundation_app_log: any
   infra_on_device_llm: any
   meta: any
 

@@ -193,6 +193,12 @@ abstract class L10n {
   /// **'platform notes'**
   String get screen_feature_debug_platform_notes_label;
 
+  /// 準備例外ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'prepare error'**
+  String get screen_feature_debug_prepare_error_label;
+
   /// プローブ省略理由ラベル
   ///
   /// In ja, this message translates to:

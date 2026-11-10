@@ -69,6 +69,10 @@
   "@screen_feature_debug_platform_notes_label": {
     "description": "platform notes ラベル"
   },
+  "screen_feature_debug_prepare_error_label": "prepare error",
+  "@screen_feature_debug_prepare_error_label": {
+    "description": "準備例外ラベル"
+  },
   "screen_feature_debug_probe_skipped_label": "probe skipped",
   "@screen_feature_debug_probe_skipped_label": {
     "description": "プローブ省略理由ラベル"

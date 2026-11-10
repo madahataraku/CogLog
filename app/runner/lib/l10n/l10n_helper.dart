@@ -112,6 +112,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_platform_notes_label;
       },
+      'screen_feature_debug_prepare_error_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_prepare_error_label;
+      },
       'screen_feature_debug_probe_skipped_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_probe_skipped_label;
