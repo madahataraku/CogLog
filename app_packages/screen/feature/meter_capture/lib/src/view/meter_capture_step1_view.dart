@@ -9,6 +9,7 @@ import '../viewmodel/meter_capture_screen_view_model.dart';
 import '../viewmodel/state/meter_capture_camera_ui.dart';
 import '../viewmodel/state/meter_capture_screen_state.dart';
 import 'meter_capture_camera_preview.dart';
+import 'meter_capture_shutter_button.dart';
 
 /// アプリ内カメラとライブラリ選択。
 ///
@@ -84,26 +85,33 @@ class MeterCaptureStep1View extends ConsumerWidget {
         ],
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: FButton(
-                  onPress: libraryEnabled ? viewModel.onPickLibraryPhoto : null,
-                  child: Text(
-                    strings.screen_feature_meter_capture_pick_library,
+          child: SizedBox(
+            height: 72,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: FButton(
+                        onPress: libraryEnabled
+                            ? viewModel.onPickLibraryPhoto
+                            : null,
+                        child: Text(
+                          strings.screen_feature_meter_capture_pick_library,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Semantics(
-                button: true,
-                label: strings.screen_feature_meter_capture_shutter,
-                child: FButton(
+                MeterCaptureShutterButton(
                   onPress: shutterEnabled ? viewModel.onCapturePhoto : null,
-                  child: Text(strings.screen_feature_meter_capture_shutter),
                 ),
-              ),
-            ],
+                const Expanded(child: SizedBox.shrink()),
+              ],
+            ),
           ),
         ),
       ],

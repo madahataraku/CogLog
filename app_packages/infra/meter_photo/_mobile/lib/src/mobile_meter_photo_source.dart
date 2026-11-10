@@ -31,6 +31,7 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
       StreamController<MeterInAppCameraStatus>.broadcast();
   MeterInAppCameraStatus _current = const MeterInAppCameraIdle();
   CameraController? _controller;
+  VoidCallback? _controllerListener;
   int _startToken = 0;
   Future<void> _operation = Future<void>.value();
 
@@ -173,9 +174,11 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
         await _safeDispose(controller);
         return;
       }
-      _controller = controller;
+      _attachController(controller);
       await _emit(
-        MeterInAppCameraReady(aspectRatio: controller.value.aspectRatio),
+        MeterInAppCameraReady(
+          aspectRatio: _displayAspectRatio(controller.value),
+        ),
       );
     } on CameraException catch (error) {
       await _safeDispose(controller);
@@ -213,8 +216,77 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
     }
   }
 
+  /// [CameraPreview] と同じ向き規則で表示縦横比（幅÷高さ）を求める。
+  ///
+  /// Example:
+  /// ```dart
+  /// source._displayAspectRatio(controller.value);
+  /// ```
+  double _displayAspectRatio(CameraValue value) {
+    final sensorAspect = value.aspectRatio;
+    if (sensorAspect <= 0) {
+      return 3 / 4;
+    }
+    return _isPreviewLandscape(value) ? sensorAspect : (1 / sensorAspect);
+  }
+
+  /// [CameraPreview] と同じ向き判定。
+  ///
+  /// Example:
+  /// ```dart
+  /// source._isPreviewLandscape(controller.value);
+  /// ```
+  bool _isPreviewLandscape(CameraValue value) {
+    final orientation = value.isRecordingVideo
+        ? value.recordingOrientation!
+        : (value.previewPauseOrientation ??
+              value.lockedCaptureOrientation ??
+              value.deviceOrientation);
+    return orientation == DeviceOrientation.landscapeLeft ||
+        orientation == DeviceOrientation.landscapeRight;
+  }
+
+  void _attachController(CameraController controller) {
+    _detachControllerListener();
+    _controller = controller;
+    _controllerListener = _handleControllerChanged;
+    controller.addListener(_controllerListener!);
+  }
+
+  void _detachControllerListener() {
+    final controller = _controller;
+    final listener = _controllerListener;
+    _controllerListener = null;
+    if (controller != null && listener != null) {
+      controller.removeListener(listener);
+    }
+  }
+
+  /// 向き変化で表示比率が変わったら ready を再通知する。
+  ///
+  /// Example:
+  /// ```dart
+  /// controller.addListener(source._handleControllerChanged);
+  /// ```
+  void _handleControllerChanged() {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) {
+      return;
+    }
+    final current = _current;
+    if (current is! MeterInAppCameraReady) {
+      return;
+    }
+    final next = _displayAspectRatio(controller.value);
+    if ((current.aspectRatio - next).abs() < 0.0001) {
+      return;
+    }
+    unawaited(_emit(MeterInAppCameraReady(aspectRatio: next)));
+  }
+
   Future<void> _disposeController() async {
     final controller = _controller;
+    _detachControllerListener();
     _controller = null;
     await _safeDispose(controller);
   }

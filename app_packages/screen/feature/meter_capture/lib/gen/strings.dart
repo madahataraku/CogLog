@@ -47,6 +47,12 @@ mixin class L10nStringsMixin {
         'screen_feature_meter_capture_duration_seconds',
       );
 
+  /// 目標自動更新の通知
+  String get screen_feature_meter_capture_goal_auto_updated =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_goal_auto_updated',
+      );
+
   /// 設定アプリ導線
   String get screen_feature_meter_capture_open_settings =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_open_settings');

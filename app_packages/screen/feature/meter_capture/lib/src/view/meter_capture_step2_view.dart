@@ -248,7 +248,23 @@ class MeterCaptureStep2View extends HookConsumerWidget {
           child: Text(strings.screen_feature_meter_capture_retake),
         ),
         FButton(
-          onPress: !canSubmit || busy ? null : viewModel.onSave,
+          onPress: !canSubmit || busy
+              ? null
+              : () async {
+                  final success = await viewModel.onSave();
+                  if (success == null) {
+                    return;
+                  }
+                  if (success.goalAutoUpdated && context.mounted) {
+                    showFToast(
+                      context: context,
+                      title: Text(
+                        strings.screen_feature_meter_capture_goal_auto_updated,
+                      ),
+                    );
+                  }
+                  viewModel.goToHomeTab();
+                },
           child: Text(strings.screen_feature_meter_capture_save),
         ),
       ],

@@ -8,6 +8,12 @@ calories_label,消費カロリー,Calories,一日あたり消費カロリーの�
 calories_unit,kcal,kcal,消費カロリーの単位
 distance_label,走行距離,Distance,一日あたり走行距離の欄
 distance_unit,km,km,走行距離の単位
+auto_update_enabled,目標の自動更新,Auto-update goals,自動更新の有効／無効
+auto_update_description,連続して目標を達成すると、レベルに応じて目標を上方修正します,Raises goals by level after consecutive achievements,自動更新の説明
+auto_update_level,自動更新レベル,Auto-update level,自動更新レベルの欄
+auto_update_level_slow,ゆっくり,Slow,自動更新レベル：ゆっくり
+auto_update_level_normal,ふつう,Normal,自動更新レベル：ふつう
+auto_update_level_challenging,挑戦的,Challenging,自動更新レベル：挑戦的
 save,保存,Save,目標を保存するボタン
 unset_hint,未設定の欄は空のまま保存できます,Leave fields empty to keep them unset,未設定の説明
 save_success,目標を保存しました,Goals saved,保存成功の通知

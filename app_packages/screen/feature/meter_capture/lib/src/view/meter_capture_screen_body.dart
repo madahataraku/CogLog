@@ -43,6 +43,8 @@ class MeterCaptureScreenBody extends ConsumerWidget {
     final entity = ref.watch(MeterCaptureScreenProviders.entity);
 
     return FScaffold(
+      // カメラ画面はプレビューを端まで伸ばすため、既定の child 余白を外す。
+      childPad: false,
       header: FHeader(title: Text(strings.screen_feature_meter_capture_title)),
       child: switch (state.step) {
         MeterCaptureStep.photo => MeterCaptureStep1View(

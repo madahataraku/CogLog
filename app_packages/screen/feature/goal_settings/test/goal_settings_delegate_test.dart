@@ -27,21 +27,34 @@ final class _Save implements SaveDailyGoalUsecase {
   final Object? error;
   var calls = 0;
   DailyGoal? lastGoal;
+  bool? lastAutoUpdateEnabled;
+  DailyGoalAutoUpdateLevel? lastAutoUpdateLevel;
+  DateTime? lastNow;
 
   @override
   Future<SaveDailyGoalResult> execute(SaveDailyGoalRequest request) async {
     calls += 1;
     lastGoal = request.goal;
+    lastAutoUpdateEnabled = request.autoUpdateEnabled;
+    lastAutoUpdateLevel = request.autoUpdateLevel;
+    lastNow = request.now;
     final error = this.error;
     if (error != null) {
       throw error;
     }
-    return SaveDailyGoalResult(goal: request.goal);
+    return SaveDailyGoalResult(
+      goal: request.goal,
+      autoUpdate: DailyGoalAutoUpdateSettings(
+        enabled: request.autoUpdateEnabled,
+        level: request.autoUpdateLevel,
+      ),
+    );
   }
 }
 
 void main() {
   late MutableStateStream<GoalSettingsScreenState> state;
+  final now = DateTime(2026, 11, 5);
 
   setUp(() {
     state = MutableStateStream(GoalSettingsScreenState.initial);
@@ -51,9 +64,15 @@ void main() {
     await state.close();
   });
 
-  test('初期化で目標を入れ、loaded にする', () async {
+  test('初期化で目標と自動更新を入れ、loaded にする', () async {
     final load = _Load(
-      const LoadDailyGoalResult(goal: DailyGoal(caloriesKcal: 100)),
+      const LoadDailyGoalResult(
+        goal: DailyGoal(caloriesKcal: 100),
+        autoUpdate: DailyGoalAutoUpdateSettings(
+          enabled: true,
+          level: DailyGoalAutoUpdateLevel.challenging,
+        ),
+      ),
     );
     await OnInitializeDelegate(
       state: state,
@@ -62,32 +81,56 @@ void main() {
 
     expect(state.state.loaded, isTrue);
     expect(state.state.goal.caloriesKcal, 100);
+    expect(state.state.autoUpdateEnabled, isTrue);
+    expect(state.state.autoUpdateLevel, DailyGoalAutoUpdateLevel.challenging);
     expect(load.calls, 1);
   });
 
-  test('全空の保存は unset になる', () async {
+  test('全空の保存は unset になり自動更新も渡す', () async {
     state = MutableStateStream(
-      const GoalSettingsScreenState(loaded: true, goal: DailyGoal.unset),
+      const GoalSettingsScreenState(
+        loaded: true,
+        goal: DailyGoal.unset,
+        autoUpdateEnabled: false,
+        autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+      ),
     );
     final save = _Save();
-    final outcome = await OnSaveDelegate(
-      state: state,
-      saveDailyGoalUsecase: save,
-    ).execute(hours: '', minutes: '', seconds: '', calories: '', distance: '');
+    final outcome =
+        await OnSaveDelegate(state: state, saveDailyGoalUsecase: save).execute(
+          hours: '',
+          minutes: '',
+          seconds: '',
+          calories: '',
+          distance: '',
+          autoUpdateEnabled: true,
+          autoUpdateLevel: DailyGoalAutoUpdateLevel.slow,
+          now: now,
+        );
 
     expect(outcome, GoalSettingsSaveOutcome.success);
     expect(save.calls, 1);
     expect(save.lastGoal?.duration, isNull);
     expect(save.lastGoal?.caloriesKcal, isNull);
     expect(save.lastGoal?.distanceKm, isNull);
+    expect(save.lastAutoUpdateEnabled, isTrue);
+    expect(save.lastAutoUpdateLevel, DailyGoalAutoUpdateLevel.slow);
+    expect(save.lastNow, now);
     expect(state.state.goal.duration, isNull);
     expect(state.state.goal.caloriesKcal, isNull);
     expect(state.state.goal.distanceKm, isNull);
+    expect(state.state.autoUpdateEnabled, isTrue);
+    expect(state.state.autoUpdateLevel, DailyGoalAutoUpdateLevel.slow);
   });
 
   test('0 設定は運動時間・カロリー・距離すべて設定済みの 0', () async {
     state = MutableStateStream(
-      const GoalSettingsScreenState(loaded: true, goal: DailyGoal.unset),
+      const GoalSettingsScreenState(
+        loaded: true,
+        goal: DailyGoal.unset,
+        autoUpdateEnabled: false,
+        autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+      ),
     );
     final save = _Save();
     await OnSaveDelegate(state: state, saveDailyGoalUsecase: save).execute(
@@ -96,6 +139,9 @@ void main() {
       seconds: '0',
       calories: '0',
       distance: '0',
+      autoUpdateEnabled: false,
+      autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+      now: now,
     );
 
     expect(save.calls, 1);
@@ -107,7 +153,12 @@ void main() {
 
   test('運動時間の一部入力は空欄を 0 とみなす', () async {
     state = MutableStateStream(
-      const GoalSettingsScreenState(loaded: true, goal: DailyGoal.unset),
+      const GoalSettingsScreenState(
+        loaded: true,
+        goal: DailyGoal.unset,
+        autoUpdateEnabled: false,
+        autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+      ),
     );
     final save = _Save();
     await OnSaveDelegate(state: state, saveDailyGoalUsecase: save).execute(
@@ -116,6 +167,9 @@ void main() {
       seconds: '5',
       calories: '',
       distance: '',
+      autoUpdateEnabled: false,
+      autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+      now: now,
     );
 
     expect(save.calls, 1);
@@ -130,7 +184,12 @@ void main() {
   test('不正入力は write せず State を変えない', () async {
     const before = DailyGoal(caloriesKcal: 50);
     state = MutableStateStream(
-      const GoalSettingsScreenState(loaded: true, goal: before),
+      const GoalSettingsScreenState(
+        loaded: true,
+        goal: before,
+        autoUpdateEnabled: true,
+        autoUpdateLevel: DailyGoalAutoUpdateLevel.slow,
+      ),
     );
     final save = _Save();
     final invalid =
@@ -140,11 +199,16 @@ void main() {
           seconds: '',
           calories: '10',
           distance: '1',
+          autoUpdateEnabled: false,
+          autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+          now: now,
         );
 
     expect(invalid, GoalSettingsSaveOutcome.invalidInput);
     expect(save.calls, 0);
     expect(state.state.goal, before);
+    expect(state.state.autoUpdateEnabled, isTrue);
+    expect(state.state.autoUpdateLevel, DailyGoalAutoUpdateLevel.slow);
 
     final negative =
         await OnSaveDelegate(state: state, saveDailyGoalUsecase: save).execute(
@@ -153,6 +217,9 @@ void main() {
           seconds: '',
           calories: '-1',
           distance: '',
+          autoUpdateEnabled: false,
+          autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+          now: now,
         );
     expect(negative, GoalSettingsSaveOutcome.invalidInput);
     expect(save.calls, 0);
@@ -165,6 +232,9 @@ void main() {
           seconds: '',
           calories: 'NaN',
           distance: 'Infinity',
+          autoUpdateEnabled: false,
+          autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+          now: now,
         );
     expect(nan, GoalSettingsSaveOutcome.invalidInput);
     expect(save.calls, 0);
@@ -179,18 +249,28 @@ void main() {
           seconds: '0',
           calories: '1',
           distance: '1',
+          autoUpdateEnabled: true,
+          autoUpdateLevel: DailyGoalAutoUpdateLevel.challenging,
+          now: now,
         );
 
     expect(outcome, GoalSettingsSaveOutcome.saveFailed);
     expect(save.calls, 0);
     expect(state.state.loaded, isFalse);
     expect(state.state.goal, DailyGoal.unset);
+    expect(state.state.autoUpdateEnabled, isFalse);
+    expect(state.state.autoUpdateLevel, DailyGoalAutoUpdateLevel.normal);
   });
 
   test('永続化失敗は saveFailed で State を変えない', () async {
     const before = DailyGoal(caloriesKcal: 50);
     state = MutableStateStream(
-      const GoalSettingsScreenState(loaded: true, goal: before),
+      const GoalSettingsScreenState(
+        loaded: true,
+        goal: before,
+        autoUpdateEnabled: false,
+        autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+      ),
     );
     final save = _Save(error: StateError('fail'));
     final outcome =
@@ -200,11 +280,15 @@ void main() {
           seconds: '0',
           calories: '1',
           distance: '1',
+          autoUpdateEnabled: true,
+          autoUpdateLevel: DailyGoalAutoUpdateLevel.slow,
+          now: now,
         );
 
     expect(outcome, GoalSettingsSaveOutcome.saveFailed);
     expect(save.calls, 1);
     expect(state.state.goal, before);
+    expect(state.state.autoUpdateEnabled, isFalse);
   });
 
   test('tryParse は全空を unset、0 と一部入力を解釈する', () {
@@ -282,7 +366,7 @@ void main() {
     );
   });
 
-  test('未設定は空文字、設定済み 0 は 0 の文字列', () {
+  test('未設定は空文字、設定済み 0 は 0 の文字列、自動更新を写す', () {
     const delegate = GoalSettingsStateToEntityDelegate();
     final unset = delegate.execute(GoalSettingsScreenState.initial);
     expect(unset.hours, '');
@@ -290,6 +374,8 @@ void main() {
     expect(unset.seconds, '');
     expect(unset.calories, '');
     expect(unset.distance, '');
+    expect(unset.autoUpdateEnabled, isFalse);
+    expect(unset.autoUpdateLevel, DailyGoalAutoUpdateLevel.normal);
 
     final zeros = delegate.execute(
       const GoalSettingsScreenState(
@@ -299,6 +385,8 @@ void main() {
           caloriesKcal: 0,
           distanceKm: 0,
         ),
+        autoUpdateEnabled: true,
+        autoUpdateLevel: DailyGoalAutoUpdateLevel.challenging,
       ),
     );
     expect(zeros.hours, '0');
@@ -306,5 +394,7 @@ void main() {
     expect(zeros.seconds, '0');
     expect(zeros.calories, '0.0');
     expect(zeros.distance, '0.0');
+    expect(zeros.autoUpdateEnabled, isTrue);
+    expect(zeros.autoUpdateLevel, DailyGoalAutoUpdateLevel.challenging);
   });
 }

@@ -273,6 +273,30 @@
   "@screen_feature_exercise_history_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_goal_settings_auto_update_description": "Raises goals by level after consecutive achievements",
+  "@screen_feature_goal_settings_auto_update_description": {
+    "description": "自動更新の説明"
+  },
+  "screen_feature_goal_settings_auto_update_enabled": "Auto-update goals",
+  "@screen_feature_goal_settings_auto_update_enabled": {
+    "description": "自動更新の有効／無効"
+  },
+  "screen_feature_goal_settings_auto_update_level": "Auto-update level",
+  "@screen_feature_goal_settings_auto_update_level": {
+    "description": "自動更新レベルの欄"
+  },
+  "screen_feature_goal_settings_auto_update_level_challenging": "Challenging",
+  "@screen_feature_goal_settings_auto_update_level_challenging": {
+    "description": "自動更新レベル：挑戦的"
+  },
+  "screen_feature_goal_settings_auto_update_level_normal": "Normal",
+  "@screen_feature_goal_settings_auto_update_level_normal": {
+    "description": "自動更新レベル：ふつう"
+  },
+  "screen_feature_goal_settings_auto_update_level_slow": "Slow",
+  "@screen_feature_goal_settings_auto_update_level_slow": {
+    "description": "自動更新レベル：ゆっくり"
+  },
   "screen_feature_goal_settings_calories_label": "Calories",
   "@screen_feature_goal_settings_calories_label": {
     "description": "一日あたり消費カロリーの欄"
@@ -380,6 +404,10 @@
   "screen_feature_meter_capture_duration_seconds": "Seconds",
   "@screen_feature_meter_capture_duration_seconds": {
     "description": "運動時間・秒"
+  },
+  "screen_feature_meter_capture_goal_auto_updated": "Daily goals were auto-updated",
+  "@screen_feature_meter_capture_goal_auto_updated": {
+    "description": "目標自動更新の通知"
   },
   "screen_feature_meter_capture_open_settings": "Open settings",
   "@screen_feature_meter_capture_open_settings": {

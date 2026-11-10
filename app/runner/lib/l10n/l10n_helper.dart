@@ -313,6 +313,30 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_title;
       },
+      'screen_feature_goal_settings_auto_update_description': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_auto_update_description;
+      },
+      'screen_feature_goal_settings_auto_update_enabled': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_auto_update_enabled;
+      },
+      'screen_feature_goal_settings_auto_update_level': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_auto_update_level;
+      },
+      'screen_feature_goal_settings_auto_update_level_challenging': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_auto_update_level_challenging;
+      },
+      'screen_feature_goal_settings_auto_update_level_normal': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_auto_update_level_normal;
+      },
+      'screen_feature_goal_settings_auto_update_level_slow': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_auto_update_level_slow;
+      },
       'screen_feature_goal_settings_calories_label': (source) {
         // No Placeholders
         return l10n.screen_feature_goal_settings_calories_label;
@@ -420,6 +444,10 @@ final class L10nHelper {
       'screen_feature_meter_capture_duration_seconds': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_duration_seconds;
+      },
+      'screen_feature_meter_capture_goal_auto_updated': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_goal_auto_updated;
       },
       'screen_feature_meter_capture_open_settings': (source) {
         // No Placeholders

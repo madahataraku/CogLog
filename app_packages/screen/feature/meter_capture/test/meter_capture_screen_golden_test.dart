@@ -118,13 +118,19 @@ List<Override> _baseOverrides() => [
   screenNavigationProvider.overrideWithValue(_Nav()),
 ];
 
-Future<void> _prepareSurface(WidgetTester tester) async {
+Future<void> _prepareSurface(
+  WidgetTester tester, {
+  Size surfaceSize = const Size(390, 844),
+  double textScaleFactor = 1,
+}) async {
   debugDefaultTargetPlatformOverride = TargetPlatform.android;
   tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
   addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
   tester.platformDispatcher.localesTestValue = const [Locale('ja')];
   addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-  tester.view.physicalSize = const Size(390, 844);
+  tester.platformDispatcher.textScaleFactorTestValue = textScaleFactor;
+  addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+  tester.view.physicalSize = surfaceSize;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -133,6 +139,27 @@ Future<void> _prepareSurface(WidgetTester tester) async {
     arbJson: StringsTestHelper.ja,
   );
   addTearDown(LocalizeStringDelegate.resetDelegateForTest);
+}
+
+Future<void> _pumpStep1Ready(
+  WidgetTester tester, {
+  required ProviderContainer container,
+  required String golden,
+}) async {
+  await tester.pumpWidget(
+    UncontrolledProviderScope(
+      container: container,
+      child: _wrap(const MeterCaptureScreenBody(debugCameraPlaceholder: true)),
+    ),
+  );
+  final viewModel = container.read(MeterCaptureScreenViewModel.provider);
+  await viewModel.onEnterCamera();
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 100));
+  await expectLater(
+    find.byType(MeterCaptureScreenBody),
+    matchesGoldenFile(golden),
+  );
 }
 
 Widget _wrap(Widget child) => ShellTabIndexScope(
@@ -157,21 +184,42 @@ void main() {
     addTearDown(container.dispose);
 
     try {
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: _wrap(
-            const MeterCaptureScreenBody(debugCameraPlaceholder: true),
-          ),
-        ),
+      await _pumpStep1Ready(
+        tester,
+        container: container,
+        golden: 'goldens/meter_capture_step1.png',
       );
-      final viewModel = container.read(MeterCaptureScreenViewModel.provider);
-      await viewModel.onEnterCamera();
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-      await expectLater(
-        find.byType(MeterCaptureScreenBody),
-        matchesGoldenFile('goldens/meter_capture_step1.png'),
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('メーター記録 step1 狭い幅 / ja / Android / light', (tester) async {
+    await _prepareSurface(tester, surfaceSize: const Size(320, 568));
+    final container = ProviderContainer(overrides: _baseOverrides());
+    addTearDown(container.dispose);
+
+    try {
+      await _pumpStep1Ready(
+        tester,
+        container: container,
+        golden: 'goldens/meter_capture_step1_narrow.png',
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('メーター記録 step1 文字拡大 / ja / Android / light', (tester) async {
+    await _prepareSurface(tester, textScaleFactor: 1.6);
+    final container = ProviderContainer(overrides: _baseOverrides());
+    addTearDown(container.dispose);
+
+    try {
+      await _pumpStep1Ready(
+        tester,
+        container: container,
+        golden: 'goldens/meter_capture_step1_text_scale.png',
       );
     } finally {
       debugDefaultTargetPlatformOverride = null;
