@@ -22,6 +22,7 @@ dependencies:
   screen_navigation: any
   state_stream: any
   state_stream_riverpod: any
+  usecase_control_meter_in_app_camera: any
   usecase_obtain_meter_photo: any
   usecase_open_app_settings: any
   usecase_read_meter_panel: any

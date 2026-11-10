@@ -6,6 +6,7 @@
 /// ```
 library;
 
+export 'src/meter_in_app_camera_status.dart';
 export 'src/meter_photo_capture.dart';
 export 'src/meter_photo_permission_denied_exception.dart';
 export 'src/meter_photo_permission_kind.dart';

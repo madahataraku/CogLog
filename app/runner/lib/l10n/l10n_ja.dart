@@ -254,13 +254,15 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_average_speed => '平均速度 (km/h)';
 
   @override
-  String get screen_feature_meter_capture_back => '戻る';
-
-  @override
   String get screen_feature_meter_capture_calories => '消費カロリー (kcal)';
 
   @override
-  String get screen_feature_meter_capture_capture_photo => '撮影する';
+  String get screen_feature_meter_capture_camera_preview_failed =>
+      'カメラを開始できませんでした。ライブラリから選ぶか、しばらくしてから撮り直してください。';
+
+  @override
+  String get screen_feature_meter_capture_capture_failed =>
+      '撮影に失敗しました。もう一度シャッターを押すか、ライブラリから選んでください。';
 
   @override
   String get screen_feature_meter_capture_distance => '走行距離 (km)';
@@ -294,10 +296,16 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_recorded_at => '記録日時';
 
   @override
+  String get screen_feature_meter_capture_retake => '撮り直す';
+
+  @override
   String get screen_feature_meter_capture_save => '登録';
 
   @override
   String get screen_feature_meter_capture_save_failed => '保存に失敗しました';
+
+  @override
+  String get screen_feature_meter_capture_shutter => 'シャッター';
 
   @override
   String get screen_feature_meter_capture_title => 'メーター記録';

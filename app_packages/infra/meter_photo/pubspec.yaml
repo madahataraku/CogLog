@@ -8,6 +8,8 @@ environment:
   sdk: ^3.13.7
 
 dependencies:
+  flutter:
+    sdk: flutter
   riverpod: any
 
 dev_dependencies:

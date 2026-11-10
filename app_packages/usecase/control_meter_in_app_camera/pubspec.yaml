@@ -1,0 +1,16 @@
+name: usecase_control_meter_in_app_camera
+description: Control in-app meter camera preview lifecycle.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

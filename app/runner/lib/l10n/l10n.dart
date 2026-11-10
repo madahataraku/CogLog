@@ -565,23 +565,23 @@ abstract class L10n {
   /// **'平均速度 (km/h)'**
   String get screen_feature_meter_capture_average_speed;
 
-  /// 2→1
-  ///
-  /// In ja, this message translates to:
-  /// **'戻る'**
-  String get screen_feature_meter_capture_back;
-
   /// 入力ラベル
   ///
   /// In ja, this message translates to:
   /// **'消費カロリー (kcal)'**
   String get screen_feature_meter_capture_calories;
 
-  /// カメラ撮影
+  /// プレビュー初期化失敗
   ///
   /// In ja, this message translates to:
-  /// **'撮影する'**
-  String get screen_feature_meter_capture_capture_photo;
+  /// **'カメラを開始できませんでした。ライブラリから選ぶか、しばらくしてから撮り直してください。'**
+  String get screen_feature_meter_capture_camera_preview_failed;
+
+  /// シャッター失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'撮影に失敗しました。もう一度シャッターを押すか、ライブラリから選んでください。'**
+  String get screen_feature_meter_capture_capture_failed;
 
   /// 入力ラベル
   ///
@@ -643,6 +643,12 @@ abstract class L10n {
   /// **'記録日時'**
   String get screen_feature_meter_capture_recorded_at;
 
+  /// 編集からカメラへ戻る
+  ///
+  /// In ja, this message translates to:
+  /// **'撮り直す'**
+  String get screen_feature_meter_capture_retake;
+
   /// 登録ボタン
   ///
   /// In ja, this message translates to:
@@ -654,6 +660,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'保存に失敗しました'**
   String get screen_feature_meter_capture_save_failed;
+
+  /// シャッターボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'シャッター'**
+  String get screen_feature_meter_capture_shutter;
 
   /// 画面タイトル
   ///
