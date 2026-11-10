@@ -1,0 +1,16 @@
+name: data_repository_notification_settings_testing
+description: In-memory notification settings repository for tests.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_notification_settings: any
+  domain_notification_settings: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

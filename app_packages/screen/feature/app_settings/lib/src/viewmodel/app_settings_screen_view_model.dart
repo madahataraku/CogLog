@@ -10,6 +10,7 @@ import 'delegate/app_settings_state_to_entity_delegate.dart';
 import 'delegate/on_back_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_open_debug_delegate.dart';
+import 'delegate/on_open_notification_settings_delegate.dart';
 import 'delegate/on_open_oss_licenses_delegate.dart';
 import 'entity/app_settings_screen_entity.dart';
 import 'state/app_settings_screen_state.dart';

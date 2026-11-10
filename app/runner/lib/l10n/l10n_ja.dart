@@ -36,6 +36,9 @@ class L10nJa extends L10n {
   String get screen_feature_app_settings_licenses_item => 'ライセンス';
 
   @override
+  String get screen_feature_app_settings_notification_item => '通知設定';
+
+  @override
   String get screen_feature_app_settings_os_label => 'OS';
 
   @override
@@ -353,6 +356,19 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_meter_capture_title => 'メーター記録';
+
+  @override
+  String get screen_feature_notification_settings_back_semantics => '戻る';
+
+  @override
+  String get screen_feature_notification_settings_enabled_item => '運動リマインド通知';
+
+  @override
+  String get screen_feature_notification_settings_permission_guidance =>
+      '通知の許可がオフです。端末の設定からCogLogの通知を許可してください。';
+
+  @override
+  String get screen_feature_notification_settings_title => '通知設定';
 
   @override
   String get screen_feature_oss_licenses_back_semantics => '戻る';

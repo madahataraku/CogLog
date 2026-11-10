@@ -1,0 +1,15 @@
+name: usecase_save_notification_settings
+description: Save notification settings and sync reminder.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

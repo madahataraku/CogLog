@@ -80,6 +80,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_app_settings_licenses_item;
       },
+      'screen_feature_app_settings_notification_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_notification_item;
+      },
       'screen_feature_app_settings_os_label': (source) {
         // No Placeholders
         return l10n.screen_feature_app_settings_os_label;
@@ -492,6 +496,22 @@ final class L10nHelper {
       'screen_feature_meter_capture_title': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_title;
+      },
+      'screen_feature_notification_settings_back_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_notification_settings_back_semantics;
+      },
+      'screen_feature_notification_settings_enabled_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_notification_settings_enabled_item;
+      },
+      'screen_feature_notification_settings_permission_guidance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_notification_settings_permission_guidance;
+      },
+      'screen_feature_notification_settings_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_notification_settings_title;
       },
       'screen_feature_oss_licenses_back_semantics': (source) {
         // No Placeholders

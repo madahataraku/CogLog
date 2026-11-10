@@ -13,6 +13,7 @@ import 'package:usecase_injection/usecase_injection.dart';
 
 import 'package:app_runner/app_runner.dart';
 
+import 'src/exercise_reminder_bootstrap.dart';
 import 'theme/theme.dart';
 
 /// CogLog を起動する。
@@ -40,18 +41,25 @@ Future<void> launchCogLog() async {
   final documents = await getApplicationDocumentsDirectory();
   final database = openDocumentsDatabase(documents);
   final screens = ScreenGraph();
+  final container = ProviderContainer(
+    overrides: [
+      ...dataRepositoryOverrides(
+        preferences: preferences,
+        database: database,
+        documentsDirectory: documents,
+      ),
+      ...infraOverrides(),
+      ...usecaseOverrides(),
+      ...screenOverrides(screens),
+    ],
+  );
+  await ExerciseReminderBootstrap(
+    container: container,
+    navigation: screens.navigation,
+  ).run();
   runApp(
-    ProviderScope(
-      overrides: [
-        ...dataRepositoryOverrides(
-          preferences: preferences,
-          database: database,
-          documentsDirectory: documents,
-        ),
-        ...infraOverrides(),
-        ...usecaseOverrides(),
-        ...screenOverrides(screens),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: Application(router: screens.router),
     ),
   );

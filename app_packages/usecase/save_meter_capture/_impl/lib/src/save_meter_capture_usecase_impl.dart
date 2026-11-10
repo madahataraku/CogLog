@@ -2,6 +2,7 @@ import 'package:data_repository_exercise_history/data_repository_exercise_histor
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 
 /// 登録可能条件を満たすときだけ永続化し、ヘルス失敗でも成功とする。
 ///
@@ -40,6 +41,7 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     required this.histories,
     required this.health,
     required this.evaluateAutoUpdate,
+    required this.syncReminder,
   });
 
   /// 運動履歴の保存先。
@@ -50,6 +52,9 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
 
   /// 保存後の目標自動更新。
   final EvaluateDailyGoalAutoUpdateUsecase evaluateAutoUpdate;
+
+  /// 保存後のリマインド同期。
+  final SyncExerciseReminderUsecase syncReminder;
 
   /// [request] を検証し、作成後にヘルスへ書き、自動更新を判定する。
   ///
@@ -93,9 +98,15 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
       );
 
       final healthWriteSucceeded = await _writeHealth(request);
+      final now = DateTime.now();
       final autoUpdate = await evaluateAutoUpdate.execute(
-        EvaluateDailyGoalAutoUpdateRequest(now: DateTime.now()),
+        EvaluateDailyGoalAutoUpdateRequest(now: now),
       );
+      try {
+        await syncReminder.execute(SyncExerciseReminderRequest(now: now));
+      } on Object {
+        // 通知の同期失敗で、保存済みの履歴を saveFailed にしない。
+      }
 
       return SaveMeterCaptureResult(
         outcome: SaveMeterCaptureOutcome.success,

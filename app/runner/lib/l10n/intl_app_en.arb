@@ -37,6 +37,10 @@
   "@screen_feature_app_settings_licenses_item": {
     "description": "OSSライセンス画面への項目"
   },
+  "screen_feature_app_settings_notification_item": "Notification settings",
+  "@screen_feature_app_settings_notification_item": {
+    "description": "通知設定画面への項目"
+  },
   "screen_feature_app_settings_os_label": "OS",
   "@screen_feature_app_settings_os_label": {
     "description": "端末OSの見出し"
@@ -451,6 +455,22 @@
   },
   "screen_feature_meter_capture_title": "Meter record",
   "@screen_feature_meter_capture_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_notification_settings_back_semantics": "Back",
+  "@screen_feature_notification_settings_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_notification_settings_enabled_item": "Exercise reminder notifications",
+  "@screen_feature_notification_settings_enabled_item": {
+    "description": "ON/OFF項目"
+  },
+  "screen_feature_notification_settings_permission_guidance": "Notifications are turned off. Allow CogLog notifications in system settings.",
+  "@screen_feature_notification_settings_permission_guidance": {
+    "description": "許可拒否時の案内"
+  },
+  "screen_feature_notification_settings_title": "Notification settings",
+  "@screen_feature_notification_settings_title": {
     "description": "画面タイトル"
   },
   "screen_feature_oss_licenses_back_semantics": "Back",

@@ -37,6 +37,10 @@
   "@screen_feature_app_settings_licenses_item": {
     "description": "OSSライセンス画面への項目"
   },
+  "screen_feature_app_settings_notification_item": "通知設定",
+  "@screen_feature_app_settings_notification_item": {
+    "description": "通知設定画面への項目"
+  },
   "screen_feature_app_settings_os_label": "OS",
   "@screen_feature_app_settings_os_label": {
     "description": "端末OSの見出し"
@@ -451,6 +455,22 @@
   },
   "screen_feature_meter_capture_title": "メーター記録",
   "@screen_feature_meter_capture_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_notification_settings_back_semantics": "戻る",
+  "@screen_feature_notification_settings_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_notification_settings_enabled_item": "運動リマインド通知",
+  "@screen_feature_notification_settings_enabled_item": {
+    "description": "ON/OFF項目"
+  },
+  "screen_feature_notification_settings_permission_guidance": "通知の許可がオフです。端末の設定からCogLogの通知を許可してください。",
+  "@screen_feature_notification_settings_permission_guidance": {
+    "description": "許可拒否時の案内"
+  },
+  "screen_feature_notification_settings_title": "通知設定",
+  "@screen_feature_notification_settings_title": {
     "description": "画面タイトル"
   },
   "screen_feature_oss_licenses_back_semantics": "戻る",

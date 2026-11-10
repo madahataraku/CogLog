@@ -1,0 +1,17 @@
+name: usecase_load_notification_settings_impl
+description: Load notification settings implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_notification_settings: any
+  infra_local_notification: any
+  usecase_load_notification_settings: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

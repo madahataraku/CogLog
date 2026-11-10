@@ -18,6 +18,8 @@ dependencies:
   infra_health_body_metrics_mobile: any
   infra_health_workout: any
   infra_health_workout_mobile: any
+  infra_local_notification: any
+  infra_local_notification_mobile: any
   infra_meter_photo: any
   infra_meter_photo_mobile: any
   infra_meter_reading: any
