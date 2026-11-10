@@ -46,7 +46,19 @@ final class TrendsBucket {
   ///   representativeDate: DateTime(2026, 11, 10),
   /// ).lengthDays;
   /// ```
-  int get lengthDays => endExclusive.difference(startInclusive).inDays;
+  int get lengthDays {
+    final start = DateTime.utc(
+      startInclusive.year,
+      startInclusive.month,
+      startInclusive.day,
+    );
+    final end = DateTime.utc(
+      endExclusive.year,
+      endExclusive.month,
+      endExclusive.day,
+    );
+    return end.difference(start).inDays;
+  }
 
   /// [at] を現地時刻へ直して、この半開区間に入るか。
   ///

@@ -13,6 +13,15 @@ import 'trends_period_spec.dart';
 /// );
 /// ```
 final class TrendsBucketBuilder {
+  /// 静的 API だけを公開する。
+  ///
+  /// Example:
+  /// ```dart
+  /// TrendsBucketBuilder.build(
+  ///   nowLocal: DateTime(2026, 11, 10),
+  ///   spec: TrendsPeriodSpec.days30,
+  /// );
+  /// ```
   const TrendsBucketBuilder._();
 
   /// [nowLocal] の日付を終点に、[spec] のバケット列を返す。
@@ -30,19 +39,17 @@ final class TrendsBucketBuilder {
   }) {
     final local = nowLocal.toLocal();
     final todayStart = DateTime(local.year, local.month, local.day);
-    final rangeStart = todayStart.subtract(Duration(days: spec.dayCount - 1));
-    final endExclusive = todayStart.add(const Duration(days: 1));
+    final rangeStart = _addCalendarDays(todayStart, -(spec.dayCount - 1));
+    final endExclusive = _addCalendarDays(todayStart, 1);
 
     var cursorEnd = endExclusive;
     final buckets = <TrendsBucket>[];
     while (cursorEnd.isAfter(rangeStart)) {
-      final candidateStart = cursorEnd.subtract(
-        Duration(days: spec.spacingDays),
-      );
+      final candidateStart = _addCalendarDays(cursorEnd, -spec.spacingDays);
       final start = candidateStart.isBefore(rangeStart)
           ? rangeStart
           : candidateStart;
-      final representativeDate = cursorEnd.subtract(const Duration(days: 1));
+      final representativeDate = _addCalendarDays(cursorEnd, -1);
       buckets.add(
         TrendsBucket(
           startInclusive: start,
@@ -53,5 +60,10 @@ final class TrendsBucketBuilder {
       cursorEnd = start;
     }
     return buckets.reversed.toList();
+  }
+
+  /// 暦日ベースで [days] 日ずらす（DST で 23/25 時間日にずれない）。
+  static DateTime _addCalendarDays(DateTime dayStart, int days) {
+    return DateTime(dayStart.year, dayStart.month, dayStart.day + days);
   }
 }

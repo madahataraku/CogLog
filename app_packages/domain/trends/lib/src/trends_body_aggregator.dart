@@ -23,6 +23,12 @@ import 'trends_series_point.dart';
 /// );
 /// ```
 final class TrendsBodyAggregator {
+  /// 静的 API だけを公開する。
+  ///
+  /// Example:
+  /// ```dart
+  /// TrendsBodyAggregator.points(samples: const [], buckets: const []);
+  /// ```
   const TrendsBodyAggregator._();
 
   /// 各バケットで計測日時が最も遅い点を古い→新しい順に返す。

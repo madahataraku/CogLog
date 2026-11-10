@@ -75,8 +75,18 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         ),
     };
 
-    final infraPermission = await health.permissionStatus();
-    final healthPermission = _mapFromInfra(infraPermission);
+    late final LoadTrendsHealthPermission healthPermission;
+    try {
+      healthPermission = _mapFromInfra(await health.permissionStatus());
+    } catch (_) {
+      return LoadTrendsResult(
+        buckets: buckets,
+        exerciseSeries: exerciseSeries,
+        bodySeries: _emptyBodySeries(buckets),
+        healthPermission: LoadTrendsHealthPermission.unknown,
+        bodyReadFailed: true,
+      );
+    }
     if (healthPermission != LoadTrendsHealthPermission.granted ||
         buckets.isEmpty) {
       return LoadTrendsResult(

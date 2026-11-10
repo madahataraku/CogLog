@@ -9,7 +9,7 @@ import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 /// );
 /// ```
 final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
-  /// [status]・[samples]・[throwOnRead]・[requestResult] を差し替え可能にする。
+  /// [status]・[samples]・[throwOnRead]・[throwOnPermissionStatus]・[requestResult] を差し替え可能にする。
   ///
   /// Example:
   /// ```dart
@@ -19,6 +19,7 @@ final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
     this.status = HealthBodyPermissionStatus.unknown,
     List<HealthBodySample> samples = const [],
     this.throwOnRead = false,
+    this.throwOnPermissionStatus = false,
     this.requestResult,
   }) : samples = List<HealthBodySample>.from(samples);
 
@@ -30,6 +31,9 @@ final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
 
   /// true のとき [read] が [HealthBodyMetricsReadException] を投げる。
   bool throwOnRead;
+
+  /// true のとき [permissionStatus] が例外を投げる。
+  bool throwOnPermissionStatus;
 
   /// [requestPermission] が返す値。null なら granted にする。
   HealthBodyPermissionStatus? requestResult;
@@ -47,7 +51,12 @@ final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
   /// await FakeHealthBodyMetricsSource().permissionStatus();
   /// ```
   @override
-  Future<HealthBodyPermissionStatus> permissionStatus() async => status;
+  Future<HealthBodyPermissionStatus> permissionStatus() async {
+    if (throwOnPermissionStatus) {
+      throw StateError('fake permissionStatus failure');
+    }
+    return status;
+  }
 
   /// [requestResult] または granted を [status] に書き戻して返す。
   ///

@@ -22,6 +22,12 @@ import 'trends_series_point.dart';
 /// );
 /// ```
 final class TrendsExerciseAggregator {
+  /// 静的 API だけを公開する。
+  ///
+  /// Example:
+  /// ```dart
+  /// TrendsExerciseAggregator.points(samples: const [], buckets: const []);
+  /// ```
   const TrendsExerciseAggregator._();
 
   /// 各バケットでサンプル value の合計点を古い→新しい順に返す。

@@ -44,6 +44,11 @@ void main() {
     expect(source.readCallCount, 1);
   });
 
+  test('throwOnPermissionStatus で例外', () async {
+    final source = FakeHealthBodyMetricsSource(throwOnPermissionStatus: true);
+    await expectLater(source.permissionStatus(), throwsStateError);
+  });
+
   test('denied のとき空、throwOnRead で例外', () async {
     final denied = FakeHealthBodyMetricsSource(
       status: HealthBodyPermissionStatus.denied,

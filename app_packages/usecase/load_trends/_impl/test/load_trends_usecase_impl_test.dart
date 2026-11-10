@@ -115,6 +115,30 @@ void main() {
     expect(result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points, isEmpty);
   });
 
+  test('permissionStatus 失敗でも運動系列を返し bodyReadFailed が true', () async {
+    final result =
+        await LoadTrendsUsecaseImpl(
+          histories: FixedExerciseHistoryRepository([
+            ride(recordedAt: DateTime(2026, 11, 10, 12), caloriesKcal: 150),
+          ]),
+          health: FakeHealthBodyMetricsSource(throwOnPermissionStatus: true),
+        ).execute(
+          LoadTrendsRequest(
+            now: now,
+            period: TrendsPeriodKind.days30,
+            groupIsBody: true,
+          ),
+        );
+
+    expect(result.healthPermission, LoadTrendsHealthPermission.unknown);
+    expect(result.bodyReadFailed, isTrue);
+    expect(
+      result.exerciseSeries[TrendsMetricKind.exerciseCaloriesKcal]!.points,
+      hasLength(1),
+    );
+    expect(result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points, isEmpty);
+  });
+
   test('granted なら身体の最終値を点にする', () async {
     final result =
         await LoadTrendsUsecaseImpl(

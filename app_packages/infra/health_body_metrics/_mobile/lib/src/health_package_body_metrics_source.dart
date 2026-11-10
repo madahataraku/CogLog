@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:health/health.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 
 /// `health` パッケージ経由の身体指標ソース。
 ///
 /// 体重・体脂肪率・除脂肪体重を READ で扱う。値は kg / % に正規化する。
-/// HealthKit entitlement が無い環境では許可拒否や空読取になり得る。
+/// HealthKit entitlement（`com.apple.developer.healthkit`）は署名準備後に
+/// Runner へ有効化する。未設定のままでも unsigned / 開発ビルドは壊さない。
 ///
 /// Example:
 /// ```dart
@@ -35,6 +38,9 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   final Health _health;
   var _configured = false;
 
+  /// iOS は READ の真偽を開示しないため、要求済みなら granted とみなす。
+  var _authorizationRequested = false;
+
   /// プラグインを一度だけ構成する。
   Future<void> _ensureConfigured() async {
     if (_configured) {
@@ -55,7 +61,7 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
     return HealthBodyPermissionStatus.unknown;
   }
 
-  /// いまの許可状態を返す。
+  /// いまの許可状態を返す。失敗時は unknown。
   ///
   /// Example:
   /// ```dart
@@ -63,12 +69,22 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   /// ```
   @override
   Future<HealthBodyPermissionStatus> permissionStatus() async {
-    await _ensureConfigured();
-    final granted = await _health.hasPermissions(_types);
-    return _mapHasPermissions(granted);
+    try {
+      await _ensureConfigured();
+      if (Platform.isIOS) {
+        if (!_authorizationRequested) {
+          return HealthBodyPermissionStatus.unknown;
+        }
+        return HealthBodyPermissionStatus.granted;
+      }
+      final granted = await _health.hasPermissions(_types);
+      return _mapHasPermissions(granted);
+    } catch (_) {
+      return HealthBodyPermissionStatus.unknown;
+    }
   }
 
-  /// 3 指標まとめて許可を求め、拒否の連続は永久拒否に寄せる。
+  /// 3 指標まとめて許可を求める。iOS は要求後に optimistic granted。
   ///
   /// Example:
   /// ```dart
@@ -77,23 +93,37 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   @override
   Future<HealthBodyPermissionStatus> requestPermission() async {
     await _ensureConfigured();
+    if (Platform.isIOS) {
+      await _health.requestAuthorization(_types);
+      _authorizationRequested = true;
+      return HealthBodyPermissionStatus.granted;
+    }
+
     final before = _mapHasPermissions(await _health.hasPermissions(_types));
     if (before == HealthBodyPermissionStatus.granted) {
+      await _ensureHistoryAuthorization();
       return HealthBodyPermissionStatus.granted;
     }
     await _health.requestAuthorization(_types);
-    final after = _mapHasPermissions(await _health.hasPermissions(_types));
-    if (after == HealthBodyPermissionStatus.granted) {
-      return HealthBodyPermissionStatus.granted;
+    await _ensureHistoryAuthorization();
+    return _mapHasPermissions(await _health.hasPermissions(_types));
+  }
+
+  /// Android の履歴許可が未取得なら要求する。
+  Future<void> _ensureHistoryAuthorization() async {
+    if (!Platform.isAndroid) {
+      return;
     }
-    if (before == HealthBodyPermissionStatus.denied &&
-        after == HealthBodyPermissionStatus.denied) {
-      return HealthBodyPermissionStatus.permanentlyDenied;
+    final authorized = await _health.isHealthDataHistoryAuthorized();
+    if (authorized) {
+      return;
     }
-    return after;
+    await _health.requestHealthDataHistoryAuthorization();
   }
 
   /// `[startInclusive, endExclusive)` の計測を返す。失敗時は例外。
+  ///
+  /// Android で履歴許可が無いときは開始を直近 30 暦日に切り詰める。
   ///
   /// Example:
   /// ```dart
@@ -107,12 +137,27 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
     required DateTime startInclusive,
     required DateTime endExclusive,
   }) async {
-    await _ensureConfigured();
     try {
+      await _ensureConfigured();
+      var start = startInclusive;
+      if (Platform.isAndroid) {
+        final historyOk = await _health.isHealthDataHistoryAuthorized();
+        if (!historyOk) {
+          final localNow = DateTime.now().toLocal();
+          final floor = DateTime(
+            localNow.year,
+            localNow.month,
+            localNow.day - 29,
+          );
+          if (start.isBefore(floor)) {
+            start = floor;
+          }
+        }
+      }
       final points = await _health.getHealthDataFromTypes(
         types: _types,
         preferredUnits: _preferredUnits,
-        startTime: startInclusive,
+        startTime: start,
         endTime: endExclusive,
       );
       final out = <HealthBodySample>[];
@@ -175,9 +220,12 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   }
 
   /// 体脂肪を 0–100 の % へ正規化する。未知単位は null。
+  ///
+  /// iOS HealthKit は 0–1 分数で返すことがあるため、そのときは 100 倍する。
   double? _toPercent(double raw, HealthDataUnit unit) {
     return switch (unit) {
-      HealthDataUnit.PERCENT => raw,
+      HealthDataUnit.PERCENT =>
+        (Platform.isIOS && raw <= 1.0) ? raw * 100 : raw,
       _ => null,
     };
   }

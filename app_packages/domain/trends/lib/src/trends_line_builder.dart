@@ -24,6 +24,12 @@ import 'trends_series_point.dart';
 /// );
 /// ```
 final class TrendsLineBuilder {
+  /// 静的 API だけを公開する。
+  ///
+  /// Example:
+  /// ```dart
+  /// TrendsLineBuilder.segments(points: const [], buckets: const []);
+  /// ```
   const TrendsLineBuilder._();
 
   /// [points] を代表日昇順に並べ、隣接関係で線種を決めた線分列を返す。

@@ -19,6 +19,7 @@ export 'src/trends_line_builder.dart';
 export 'src/trends_line_kind.dart';
 export 'src/trends_line_segment.dart';
 export 'src/trends_metric_kind.dart';
+export 'src/trends_period_kind.dart';
 export 'src/trends_period_spec.dart';
 export 'src/trends_sample.dart';
 export 'src/trends_series_point.dart';

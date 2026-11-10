@@ -44,6 +44,8 @@ final class OnReloadDelegate {
 
   /// 読込中にしてから系列を取り、結果を State へ書く。
   ///
+  /// 失敗時は loading を下ろす。期間・グループが開始時と違えば結果を捨てる。
+  ///
   /// Example:
   /// ```dart
   /// delegate.execute();
@@ -53,24 +55,40 @@ final class OnReloadDelegate {
       await emitter.emit(current.copyWith(loading: true));
       return current;
     });
-    final result = await loadTrendsUsecase.execute(
-      LoadTrendsRequest(
-        now: now,
-        period: mapTrendsPeriod(snapshot.period),
-        groupIsBody: snapshot.group == TrendsMetricGroup.body,
-      ),
-    );
-    await state.updateWithLock((current, emitter) async {
-      await emitter.emit(
-        current.copyWith(
-          loading: false,
-          bodyReadFailed: result.bodyReadFailed,
-          healthPermissionUi: mapTrendsHealthUi(result.healthPermission),
-          buckets: result.buckets,
-          exerciseSeries: mapTrendsSeries(result.exerciseSeries),
-          bodySeries: mapTrendsSeries(result.bodySeries),
+    try {
+      final result = await loadTrendsUsecase.execute(
+        LoadTrendsRequest(
+          now: now,
+          period: mapTrendsPeriod(snapshot.period),
+          groupIsBody: snapshot.group == TrendsMetricGroup.body,
         ),
       );
-    });
+      await state.updateWithLock((current, emitter) async {
+        if (current.period != snapshot.period ||
+            current.group != snapshot.group) {
+          return;
+        }
+        await emitter.emit(
+          current.copyWith(
+            loading: false,
+            bodyReadFailed: result.bodyReadFailed,
+            healthPermissionUi: mapTrendsHealthUi(result.healthPermission),
+            buckets: result.buckets,
+            exerciseSeries: mapTrendsSeries(result.exerciseSeries),
+            bodySeries: mapTrendsSeries(result.bodySeries),
+          ),
+        );
+      });
+    } catch (_) {
+      await state.updateWithLock((current, emitter) async {
+        if (current.period != snapshot.period ||
+            current.group != snapshot.group) {
+          return;
+        }
+        await emitter.emit(
+          current.copyWith(loading: false, bodyReadFailed: true),
+        );
+      });
+    }
   }
 }

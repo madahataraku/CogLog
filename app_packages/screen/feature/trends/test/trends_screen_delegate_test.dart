@@ -19,11 +19,18 @@ final class _FakeLoadTrends implements LoadTrendsUsecase {
   LoadTrendsResult? result;
   int calls = 0;
   LoadTrendsRequest? lastRequest;
+  Object? throwError;
+  Future<void> Function()? onExecute;
 
   @override
   Future<LoadTrendsResult> execute(LoadTrendsRequest request) async {
     calls += 1;
     lastRequest = request;
+    await onExecute?.call();
+    final error = throwError;
+    if (error != null) {
+      throw error;
+    }
     return result ??
         const LoadTrendsResult(
           buckets: [],
@@ -242,5 +249,44 @@ void main() {
       isNotNull,
     );
     expect(state.state.healthPermissionUi, TrendsHealthPermissionUi.denied);
+  });
+
+  test('OnReloadDelegate は失敗時に loading を下ろし bodyReadFailed を立てる', () async {
+    load.throwError = StateError('reload failed');
+    await OnReloadDelegate(
+      state: state,
+      loadTrendsUsecase: load,
+      now: now,
+    ).execute();
+    expect(state.state.loading, isFalse);
+    expect(state.state.bodyReadFailed, isTrue);
+  });
+
+  test('OnReloadDelegate は期間変更後の古い結果を捨てる', () async {
+    final buckets = TrendsBucketBuilder.build(
+      nowLocal: now,
+      spec: TrendsPeriodSpec.days30,
+    );
+    load
+      ..result = LoadTrendsResult(
+        buckets: buckets,
+        exerciseSeries: const {},
+        bodySeries: const {},
+        healthPermission: LoadTrendsHealthPermission.granted,
+        bodyReadFailed: false,
+      )
+      ..onExecute = () async {
+        await state.updateWithLock((current, emitter) async {
+          await emitter.emit(current.copyWith(period: TrendsPeriod.days90));
+        });
+      };
+    await OnReloadDelegate(
+      state: state,
+      loadTrendsUsecase: load,
+      now: now,
+    ).execute();
+    expect(state.state.period, TrendsPeriod.days90);
+    expect(state.state.buckets, isEmpty);
+    expect(state.state.loading, isTrue);
   });
 }
