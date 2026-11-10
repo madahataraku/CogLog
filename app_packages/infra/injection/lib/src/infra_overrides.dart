@@ -15,7 +15,8 @@ import 'package:riverpod/misc.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
-/// [onDeviceLlm] / [meterPhotoSource] を渡すと、その実装を使う（Widget テスト用）。
+/// [onDeviceLlm] / [meterPhotoSource] / [healthBodyMetricsSource] を渡すと、
+/// その実装を使う（Widget テスト用）。
 ///
 /// Example:
 /// ```dart
@@ -24,6 +25,7 @@ import 'package:riverpod/misc.dart';
 List<Override> infraOverrides({
   OnDeviceLlm? onDeviceLlm,
   MeterPhotoSource? meterPhotoSource,
+  HealthBodyMetricsSource? healthBodyMetricsSource,
 }) => [
   onDeviceLlmProvider.overrideWith((ref) {
     final injected = onDeviceLlm;
@@ -51,6 +53,10 @@ List<Override> infraOverrides({
     (ref) => const UnavailableHealthWorkoutWriter(),
   ),
   healthBodyMetricsSourceProvider.overrideWith((ref) {
+    final injected = healthBodyMetricsSource;
+    if (injected != null) {
+      return injected;
+    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
       case TargetPlatform.android:
