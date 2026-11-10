@@ -55,6 +55,8 @@ class MeterCaptureCameraPreview extends StatelessWidget {
         child: SizedBox.expand(),
       );
     }
-    return AspectRatio(aspectRatio: aspectRatio, child: preview);
+    return Center(
+      child: AspectRatio(aspectRatio: aspectRatio, child: preview),
+    );
   }
 }

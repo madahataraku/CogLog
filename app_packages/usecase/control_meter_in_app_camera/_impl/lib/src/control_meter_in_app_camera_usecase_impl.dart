@@ -58,6 +58,12 @@ final class ControlMeterInAppCameraUsecaseImpl
   @override
   Widget buildPreview({Key? key}) => source.buildInAppPreview(key: key);
 
+  /// infra の状態を画面向け状態へ写す。
+  ///
+  /// Example:
+  /// ```dart
+  /// usecase._mapStatus(const MeterInAppCameraIdle());
+  /// ```
   MeterInAppCameraUiStatus _mapStatus(MeterInAppCameraStatus status) {
     return switch (status) {
       MeterInAppCameraIdle() => const MeterInAppCameraUiIdle(),

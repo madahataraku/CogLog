@@ -110,6 +110,12 @@ class MeterCaptureStep1View extends ConsumerWidget {
     );
   }
 
+  /// 読み取り中オーバーレイと [MeterCaptureCameraUi] ごとのプレビュー領域を作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _buildPreviewArea(context, viewModel);
+  /// ```
   Widget _buildPreviewArea(
     BuildContext context,
     MeterCaptureScreenViewModel viewModel,

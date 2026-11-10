@@ -30,6 +30,7 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
       StreamController<MeterInAppCameraStatus>.broadcast();
   MeterInAppCameraStatus _current = const MeterInAppCameraIdle();
   CameraController? _controller;
+  int _startToken = 0;
 
   /// 現在状態を流し、以降の更新を購読する。
   ///
@@ -51,10 +52,15 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
   /// ```
   @override
   Future<void> startInAppCamera() async {
-    await stopInAppCamera();
+    final token = ++_startToken;
+    await _disposeController();
     await _emit(const MeterInAppCameraStarting());
+    CameraController? controller;
     try {
       final cameras = await availableCameras();
+      if (token != _startToken) {
+        return;
+      }
       if (cameras.isEmpty) {
         await _emit(const MeterInAppCameraFailed());
         return;
@@ -63,18 +69,26 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
         (candidate) => candidate.lensDirection == CameraLensDirection.back,
         orElse: () => cameras.first,
       );
-      final controller = CameraController(
+      controller = CameraController(
         camera,
         ResolutionPreset.high,
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
       await controller.initialize();
+      if (token != _startToken) {
+        await controller.dispose();
+        return;
+      }
       _controller = controller;
       await _emit(
         MeterInAppCameraReady(aspectRatio: controller.value.aspectRatio),
       );
     } on CameraException catch (error) {
+      await controller?.dispose();
+      if (token != _startToken) {
+        return;
+      }
       await _disposeController();
       if (_isCameraPermissionDenied(error)) {
         await _emit(const MeterInAppCameraPermissionDenied());
@@ -82,6 +96,10 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
         await _emit(const MeterInAppCameraFailed());
       }
     } on Object {
+      await controller?.dispose();
+      if (token != _startToken) {
+        return;
+      }
       await _disposeController();
       await _emit(const MeterInAppCameraFailed());
     }
@@ -95,11 +113,12 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
   /// ```
   @override
   Future<void> stopInAppCamera() async {
+    _startToken++;
     await _disposeController();
     await _emit(const MeterInAppCameraIdle());
   }
 
-  /// ready ならライブプレビュー、否则は空。
+  /// ready ならライブプレビュー、それ以外は空。
   ///
   /// Example:
   /// ```dart
@@ -111,7 +130,7 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
     if (controller == null || !controller.value.isInitialized) {
       return SizedBox.shrink(key: key);
     }
-    return KeyedSubtree(key: key, child: controller.buildPreview());
+    return KeyedSubtree(key: key, child: CameraPreview(controller));
   }
 
   /// アプリ内カメラで 1 枚撮る。

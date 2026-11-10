@@ -10,7 +10,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/misc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
-import 'package:screen_feature_meter_capture/screen_feature_meter_capture.dart';
 import 'package:screen_feature_meter_capture/src/view/meter_capture_screen_body.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/meter_capture_screen_view_model.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_camera_ui.dart';

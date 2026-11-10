@@ -95,7 +95,7 @@ void main() {
     await state.close();
   });
 
-  Future<void> _readyCamera() async {
+  Future<void> readyCamera() async {
     await state.updateWithLock((_, emitter) async {
       await emitter.emit(
         const MeterCaptureScreenState(
@@ -107,7 +107,7 @@ void main() {
   }
 
   test('D1: 撮影 null は captureError', () async {
-    await _readyCamera();
+    await readyCamera();
     final obtain = _Obtain(const ObtainMeterPhotoCancelled());
     final read = _Read(
       const ReadMeterPanelResult(
@@ -131,7 +131,7 @@ void main() {
   });
 
   test('D2: 権限拒否は permissionDeniedKind=camera', () async {
-    await _readyCamera();
+    await readyCamera();
     final obtain = _Obtain(
       const ObtainMeterPhotoPermissionDenied(MeterPhotoPermissionKind.camera),
     );
@@ -269,7 +269,7 @@ void main() {
   });
 
   test('撮影成功で読み取りし edit へ進む', () async {
-    await _readyCamera();
+    await readyCamera();
     final obtain = _Obtain(
       ObtainMeterPhotoSuccess(bytes: Uint8List.fromList(const [9, 9])),
     );

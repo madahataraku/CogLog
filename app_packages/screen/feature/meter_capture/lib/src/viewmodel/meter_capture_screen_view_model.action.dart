@@ -34,8 +34,12 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
       );
     });
     await controlMeterInAppCameraUsecase.stop();
-    await state.updateWithLock((_, emitter) async {
-      await emitter.emit(MeterCaptureScreenState.initial);
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        MeterCaptureScreenState.initial.copyWith(
+          cameraSessionGeneration: current.cameraSessionGeneration,
+        ),
+      );
     });
   }
 
@@ -82,7 +86,9 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
     return delegate.execute();
   }
 
-  /// 下書きを破棄してカメラ画面へ戻り、プレビューを再開する。
+  /// 下書きを破棄してカメラ画面へ戻る。
+  ///
+  /// プレビュー再開は [MeterCaptureScreen] の step 監視に任せる。
   ///
   /// Example:
   /// ```dart
@@ -90,7 +96,6 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
   /// ```
   Future<void> onBackToStep1() async {
     await OnBackToStep1Delegate(state: state).execute();
-    await onEnterCamera();
   }
 
   /// 走行距離を更新する。
