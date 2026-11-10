@@ -97,11 +97,10 @@ void main() {
 
 /// [write] だけ失敗する Repository。
 final class _FailingGoalWriteRepository implements DailyGoalRepository {
-  DailyGoal _goal = DailyGoal.unset;
   DailyGoalAutoUpdateSettings _autoUpdate = DailyGoalAutoUpdateSettings.defaults;
 
   @override
-  Future<DailyGoal> read() async => _goal;
+  Future<DailyGoal> read() async => DailyGoal.unset;
 
   @override
   Future<void> write(DailyGoal goal) async {
