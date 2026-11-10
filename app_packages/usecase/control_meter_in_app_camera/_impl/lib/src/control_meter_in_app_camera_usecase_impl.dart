@@ -62,8 +62,9 @@ final class ControlMeterInAppCameraUsecaseImpl
     return switch (status) {
       MeterInAppCameraIdle() => const MeterInAppCameraUiIdle(),
       MeterInAppCameraStarting() => const MeterInAppCameraUiStarting(),
-      MeterInAppCameraReady(:final aspectRatio) =>
-        MeterInAppCameraUiReady(aspectRatio: aspectRatio),
+      MeterInAppCameraReady(:final aspectRatio) => MeterInAppCameraUiReady(
+        aspectRatio: aspectRatio,
+      ),
       MeterInAppCameraPermissionDenied() =>
         const MeterInAppCameraUiPermissionDenied(),
       MeterInAppCameraFailed() => const MeterInAppCameraUiFailed(),

@@ -17,7 +17,8 @@ abstract interface class ControlMeterInAppCameraUsecase {
   /// ControlMeterInAppCameraUsecase.provider;
   /// ```
   static final provider = Provider<ControlMeterInAppCameraUsecase>(
-    (ref) => throw UnimplementedError('ControlMeterInAppCameraUsecase.provider'),
+    (ref) =>
+        throw UnimplementedError('ControlMeterInAppCameraUsecase.provider'),
   );
 
   /// 画面向けカメラ状態。

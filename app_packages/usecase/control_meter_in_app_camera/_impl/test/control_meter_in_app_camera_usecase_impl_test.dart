@@ -10,7 +10,9 @@ void main() {
       startBehavior: const MeterInAppCameraReady(aspectRatio: 1.2),
     );
     final usecase = ControlMeterInAppCameraUsecaseImpl(source: source);
-    final future = usecase.watch().firstWhere((s) => s is MeterInAppCameraUiReady);
+    final future = usecase.watch().firstWhere(
+      (s) => s is MeterInAppCameraUiReady,
+    );
     await usecase.start();
     final status = await future;
     expect(status, isA<MeterInAppCameraUiReady>());

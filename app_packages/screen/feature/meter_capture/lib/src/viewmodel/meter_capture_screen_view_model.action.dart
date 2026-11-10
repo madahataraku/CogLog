@@ -3,6 +3,42 @@ part of 'meter_capture_screen_view_model.dart';
 /// メーター記録画面の操作。
 @internal
 extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
+  /// アプリ内カメラを開始する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEnterCamera();
+  /// ```
+  Future<void> onEnterCamera() => controlMeterInAppCameraUsecase.start();
+
+  /// プレビューだけ止める（編集中・背面）。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAppPaused();
+  /// ```
+  Future<void> onAppPaused() => controlMeterInAppCameraUsecase.stop();
+
+  /// 他タブへ離れたとき、世代を進め状態を初期化する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onLeaveMeterTab();
+  /// ```
+  Future<void> onLeaveMeterTab() async {
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          cameraSessionGeneration: current.cameraSessionGeneration + 1,
+        ),
+      );
+    });
+    await controlMeterInAppCameraUsecase.stop();
+    await state.updateWithLock((_, emitter) async {
+      await emitter.emit(MeterCaptureScreenState.initial);
+    });
+  }
+
   /// カメラで写真を撮り、読み取りへ進む。
   ///
   /// Example:
@@ -46,15 +82,15 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
     return delegate.execute();
   }
 
-  /// 1 ステップ目へ戻り、作業中データを破棄する。
+  /// 下書きを破棄してカメラ画面へ戻り、プレビューを再開する。
   ///
   /// Example:
   /// ```dart
   /// viewModel.onBackToStep1();
   /// ```
-  Future<void> onBackToStep1() {
-    final delegate = OnBackToStep1Delegate(state: state);
-    return delegate.execute();
+  Future<void> onBackToStep1() async {
+    await OnBackToStep1Delegate(state: state).execute();
+    await onEnterCamera();
   }
 
   /// 走行距離を更新する。

@@ -8,6 +8,7 @@ import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_back_to_s
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_capture_photo_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_field_changed_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_save_meter_capture_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_camera_ui.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_screen_state.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_step.dart';
 import 'package:screen_navigation/screen_navigation.dart';
@@ -94,7 +95,19 @@ void main() {
     await state.close();
   });
 
-  test('D1: 撮影キャンセルは State を変えない', () async {
+  Future<void> _readyCamera() async {
+    await state.updateWithLock((_, emitter) async {
+      await emitter.emit(
+        const MeterCaptureScreenState(
+          step: MeterCaptureStep.photo,
+          cameraUi: MeterCaptureCameraUi.ready,
+        ),
+      );
+    });
+  }
+
+  test('D1: 撮影 null は captureError', () async {
+    await _readyCamera();
     final obtain = _Obtain(const ObtainMeterPhotoCancelled());
     final read = _Read(
       const ReadMeterPanelResult(
@@ -114,10 +127,11 @@ void main() {
     expect(read.calls, 0);
     expect(state.state.step, MeterCaptureStep.photo);
     expect(state.state.photoBytes, isNull);
-    expect(state.state.permissionDeniedKind, isNull);
+    expect(state.state.captureError, isTrue);
   });
 
   test('D2: 権限拒否は permissionDeniedKind=camera', () async {
+    await _readyCamera();
     final obtain = _Obtain(
       const ObtainMeterPhotoPermissionDenied(MeterPhotoPermissionKind.camera),
     );
@@ -255,6 +269,7 @@ void main() {
   });
 
   test('撮影成功で読み取りし edit へ進む', () async {
+    await _readyCamera();
     final obtain = _Obtain(
       ObtainMeterPhotoSuccess(bytes: Uint8List.fromList(const [9, 9])),
     );

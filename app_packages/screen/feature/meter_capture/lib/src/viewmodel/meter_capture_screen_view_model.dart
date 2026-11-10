@@ -1,15 +1,18 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
+import 'package:usecase_control_meter_in_app_camera/usecase_control_meter_in_app_camera.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 
 import 'delegate/meter_capture_state_to_entity_delegate.dart';
+import 'delegate/on_apply_camera_status_delegate.dart';
 import 'delegate/on_back_to_step1_delegate.dart';
 import 'delegate/on_capture_photo_delegate.dart';
 import 'delegate/on_field_changed_delegate.dart';
@@ -45,9 +48,19 @@ final class MeterCaptureScreenViewModel {
         readMeterPanelUsecase: ref.watch(ReadMeterPanelUsecase.provider),
         saveMeterCaptureUsecase: ref.watch(SaveMeterCaptureUsecase.provider),
         openAppSettingsUsecase: ref.watch(OpenAppSettingsUsecase.provider),
+        controlMeterInAppCameraUsecase: ref.watch(
+          ControlMeterInAppCameraUsecase.provider,
+        ),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const MeterCaptureStateToEntityDelegate(),
       );
+      result._cameraStatusSubscription = result.controlMeterInAppCameraUsecase
+          .watch()
+          .listen((status) {
+            unawaited(
+              OnApplyCameraStatusDelegate(state: result.state).execute(status),
+            );
+          });
       ref.onDispose(() {
         unawaited(result._close());
       });
@@ -58,6 +71,7 @@ final class MeterCaptureScreenViewModel {
       ReadMeterPanelUsecase.provider,
       SaveMeterCaptureUsecase.provider,
       OpenAppSettingsUsecase.provider,
+      ControlMeterInAppCameraUsecase.provider,
       screenNavigationProvider,
     ],
   );
@@ -82,6 +96,10 @@ final class MeterCaptureScreenViewModel {
   @visibleForTesting
   final OpenAppSettingsUsecase openAppSettingsUsecase;
 
+  /// アプリ内カメラ制御。
+  @visibleForTesting
+  final ControlMeterInAppCameraUsecase controlMeterInAppCameraUsecase;
+
   /// ホームタブへの遷移。
   @visibleForTesting
   final ScreenNavigation navigation;
@@ -90,18 +108,21 @@ final class MeterCaptureScreenViewModel {
   @visibleForTesting
   final MeterCaptureStateToEntityDelegate stateToEntity;
 
+  StreamSubscription<MeterInAppCameraUiStatus>? _cameraStatusSubscription;
+
   /// 注入された依存から ViewModel を作る。
   ///
   /// Example:
   /// ```dart
   /// MeterCaptureScreenViewModel.provider;
   /// ```
-  const MeterCaptureScreenViewModel._({
+  MeterCaptureScreenViewModel._({
     required this.state,
     required this.obtainMeterPhotoUsecase,
     required this.readMeterPanelUsecase,
     required this.saveMeterCaptureUsecase,
     required this.openAppSettingsUsecase,
+    required this.controlMeterInAppCameraUsecase,
     required this.navigation,
     required this.stateToEntity,
   });
@@ -118,11 +139,25 @@ final class MeterCaptureScreenViewModel {
   /// ```
   StateStream<MeterCaptureScreenState> get screenState => state;
 
-  /// 状態の Stream を閉じる。
+  /// ライブプレビュー。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.buildCameraPreview();
+  /// ```
+  Widget buildCameraPreview({Key? key}) =>
+      controlMeterInAppCameraUsecase.buildPreview(key: key);
+
+  /// 購読と状態 Stream を閉じる。
   ///
   /// Example:
   /// ```dart
   /// viewModel.provider;
   /// ```
-  Future<void> _close() => state.close();
+  Future<void> _close() async {
+    await _cameraStatusSubscription?.cancel();
+    _cameraStatusSubscription = null;
+    await controlMeterInAppCameraUsecase.stop();
+    await state.close();
+  }
 }
