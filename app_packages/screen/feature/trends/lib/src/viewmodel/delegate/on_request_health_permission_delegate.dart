@@ -49,12 +49,22 @@ final class OnRequestHealthPermissionDelegate {
 
   /// 許可ダイアログのあと系列を取り直す。
   ///
+  /// 要求自体が例外で失敗したときは再読込せず [TrendsScreenState.bodyReadFailed]
+  /// を立て、再試行ボタンから復旧できるようにする。
+  ///
   /// Example:
   /// ```dart
   /// delegate.execute();
   /// ```
   Future<void> execute() async {
-    await requestHealthPermissionUsecase.execute();
+    try {
+      await requestHealthPermissionUsecase.execute();
+    } catch (_) {
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(current.copyWith(bodyReadFailed: true));
+      });
+      return;
+    }
     await OnReloadDelegate(
       state: state,
       loadTrendsUsecase: loadTrendsUsecase,

@@ -44,28 +44,31 @@ final class OnReloadDelegate {
 
   /// 読込中にしてから系列を取り、結果を State へ書く。
   ///
-  /// 失敗時は loading を下ろす。期間・グループが開始時と違えば結果を捨てる。
+  /// 開始時に [TrendsScreenState.reloadGeneration] を進め、成功・失敗のどちらでも
+  /// 自世代以外の結果は捨てる（同一 period/group の重なり読込対策）。
   ///
   /// Example:
   /// ```dart
   /// delegate.execute();
   /// ```
   Future<void> execute() async {
-    final snapshot = await state.updateWithLock((current, emitter) async {
-      await emitter.emit(current.copyWith(loading: true));
-      return current;
+    final started = await state.updateWithLock((current, emitter) async {
+      final generation = current.reloadGeneration + 1;
+      await emitter.emit(
+        current.copyWith(loading: true, reloadGeneration: generation),
+      );
+      return (snapshot: current, generation: generation);
     });
     try {
       final result = await loadTrendsUsecase.execute(
         LoadTrendsRequest(
           now: now,
-          period: mapTrendsPeriod(snapshot.period),
-          groupIsBody: snapshot.group == TrendsMetricGroup.body,
+          period: mapTrendsPeriod(started.snapshot.period),
+          groupIsBody: started.snapshot.group == TrendsMetricGroup.body,
         ),
       );
       await state.updateWithLock((current, emitter) async {
-        if (current.period != snapshot.period ||
-            current.group != snapshot.group) {
+        if (!_isCurrent(current, started)) {
           return;
         }
         await emitter.emit(
@@ -81,8 +84,7 @@ final class OnReloadDelegate {
       });
     } catch (_) {
       await state.updateWithLock((current, emitter) async {
-        if (current.period != snapshot.period ||
-            current.group != snapshot.group) {
+        if (!_isCurrent(current, started)) {
           return;
         }
         await emitter.emit(
@@ -91,4 +93,18 @@ final class OnReloadDelegate {
       });
     }
   }
+
+  /// 自世代かつ開始時と同じ期間・グループなら最新の読込結果とみなす。
+  ///
+  /// Example:
+  /// ```dart
+  /// _isCurrent(current, started);
+  /// ```
+  bool _isCurrent(
+    TrendsScreenState current,
+    ({TrendsScreenState snapshot, int generation}) started,
+  ) =>
+      current.reloadGeneration == started.generation &&
+      current.period == started.snapshot.period &&
+      current.group == started.snapshot.group;
 }

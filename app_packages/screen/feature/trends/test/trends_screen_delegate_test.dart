@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:domain_trends/domain_trends.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
@@ -45,10 +47,15 @@ final class _FakeLoadTrends implements LoadTrendsUsecase {
 final class _FakeRequestPermission
     implements RequestHealthBodyPermissionUsecase {
   int calls = 0;
+  Object? throwError;
 
   @override
   Future<HealthBodyPermissionStatus> execute() async {
     calls += 1;
+    final error = throwError;
+    if (error != null) {
+      throw error;
+    }
     return HealthBodyPermissionStatus.granted;
   }
 }
@@ -219,6 +226,21 @@ void main() {
     expect(load.calls, 1);
   });
 
+  test('許可リクエスト失敗時は reload せず bodyReadFailed を立てる', () async {
+    final request = _FakeRequestPermission()
+      ..throwError = StateError('permission failed');
+    await OnRequestHealthPermissionDelegate(
+      state: state,
+      requestHealthPermissionUsecase: request,
+      loadTrendsUsecase: load,
+      now: now,
+    ).execute();
+    expect(request.calls, 1);
+    expect(load.calls, 0);
+    expect(state.state.bodyReadFailed, isTrue);
+    expect(state.state.loading, isTrue);
+  });
+
   test('OnReloadDelegate は系列と許可を State へ書く', () async {
     final buckets = TrendsBucketBuilder.build(
       nowLocal: now,
@@ -288,5 +310,61 @@ void main() {
     expect(state.state.period, TrendsPeriod.days90);
     expect(state.state.buckets, isEmpty);
     expect(state.state.loading, isTrue);
+  });
+
+  test('OnReloadDelegate は同一条件の古い失敗で最新成功を上書きしない', () async {
+    final buckets = TrendsBucketBuilder.build(
+      nowLocal: now,
+      spec: TrendsPeriodSpec.days30,
+    );
+    final first = _FakeLoadTrends()
+      ..throwError = StateError('stale reload failed');
+    final second = _FakeLoadTrends()
+      ..result = LoadTrendsResult(
+        buckets: buckets,
+        exerciseSeries: {
+          TrendsMetricKind.exerciseCaloriesKcal: const LoadTrendsSeries(
+            metric: TrendsMetricKind.exerciseCaloriesKcal,
+            points: [],
+            segments: [],
+          ),
+        },
+        bodySeries: const {},
+        healthPermission: LoadTrendsHealthPermission.granted,
+        bodyReadFailed: false,
+      );
+
+    late void Function() finishFirst;
+    final firstStarted = Completer<void>();
+    first.onExecute = () {
+      firstStarted.complete();
+      final gate = Completer<void>();
+      finishFirst = gate.complete;
+      return gate.future;
+    };
+
+    final firstFuture = OnReloadDelegate(
+      state: state,
+      loadTrendsUsecase: first,
+      now: now,
+    ).execute();
+    await firstStarted.future;
+
+    await OnReloadDelegate(
+      state: state,
+      loadTrendsUsecase: second,
+      now: now,
+    ).execute();
+    expect(state.state.loading, isFalse);
+    expect(state.state.bodyReadFailed, isFalse);
+    expect(state.state.buckets.length, buckets.length);
+    expect(state.state.reloadGeneration, 2);
+
+    finishFirst();
+    await firstFuture;
+    expect(state.state.loading, isFalse);
+    expect(state.state.bodyReadFailed, isFalse);
+    expect(state.state.buckets.length, buckets.length);
+    expect(state.state.reloadGeneration, 2);
   });
 }

@@ -51,6 +51,7 @@ final class TrendsScreenState {
     required this.buckets,
     required this.exerciseSeries,
     required this.bodySeries,
+    this.reloadGeneration = 0,
   });
 
   /// 初期は過去 30 日・運動・消費カロリー・読込中。
@@ -93,6 +94,9 @@ final class TrendsScreenState {
   /// 身体 3 指標の系列。
   final Map<TrendsMetricKind, TrendsVisibleSeries> bodySeries;
 
+  /// 再取得の世代。新しい読込開始のたびに増やす。
+  final int reloadGeneration;
+
   /// 指定したフィールドだけ差し替える。
   ///
   /// Example:
@@ -109,6 +113,7 @@ final class TrendsScreenState {
     List<TrendsBucket>? buckets,
     Map<TrendsMetricKind, TrendsVisibleSeries>? exerciseSeries,
     Map<TrendsMetricKind, TrendsVisibleSeries>? bodySeries,
+    int? reloadGeneration,
   }) => TrendsScreenState(
     period: period ?? this.period,
     group: group ?? this.group,
@@ -119,5 +124,6 @@ final class TrendsScreenState {
     buckets: buckets ?? this.buckets,
     exerciseSeries: exerciseSeries ?? this.exerciseSeries,
     bodySeries: bodySeries ?? this.bodySeries,
+    reloadGeneration: reloadGeneration ?? this.reloadGeneration,
   );
 }
