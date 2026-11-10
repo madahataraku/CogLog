@@ -57,8 +57,8 @@ kotlin {
 }
 
 dependencies {
-    // Google ML Kit GenAI Prompt API (Gemini Nano through AICore).
-    implementation("com.google.mlkit:genai-prompt:1.0.0-beta4")
-    // genai-prompt beta3/4 needs 1.11+ or download completion can throw NoSuchMethodError.
+    // Match Gemini Nano Playground: beta3/4 request AICore features many devices lack.
+    // See googlesamples/mlkit#1061 (feature 648 vs shipping 636).
+    implementation("com.google.mlkit:genai-prompt:1.0.0-beta2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 }
