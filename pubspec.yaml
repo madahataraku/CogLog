@@ -63,6 +63,7 @@ workspace:
   - app_packages/infra/oss_license_catalog
   - app_packages/infra/oss_license_catalog/_impl
   - app_packages/infra/oss_license_catalog/_testing
+  - app_packages/screen/feature/achievement
   - app_packages/screen/feature/app_settings
   - app_packages/screen/feature/notification_settings
   - app_packages/screen/feature/debug

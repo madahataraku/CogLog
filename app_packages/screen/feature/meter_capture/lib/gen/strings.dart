@@ -9,6 +9,31 @@ import 'package:monolith_localization_runtime/src/localize_string_delegate.dart'
 mixin class L10nStringsMixin {
   const L10nStringsMixin();
 
+  /// 単件トースト本文
+  String screen_feature_meter_capture_achievement_unlocked_body({
+    required String condition,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_meter_capture_achievement_unlocked_body',
+    arguments: [condition],
+  );
+
+  /// 複数要約
+  String screen_feature_meter_capture_achievement_unlocked_summary_title({
+    required String count,
+    required String firstName,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_meter_capture_achievement_unlocked_summary_title',
+    arguments: [count, firstName],
+  );
+
+  /// 単件トーストタイトル（name引数）
+  String screen_feature_meter_capture_achievement_unlocked_title({
+    required String name,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_meter_capture_achievement_unlocked_title',
+    arguments: [name],
+  );
+
   /// 入力ラベル
   String get screen_feature_meter_capture_average_speed =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_average_speed');

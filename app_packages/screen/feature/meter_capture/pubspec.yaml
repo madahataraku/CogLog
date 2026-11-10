@@ -9,6 +9,7 @@ environment:
   flutter: ">=3.47.0 <4.0.0"
 
 dependencies:
+  domain_achievement: any
   domain_exercise_history: any
   flutter:
     sdk: flutter
@@ -19,6 +20,7 @@ dependencies:
   meta: any
   monolith_localization_runtime: any
   riverpod: any
+  screen_feature_achievement: any
   screen_navigation: any
   state_stream: any
   state_stream_riverpod: any

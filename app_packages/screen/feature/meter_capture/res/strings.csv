@@ -19,3 +19,6 @@ retake,撮り直す,Retake,編集からカメラへ戻る
 save,登録,Save,登録ボタン
 save_failed,保存に失敗しました,Failed to save,保存失敗
 goal_auto_updated,目標が自動更新されました,Daily goals were auto-updated,目標自動更新の通知
+achievement_unlocked_title,{name},Unlocked: {name},単件トーストタイトル（name引数）
+achievement_unlocked_body,{condition},{condition},単件トースト本文
+achievement_unlocked_summary_title,アチーブメントを{count}件獲得：{firstName}ほか,{count} achievements unlocked: {firstName} and more,複数要約

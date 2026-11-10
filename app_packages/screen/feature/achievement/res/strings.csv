@@ -1,0 +1,100 @@
+id,ja,en,description
+title,アチーブメント,Achievements,画面タイトル
+locked_name,？？？？？,?????,未開放時の表示名
+load_failed,読み込みに失敗しました,Failed to load achievements,一覧失敗
+retry,再試行,Retry,再試行ボタン
+back_semantics,戻る,Back,戻る a11y
+name_first_record,はじめの一歩,First step,アチーブメント名 first_record
+condition_first_record,初めて運動記録を登録する,Log your first exercise record,達成条件 first_record
+name_streak_3,三日坊主卒業,Three-day streak,アチーブメント名 streak_3
+condition_streak_3,3日間連続で運動する,Exercise 3 days in a row,達成条件 streak_3
+name_streak_7,習慣の芽生え,Habit sprouting,アチーブメント名 streak_7
+condition_streak_7,7日間連続で運動する,Exercise 7 days in a row,達成条件 streak_7
+name_streak_14,習慣の定着,Habit formed,アチーブメント名 streak_14
+condition_streak_14,14日間連続で運動する,Exercise 14 days in a row,達成条件 streak_14
+name_streak_30,習慣の達人,Habit master,アチーブメント名 streak_30
+condition_streak_30,30日間連続で運動する,Exercise 30 days in a row,達成条件 streak_30
+name_streak_60,二カ月の軌跡,Two-month trail,アチーブメント名 streak_60
+condition_streak_60,60日間連続で運動する,Exercise 60 days in a row,達成条件 streak_60
+name_streak_90,三カ月の証,Three-month proof,アチーブメント名 streak_90
+condition_streak_90,90日間連続で運動する,Exercise 90 days in a row,達成条件 streak_90
+name_unique_100,継続は力なり,Consistency is power,アチーブメント名 unique_100
+condition_unique_100,累計100日運動する,Exercise on 100 unique days,達成条件 unique_100
+name_streak_365,一年皆勤賞,Year of perfect attendance,アチーブメント名 streak_365
+condition_streak_365,365日間連続で運動する,Exercise 365 days in a row,達成条件 streak_365
+name_distance_1,はじめての1km,First kilometer,アチーブメント名 distance_1
+condition_distance_1,累計1km,Reach 1 km total distance,達成条件 distance_1
+name_distance_10,10kmライダー,10 km rider,アチーブメント名 distance_10
+condition_distance_10,累計10km,Reach 10 km total distance,達成条件 distance_10
+name_distance_50,50kmライダー,50 km rider,アチーブメント名 distance_50
+condition_distance_50,累計50km,Reach 50 km total distance,達成条件 distance_50
+name_distance_100,100kmライダー,100 km rider,アチーブメント名 distance_100
+condition_distance_100,累計100km,Reach 100 km total distance,達成条件 distance_100
+name_distance_500,500kmライダー,500 km rider,アチーブメント名 distance_500
+condition_distance_500,累計500km,Reach 500 km total distance,達成条件 distance_500
+name_distance_1000,"1,000kmライダー","1,000 km rider",アチーブメント名 distance_1000
+condition_distance_1000,"累計1,000km","Reach 1,000 km total distance",達成条件 distance_1000
+name_distance_5000,"5,000kmライダー","5,000 km rider",アチーブメント名 distance_5000
+condition_distance_5000,"累計5,000km","Reach 5,000 km total distance",達成条件 distance_5000
+name_distance_10000,"10,000kmライダー","10,000 km rider",アチーブメント名 distance_10000
+condition_distance_10000,"累計10,000km","Reach 10,000 km total distance",達成条件 distance_10000
+name_distance_40075,地球一周への道,Around the world path,アチーブメント名 distance_40075
+condition_distance_40075,"累計40,075km","Reach 40,075 km total distance",達成条件 distance_40075
+name_single_duration_10m,まずは10分,First 10 minutes,アチーブメント名 single_duration_10m
+condition_single_duration_10m,1回の運動で10分以上,Exercise for 10+ minutes in one session,達成条件 single_duration_10m
+name_single_duration_30m,30分ライダー,30-minute rider,アチーブメント名 single_duration_30m
+condition_single_duration_30m,1回の運動で30分以上,Exercise for 30+ minutes in one session,達成条件 single_duration_30m
+name_single_duration_60m,1時間の挑戦者,One-hour challenger,アチーブメント名 single_duration_60m
+condition_single_duration_60m,1回の運動で60分以上,Exercise for 60+ minutes in one session,達成条件 single_duration_60m
+name_total_duration_10h,時間の積み重ね,Hours add up,アチーブメント名 total_duration_10h
+condition_total_duration_10h,累計運動時間10時間,Reach 10 hours total exercise time,達成条件 total_duration_10h
+name_total_duration_24h,丸一日の軌跡,A full day of riding,アチーブメント名 total_duration_24h
+condition_total_duration_24h,累計運動時間24時間,Reach 24 hours total exercise time,達成条件 total_duration_24h
+name_total_duration_48h,二日分の積み重ね,Two days stacked,アチーブメント名 total_duration_48h
+condition_total_duration_48h,累計運動時間48時間,Reach 48 hours total exercise time,達成条件 total_duration_48h
+name_total_duration_96h,四日分の到達,Four days reached,アチーブメント名 total_duration_96h
+condition_total_duration_96h,累計運動時間96時間,Reach 96 hours total exercise time,達成条件 total_duration_96h
+name_total_duration_100h,時間の達人,Time master,アチーブメント名 total_duration_100h
+condition_total_duration_100h,累計運動時間100時間,Reach 100 hours total exercise time,達成条件 total_duration_100h
+name_total_duration_300h,時間の覇者,Time champion,アチーブメント名 total_duration_300h
+condition_total_duration_300h,累計運動時間300時間,Reach 300 hours total exercise time,達成条件 total_duration_300h
+name_total_duration_1000h,千時間の伝説,Thousand-hour legend,アチーブメント名 total_duration_1000h
+condition_total_duration_1000h,"累計運動時間1,000時間","Reach 1,000 hours total exercise time",達成条件 total_duration_1000h
+name_calories_50,いちご10個分！,10 strawberries!,アチーブメント名 calories_50
+condition_calories_50,累計消費カロリー50 kcal,Burn 50 kcal total,達成条件 calories_50
+name_calories_100,バナナ1本分！,One banana!,アチーブメント名 calories_100
+condition_calories_100,累計消費カロリー100 kcal,Burn 100 kcal total,達成条件 calories_100
+name_calories_150,りんご1個分！,One apple!,アチーブメント名 calories_150
+condition_calories_150,累計消費カロリー150 kcal,Burn 150 kcal total,達成条件 calories_150
+name_calories_200,おにぎり1個分！,One rice ball!,アチーブメント名 calories_200
+condition_calories_200,累計消費カロリー200 kcal,Burn 200 kcal total,達成条件 calories_200
+name_calories_300,どら焼き1個分！,One dorayaki!,アチーブメント名 calories_300
+condition_calories_300,累計消費カロリー300 kcal,Burn 300 kcal total,達成条件 calories_300
+name_calories_500,ハンバーガー1個分！,One hamburger!,アチーブメント名 calories_500
+condition_calories_500,累計消費カロリー500 kcal,Burn 500 kcal total,達成条件 calories_500
+name_calories_1000,ショートケーキ2個分！,Two shortcakes!,アチーブメント名 calories_1000
+condition_calories_1000,"累計消費カロリー1,000 kcal","Burn 1,000 kcal total",達成条件 calories_1000
+name_calories_1500,ピザ5切れ分！,Five pizza slices!,アチーブメント名 calories_1500
+condition_calories_1500,"累計消費カロリー1,500 kcal","Burn 1,500 kcal total",達成条件 calories_1500
+name_calories_3000,ラーメン5杯分！,Five bowls of ramen!,アチーブメント名 calories_3000
+condition_calories_3000,"累計消費カロリー3,000 kcal","Burn 3,000 kcal total",達成条件 calories_3000
+name_calories_5000,ホールケーキ10個分！,Ten whole cakes!,アチーブメント名 calories_5000
+condition_calories_5000,"累計消費カロリー5,000 kcal","Burn 5,000 kcal total",達成条件 calories_5000
+name_calories_10000,カレーライス20皿分！,Twenty curry plates!,アチーブメント名 calories_10000
+condition_calories_10000,"累計消費カロリー10,000 kcal","Burn 10,000 kcal total",達成条件 calories_10000
+name_best_distance,昨日の自分を超えろ,Beat yesterday's you,アチーブメント名 best_distance
+condition_best_distance,2件目以降の運動で過去最高走行距離を更新する,Beat your best distance on a later ride,達成条件 best_distance
+name_best_duration,自己ベスト更新,New personal best,アチーブメント名 best_duration
+condition_best_duration,2件目以降の運動で過去最高運動時間を更新する,Beat your best duration on a later ride,達成条件 best_duration
+name_gap_restart_30,復活のライダー,Comeback rider,アチーブメント名 gap_restart_30
+condition_gap_restart_30,記録日間隔が30日超の空白のあと運動を再開する,Resume exercise after a 30+ day gap,達成条件 gap_restart_30
+name_leap_day,うるう年ライダー,Leap day rider,アチーブメント名 leap_day
+condition_leap_day,2月29日に運動する,Exercise on February 29,達成条件 leap_day
+name_day_11_11,ゾロ目記念日,Double-11 day,アチーブメント名 day_11_11
+condition_day_11_11,11月11日に運動する,Exercise on November 11,達成条件 day_11_11
+name_count_100,100回記念,100th ride,アチーブメント名 count_100
+condition_count_100,100回目の運動を達成する,Complete your 100th exercise,達成条件 count_100
+name_same_day_2,完璧主義者,Perfectionist,アチーブメント名 same_day_2
+condition_same_day_2,1日に2回運動する,Exercise twice on the same day,達成条件 same_day_2
+name_year_end_new_year,年末年始も休まず営業,Open through New Year,アチーブメント名 year_end_new_year
+condition_year_end_new_year,ある年末の12/29–31とその直後の年始1/1–3の6日すべてに運動する,Exercise all 6 days from Dec 29–31 and Jan 1–3,達成条件 year_end_new_year

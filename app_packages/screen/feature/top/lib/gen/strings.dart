@@ -13,6 +13,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_achievement_title =>
       LocalizeStringDelegate.get('screen_feature_top_achievement_title');
 
+  /// ホーム右上
+  String get screen_feature_top_achievements_semantics =>
+      LocalizeStringDelegate.get('screen_feature_top_achievements_semantics');
+
   /// 実績のラベル
   String get screen_feature_top_actual_label =>
       LocalizeStringDelegate.get('screen_feature_top_actual_label');

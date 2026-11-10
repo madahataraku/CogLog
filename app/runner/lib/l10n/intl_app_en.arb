@@ -17,6 +17,402 @@
   "@foundation_resources_app_name": {
     "description": "アプリケーション名"
   },
+  "screen_feature_achievement_back_semantics": "Back",
+  "@screen_feature_achievement_back_semantics": {
+    "description": "戻る a11y"
+  },
+  "screen_feature_achievement_condition_best_distance": "Beat your best distance on a later ride",
+  "@screen_feature_achievement_condition_best_distance": {
+    "description": "達成条件 best_distance"
+  },
+  "screen_feature_achievement_condition_best_duration": "Beat your best duration on a later ride",
+  "@screen_feature_achievement_condition_best_duration": {
+    "description": "達成条件 best_duration"
+  },
+  "screen_feature_achievement_condition_calories_100": "Burn 100 kcal total",
+  "@screen_feature_achievement_condition_calories_100": {
+    "description": "達成条件 calories_100"
+  },
+  "screen_feature_achievement_condition_calories_1000": "Burn 1,000 kcal total",
+  "@screen_feature_achievement_condition_calories_1000": {
+    "description": "達成条件 calories_1000"
+  },
+  "screen_feature_achievement_condition_calories_10000": "Burn 10,000 kcal total",
+  "@screen_feature_achievement_condition_calories_10000": {
+    "description": "達成条件 calories_10000"
+  },
+  "screen_feature_achievement_condition_calories_150": "Burn 150 kcal total",
+  "@screen_feature_achievement_condition_calories_150": {
+    "description": "達成条件 calories_150"
+  },
+  "screen_feature_achievement_condition_calories_1500": "Burn 1,500 kcal total",
+  "@screen_feature_achievement_condition_calories_1500": {
+    "description": "達成条件 calories_1500"
+  },
+  "screen_feature_achievement_condition_calories_200": "Burn 200 kcal total",
+  "@screen_feature_achievement_condition_calories_200": {
+    "description": "達成条件 calories_200"
+  },
+  "screen_feature_achievement_condition_calories_300": "Burn 300 kcal total",
+  "@screen_feature_achievement_condition_calories_300": {
+    "description": "達成条件 calories_300"
+  },
+  "screen_feature_achievement_condition_calories_3000": "Burn 3,000 kcal total",
+  "@screen_feature_achievement_condition_calories_3000": {
+    "description": "達成条件 calories_3000"
+  },
+  "screen_feature_achievement_condition_calories_50": "Burn 50 kcal total",
+  "@screen_feature_achievement_condition_calories_50": {
+    "description": "達成条件 calories_50"
+  },
+  "screen_feature_achievement_condition_calories_500": "Burn 500 kcal total",
+  "@screen_feature_achievement_condition_calories_500": {
+    "description": "達成条件 calories_500"
+  },
+  "screen_feature_achievement_condition_calories_5000": "Burn 5,000 kcal total",
+  "@screen_feature_achievement_condition_calories_5000": {
+    "description": "達成条件 calories_5000"
+  },
+  "screen_feature_achievement_condition_count_100": "Complete your 100th exercise",
+  "@screen_feature_achievement_condition_count_100": {
+    "description": "達成条件 count_100"
+  },
+  "screen_feature_achievement_condition_day_11_11": "Exercise on November 11",
+  "@screen_feature_achievement_condition_day_11_11": {
+    "description": "達成条件 day_11_11"
+  },
+  "screen_feature_achievement_condition_distance_1": "Reach 1 km total distance",
+  "@screen_feature_achievement_condition_distance_1": {
+    "description": "達成条件 distance_1"
+  },
+  "screen_feature_achievement_condition_distance_10": "Reach 10 km total distance",
+  "@screen_feature_achievement_condition_distance_10": {
+    "description": "達成条件 distance_10"
+  },
+  "screen_feature_achievement_condition_distance_100": "Reach 100 km total distance",
+  "@screen_feature_achievement_condition_distance_100": {
+    "description": "達成条件 distance_100"
+  },
+  "screen_feature_achievement_condition_distance_1000": "Reach 1,000 km total distance",
+  "@screen_feature_achievement_condition_distance_1000": {
+    "description": "達成条件 distance_1000"
+  },
+  "screen_feature_achievement_condition_distance_10000": "Reach 10,000 km total distance",
+  "@screen_feature_achievement_condition_distance_10000": {
+    "description": "達成条件 distance_10000"
+  },
+  "screen_feature_achievement_condition_distance_40075": "Reach 40,075 km total distance",
+  "@screen_feature_achievement_condition_distance_40075": {
+    "description": "達成条件 distance_40075"
+  },
+  "screen_feature_achievement_condition_distance_50": "Reach 50 km total distance",
+  "@screen_feature_achievement_condition_distance_50": {
+    "description": "達成条件 distance_50"
+  },
+  "screen_feature_achievement_condition_distance_500": "Reach 500 km total distance",
+  "@screen_feature_achievement_condition_distance_500": {
+    "description": "達成条件 distance_500"
+  },
+  "screen_feature_achievement_condition_distance_5000": "Reach 5,000 km total distance",
+  "@screen_feature_achievement_condition_distance_5000": {
+    "description": "達成条件 distance_5000"
+  },
+  "screen_feature_achievement_condition_first_record": "Log your first exercise record",
+  "@screen_feature_achievement_condition_first_record": {
+    "description": "達成条件 first_record"
+  },
+  "screen_feature_achievement_condition_gap_restart_30": "Resume exercise after a 30+ day gap",
+  "@screen_feature_achievement_condition_gap_restart_30": {
+    "description": "達成条件 gap_restart_30"
+  },
+  "screen_feature_achievement_condition_leap_day": "Exercise on February 29",
+  "@screen_feature_achievement_condition_leap_day": {
+    "description": "達成条件 leap_day"
+  },
+  "screen_feature_achievement_condition_same_day_2": "Exercise twice on the same day",
+  "@screen_feature_achievement_condition_same_day_2": {
+    "description": "達成条件 same_day_2"
+  },
+  "screen_feature_achievement_condition_single_duration_10m": "Exercise for 10+ minutes in one session",
+  "@screen_feature_achievement_condition_single_duration_10m": {
+    "description": "達成条件 single_duration_10m"
+  },
+  "screen_feature_achievement_condition_single_duration_30m": "Exercise for 30+ minutes in one session",
+  "@screen_feature_achievement_condition_single_duration_30m": {
+    "description": "達成条件 single_duration_30m"
+  },
+  "screen_feature_achievement_condition_single_duration_60m": "Exercise for 60+ minutes in one session",
+  "@screen_feature_achievement_condition_single_duration_60m": {
+    "description": "達成条件 single_duration_60m"
+  },
+  "screen_feature_achievement_condition_streak_14": "Exercise 14 days in a row",
+  "@screen_feature_achievement_condition_streak_14": {
+    "description": "達成条件 streak_14"
+  },
+  "screen_feature_achievement_condition_streak_3": "Exercise 3 days in a row",
+  "@screen_feature_achievement_condition_streak_3": {
+    "description": "達成条件 streak_3"
+  },
+  "screen_feature_achievement_condition_streak_30": "Exercise 30 days in a row",
+  "@screen_feature_achievement_condition_streak_30": {
+    "description": "達成条件 streak_30"
+  },
+  "screen_feature_achievement_condition_streak_365": "Exercise 365 days in a row",
+  "@screen_feature_achievement_condition_streak_365": {
+    "description": "達成条件 streak_365"
+  },
+  "screen_feature_achievement_condition_streak_60": "Exercise 60 days in a row",
+  "@screen_feature_achievement_condition_streak_60": {
+    "description": "達成条件 streak_60"
+  },
+  "screen_feature_achievement_condition_streak_7": "Exercise 7 days in a row",
+  "@screen_feature_achievement_condition_streak_7": {
+    "description": "達成条件 streak_7"
+  },
+  "screen_feature_achievement_condition_streak_90": "Exercise 90 days in a row",
+  "@screen_feature_achievement_condition_streak_90": {
+    "description": "達成条件 streak_90"
+  },
+  "screen_feature_achievement_condition_total_duration_1000h": "Reach 1,000 hours total exercise time",
+  "@screen_feature_achievement_condition_total_duration_1000h": {
+    "description": "達成条件 total_duration_1000h"
+  },
+  "screen_feature_achievement_condition_total_duration_100h": "Reach 100 hours total exercise time",
+  "@screen_feature_achievement_condition_total_duration_100h": {
+    "description": "達成条件 total_duration_100h"
+  },
+  "screen_feature_achievement_condition_total_duration_10h": "Reach 10 hours total exercise time",
+  "@screen_feature_achievement_condition_total_duration_10h": {
+    "description": "達成条件 total_duration_10h"
+  },
+  "screen_feature_achievement_condition_total_duration_24h": "Reach 24 hours total exercise time",
+  "@screen_feature_achievement_condition_total_duration_24h": {
+    "description": "達成条件 total_duration_24h"
+  },
+  "screen_feature_achievement_condition_total_duration_300h": "Reach 300 hours total exercise time",
+  "@screen_feature_achievement_condition_total_duration_300h": {
+    "description": "達成条件 total_duration_300h"
+  },
+  "screen_feature_achievement_condition_total_duration_48h": "Reach 48 hours total exercise time",
+  "@screen_feature_achievement_condition_total_duration_48h": {
+    "description": "達成条件 total_duration_48h"
+  },
+  "screen_feature_achievement_condition_total_duration_96h": "Reach 96 hours total exercise time",
+  "@screen_feature_achievement_condition_total_duration_96h": {
+    "description": "達成条件 total_duration_96h"
+  },
+  "screen_feature_achievement_condition_unique_100": "Exercise on 100 unique days",
+  "@screen_feature_achievement_condition_unique_100": {
+    "description": "達成条件 unique_100"
+  },
+  "screen_feature_achievement_condition_year_end_new_year": "Exercise all 6 days from Dec 29–31 and Jan 1–3",
+  "@screen_feature_achievement_condition_year_end_new_year": {
+    "description": "達成条件 year_end_new_year"
+  },
+  "screen_feature_achievement_load_failed": "Failed to load achievements",
+  "@screen_feature_achievement_load_failed": {
+    "description": "一覧失敗"
+  },
+  "screen_feature_achievement_locked_name": "?????",
+  "@screen_feature_achievement_locked_name": {
+    "description": "未開放時の表示名"
+  },
+  "screen_feature_achievement_name_best_distance": "Beat yesterday's you",
+  "@screen_feature_achievement_name_best_distance": {
+    "description": "アチーブメント名 best_distance"
+  },
+  "screen_feature_achievement_name_best_duration": "New personal best",
+  "@screen_feature_achievement_name_best_duration": {
+    "description": "アチーブメント名 best_duration"
+  },
+  "screen_feature_achievement_name_calories_100": "One banana!",
+  "@screen_feature_achievement_name_calories_100": {
+    "description": "アチーブメント名 calories_100"
+  },
+  "screen_feature_achievement_name_calories_1000": "Two shortcakes!",
+  "@screen_feature_achievement_name_calories_1000": {
+    "description": "アチーブメント名 calories_1000"
+  },
+  "screen_feature_achievement_name_calories_10000": "Twenty curry plates!",
+  "@screen_feature_achievement_name_calories_10000": {
+    "description": "アチーブメント名 calories_10000"
+  },
+  "screen_feature_achievement_name_calories_150": "One apple!",
+  "@screen_feature_achievement_name_calories_150": {
+    "description": "アチーブメント名 calories_150"
+  },
+  "screen_feature_achievement_name_calories_1500": "Five pizza slices!",
+  "@screen_feature_achievement_name_calories_1500": {
+    "description": "アチーブメント名 calories_1500"
+  },
+  "screen_feature_achievement_name_calories_200": "One rice ball!",
+  "@screen_feature_achievement_name_calories_200": {
+    "description": "アチーブメント名 calories_200"
+  },
+  "screen_feature_achievement_name_calories_300": "One dorayaki!",
+  "@screen_feature_achievement_name_calories_300": {
+    "description": "アチーブメント名 calories_300"
+  },
+  "screen_feature_achievement_name_calories_3000": "Five bowls of ramen!",
+  "@screen_feature_achievement_name_calories_3000": {
+    "description": "アチーブメント名 calories_3000"
+  },
+  "screen_feature_achievement_name_calories_50": "10 strawberries!",
+  "@screen_feature_achievement_name_calories_50": {
+    "description": "アチーブメント名 calories_50"
+  },
+  "screen_feature_achievement_name_calories_500": "One hamburger!",
+  "@screen_feature_achievement_name_calories_500": {
+    "description": "アチーブメント名 calories_500"
+  },
+  "screen_feature_achievement_name_calories_5000": "Ten whole cakes!",
+  "@screen_feature_achievement_name_calories_5000": {
+    "description": "アチーブメント名 calories_5000"
+  },
+  "screen_feature_achievement_name_count_100": "100th ride",
+  "@screen_feature_achievement_name_count_100": {
+    "description": "アチーブメント名 count_100"
+  },
+  "screen_feature_achievement_name_day_11_11": "Double-11 day",
+  "@screen_feature_achievement_name_day_11_11": {
+    "description": "アチーブメント名 day_11_11"
+  },
+  "screen_feature_achievement_name_distance_1": "First kilometer",
+  "@screen_feature_achievement_name_distance_1": {
+    "description": "アチーブメント名 distance_1"
+  },
+  "screen_feature_achievement_name_distance_10": "10 km rider",
+  "@screen_feature_achievement_name_distance_10": {
+    "description": "アチーブメント名 distance_10"
+  },
+  "screen_feature_achievement_name_distance_100": "100 km rider",
+  "@screen_feature_achievement_name_distance_100": {
+    "description": "アチーブメント名 distance_100"
+  },
+  "screen_feature_achievement_name_distance_1000": "1,000 km rider",
+  "@screen_feature_achievement_name_distance_1000": {
+    "description": "アチーブメント名 distance_1000"
+  },
+  "screen_feature_achievement_name_distance_10000": "10,000 km rider",
+  "@screen_feature_achievement_name_distance_10000": {
+    "description": "アチーブメント名 distance_10000"
+  },
+  "screen_feature_achievement_name_distance_40075": "Around the world path",
+  "@screen_feature_achievement_name_distance_40075": {
+    "description": "アチーブメント名 distance_40075"
+  },
+  "screen_feature_achievement_name_distance_50": "50 km rider",
+  "@screen_feature_achievement_name_distance_50": {
+    "description": "アチーブメント名 distance_50"
+  },
+  "screen_feature_achievement_name_distance_500": "500 km rider",
+  "@screen_feature_achievement_name_distance_500": {
+    "description": "アチーブメント名 distance_500"
+  },
+  "screen_feature_achievement_name_distance_5000": "5,000 km rider",
+  "@screen_feature_achievement_name_distance_5000": {
+    "description": "アチーブメント名 distance_5000"
+  },
+  "screen_feature_achievement_name_first_record": "First step",
+  "@screen_feature_achievement_name_first_record": {
+    "description": "アチーブメント名 first_record"
+  },
+  "screen_feature_achievement_name_gap_restart_30": "Comeback rider",
+  "@screen_feature_achievement_name_gap_restart_30": {
+    "description": "アチーブメント名 gap_restart_30"
+  },
+  "screen_feature_achievement_name_leap_day": "Leap day rider",
+  "@screen_feature_achievement_name_leap_day": {
+    "description": "アチーブメント名 leap_day"
+  },
+  "screen_feature_achievement_name_same_day_2": "Perfectionist",
+  "@screen_feature_achievement_name_same_day_2": {
+    "description": "アチーブメント名 same_day_2"
+  },
+  "screen_feature_achievement_name_single_duration_10m": "First 10 minutes",
+  "@screen_feature_achievement_name_single_duration_10m": {
+    "description": "アチーブメント名 single_duration_10m"
+  },
+  "screen_feature_achievement_name_single_duration_30m": "30-minute rider",
+  "@screen_feature_achievement_name_single_duration_30m": {
+    "description": "アチーブメント名 single_duration_30m"
+  },
+  "screen_feature_achievement_name_single_duration_60m": "One-hour challenger",
+  "@screen_feature_achievement_name_single_duration_60m": {
+    "description": "アチーブメント名 single_duration_60m"
+  },
+  "screen_feature_achievement_name_streak_14": "Habit formed",
+  "@screen_feature_achievement_name_streak_14": {
+    "description": "アチーブメント名 streak_14"
+  },
+  "screen_feature_achievement_name_streak_3": "Three-day streak",
+  "@screen_feature_achievement_name_streak_3": {
+    "description": "アチーブメント名 streak_3"
+  },
+  "screen_feature_achievement_name_streak_30": "Habit master",
+  "@screen_feature_achievement_name_streak_30": {
+    "description": "アチーブメント名 streak_30"
+  },
+  "screen_feature_achievement_name_streak_365": "Year of perfect attendance",
+  "@screen_feature_achievement_name_streak_365": {
+    "description": "アチーブメント名 streak_365"
+  },
+  "screen_feature_achievement_name_streak_60": "Two-month trail",
+  "@screen_feature_achievement_name_streak_60": {
+    "description": "アチーブメント名 streak_60"
+  },
+  "screen_feature_achievement_name_streak_7": "Habit sprouting",
+  "@screen_feature_achievement_name_streak_7": {
+    "description": "アチーブメント名 streak_7"
+  },
+  "screen_feature_achievement_name_streak_90": "Three-month proof",
+  "@screen_feature_achievement_name_streak_90": {
+    "description": "アチーブメント名 streak_90"
+  },
+  "screen_feature_achievement_name_total_duration_1000h": "Thousand-hour legend",
+  "@screen_feature_achievement_name_total_duration_1000h": {
+    "description": "アチーブメント名 total_duration_1000h"
+  },
+  "screen_feature_achievement_name_total_duration_100h": "Time master",
+  "@screen_feature_achievement_name_total_duration_100h": {
+    "description": "アチーブメント名 total_duration_100h"
+  },
+  "screen_feature_achievement_name_total_duration_10h": "Hours add up",
+  "@screen_feature_achievement_name_total_duration_10h": {
+    "description": "アチーブメント名 total_duration_10h"
+  },
+  "screen_feature_achievement_name_total_duration_24h": "A full day of riding",
+  "@screen_feature_achievement_name_total_duration_24h": {
+    "description": "アチーブメント名 total_duration_24h"
+  },
+  "screen_feature_achievement_name_total_duration_300h": "Time champion",
+  "@screen_feature_achievement_name_total_duration_300h": {
+    "description": "アチーブメント名 total_duration_300h"
+  },
+  "screen_feature_achievement_name_total_duration_48h": "Two days stacked",
+  "@screen_feature_achievement_name_total_duration_48h": {
+    "description": "アチーブメント名 total_duration_48h"
+  },
+  "screen_feature_achievement_name_total_duration_96h": "Four days reached",
+  "@screen_feature_achievement_name_total_duration_96h": {
+    "description": "アチーブメント名 total_duration_96h"
+  },
+  "screen_feature_achievement_name_unique_100": "Consistency is power",
+  "@screen_feature_achievement_name_unique_100": {
+    "description": "アチーブメント名 unique_100"
+  },
+  "screen_feature_achievement_name_year_end_new_year": "Open through New Year",
+  "@screen_feature_achievement_name_year_end_new_year": {
+    "description": "アチーブメント名 year_end_new_year"
+  },
+  "screen_feature_achievement_retry": "Retry",
+  "@screen_feature_achievement_retry": {
+    "description": "再試行ボタン"
+  },
+  "screen_feature_achievement_title": "Achievements",
+  "@screen_feature_achievement_title": {
+    "description": "画面タイトル"
+  },
   "screen_feature_app_settings_back_semantics": "Back",
   "@screen_feature_app_settings_back_semantics": {
     "description": "戻るボタンの代替テキスト"
@@ -377,6 +773,36 @@
   "@screen_feature_main_nav_trends": {
     "description": "ボトムナビ"
   },
+  "screen_feature_meter_capture_achievement_unlocked_body": "{condition}",
+  "@screen_feature_meter_capture_achievement_unlocked_body": {
+    "placeholders": {
+      "condition": {
+        "type": "String"
+      }
+    },
+    "description": "単件トースト本文"
+  },
+  "screen_feature_meter_capture_achievement_unlocked_summary_title": "{count} achievements unlocked: {firstName} and more",
+  "@screen_feature_meter_capture_achievement_unlocked_summary_title": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "firstName": {
+        "type": "String"
+      }
+    },
+    "description": "複数要約"
+  },
+  "screen_feature_meter_capture_achievement_unlocked_title": "Unlocked: {name}",
+  "@screen_feature_meter_capture_achievement_unlocked_title": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    },
+    "description": "単件トーストタイトル（name引数）"
+  },
   "screen_feature_meter_capture_average_speed": "Average speed (km/h)",
   "@screen_feature_meter_capture_average_speed": {
     "description": "入力ラベル"
@@ -492,6 +918,10 @@
   "screen_feature_top_achievement_title": "Goal progress",
   "@screen_feature_top_achievement_title": {
     "description": "目標達成率セクションの見出し"
+  },
+  "screen_feature_top_achievements_semantics": "Achievements",
+  "@screen_feature_top_achievements_semantics": {
+    "description": "ホーム右上"
   },
   "screen_feature_top_actual_label": "Actual",
   "@screen_feature_top_actual_label": {
