@@ -1,0 +1,5 @@
+id,ja,en,description
+title,ライセンス,Licenses,画面タイトル
+back_semantics,戻る,Back,戻るボタンの代替テキスト
+empty,表示できるライセンスがありません。,No licenses to display.,空状態メッセージ
+detail_title,ライセンス詳細,License detail,詳細画面タイトル

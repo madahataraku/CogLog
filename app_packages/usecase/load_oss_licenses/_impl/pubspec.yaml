@@ -1,0 +1,17 @@
+name: usecase_load_oss_licenses_impl
+description: LoadOssLicensesUsecase implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_oss_license_catalog: any
+  usecase_load_oss_licenses: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_oss_license_catalog_testing: any
+  test: any

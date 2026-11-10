@@ -20,6 +20,8 @@ dependencies:
   infra_meter_reading_mobile: any
   infra_on_device_llm: any
   infra_on_device_llm_mobile: any
+  infra_oss_license_catalog: any
+  infra_oss_license_catalog_impl: any
   riverpod: any
 
 dev_dependencies:
