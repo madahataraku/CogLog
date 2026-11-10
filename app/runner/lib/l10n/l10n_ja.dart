@@ -424,7 +424,7 @@ class L10nJa extends L10n {
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';
 
   @override
-  String get screen_feature_trends_chart_placeholder => 'グラフは準備中です';
+  String get screen_feature_trends_chart_placeholder => '読み込み中';
 
   @override
   String get screen_feature_trends_group_body => '身体';
@@ -434,6 +434,33 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_group_label => 'グループ';
+
+  @override
+  String get screen_feature_trends_metric_body_fat => '体脂肪率';
+
+  @override
+  String get screen_feature_trends_metric_body_kg => '体重と除脂肪体重';
+
+  @override
+  String get screen_feature_trends_metric_body_lean_mass => '除脂肪体重';
+
+  @override
+  String get screen_feature_trends_metric_body_weight => '体重';
+
+  @override
+  String get screen_feature_trends_metric_calories => '消費カロリー';
+
+  @override
+  String get screen_feature_trends_metric_distance => '走行距離';
+
+  @override
+  String get screen_feature_trends_metric_duration => '運動時間';
+
+  @override
+  String get screen_feature_trends_metric_label => '指標';
+
+  @override
+  String get screen_feature_trends_open_os_settings => '設定を開く';
 
   @override
   String get screen_feature_trends_period_days182 => '過去半年';
@@ -449,6 +476,15 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_period_label => '期間';
+
+  @override
+  String get screen_feature_trends_request_health_history => 'ヘルスの履歴データを許可';
+
+  @override
+  String get screen_feature_trends_request_health_permission => 'ヘルスケアを許可';
+
+  @override
+  String get screen_feature_trends_retry_load => '再試行';
 
   @override
   String get screen_feature_trends_title => '推移';

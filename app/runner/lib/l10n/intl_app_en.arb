@@ -541,9 +541,9 @@
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
   },
-  "screen_feature_trends_chart_placeholder": "Chart coming soon",
+  "screen_feature_trends_chart_placeholder": "Loading",
   "@screen_feature_trends_chart_placeholder": {
-    "description": "Phase1プレースホルダ"
+    "description": "グラフ領域のロード中表示"
   },
   "screen_feature_trends_group_body": "Body",
   "@screen_feature_trends_group_body": {
@@ -556,6 +556,42 @@
   "screen_feature_trends_group_label": "Group",
   "@screen_feature_trends_group_label": {
     "description": "指標グループ選択のラベル"
+  },
+  "screen_feature_trends_metric_body_fat": "Body fat",
+  "@screen_feature_trends_metric_body_fat": {
+    "description": "身体％"
+  },
+  "screen_feature_trends_metric_body_kg": "Weight & lean mass",
+  "@screen_feature_trends_metric_body_kg": {
+    "description": "身体 kg 組"
+  },
+  "screen_feature_trends_metric_body_lean_mass": "Lean mass",
+  "@screen_feature_trends_metric_body_lean_mass": {
+    "description": "凡例用の除脂肪体重"
+  },
+  "screen_feature_trends_metric_body_weight": "Weight",
+  "@screen_feature_trends_metric_body_weight": {
+    "description": "凡例用の体重"
+  },
+  "screen_feature_trends_metric_calories": "Calories",
+  "@screen_feature_trends_metric_calories": {
+    "description": "運動指標"
+  },
+  "screen_feature_trends_metric_distance": "Distance",
+  "@screen_feature_trends_metric_distance": {
+    "description": "運動指標"
+  },
+  "screen_feature_trends_metric_duration": "Duration",
+  "@screen_feature_trends_metric_duration": {
+    "description": "運動指標"
+  },
+  "screen_feature_trends_metric_label": "Metric",
+  "@screen_feature_trends_metric_label": {
+    "description": "グループ内の指標選択ラベル"
+  },
+  "screen_feature_trends_open_os_settings": "Open Settings",
+  "@screen_feature_trends_open_os_settings": {
+    "description": "永久拒否時に OS 設定を開く"
   },
   "screen_feature_trends_period_days182": "Last 6 months",
   "@screen_feature_trends_period_days182": {
@@ -576,6 +612,18 @@
   "screen_feature_trends_period_label": "Period",
   "@screen_feature_trends_period_label": {
     "description": "期間選択のラベル"
+  },
+  "screen_feature_trends_request_health_history": "Allow health history",
+  "@screen_feature_trends_request_health_history": {
+    "description": "Android 履歴許可の再要求"
+  },
+  "screen_feature_trends_request_health_permission": "Allow Health access",
+  "@screen_feature_trends_request_health_permission": {
+    "description": "身体グループの許可リクエスト"
+  },
+  "screen_feature_trends_retry_load": "Retry",
+  "@screen_feature_trends_retry_load": {
+    "description": "身体指標の再読取"
   },
   "screen_feature_trends_title": "Trends",
   "@screen_feature_trends_title": {

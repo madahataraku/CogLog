@@ -1,0 +1,20 @@
+name: infra_health_body_metrics_mobile
+description: health package-backed body metrics source for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  health: any
+  infra_health_body_metrics: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  test: any

@@ -23,6 +23,7 @@ workspace:
   - app_packages/data/repository/top_screen_metric/_testing
   - app_packages/domain/daily_goal
   - app_packages/domain/exercise_history
+  - app_packages/domain/trends
   - app_packages/foundation/app_log
   - app_packages/foundation/metadata
   - app_packages/foundation/resources
@@ -32,9 +33,9 @@ workspace:
   - app_packages/infra/app_runtime_info
   - app_packages/infra/app_runtime_info/_mobile
   - app_packages/infra/app_runtime_info/_testing
-  - app_packages/infra/oss_license_catalog
-  - app_packages/infra/oss_license_catalog/_impl
-  - app_packages/infra/oss_license_catalog/_testing
+  - app_packages/infra/health_body_metrics
+  - app_packages/infra/health_body_metrics/_mobile
+  - app_packages/infra/health_body_metrics/_testing
   - app_packages/infra/health_workout
   - app_packages/infra/health_workout/_mobile
   - app_packages/infra/health_workout/_testing
@@ -48,6 +49,9 @@ workspace:
   - app_packages/infra/on_device_llm
   - app_packages/infra/on_device_llm/_mobile
   - app_packages/infra/on_device_llm/_testing
+  - app_packages/infra/oss_license_catalog
+  - app_packages/infra/oss_license_catalog/_impl
+  - app_packages/infra/oss_license_catalog/_testing
   - app_packages/screen/feature/app_settings
   - app_packages/screen/feature/debug
   - app_packages/screen/feature/exercise_history
@@ -80,6 +84,8 @@ workspace:
   - app_packages/usecase/load_oss_licenses/_impl
   - app_packages/usecase/load_top_screen
   - app_packages/usecase/load_top_screen/_impl
+  - app_packages/usecase/load_trends
+  - app_packages/usecase/load_trends/_impl
   - app_packages/usecase/obtain_meter_photo
   - app_packages/usecase/obtain_meter_photo/_impl
   - app_packages/usecase/control_meter_in_app_camera
@@ -90,6 +96,8 @@ workspace:
   - app_packages/usecase/on_device_llm_guidance/_impl
   - app_packages/usecase/read_meter_panel
   - app_packages/usecase/read_meter_panel/_impl
+  - app_packages/usecase/request_health_body_permission
+  - app_packages/usecase/request_health_body_permission/_impl
   - app_packages/usecase/save_daily_goal
   - app_packages/usecase/save_daily_goal/_impl
   - app_packages/usecase/save_meter_capture
@@ -112,6 +120,7 @@ dependency_overrides:
   flutter_riverpod: 3.4.3
   forui: ^0.27.7
   go_router: 18.1.3
+  health: 13.3.2
   hooks_riverpod: 3.4.3
   camera: 0.12.2
   dart_pubspec_licenses: 3.2.0

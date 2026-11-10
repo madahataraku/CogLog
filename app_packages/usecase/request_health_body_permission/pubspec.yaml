@@ -1,0 +1,15 @@
+name: usecase_request_health_body_permission
+description: Request health body metrics permission for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_health_body_metrics: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
