@@ -174,9 +174,11 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
         return;
       }
       _controller = controller;
-      await _emit(
-        MeterInAppCameraReady(aspectRatio: controller.value.aspectRatio),
-      );
+      // CameraPreview は縦向きで 1/sensorAspect を使う。画面側の全面表示も
+      // 同じ表示縦横比（幅÷高さ）で揃える。
+      final sensorAspect = controller.value.aspectRatio;
+      final displayAspect = sensorAspect > 0 ? (1 / sensorAspect) : (3 / 4);
+      await _emit(MeterInAppCameraReady(aspectRatio: displayAspect));
     } on CameraException catch (error) {
       await _safeDispose(controller);
       if (token != _startToken) {
