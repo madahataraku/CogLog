@@ -438,13 +438,13 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                     is DownloadStatus.DownloadCompleted ->
                         emit(mapOf("status" to "available", "progress" to 1.0))
                     is DownloadStatus.DownloadFailed ->
-                        emit(mapOf("status" to "unavailable", "errorMessage" to status.e.message))
+                        emit(mapOf("status" to "unavailable", "errorMessage" to formatThrowable(status.e)))
                 }
             }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Throwable) {
-            emit(mapOf("status" to "unavailable", "errorMessage" to (e.message ?: e.toString())))
+            emit(mapOf("status" to "unavailable", "errorMessage" to formatThrowable(e)))
         }
         post { events?.endOfStream() }
     }

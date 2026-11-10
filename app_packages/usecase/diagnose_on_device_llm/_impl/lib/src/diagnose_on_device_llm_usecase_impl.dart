@@ -98,10 +98,13 @@ final class DiagnoseOnDeviceLlmUsecaseImpl
       final output = await llm
           .diagnoseGenerate(probePrompt)
           .timeout(generateTimeout);
+      final ready = snapshot.readiness == OnDeviceLlmReadiness.ready;
       log.append(
         tag: 'llm.diagnose',
-        level: AppLogLevel.info,
-        message: 'generate probe ok length=${output.length}',
+        level: ready ? AppLogLevel.info : AppLogLevel.warn,
+        message:
+            'generate probe ok length=${output.length}'
+            '${ready ? '' : '; readiness=${snapshot.readiness.name}'}',
       );
       return DiagnoseOnDeviceLlmResult(
         snapshot: snapshot,

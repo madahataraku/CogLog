@@ -44,13 +44,15 @@ void main() {
 
   test('prepare 失敗を型名付き prepareError に残す', () async {
     final usecase = DiagnoseOnDeviceLlmUsecaseImpl(
-      llm: FakeOnDeviceLlm(throwOnPrepareModel: true),
+      llm: FakeOnDeviceLlm(response: 'ok', throwOnPrepareModel: true),
       log: AppLogStore(),
     );
     final result = await usecase.execute();
     expect(result.prepareError, contains('StateError'));
     expect(result.prepareError, contains('prepareModel failed'));
     expect(result.canGenerate, isTrue);
+    expect(result.generateError, isNull);
+    expect(result.sampleOutput, 'ok');
   });
 
   test('probeGenerate=false なら生成をスキップする', () async {

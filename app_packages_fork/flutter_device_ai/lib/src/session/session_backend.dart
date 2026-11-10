@@ -101,6 +101,7 @@ class FallbackSessionBackend implements SessionBackend {
   final List<String> _pending = [];
   final List<FallbackImage> _pendingImages = [];
   StreamSubscription<String>? _activeStream;
+  StreamController<String>? _activeController;
   bool _cancelled = false;
 
   @override
@@ -175,6 +176,7 @@ class FallbackSessionBackend implements SessionBackend {
       instructions: systemInstruction,
     );
     final controller = StreamController<String>();
+    _activeController = controller;
     _activeStream = source.listen(
       controller.add,
       onError: controller.addError,
@@ -193,6 +195,7 @@ class FallbackSessionBackend implements SessionBackend {
     } finally {
       await _activeStream?.cancel();
       _activeStream = null;
+      _activeController = null;
     }
   }
 
@@ -212,6 +215,12 @@ class FallbackSessionBackend implements SessionBackend {
   Future<void> stop() async {
     _cancelled = true;
     await _activeStream?.cancel();
+    _activeStream = null;
+    final controller = _activeController;
+    if (controller != null && !controller.isClosed) {
+      await controller.close();
+    }
+    _activeController = null;
   }
 
   @override

@@ -84,16 +84,33 @@ class RagIndex {
   }) async {
     final chunks = chunkText(text, maxChars: chunkChars, overlap: chunkOverlap);
     final vectors = await embedder.embedBatch(chunks);
-    store.removeDocument(id);
-    for (var i = 0; i < chunks.length; i++) {
-      store.upsert(
-        VectorRecord(
-          id: '$id#$i',
-          text: chunks[i],
-          vector: vectors[i],
-          metadata: {...metadata, 'documentId': id, 'chunk': i},
-        ),
+    if (vectors.length != chunks.length) {
+      throw StateError(
+        'embedBatch returned ${vectors.length} vectors for '
+        '${chunks.length} chunks.',
       );
+    }
+    final previous = store.records
+        .where((r) => r.id == id || r.id.startsWith('$id#'))
+        .toList(growable: false);
+    store.removeDocument(id);
+    try {
+      for (var i = 0; i < chunks.length; i++) {
+        store.upsert(
+          VectorRecord(
+            id: '$id#$i',
+            text: chunks[i],
+            vector: vectors[i],
+            metadata: {...metadata, 'documentId': id, 'chunk': i},
+          ),
+        );
+      }
+    } catch (_) {
+      store.removeDocument(id);
+      for (final record in previous) {
+        store.upsert(record);
+      }
+      rethrow;
     }
     return chunks.length;
   }

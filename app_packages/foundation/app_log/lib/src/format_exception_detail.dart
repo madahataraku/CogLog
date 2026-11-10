@@ -1,3 +1,5 @@
+import 'exception_with_cause.dart';
+
 /// [error] の実行時型名とメッセージ、cause 連鎖を診断用文字列にする。
 ///
 /// Example:
@@ -31,14 +33,8 @@ String _one(Object error) {
 }
 
 Object? _causeOf(Object error) {
-  try {
-    final dynamic value = error;
-    final cause = value.cause;
-    if (cause is Object) {
-      return cause;
-    }
-  } on Object {
-    // cause を持たない型は無視する。
+  if (error is ExceptionWithCause) {
+    return error.cause;
   }
   return null;
 }

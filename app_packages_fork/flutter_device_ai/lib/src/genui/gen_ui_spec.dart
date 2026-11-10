@@ -26,6 +26,9 @@ class GenUiBlockTypes {
     'note',
   ];
 
+  static List<Object?> _list(Object? value) =>
+      value is List ? List<Object?>.from(value) : const [];
+
   /// Normalises one raw block. Returns `null` when it cannot be rendered.
   static Map<String, dynamic>? sanitize(Object? raw) {
     if (raw is! Map) return null;
@@ -64,7 +67,7 @@ class GenUiBlockTypes {
         };
       case 'checklist':
         final items = <Map<String, dynamic>>[];
-        for (final item in block['items'] as List? ?? const []) {
+        for (final item in _list(block['items'])) {
           if (item is Map) {
             final title = item['title']?.toString() ?? '';
             if (title.isNotEmpty) {
@@ -80,7 +83,7 @@ class GenUiBlockTypes {
         return items.isEmpty ? null : {'type': type, 'items': items};
       case 'list':
         final items = [
-          for (final i in block['items'] as List? ?? const [])
+          for (final i in _list(block['items']))
             if (i != null && i.toString().isNotEmpty) i.toString(),
         ];
         if (items.isEmpty) return null;
@@ -91,7 +94,7 @@ class GenUiBlockTypes {
         };
       case 'steps':
         final items = <Map<String, dynamic>>[];
-        for (final item in block['items'] as List? ?? const []) {
+        for (final item in _list(block['items'])) {
           if (item is Map && (item['title']?.toString() ?? '').isNotEmpty) {
             items.add({
               'title': item['title'].toString(),
@@ -103,11 +106,9 @@ class GenUiBlockTypes {
         }
         return items.isEmpty ? null : {'type': type, 'items': items};
       case 'table':
-        final columns = [
-          for (final c in block['columns'] as List? ?? const []) c.toString(),
-        ];
+        final columns = [for (final c in _list(block['columns'])) c.toString()];
         final rows = <List<String>>[];
-        for (final r in block['rows'] as List? ?? const []) {
+        for (final r in _list(block['rows'])) {
           if (r is! List) continue;
           // Small models return ragged rows; pad or trim to the header width.
           rows.add([
@@ -226,18 +227,22 @@ class GenUiModuleSpec {
   /// Returns `null` when nothing renderable remains.
   static GenUiModuleSpec? tryFromJson(Map<String, dynamic> json) {
     final blocks = <Map<String, dynamic>>[];
-    for (final raw in json['blocks'] as List? ?? const []) {
+    for (final raw in GenUiBlockTypes._list(json['blocks'])) {
       final clean = GenUiBlockTypes.sanitize(raw);
       if (clean != null) blocks.add(clean);
     }
     if (blocks.isEmpty) return null;
+    final title = json['title'];
+    final icon = json['icon'];
+    final tone = json['tone'];
+    final blurb = json['blurb'];
     return GenUiModuleSpec(
-      title: (json['title'] as String?)?.trim().isNotEmpty == true
-          ? json['title'] as String
+      title: title is String && title.trim().isNotEmpty
+          ? title
           : 'Untitled module',
-      icon: json['icon'] as String? ?? 'sparkles',
-      tone: json['tone'] as String? ?? 'neutral',
-      blurb: json['blurb'] as String? ?? '',
+      icon: icon is String ? icon : 'sparkles',
+      tone: tone is String ? tone : 'neutral',
+      blurb: blurb is String ? blurb : '',
       blocks: blocks,
     );
   }
