@@ -13,7 +13,7 @@ import com.google.mlkit.genai.common.DownloadStatus
 import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.common.GenAiException
 import com.google.mlkit.genai.prompt.GenerateContentRequest
-import com.google.mlkit.genai.prompt.Generation
+import com.google.mlkit.genai.prompt.GenerateContentResponse
 import com.google.mlkit.genai.prompt.GenerativeModel
 import com.google.mlkit.genai.prompt.ImagePart
 import com.google.mlkit.genai.prompt.PromptPrefix
@@ -51,7 +51,6 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
     private val main = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-    private var model: GenerativeModel? = null
     private val sessions = mutableMapOf<String, Conversation>()
 
     private class Turn(val role: String, val text: String)
@@ -65,9 +64,9 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     companion object {
         private const val AICORE_PACKAGE = "com.google.android.aicore"
-        /** AICore バインド直後の checkStatus NPE を避けるための待ち時間。 */
-        private const val STATUS_RETRY_DELAY_MS = 200L
-        private const val STATUS_RETRY_COUNT = 3
+        /** First checkStatus must wait after construction (mlkit#1071). */
+        private const val MIN_CLIENT_AGE_BEFORE_STATUS_MS = 2_000L
+        private val STATUS_RETRY_DELAYS_MS = longArrayOf(1_000L, 2_000L, 4_000L)
         private const val STACK_FRAME_LIMIT = 8
         private const val THROWABLE_TEXT_LIMIT = 1500
     }
@@ -103,8 +102,8 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             }
         })
 
-        // AICore のサービスバインドは初回が遅い。診断の直前生成を避ける。
-        warmClient()
+        // ContentProvider でも温めるが、エンジン再アタッチ時の保険として再実行する。
+        SharedGenerativeModel.warm()
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -112,25 +111,14 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         eventChannel.setStreamHandler(null)
         downloadChannel.setStreamHandler(null)
         scope.cancel()
-        runCatching { model?.close() }
-        model = null
         sessions.clear()
         context = null
+        // Do not close SharedGenerativeModel: recreating it reintroduces mlkit#1071.
     }
 
     // --- helpers ----------------------------------------------------------------
 
-    private fun client(): GenerativeModel = model ?: Generation.getClient().also { model = it }
-
-    /** AICore クライアントを先に作り、初回 checkStatus のレースを緩和する。 */
-    private fun warmClient() {
-        runCatching { client() }
-    }
-
-    private fun resetClient() {
-        runCatching { model?.close() }
-        model = null
-    }
+    private fun client(): GenerativeModel = SharedGenerativeModel.get()
 
     private fun aiCorePackageInfo(): android.content.pm.PackageInfo? {
         val ctx = context ?: return null
@@ -163,25 +151,42 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         mapOf("status" to status, "reason" to reason, "message" to message)
 
     /**
-     * AICore バインド直後の raw NPE を待ち＋クライアント再生成で避ける。
-     * 既知の genai-prompt / AICore 初期化レース向け。
+     * Waits until the shared client is old enough, then retries checkStatus on
+     * raw NPE without recreating the client (recreate worsens mlkit#1071).
      */
     private suspend fun checkStatusWithRetry(): Int {
+        val generative = client()
+        val age = SharedGenerativeModel.ageMs()
+        if (age < MIN_CLIENT_AGE_BEFORE_STATUS_MS) {
+            delay(MIN_CLIENT_AGE_BEFORE_STATUS_MS - age)
+        }
         var lastNpe: NullPointerException? = null
-        repeat(STATUS_RETRY_COUNT) { attempt ->
+        for (waitMs in STATUS_RETRY_DELAYS_MS) {
             try {
-                return client().checkStatus()
+                return generative.checkStatus()
             } catch (e: NullPointerException) {
                 lastNpe = e
-                delay(STATUS_RETRY_DELAY_MS * (attempt + 1))
-                if (attempt == STATUS_RETRY_COUNT - 2) {
-                    resetClient()
-                    warmClient()
-                    delay(STATUS_RETRY_DELAY_MS)
-                }
+                delay(waitMs)
             }
         }
         throw lastNpe ?: NullPointerException("checkStatus failed without exception")
+    }
+
+    /** Retries generateContent on the same raw AICore bind NPE. */
+    private suspend fun generateContentWithRetry(
+        request: GenerateContentRequest,
+    ): GenerateContentResponse {
+        val generative = client()
+        var lastNpe: NullPointerException? = null
+        for (waitMs in STATUS_RETRY_DELAYS_MS) {
+            try {
+                return generative.generateContent(request)
+            } catch (e: NullPointerException) {
+                lastNpe = e
+                delay(waitMs)
+            }
+        }
+        throw lastNpe ?: NullPointerException("generateContent failed without exception")
     }
 
     private suspend fun availability(): Map<String, Any> {
@@ -291,7 +296,8 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                         "supportsExactTokenCounts" to usable,
                         "isConfigured" to true,
                         "diagnosticNotes" to
-                            "Android SDK ${Build.VERSION.SDK_INT}, genai-prompt 1.0.0-beta2, ${aiCoreVersionLabel()}"
+                            "Android SDK ${Build.VERSION.SDK_INT}, genai-prompt 1.0.0-beta2, " +
+                            "clientAgeMs=${SharedGenerativeModel.ageMs()}, ${aiCoreVersionLabel()}"
                     )
                 )
             }
@@ -427,7 +433,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         val started = System.currentTimeMillis()
         convo.job = scope.launch(Dispatchers.IO) {
             try {
-                val response = client().generateContent(buildRequest(convo, config))
+                val response = generateContentWithRetry(buildRequest(convo, config))
                 val text = response.candidates.firstOrNull()?.text.orEmpty()
                 commitTurn(convo, text)
                 val payload = mapOf(

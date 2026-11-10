@@ -4,4 +4,12 @@
   <queries>
     <package android:name="com.google.android.aicore" />
   </queries>
+  <application>
+    <!-- Warm Generation.getClient() at process start (mlkit#1071 timing race). -->
+    <provider
+      android:name="dev.flutter_device_ai.FlutterDeviceAiInitProvider"
+      android:authorities="${applicationId}.flutterdeviceai.init"
+      android:exported="false"
+      android:initOrder="100" />
+  </application>
 </manifest>
