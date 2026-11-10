@@ -6,6 +6,7 @@ import 'package:screen_feature_exercise_history_detail/screen_feature_exercise_h
 import 'package:screen_feature_goal_settings/screen_feature_goal_settings.dart';
 import 'package:screen_feature_main/screen_feature_main.dart';
 import 'package:screen_feature_meter_capture/screen_feature_meter_capture.dart';
+import 'package:screen_feature_oss_licenses/screen_feature_oss_licenses.dart';
 import 'package:screen_feature_top/screen_feature_top.dart';
 import 'package:screen_feature_trends/screen_feature_trends.dart';
 import 'package:screen_navigation/screen_navigation.dart';
@@ -54,6 +55,21 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                       path: 'settings',
                       builder: (context, state) => const AppSettingsScreen(),
                       routes: [
+                        GoRoute(
+                          path: 'licenses',
+                          builder: (context, state) =>
+                              const OssLicensesScreen(),
+                          routes: [
+                            GoRoute(
+                              path: 'detail',
+                              builder: (context, state) =>
+                                  OssLicenseDetailScreen(
+                                    packageName:
+                                        state.uri.queryParameters['name'] ?? '',
+                                  ),
+                            ),
+                          ],
+                        ),
                         GoRoute(
                           path: 'debug',
                           builder: (context, state) => const DebugScreen(),
@@ -147,6 +163,33 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   @override
   void openDebug() {
     router.push('/settings/debug');
+  }
+
+  /// OSS ライセンス一覧を積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openOssLicenses();
+  /// ```
+  @override
+  void openOssLicenses() {
+    router.push('/settings/licenses');
+  }
+
+  /// OSS ライセンス詳細を積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openOssLicenseDetail(packageName: 'riverpod');
+  /// ```
+  @override
+  void openOssLicenseDetail({required String packageName}) {
+    router.push(
+      Uri(
+        path: '/settings/licenses/detail',
+        queryParameters: {'name': packageName},
+      ).toString(),
+    );
   }
 
   /// 現在のスタックを 1 つ戻す。

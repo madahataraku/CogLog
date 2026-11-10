@@ -27,7 +27,22 @@ class L10nEn extends L10n {
   String get screen_feature_app_settings_debug_item => 'Debug';
 
   @override
+  String get screen_feature_app_settings_info_loading => '…';
+
+  @override
+  String get screen_feature_app_settings_info_unavailable => '—';
+
+  @override
+  String get screen_feature_app_settings_licenses_item => 'Licenses';
+
+  @override
+  String get screen_feature_app_settings_os_label => 'OS';
+
+  @override
   String get screen_feature_app_settings_title => 'App settings';
+
+  @override
+  String get screen_feature_app_settings_version_label => 'Version';
 
   @override
   String get screen_feature_debug_availability_error_label =>
@@ -355,6 +370,18 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_meter_capture_title => 'Meter record';
+
+  @override
+  String get screen_feature_oss_licenses_back_semantics => 'Back';
+
+  @override
+  String get screen_feature_oss_licenses_detail_title => 'License detail';
+
+  @override
+  String get screen_feature_oss_licenses_empty => 'No licenses to display.';
+
+  @override
+  String get screen_feature_oss_licenses_title => 'Licenses';
 
   @override
   String get screen_feature_top_achievement_title => 'Goal progress';

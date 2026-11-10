@@ -1,0 +1,17 @@
+name: usecase_load_app_runtime_info_impl
+description: LoadAppRuntimeInfoUsecase implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_app_runtime_info: any
+  usecase_load_app_runtime_info: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_app_runtime_info_testing: any
+  test: any

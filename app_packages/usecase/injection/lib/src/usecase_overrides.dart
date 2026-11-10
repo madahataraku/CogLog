@@ -2,12 +2,14 @@ import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
+import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
+import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 import 'package:riverpod/misc.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
@@ -15,12 +17,16 @@ import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_g
 import 'package:usecase_evaluate_daily_goal_auto_update_impl/usecase_evaluate_daily_goal_auto_update_impl.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
+import 'package:usecase_load_app_runtime_info/usecase_load_app_runtime_info.dart';
+import 'package:usecase_load_app_runtime_info_impl/usecase_load_app_runtime_info_impl.dart';
 import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
 import 'package:usecase_load_daily_goal_impl/usecase_load_daily_goal_impl.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 import 'package:usecase_load_exercise_history_detail_impl/usecase_load_exercise_history_detail_impl.dart';
 import 'package:usecase_load_exercise_history_page/usecase_load_exercise_history_page.dart';
 import 'package:usecase_load_exercise_history_page_impl/usecase_load_exercise_history_page_impl.dart';
+import 'package:usecase_load_oss_licenses/usecase_load_oss_licenses.dart';
+import 'package:usecase_load_oss_licenses_impl/usecase_load_oss_licenses_impl.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_load_top_screen_impl/usecase_load_top_screen_impl.dart';
 import 'package:usecase_load_trends/usecase_load_trends.dart';
@@ -115,6 +121,16 @@ List<Override> usecaseOverrides({
   LoadExerciseHistoryDetailUsecase.provider.overrideWith(
     (ref) => LoadExerciseHistoryDetailUsecaseImpl(
       histories: ref.watch(exerciseHistoryRepositoryProvider),
+    ),
+  ),
+  LoadOssLicensesUsecase.provider.overrideWith(
+    (ref) => LoadOssLicensesUsecaseImpl(
+      catalog: ref.watch(OssLicenseCatalog.provider),
+    ),
+  ),
+  LoadAppRuntimeInfoUsecase.provider.overrideWith(
+    (ref) => LoadAppRuntimeInfoUsecaseImpl(
+      reader: ref.watch(AppRuntimeInfoReader.provider),
     ),
   ),
   ObtainMeterPhotoUsecase.provider.overrideWith(

@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 
 import '../strings.dart';
 import '../viewmodel/app_settings_screen_view_model.dart';
+import 'app_settings_screen_providers.dart';
 
 /// アプリ設定の一覧。
 ///
@@ -22,7 +23,7 @@ class AppSettingsScreenBody extends ConsumerWidget {
   /// ```
   const AppSettingsScreenBody({super.key});
 
-  /// 戻るとデバッグ項目を描画する。
+  /// 設定項目とアプリ情報フッターを描画する。
   ///
   /// Example:
   /// ```dart
@@ -31,6 +32,7 @@ class AppSettingsScreenBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(AppSettingsScreenViewModel.provider);
+    final entity = ref.watch(AppSettingsScreenProviders.entity);
     return FScaffold(
       header: FHeader.nested(
         title: Text(strings.screen_feature_app_settings_title),
@@ -46,10 +48,27 @@ class AppSettingsScreenBody extends ConsumerWidget {
           FTileGroup(
             children: [
               FTile(
+                title: Text(strings.screen_feature_app_settings_licenses_item),
+                onPress: viewModel.onOpenOssLicenses,
+              ),
+              FTile(
                 title: Text(strings.screen_feature_app_settings_debug_item),
                 onPress: viewModel.onOpenDebug,
               ),
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(strings.screen_feature_app_settings_version_label),
+                Text(entity.versionText),
+                const SizedBox(height: 12),
+                Text(strings.screen_feature_app_settings_os_label),
+                Text(entity.osText),
+              ],
+            ),
           ),
         ],
       ),
