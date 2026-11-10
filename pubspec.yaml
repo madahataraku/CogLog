@@ -23,6 +23,7 @@ workspace:
   - app_packages/data/repository/top_screen_metric/_testing
   - app_packages/domain/daily_goal
   - app_packages/domain/exercise_history
+  - app_packages/domain/trends
   - app_packages/foundation/app_log
   - app_packages/foundation/metadata
   - app_packages/foundation/resources
