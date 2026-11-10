@@ -835,10 +835,10 @@ abstract class L10n {
   /// **'目標設定で一日あたりの目標を設定しましょう'**
   String get screen_feature_top_unset_prompt;
 
-  /// Phase1プレースホルダ
+  /// グラフ領域のロード中表示
   ///
   /// In ja, this message translates to:
-  /// **'グラフは準備中です'**
+  /// **'読み込み中'**
   String get screen_feature_trends_chart_placeholder;
 
   /// 指標グループ
@@ -858,6 +858,60 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'グループ'**
   String get screen_feature_trends_group_label;
+
+  /// 身体％
+  ///
+  /// In ja, this message translates to:
+  /// **'体脂肪率'**
+  String get screen_feature_trends_metric_body_fat;
+
+  /// 身体 kg 組
+  ///
+  /// In ja, this message translates to:
+  /// **'体重と除脂肪体重'**
+  String get screen_feature_trends_metric_body_kg;
+
+  /// 凡例用の除脂肪体重
+  ///
+  /// In ja, this message translates to:
+  /// **'除脂肪体重'**
+  String get screen_feature_trends_metric_body_lean_mass;
+
+  /// 凡例用の体重
+  ///
+  /// In ja, this message translates to:
+  /// **'体重'**
+  String get screen_feature_trends_metric_body_weight;
+
+  /// 運動指標
+  ///
+  /// In ja, this message translates to:
+  /// **'消費カロリー'**
+  String get screen_feature_trends_metric_calories;
+
+  /// 運動指標
+  ///
+  /// In ja, this message translates to:
+  /// **'走行距離'**
+  String get screen_feature_trends_metric_distance;
+
+  /// 運動指標
+  ///
+  /// In ja, this message translates to:
+  /// **'運動時間'**
+  String get screen_feature_trends_metric_duration;
+
+  /// グループ内の指標選択ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'指標'**
+  String get screen_feature_trends_metric_label;
+
+  /// 永久拒否時に OS 設定を開く
+  ///
+  /// In ja, this message translates to:
+  /// **'設定を開く'**
+  String get screen_feature_trends_open_os_settings;
 
   /// 期間
   ///
@@ -888,6 +942,24 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'期間'**
   String get screen_feature_trends_period_label;
+
+  /// Android 履歴許可の再要求
+  ///
+  /// In ja, this message translates to:
+  /// **'ヘルスの履歴データを許可'**
+  String get screen_feature_trends_request_health_history;
+
+  /// 身体グループの許可リクエスト
+  ///
+  /// In ja, this message translates to:
+  /// **'ヘルスケアを許可'**
+  String get screen_feature_trends_request_health_permission;
+
+  /// 身体指標の再読取
+  ///
+  /// In ja, this message translates to:
+  /// **'再試行'**
+  String get screen_feature_trends_retry_load;
 
   /// 画面タイトル
   ///

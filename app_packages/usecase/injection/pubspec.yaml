@@ -12,6 +12,7 @@ dependencies:
   data_repository_exercise_history: any
   data_repository_top_screen_metric: any
   infra_app_settings: any
+  infra_health_body_metrics: any
   infra_health_workout: any
   infra_meter_photo: any
   infra_meter_reading: any
@@ -32,6 +33,8 @@ dependencies:
   usecase_load_exercise_history_page_impl: any
   usecase_load_top_screen: any
   usecase_load_top_screen_impl: any
+  usecase_load_trends: any
+  usecase_load_trends_impl: any
   usecase_control_meter_in_app_camera: any
   usecase_control_meter_in_app_camera_impl: any
   usecase_obtain_meter_photo: any
@@ -42,6 +45,8 @@ dependencies:
   usecase_open_app_settings_impl: any
   usecase_read_meter_panel: any
   usecase_read_meter_panel_impl: any
+  usecase_request_health_body_permission: any
+  usecase_request_health_body_permission_impl: any
   usecase_save_daily_goal: any
   usecase_save_daily_goal_impl: any
   usecase_save_meter_capture: any

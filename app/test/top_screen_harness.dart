@@ -7,6 +7,8 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
+import 'package:infra_health_body_metrics_testing/infra_health_body_metrics_testing.dart';
 import 'package:infra_injection/infra_injection.dart';
 import 'package:infra_meter_photo_testing/infra_meter_photo_testing.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
@@ -47,9 +49,13 @@ Future<ScreenGraph> pumpTopScreen(
         // Widget テストの既定 OS は Android。本番 DI の FlutterDeviceAi は
         // readiness がチャネル待ちで止まるため、固定 Fake に差し替える。
         // メーター写真も実カメラ初期化で progress が回り続けるため Fake にする。
+        // ヘルス読取もプラグイン未実装のため Unavailable にする。
         ...infraOverrides(
           onDeviceLlm: FakeOnDeviceLlm(available: false),
           meterPhotoSource: FakeMeterPhotoSource(),
+          healthBodyMetricsSource: FakeHealthBodyMetricsSource(
+            status: HealthBodyPermissionStatus.denied,
+          ),
         ),
         ...usecaseOverrides(
           adviceTemplatePicker: const FixedAdviceTemplatePicker(),
