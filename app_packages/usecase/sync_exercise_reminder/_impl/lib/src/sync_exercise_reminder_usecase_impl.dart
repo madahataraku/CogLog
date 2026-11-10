@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
@@ -30,7 +31,7 @@ final class SyncExerciseReminderUsecaseImpl
   ///   notifications: notifications,
   /// );
   /// ```
-  const SyncExerciseReminderUsecaseImpl({
+  SyncExerciseReminderUsecaseImpl({
     required this.settings,
     required this.histories,
     required this.notifications,
@@ -45,6 +46,9 @@ final class SyncExerciseReminderUsecaseImpl
   /// ローカル通知。
   final LocalNotificationGateway notifications;
 
+  /// 設定読取から予約／取消までの直列化キュー。
+  Future<void> _chain = Future<void>.value();
+
   /// OFF・無許可・候補なしなら取り消し、あれば一回予約する。
   ///
   /// Example:
@@ -53,6 +57,21 @@ final class SyncExerciseReminderUsecaseImpl
   /// ```
   @override
   Future<SyncExerciseReminderResult> execute(
+    SyncExerciseReminderRequest request,
+  ) {
+    final gate = Completer<void>();
+    final previous = _chain;
+    _chain = gate.future;
+    return previous.then((_) => _run(request)).whenComplete(gate.complete);
+  }
+
+  /// 設定を読んで予約または取り消す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _run(request);
+  /// ```
+  Future<SyncExerciseReminderResult> _run(
     SyncExerciseReminderRequest request,
   ) async {
     final current = await settings.read();

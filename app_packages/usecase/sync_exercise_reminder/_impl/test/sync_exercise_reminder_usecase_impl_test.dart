@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
+import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
 import 'package:data_repository_notification_settings_testing/data_repository_notification_settings_testing.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:domain_notification_settings/domain_notification_settings.dart';
@@ -116,4 +119,74 @@ void main() {
     expect(result.scheduled, isFalse);
     expect(notifications.scheduled, isNull);
   });
+
+  test('後続の OFF 同期が完了すると予約は残らない', () async {
+    final settings = _GatedNotificationSettingsRepository(
+      initial: const NotificationSettings(enabled: true),
+    );
+    final notifications = FakeLocalNotificationGateway(permissionGranted: true);
+    final usecase = SyncExerciseReminderUsecaseImpl(
+      settings: settings,
+      histories: FixedExerciseHistoryRepository([
+        history(
+          id: '1',
+          at: DateTime(2026, 11, 9, 18),
+          duration: const Duration(hours: 1),
+        ),
+      ]),
+      notifications: notifications,
+    );
+
+    final first = usecase.execute(
+      SyncExerciseReminderRequest(now: DateTime(2026, 11, 10, 8)),
+    );
+    await settings.firstReadStarted.future;
+    await settings.write(const NotificationSettings(enabled: false));
+    final second = usecase.execute(
+      SyncExerciseReminderRequest(now: DateTime(2026, 11, 10, 8)),
+    );
+    settings.releaseFirstRead();
+
+    final results = await Future.wait([first, second]);
+    expect(results[0].scheduled, isTrue);
+    expect(results[1].scheduled, isFalse);
+    expect(notifications.scheduled, isNull);
+  });
+}
+
+/// 最初の read だけ一時停止できる設定リポジトリ。
+final class _GatedNotificationSettingsRepository
+    implements NotificationSettingsRepository {
+  _GatedNotificationSettingsRepository({required NotificationSettings initial})
+    : _current = initial;
+
+  NotificationSettings _current;
+  var _firstRead = true;
+  final firstReadStarted = Completer<void>();
+  final _firstReadGate = Completer<void>();
+
+  void releaseFirstRead() {
+    if (!_firstReadGate.isCompleted) {
+      _firstReadGate.complete();
+    }
+  }
+
+  @override
+  Future<NotificationSettings> read() async {
+    if (_firstRead) {
+      _firstRead = false;
+      final snapshot = _current;
+      if (!firstReadStarted.isCompleted) {
+        firstReadStarted.complete();
+      }
+      await _firstReadGate.future;
+      return snapshot;
+    }
+    return _current;
+  }
+
+  @override
+  Future<void> write(NotificationSettings settings) async {
+    _current = settings;
+  }
 }
