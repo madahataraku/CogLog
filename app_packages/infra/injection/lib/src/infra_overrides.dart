@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_app_settings_mobile/infra_app_settings_mobile.dart';
+import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
+import 'package:infra_health_body_metrics_mobile/infra_health_body_metrics_mobile.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_health_workout_mobile/infra_health_workout_mobile.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
@@ -48,6 +50,18 @@ List<Override> infraOverrides({
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
   ),
+  healthBodyMetricsSourceProvider.overrideWith((ref) {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return HealthPackageBodyMetricsSource();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableHealthBodyMetricsSource();
+    }
+  }),
   appSettingsOpenerProvider.overrideWith(
     (ref) => const AppSettingsPackageOpener(),
   ),

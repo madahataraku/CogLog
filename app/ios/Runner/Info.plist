@@ -6,6 +6,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>メーターパネルを撮影して運動履歴を記録するためにカメラを使います。</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>体重・体脂肪率・除脂肪体重の推移表示に使用します</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>メーターパネル写真を選んで運動履歴を記録するためにフォトライブラリへアクセスします。</string>
 	<key>CFBundleDevelopmentRegion</key>
