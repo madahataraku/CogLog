@@ -64,8 +64,9 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     companion object {
         private const val AICORE_PACKAGE = "com.google.android.aicore"
-        /** First checkStatus must wait after construction (mlkit#1071). */
-        private const val MIN_CLIENT_AGE_BEFORE_STATUS_MS = 2_000L
+        /** Settle time after process mark / client create before checkStatus (mlkit#1071). */
+        private const val MIN_SETTLE_BEFORE_STATUS_MS = 2_000L
+        private val CLIENT_RETRY_DELAYS_MS = longArrayOf(500L, 1_000L, 2_000L)
         private val STATUS_RETRY_DELAYS_MS = longArrayOf(1_000L, 2_000L, 4_000L)
         private const val STACK_FRAME_LIMIT = 8
         private const val THROWABLE_TEXT_LIMIT = 1500
@@ -108,7 +109,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
         })
 
         // ContentProvider でも温めるが、エンジン再アタッチ時の保険として再実行する。
-        SharedGenerativeModel.warm()
+        SharedGenerativeModel.warm(binding.applicationContext)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -123,7 +124,25 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
 
     // --- helpers ----------------------------------------------------------------
 
-    private fun client(): GenerativeModel = SharedGenerativeModel.get()
+    private fun requireAppContext(): Context =
+        context ?: throw IllegalStateException("FlutterDeviceAiPlugin is not attached")
+
+    private fun client(): GenerativeModel = SharedGenerativeModel.get(requireAppContext())
+
+    /** Retries [Generation.getClient] after MlKit init; records failures in diagnostics. */
+    private suspend fun clientWithRetry(): GenerativeModel {
+        if (SharedGenerativeModel.isReady()) return client()
+        var last: Throwable? = null
+        for ((index, waitMs) in CLIENT_RETRY_DELAYS_MS.withIndex()) {
+            try {
+                return client()
+            } catch (e: Throwable) {
+                last = e
+                if (index < CLIENT_RETRY_DELAYS_MS.lastIndex) delay(waitMs)
+            }
+        }
+        throw last ?: IllegalStateException("Generation.getClient failed without exception")
+    }
 
     private fun aiCorePackageInfo(): android.content.pm.PackageInfo? {
         val ctx = context ?: return null
@@ -155,16 +174,25 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
     private fun availabilityMap(status: String, reason: String, message: String) =
         mapOf("status" to status, "reason" to reason, "message" to message)
 
+    /** Waits until process/client settle time has elapsed (mlkit#1071). */
+    private suspend fun awaitSettle() {
+        val processAge = SharedGenerativeModel.processAgeMs()
+        if (processAge in 1 until MIN_SETTLE_BEFORE_STATUS_MS) {
+            delay(MIN_SETTLE_BEFORE_STATUS_MS - processAge)
+        }
+        val clientAge = SharedGenerativeModel.ageMs()
+        if (clientAge in 1 until MIN_SETTLE_BEFORE_STATUS_MS) {
+            delay(MIN_SETTLE_BEFORE_STATUS_MS - clientAge)
+        }
+    }
+
     /**
-     * Waits until the shared client is old enough, then retries checkStatus on
-     * raw NPE without recreating the client (recreate worsens mlkit#1071).
+     * Ensures the client exists (with MlKit init + retries), settles, then retries
+     * checkStatus on raw NPE without recreating the client.
      */
     private suspend fun checkStatusWithRetry(): Int {
-        val generative = client()
-        val age = SharedGenerativeModel.ageMs()
-        if (age < MIN_CLIENT_AGE_BEFORE_STATUS_MS) {
-            delay(MIN_CLIENT_AGE_BEFORE_STATUS_MS - age)
-        }
+        val generative = clientWithRetry()
+        awaitSettle()
         var lastNpe: NullPointerException? = null
         for ((index, waitMs) in STATUS_RETRY_DELAYS_MS.withIndex()) {
             try {
@@ -181,7 +209,8 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
     private suspend fun generateContentWithRetry(
         request: GenerateContentRequest,
     ): GenerateContentResponse {
-        val generative = client()
+        val generative = clientWithRetry()
+        awaitSettle()
         var lastNpe: NullPointerException? = null
         for ((index, waitMs) in STATUS_RETRY_DELAYS_MS.withIndex()) {
             try {
@@ -300,9 +329,15 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
                         "supportsPlayStoreRedirect" to true,
                         "supportsExactTokenCounts" to usable,
                         "isConfigured" to true,
-                        "diagnosticNotes" to
-                            "Android SDK ${Build.VERSION.SDK_INT}, genai-prompt 1.0.0-beta2, " +
-                            "clientAgeMs=${SharedGenerativeModel.ageMs()}, ${aiCoreVersionLabel()}"
+                        "diagnosticNotes" to buildString {
+                            append("Android SDK ${Build.VERSION.SDK_INT}")
+                            append(", genai-prompt 1.0.0-beta2")
+                            append(", modelReady=${SharedGenerativeModel.isReady()}")
+                            append(", clientAgeMs=${SharedGenerativeModel.ageMs()}")
+                            append(", processAgeMs=${SharedGenerativeModel.processAgeMs()}")
+                            SharedGenerativeModel.lastError?.let { append(", warmError=$it") }
+                            append(", ${aiCoreVersionLabel()}")
+                        }
                     )
                 )
             }

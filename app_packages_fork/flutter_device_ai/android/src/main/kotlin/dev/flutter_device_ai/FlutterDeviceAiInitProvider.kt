@@ -4,17 +4,23 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
+import com.google.mlkit.common.MlKit
 
 /**
- * Creates the shared [GenerativeModel] during app process start, before Flutter
- * attaches plugins, so AICore has time to bind before the first status check.
+ * Marks process start and initializes ML Kit during app startup, before Flutter
+ * attaches plugins. Defers [Generation.getClient] warm to a background attempt
+ * so MlKitContext is ready (mlkit#1071 / MlKitContext init).
  *
  * Manifest `initOrder` must be lower than ML Kit's `MlKitInitProvider` (99)
- * so that provider runs first.
+ * so that provider runs first when present.
  */
 class FlutterDeviceAiInitProvider : ContentProvider() {
     override fun onCreate(): Boolean {
-        SharedGenerativeModel.warm()
+        SharedGenerativeModel.markProcessStart()
+        val ctx = context?.applicationContext ?: return true
+        runCatching { MlKit.initialize(ctx) }
+        // Warm after ML Kit init; failures are kept in SharedGenerativeModel.lastError.
+        SharedGenerativeModel.warm(ctx)
         return true
     }
 
