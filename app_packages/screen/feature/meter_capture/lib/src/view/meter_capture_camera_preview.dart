@@ -3,6 +3,9 @@ import 'package:meta/meta.dart';
 
 /// アプリ内カメラのプレビュー枠。
 ///
+/// 与えられた領域を [aspectRatio]（幅÷高さ）を保ったまま全面で埋め、
+/// はみ出しは中央基準で切り取る。
+///
 /// Example:
 /// ```dart
 /// MeterCaptureCameraPreview(
@@ -29,7 +32,7 @@ class MeterCaptureCameraPreview extends StatelessWidget {
     super.key,
   });
 
-  /// プレビュー縦横比。
+  /// 表示上のプレビュー縦横比（幅 ÷ 高さ）。
   final double aspectRatio;
 
   /// Usecase 経由のライブプレビュー。
@@ -55,8 +58,37 @@ class MeterCaptureCameraPreview extends StatelessWidget {
         child: SizedBox.expand(),
       );
     }
-    return Center(
-      child: AspectRatio(aspectRatio: aspectRatio, child: preview),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final ratio = aspectRatio > 0 ? aspectRatio : (3 / 4);
+        if (!constraints.hasBoundedWidth || !constraints.hasBoundedHeight) {
+          return Center(
+            child: AspectRatio(aspectRatio: ratio, child: preview),
+          );
+        }
+        final maxWidth = constraints.maxWidth;
+        final maxHeight = constraints.maxHeight;
+        var width = maxWidth;
+        var height = maxWidth / ratio;
+        if (height < maxHeight) {
+          height = maxHeight;
+          width = maxHeight * ratio;
+        }
+        return ClipRect(
+          child: SizedBox(
+            width: maxWidth,
+            height: maxHeight,
+            child: OverflowBox(
+              minWidth: width,
+              maxWidth: width,
+              minHeight: height,
+              maxHeight: height,
+              alignment: Alignment.center,
+              child: SizedBox(width: width, height: height, child: preview),
+            ),
+          ),
+        );
+      },
     );
   }
 }
