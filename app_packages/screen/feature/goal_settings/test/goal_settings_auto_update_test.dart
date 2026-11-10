@@ -146,8 +146,10 @@ void main() {
       ),
     ]) {
       expect(
-        DailyGoalAutoUpdate.apply(original, DailyGoalAutoUpdateLevel.challenging)
-            .sameAs(original),
+        DailyGoalAutoUpdate.apply(
+          original,
+          DailyGoalAutoUpdateLevel.challenging,
+        ).sameAs(original),
         isTrue,
       );
     }

@@ -275,10 +275,7 @@ void main() {
         );
       });
       final save = _Save(
-        result: SaveMeterCaptureResult(
-          outcome: outcome,
-          goalAutoUpdated: true,
-        ),
+        result: SaveMeterCaptureResult(outcome: outcome, goalAutoUpdated: true),
       );
       final result = await OnSaveMeterCaptureDelegate(
         state: state,

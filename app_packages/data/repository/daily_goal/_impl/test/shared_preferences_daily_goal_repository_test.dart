@@ -202,7 +202,10 @@ void main() {
       DailyGoalAutoUpdateSettings.defaults,
     );
     for (final suffix in ['enabled_on', 'streak_epoch', 'last_applied']) {
-      expect(preferences.containsKey('daily_goal_auto_update_$suffix'), isFalse);
+      expect(
+        preferences.containsKey('daily_goal_auto_update_$suffix'),
+        isFalse,
+      );
     }
     expect((await repository.readAutoUpdateSettings()).enabled, isFalse);
   });
@@ -235,5 +238,4 @@ void main() {
     expect(settings.level, DailyGoalAutoUpdateLevel.normal);
     expect(settings.enabledOnLocalDate, isNull);
   });
-
 }
