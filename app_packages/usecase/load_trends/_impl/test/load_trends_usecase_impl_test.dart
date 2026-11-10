@@ -139,6 +139,62 @@ void main() {
     expect(result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points, isEmpty);
   });
 
+  test('運動グループかつ granted でも health.read を呼ばない', () async {
+    final health = FakeHealthBodyMetricsSource(
+      status: HealthBodyPermissionStatus.granted,
+      samples: [
+        HealthBodySample(
+          kind: HealthBodyMetricKind.weightKg,
+          at: DateTime(2026, 11, 10, 8),
+          value: 70,
+        ),
+      ],
+    );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: health,
+    ).execute(
+      LoadTrendsRequest(
+        now: now,
+        period: TrendsPeriodKind.days30,
+        groupIsBody: false,
+      ),
+    );
+
+    expect(health.readCallCount, 0);
+    expect(result.healthPermission, LoadTrendsHealthPermission.granted);
+    expect(result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points, isEmpty);
+  });
+
+  test('unknown でも身体グループなら読取を試す', () async {
+    final health = FakeHealthBodyMetricsSource(
+      status: HealthBodyPermissionStatus.unknown,
+      samples: [
+        HealthBodySample(
+          kind: HealthBodyMetricKind.weightKg,
+          at: DateTime(2026, 11, 10, 8),
+          value: 71,
+        ),
+      ],
+    );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: health,
+    ).execute(
+      LoadTrendsRequest(
+        now: now,
+        period: TrendsPeriodKind.days30,
+        groupIsBody: true,
+      ),
+    );
+
+    expect(health.readCallCount, 1);
+    expect(
+      result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points.single.value,
+      71,
+    );
+  });
+
   test('granted なら身体の最終値を点にする', () async {
     final result =
         await LoadTrendsUsecaseImpl(

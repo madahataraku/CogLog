@@ -87,8 +87,14 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
         bodyReadFailed: true,
       );
     }
-    if (healthPermission != LoadTrendsHealthPermission.granted ||
-        buckets.isEmpty) {
+    // 運動グループでは身体を読まない。iOS は READ が unknown のままなので、
+    // 身体グループでは granted / unknown のとき読取を試す。
+    final canAttemptBodyRead =
+        request.groupIsBody &&
+        buckets.isNotEmpty &&
+        (healthPermission == LoadTrendsHealthPermission.granted ||
+            healthPermission == LoadTrendsHealthPermission.unknown);
+    if (!canAttemptBodyRead) {
       return LoadTrendsResult(
         buckets: buckets,
         exerciseSeries: exerciseSeries,

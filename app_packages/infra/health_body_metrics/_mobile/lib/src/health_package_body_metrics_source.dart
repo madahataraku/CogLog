@@ -38,9 +38,6 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   final Health _health;
   var _configured = false;
 
-  /// iOS は READ の真偽を開示しないため、要求済みなら granted とみなす。
-  var _authorizationRequested = false;
-
   /// プラグインを一度だけ構成する。
   Future<void> _ensureConfigured() async {
     if (_configured) {
@@ -51,6 +48,9 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   }
 
   /// [hasPermissions] の結果を [HealthBodyPermissionStatus] へ写す。
+  ///
+  /// iOS の READ は `null`（unknown）になり得る。呼び出し側は unknown でも
+  /// 読取を試し、空結果を「データなし／未許可」として扱う。
   HealthBodyPermissionStatus _mapHasPermissions(bool? granted) {
     if (granted == true) {
       return HealthBodyPermissionStatus.granted;
@@ -71,12 +71,6 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
   Future<HealthBodyPermissionStatus> permissionStatus() async {
     try {
       await _ensureConfigured();
-      if (Platform.isIOS) {
-        if (!_authorizationRequested) {
-          return HealthBodyPermissionStatus.unknown;
-        }
-        return HealthBodyPermissionStatus.granted;
-      }
       final granted = await _health.hasPermissions(_types);
       return _mapHasPermissions(granted);
     } catch (_) {
@@ -84,7 +78,7 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
     }
   }
 
-  /// 3 指標まとめて許可を求める。iOS は要求後に optimistic granted。
+  /// 3 指標まとめて許可を求める。iOS は再実行しても安全で、結果は unknown になり得る。
   ///
   /// Example:
   /// ```dart
@@ -95,8 +89,7 @@ final class HealthPackageBodyMetricsSource implements HealthBodyMetricsSource {
     await _ensureConfigured();
     if (Platform.isIOS) {
       await _health.requestAuthorization(_types);
-      _authorizationRequested = true;
-      return HealthBodyPermissionStatus.granted;
+      return _mapHasPermissions(await _health.hasPermissions(_types));
     }
 
     final before = _mapHasPermissions(await _health.hasPermissions(_types));
