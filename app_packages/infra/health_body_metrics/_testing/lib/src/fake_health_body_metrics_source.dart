@@ -94,7 +94,9 @@ final class FakeHealthBodyMetricsSource implements HealthBodyMetricsSource {
     if (throwOnRead) {
       throw const HealthBodyMetricsReadException('fake read failure');
     }
-    if (status != HealthBodyPermissionStatus.granted) {
+    // iOS と同様、unknown でも読取を試し、denied 系だけ空にする。
+    if (status == HealthBodyPermissionStatus.denied ||
+        status == HealthBodyPermissionStatus.permanentlyDenied) {
       return const [];
     }
     return [
