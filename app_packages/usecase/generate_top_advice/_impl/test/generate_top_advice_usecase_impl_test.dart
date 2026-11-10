@@ -1,3 +1,4 @@
+import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
 import 'package:test/test.dart';
@@ -27,9 +28,13 @@ const _templateC = AdviceTemplate(text: '定型C', tone: AdviceTone.fun);
 
 GenerateTopAdviceRequest request({
   List<ExerciseHistory> histories = const [],
+  DailyGoal goal = DailyGoal.unset,
+  int consecutiveExerciseDays = 0,
 }) => GenerateTopAdviceRequest(
   histories: histories,
   locale: 'ja',
+  goal: goal,
+  consecutiveExerciseDays: consecutiveExerciseDays,
   noExercise: const AdviceTemplate(
     text: '今日はまだ運動していません',
     tone: AdviceTone.realized,
@@ -57,7 +62,11 @@ void main() {
           llm: llm,
           picker: const FixedAdviceTemplatePicker(),
         ).execute(
-          request(histories: [ride(recordedAt: DateTime(2026, 11, 5, 12))]),
+          request(
+            histories: [ride(recordedAt: DateTime(2026, 11, 5, 12))],
+            goal: const DailyGoal(caloriesKcal: 200, distanceKm: 5),
+            consecutiveExerciseDays: 3,
+          ),
         );
 
     expect(result.advice, 'よく動けた');
@@ -66,12 +75,34 @@ void main() {
     expect(llm.lastPrompt, contains('locale=ja'));
     expect(llm.lastPrompt, contains('distanceKm=2.0'));
     expect(llm.lastPrompt, contains('caloriesKcal=80.0'));
+    expect(llm.lastPrompt, contains('goalCaloriesKcal=200.0'));
+    expect(llm.lastPrompt, contains('goalDistanceKm=5.0'));
+    expect(llm.lastPrompt, isNot(contains('goalDurationMinutes=')));
+    expect(llm.lastPrompt, contains('consecutiveExerciseDays=3'));
+    expect(llm.lastPrompt, contains('Compare today totals with any set goals'));
+    expect(
+      llm.lastPrompt,
+      contains('Praise the consecutive exercise-day streak'),
+    );
+    expect(llm.lastPrompt, contains('at most about 150 characters'));
     expect(llm.lastPrompt, contains('fun, confused, happy, realized'));
     expect(llm.lastPrompt, contains('TONE='));
     expect(
       llm.lastPrompt,
       isNot(contains('Reply in the language of locale=ja')),
     );
+  });
+
+  test('目標未設定のとき goal=unset を送る', () async {
+    final llm = FakeOnDeviceLlm(response: 'TONE=fun\nADVICE=ok');
+    await GenerateTopAdviceUsecaseImpl(
+      llm: llm,
+      picker: const FixedAdviceTemplatePicker(),
+    ).execute(
+      request(histories: [ride(recordedAt: DateTime(2026, 11, 5, 12))]),
+    );
+    expect(llm.lastPrompt, contains('goal=unset'));
+    expect(llm.lastPrompt, contains('consecutiveExerciseDays=0'));
   });
 
   test('LLM 失敗時は定型を返す', () async {

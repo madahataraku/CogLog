@@ -98,6 +98,7 @@ const _loadResult = LoadTopScreenResult(
   month: PeriodAggregate.empty,
   goal: DailyGoal.unset,
   todayHistories: [],
+  consecutiveExerciseDays: 0,
 );
 
 void main() {

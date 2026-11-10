@@ -93,6 +93,8 @@ final class OnInitializeDelegate {
         GenerateTopAdviceRequest(
           histories: result.todayHistories,
           locale: locale,
+          goal: result.goal,
+          consecutiveExerciseDays: result.consecutiveExerciseDays,
           noExercise: noExercise,
           fallbackTemplates: fallbackTemplates,
         ),

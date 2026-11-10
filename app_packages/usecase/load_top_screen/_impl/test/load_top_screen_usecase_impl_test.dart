@@ -43,6 +43,7 @@ void main() {
     expect(result.month.hasHistory, isFalse);
     expect(result.goal.duration, isNull);
     expect(result.todayHistories, isEmpty);
+    expect(result.consecutiveExerciseDays, 0);
   });
 
   test('11月5日、11月1日、10月31日をそれぞれの期間へ入れる', () async {
@@ -67,6 +68,27 @@ void main() {
     expect(result.month.count, 2);
     expect(result.todayHistories, hasLength(1));
     expect(result.todayHistories.single.recordedAt, DateTime(2026, 11, 5, 12));
+    expect(result.consecutiveExerciseDays, 1);
+  });
+
+  test('連続した日の履歴は consecutiveExerciseDays に数える', () async {
+    final result = await LoadTopScreenUsecaseImpl(
+      histories: FixedExerciseHistoryRepository([
+        ride(recordedAt: DateTime(2026, 11, 5, 12)),
+        ride(
+          recordedAt: DateTime(2026, 11, 4, 12),
+          id: '22222222-2222-4222-8222-222222222222',
+        ),
+        ride(
+          recordedAt: DateTime(2026, 11, 2, 12),
+          id: '33333333-3333-4333-8333-333333333333',
+        ),
+      ]),
+      metrics: MemoryTopScreenMetricRepository(),
+      goals: MemoryDailyGoalRepository(),
+    ).execute(LoadTopScreenRequest(now: now));
+
+    expect(result.consecutiveExerciseDays, 2);
   });
 
   test('1.14 km が 2 件の表記は 2.3', () async {
@@ -154,5 +176,6 @@ void main() {
     expect(swapped.goal.caloriesKcal, 100);
     expect(swapped.todayHistories, hasLength(1));
     expect(swapped.today, result.today);
+    expect(swapped.consecutiveExerciseDays, result.consecutiveExerciseDays);
   });
 }
