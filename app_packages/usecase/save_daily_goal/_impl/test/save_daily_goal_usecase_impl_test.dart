@@ -1,3 +1,4 @@
+import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_daily_goal_testing/data_repository_daily_goal_testing.dart';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:test/test.dart';
@@ -95,9 +96,26 @@ void main() {
 }
 
 /// [write] だけ失敗する Repository。
-final class _FailingGoalWriteRepository extends MemoryDailyGoalRepository {
+final class _FailingGoalWriteRepository implements DailyGoalRepository {
+  DailyGoal _goal = DailyGoal.unset;
+  DailyGoalAutoUpdateSettings _autoUpdate = DailyGoalAutoUpdateSettings.defaults;
+
+  @override
+  Future<DailyGoal> read() async => _goal;
+
   @override
   Future<void> write(DailyGoal goal) async {
     throw StateError('goal write failed');
+  }
+
+  @override
+  Future<DailyGoalAutoUpdateSettings> readAutoUpdateSettings() async =>
+      _autoUpdate;
+
+  @override
+  Future<void> writeAutoUpdateSettings(
+    DailyGoalAutoUpdateSettings settings,
+  ) async {
+    _autoUpdate = settings;
   }
 }
