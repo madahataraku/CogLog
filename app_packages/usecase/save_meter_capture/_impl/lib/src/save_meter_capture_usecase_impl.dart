@@ -1,12 +1,17 @@
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
+import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 
 /// 登録可能条件を満たすときだけ永続化し、ヘルス失敗でも成功とする。
 ///
 /// Example:
 /// ```dart
-/// SaveMeterCaptureUsecaseImpl(histories: histories, health: health).execute(
+/// SaveMeterCaptureUsecaseImpl(
+///   histories: histories,
+///   health: health,
+///   evaluateAutoUpdate: evaluateAutoUpdate,
+/// ).execute(
 ///   SaveMeterCaptureRequest(
 ///     creationStartedAt: DateTime.timestamp(),
 ///     capturedAt: DateTime.timestamp(),
@@ -21,15 +26,20 @@ import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 /// );
 /// ```
 final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
-  /// [histories] と [health] を使う実装を作る。
+  /// [histories]・[health]・[evaluateAutoUpdate] を使う実装を作る。
   ///
   /// Example:
   /// ```dart
-  /// SaveMeterCaptureUsecaseImpl(histories: histories, health: health);
+  /// SaveMeterCaptureUsecaseImpl(
+  ///   histories: histories,
+  ///   health: health,
+  ///   evaluateAutoUpdate: evaluateAutoUpdate,
+  /// );
   /// ```
   const SaveMeterCaptureUsecaseImpl({
     required this.histories,
     required this.health,
+    required this.evaluateAutoUpdate,
   });
 
   /// 運動履歴の保存先。
@@ -38,7 +48,10 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
   /// ヘルスへのサイクリング書き込み。
   final HealthWorkoutWriter health;
 
-  /// [request] を検証し、作成後にヘルスへ書く。
+  /// 保存後の目標自動更新。
+  final EvaluateDailyGoalAutoUpdateUsecase evaluateAutoUpdate;
+
+  /// [request] を検証し、作成後にヘルスへ書き、自動更新を判定する。
   ///
   /// Example:
   /// ```dart
@@ -80,11 +93,15 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
       );
 
       final healthWriteSucceeded = await _writeHealth(request);
+      final autoUpdate = await evaluateAutoUpdate.execute(
+        EvaluateDailyGoalAutoUpdateRequest(now: DateTime.now()),
+      );
 
       return SaveMeterCaptureResult(
         outcome: SaveMeterCaptureOutcome.success,
         history: history,
         healthWriteSucceeded: healthWriteSucceeded,
+        goalAutoUpdated: autoUpdate.applied,
       );
     } on Object {
       return const SaveMeterCaptureResult(

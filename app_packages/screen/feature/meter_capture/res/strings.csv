@@ -16,3 +16,4 @@ recorded_at,記録日時,Recorded at,記録日時
 back,戻る,Back,2→1
 save,登録,Save,登録ボタン
 save_failed,保存に失敗しました,Failed to save,保存失敗
+goal_auto_updated,目標が自動更新されました,Daily goals were auto-updated,目標自動更新の通知

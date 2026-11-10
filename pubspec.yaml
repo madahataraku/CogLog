@@ -53,6 +53,8 @@ workspace:
   - app_packages/screen/injection
   - app_packages/screen/navigation
   - app_packages/screen/navigation/_go_router
+  - app_packages/usecase/evaluate_daily_goal_auto_update
+  - app_packages/usecase/evaluate_daily_goal_auto_update/_impl
   - app_packages/usecase/diagnose_on_device_llm
   - app_packages/usecase/diagnose_on_device_llm/_impl
   - app_packages/usecase/generate_top_advice

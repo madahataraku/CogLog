@@ -10,7 +10,6 @@ import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_field_cha
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_save_meter_capture_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_screen_state.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_step.dart';
-import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
@@ -59,27 +58,6 @@ final class _Save implements SaveMeterCaptureUsecase {
     calls += 1;
     return result ??
         const SaveMeterCaptureResult(outcome: SaveMeterCaptureOutcome.success);
-  }
-}
-
-final class _Nav implements ScreenNavigation {
-  var homeCalls = 0;
-
-  @override
-  void openExerciseHistoryDetail({required String id}) {}
-
-  @override
-  void openAppSettings() {}
-
-  @override
-  void openDebug() {}
-
-  @override
-  void pop() {}
-
-  @override
-  void goToHomeTab() {
-    homeCalls += 1;
   }
 }
 
@@ -171,7 +149,7 @@ void main() {
     expect(state.state.saveError, isFalse);
   });
 
-  test('D4: save ok で goToHomeTab 1 回', () async {
+  test('D4: save ok で成功結果を返し遷移は呼び出し側', () async {
     final at = DateTime(2026, 11, 8, 12);
     await state.updateWithLock((_, emitter) async {
       await emitter.emit(
@@ -189,23 +167,54 @@ void main() {
       );
     });
     final save = _Save();
-    final nav = _Nav();
 
-    await OnSaveMeterCaptureDelegate(
+    final success = await OnSaveMeterCaptureDelegate(
       state: state,
       saveMeterCaptureUsecase: save,
-      navigation: nav,
     ).execute();
 
     expect(save.calls, 1);
-    expect(nav.homeCalls, 1);
+    expect(success, isNotNull);
+    expect(success!.goalAutoUpdated, isFalse);
     expect(state.state.saveError, isFalse);
     expect(state.state.saving, isFalse);
     expect(state.state.step, MeterCaptureStep.photo);
     expect(state.state.photoBytes, isNull);
   });
 
-  test('saveFailed は saveError を立てホームへ行かない', () async {
+  test('save ok で goalAutoUpdated を成功結果へ写す', () async {
+    final at = DateTime(2026, 11, 8, 12);
+    await state.updateWithLock((_, emitter) async {
+      await emitter.emit(
+        MeterCaptureScreenState(
+          step: MeterCaptureStep.edit,
+          photoBytes: Uint8List.fromList(const [1]),
+          creationStartedAt: at,
+          capturedAt: at,
+          distanceKm: 1,
+          duration: const Duration(minutes: 30),
+          caloriesKcal: 100,
+          averageSpeedKmh: 2,
+          recordedAt: at,
+        ),
+      );
+    });
+    final save = _Save(
+      result: const SaveMeterCaptureResult(
+        outcome: SaveMeterCaptureOutcome.success,
+        goalAutoUpdated: true,
+      ),
+    );
+
+    final success = await OnSaveMeterCaptureDelegate(
+      state: state,
+      saveMeterCaptureUsecase: save,
+    ).execute();
+
+    expect(success?.goalAutoUpdated, isTrue);
+  });
+
+  test('saveFailed は saveError を立て成功結果を返さない', () async {
     final at = DateTime(2026, 11, 8, 12);
     await state.updateWithLock((_, emitter) async {
       await emitter.emit(
@@ -227,31 +236,27 @@ void main() {
         outcome: SaveMeterCaptureOutcome.saveFailed,
       ),
     );
-    final nav = _Nav();
 
-    await OnSaveMeterCaptureDelegate(
+    final success = await OnSaveMeterCaptureDelegate(
       state: state,
       saveMeterCaptureUsecase: save,
-      navigation: nav,
     ).execute();
 
-    expect(nav.homeCalls, 0);
+    expect(success, isNull);
     expect(state.state.saveError, isTrue);
     expect(state.state.step, MeterCaptureStep.edit);
   });
 
   test('canSubmit 未満の save は usecase を呼ばない', () async {
     final save = _Save();
-    final nav = _Nav();
 
-    await OnSaveMeterCaptureDelegate(
+    final success = await OnSaveMeterCaptureDelegate(
       state: state,
       saveMeterCaptureUsecase: save,
-      navigation: nav,
     ).execute();
 
+    expect(success, isNull);
     expect(save.calls, 0);
-    expect(nav.homeCalls, 0);
   });
 
   test('撮影成功で読み取りし edit へ進む', () async {

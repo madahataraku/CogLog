@@ -197,6 +197,26 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_title => '運動履歴';
 
   @override
+  String get screen_feature_goal_settings_auto_update_description =>
+      '連続して目標を達成すると、レベルに応じて目標を上方修正します';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_enabled => '目標の自動更新';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level => '自動更新レベル';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level_challenging =>
+      '挑戦的';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level_normal => 'ふつう';
+
+  @override
+  String get screen_feature_goal_settings_auto_update_level_slow => 'ゆっくり';
+
+  @override
   String get screen_feature_goal_settings_calories_label => '消費カロリー';
 
   @override
@@ -273,6 +293,9 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_meter_capture_duration_seconds => '秒';
+
+  @override
+  String get screen_feature_meter_capture_goal_auto_updated => '目標が自動更新されました';
 
   @override
   String get screen_feature_meter_capture_open_settings => '設定を開く';

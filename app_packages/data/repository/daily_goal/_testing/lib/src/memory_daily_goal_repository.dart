@@ -18,6 +18,8 @@ final class MemoryDailyGoalRepository implements DailyGoalRepository {
   MemoryDailyGoalRepository();
 
   DailyGoal _goal = DailyGoal.unset;
+  DailyGoalAutoUpdateSettings _autoUpdate =
+      DailyGoalAutoUpdateSettings.defaults;
 
   /// まだ書いていなければ [DailyGoal.unset]。
   ///
@@ -37,5 +39,28 @@ final class MemoryDailyGoalRepository implements DailyGoalRepository {
   @override
   Future<void> write(DailyGoal goal) async {
     _goal = goal;
+  }
+
+  /// まだ書いていなければ [DailyGoalAutoUpdateSettings.defaults]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readAutoUpdateSettings();
+  /// ```
+  @override
+  Future<DailyGoalAutoUpdateSettings> readAutoUpdateSettings() async =>
+      _autoUpdate;
+
+  /// [settings] を次の [readAutoUpdateSettings] で返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeAutoUpdateSettings(DailyGoalAutoUpdateSettings.defaults);
+  /// ```
+  @override
+  Future<void> writeAutoUpdateSettings(
+    DailyGoalAutoUpdateSettings settings,
+  ) async {
+    _autoUpdate = settings;
   }
 }

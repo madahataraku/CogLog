@@ -4,6 +4,20 @@ import 'package:test/test.dart';
 import 'package:usecase_save_daily_goal/usecase_save_daily_goal.dart';
 import 'package:usecase_save_daily_goal_impl/usecase_save_daily_goal_impl.dart';
 
+SaveDailyGoalRequest request({
+  required DailyGoal goal,
+  bool enabled = false,
+  DailyGoalAutoUpdateLevel level = DailyGoalAutoUpdateLevel.normal,
+  DateTime? now,
+}) {
+  return SaveDailyGoalRequest(
+    goal: goal,
+    autoUpdateEnabled: enabled,
+    autoUpdateLevel: level,
+    now: now ?? DateTime(2026, 11, 5),
+  );
+}
+
 void main() {
   test('書いた目標を再び読める', () async {
     final goals = MemoryDailyGoalRepository();
@@ -14,11 +28,12 @@ void main() {
     );
 
     final result = await SaveDailyGoalUsecaseImpl(goals: goals)
-        .execute(const SaveDailyGoalRequest(goal: goal));
+        .execute(request(goal: goal));
 
     expect(result.goal.duration, const Duration(minutes: 30));
     expect(result.goal.caloriesKcal, 200);
     expect(result.goal.distanceKm, 0);
+    expect(result.autoUpdate.enabled, isFalse);
 
     final stored = await goals.read();
     expect(stored.duration, const Duration(minutes: 30));
@@ -33,7 +48,7 @@ void main() {
     );
 
     final result = await SaveDailyGoalUsecaseImpl(goals: goals)
-        .execute(const SaveDailyGoalRequest(goal: DailyGoal.unset));
+        .execute(request(goal: DailyGoal.unset));
 
     expect(result.goal.duration, isNull);
     expect(result.goal.caloriesKcal, isNull);
@@ -43,5 +58,22 @@ void main() {
     expect(stored.duration, isNull);
     expect(stored.caloriesKcal, isNull);
     expect(stored.distanceKm, isNull);
+  });
+
+  test('OFF→ON で enabledOn を today にする', () async {
+    final goals = MemoryDailyGoalRepository();
+    final result = await SaveDailyGoalUsecaseImpl(
+      goals: goals,
+    ).execute(request(goal: const DailyGoal(caloriesKcal: 100), enabled: true));
+    expect(result.autoUpdate.enabled, isTrue);
+    expect(result.autoUpdate.enabledOnLocalDate, DateTime(2026, 11, 5));
+  });
+
+  test('目標変更で streakEpoch を today にする', () async {
+    final goals = MemoryDailyGoalRepository();
+    await goals.write(const DailyGoal(caloriesKcal: 50));
+    final result = await SaveDailyGoalUsecaseImpl(goals: goals)
+        .execute(request(goal: const DailyGoal(caloriesKcal: 100)));
+    expect(result.autoUpdate.streakEpochLocalDate, DateTime(2026, 11, 5));
   });
 }
