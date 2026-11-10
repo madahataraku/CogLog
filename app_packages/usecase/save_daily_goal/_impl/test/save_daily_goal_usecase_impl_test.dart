@@ -80,11 +80,20 @@ void main() {
 
   test('目標書き込み失敗時は目標と設定を復元する', () async {
     final goals = _FailingGoalWriteRepository();
-    await goals.writeAutoUpdateSettings(DailyGoalAutoUpdateSettings.defaults);
+    await goals.writeAutoUpdateSettings(
+      const DailyGoalAutoUpdateSettings(
+        enabled: false,
+        level: DailyGoalAutoUpdateLevel.slow,
+      ),
+    );
 
     await expectLater(
       SaveDailyGoalUsecaseImpl(goals: goals).execute(
-        request(goal: const DailyGoal(caloriesKcal: 100), enabled: true),
+        request(
+          goal: const DailyGoal(caloriesKcal: 100),
+          enabled: true,
+          level: DailyGoalAutoUpdateLevel.challenging,
+        ),
       ),
       throwsA(isA<StateError>()),
     );
@@ -92,7 +101,10 @@ void main() {
     final settings = await goals.readAutoUpdateSettings();
     expect(settings.enabled, isFalse);
     expect(settings.enabledOnLocalDate, isNull);
+    expect(settings.level, DailyGoalAutoUpdateLevel.slow);
     expect(goals.writeCallCount, 2);
+    expect(goals.writtenGoals, [DailyGoal.unset]);
+    expect(goals.sawEnabledSettings, isTrue);
   });
 }
 
@@ -104,6 +116,12 @@ final class _FailingGoalWriteRepository implements DailyGoalRepository {
 
   /// [write] が呼ばれた回数。
   int writeCallCount = 0;
+
+  /// 成功した [write] に渡された目標。
+  final List<DailyGoal> writtenGoals = [];
+
+  /// 有効化後の設定が一度でも書かれたか。
+  bool sawEnabledSettings = false;
 
   /// 未設定の目標を返す。
   ///
@@ -126,6 +144,7 @@ final class _FailingGoalWriteRepository implements DailyGoalRepository {
     if (writeCallCount == 1) {
       throw StateError('goal write failed');
     }
+    writtenGoals.add(goal);
   }
 
   /// 保持中の自動更新設定を返す。
@@ -150,6 +169,9 @@ final class _FailingGoalWriteRepository implements DailyGoalRepository {
   Future<void> writeAutoUpdateSettings(
     DailyGoalAutoUpdateSettings settings,
   ) async {
+    if (settings.enabled) {
+      sawEnabledSettings = true;
+    }
     _autoUpdate = settings;
   }
 }
