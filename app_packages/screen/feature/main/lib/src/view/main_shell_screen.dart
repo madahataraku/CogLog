@@ -6,6 +6,7 @@ import '../strings.dart';
 /// ボトムナビゲーションを持つアプリの入れ物。
 ///
 /// go_router には依存しない。タブ切替は [onIndexChange] に任せる。
+/// キーボード表示中はボトムナビを隠し、子へ bottom inset を伝播させない。
 ///
 /// Example:
 /// ```dart
@@ -54,38 +55,46 @@ class MainShellScreen extends StatelessWidget {
   /// ```
   @override
   Widget build(BuildContext context) {
+    final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
     return FScaffold(
       childPad: false,
       scaffoldStyle: .delta(footerDecoration: .value(const BoxDecoration())),
-      footer: FBottomNavigationBar(
-        safeAreaBottom: true,
-        style: .delta(decoration: .value(const BoxDecoration())),
-        index: currentIndex,
-        onChange: onIndexChange,
-        children: [
-          FBottomNavigationBarItem(
-            icon: const Icon(FLucideIcons.house),
-            label: Text(strings.screen_feature_main_nav_home),
-          ),
-          FBottomNavigationBarItem(
-            icon: const Icon(FLucideIcons.camera),
-            label: Text(strings.screen_feature_main_nav_meter_capture),
-          ),
-          FBottomNavigationBarItem(
-            icon: const Icon(FLucideIcons.chartLine),
-            label: Text(strings.screen_feature_main_nav_trends),
-          ),
-          FBottomNavigationBarItem(
-            icon: const Icon(FLucideIcons.history),
-            label: Text(strings.screen_feature_main_nav_exercise_history),
-          ),
-          FBottomNavigationBarItem(
-            icon: const Icon(FLucideIcons.target),
-            label: Text(strings.screen_feature_main_nav_goal_settings),
-          ),
-        ],
+      resizeToAvoidBottomInset: true,
+      footer: keyboardVisible
+          ? null
+          : FBottomNavigationBar(
+              safeAreaBottom: true,
+              style: .delta(decoration: .value(const BoxDecoration())),
+              index: currentIndex,
+              onChange: onIndexChange,
+              children: [
+                FBottomNavigationBarItem(
+                  icon: const Icon(FLucideIcons.house),
+                  label: Text(strings.screen_feature_main_nav_home),
+                ),
+                FBottomNavigationBarItem(
+                  icon: const Icon(FLucideIcons.camera),
+                  label: Text(strings.screen_feature_main_nav_meter_capture),
+                ),
+                FBottomNavigationBarItem(
+                  icon: const Icon(FLucideIcons.chartLine),
+                  label: Text(strings.screen_feature_main_nav_trends),
+                ),
+                FBottomNavigationBarItem(
+                  icon: const Icon(FLucideIcons.history),
+                  label: Text(strings.screen_feature_main_nav_exercise_history),
+                ),
+                FBottomNavigationBarItem(
+                  icon: const Icon(FLucideIcons.target),
+                  label: Text(strings.screen_feature_main_nav_goal_settings),
+                ),
+              ],
+            ),
+      child: MediaQuery.removeViewInsets(
+        context: context,
+        removeBottom: true,
+        child: child,
       ),
-      child: child,
     );
   }
 }

@@ -72,7 +72,7 @@ Future<void> _pumpPanelGolden(
   addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
   tester.platformDispatcher.localesTestValue = const [Locale('ja')];
   addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-  tester.view.physicalSize = const Size(360, 160);
+  tester.view.physicalSize = const Size(360, 200);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);

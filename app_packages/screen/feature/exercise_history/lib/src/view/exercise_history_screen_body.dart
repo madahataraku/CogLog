@@ -161,19 +161,24 @@ class ExerciseHistoryScreenBody extends HookConsumerWidget {
                             );
                           }
                           final item = entity.items[index];
-                          return FTile(
-                            title: Text(item.createdAtText),
-                            subtitle: Text(
-                              '${strings.screen_feature_exercise_history_calories}: '
-                              '${item.caloriesText} '
-                              '${strings.screen_feature_exercise_history_calories_unit}\n'
-                              '${strings.screen_feature_exercise_history_duration}: '
-                              '${item.durationText}\n'
-                              '${strings.screen_feature_exercise_history_distance}: '
-                              '${item.distanceText} '
-                              '${strings.screen_feature_exercise_history_distance_unit}',
+                          return Padding(
+                            padding: index == 0
+                                ? const EdgeInsets.only(top: 8, bottom: 8)
+                                : const EdgeInsets.only(bottom: 8),
+                            child: FTile(
+                              title: Text(item.createdAtText),
+                              subtitle: Text(
+                                '${strings.screen_feature_exercise_history_calories}: '
+                                '${item.caloriesText} '
+                                '${strings.screen_feature_exercise_history_calories_unit}\n'
+                                '${strings.screen_feature_exercise_history_duration}: '
+                                '${item.durationText}\n'
+                                '${strings.screen_feature_exercise_history_distance}: '
+                                '${item.distanceText} '
+                                '${strings.screen_feature_exercise_history_distance_unit}',
+                              ),
+                              onPress: () => viewModel.onTapItem(id: item.id),
                             ),
-                            onPress: () => viewModel.onTapItem(id: item.id),
                           );
                         },
                       ),

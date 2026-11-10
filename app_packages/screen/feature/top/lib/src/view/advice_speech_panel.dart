@@ -45,7 +45,7 @@ class AdviceSpeechPanel extends StatelessWidget {
   /// キャラクター画像の代替テキスト。
   final String semanticsLabel;
 
-  /// 左に吹き出し、右に高さ 96 のキャラクターを並べる。
+  /// 左に吹き出し、右に高さ 144 のキャラクターを並べる。
   ///
   /// Example:
   /// ```dart
@@ -65,7 +65,7 @@ class AdviceSpeechPanel extends StatelessWidget {
     );
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
+      spacing: 4,
       children: [
         Expanded(
           child: _SpeechBubble(
@@ -85,7 +85,7 @@ class AdviceSpeechPanel extends StatelessWidget {
           child: Image.asset(
             'assets/advisor/${tone.name}.png',
             package: 'screen_feature_top',
-            height: 96,
+            height: 144,
             fit: BoxFit.contain,
           ),
         ),
@@ -94,7 +94,7 @@ class AdviceSpeechPanel extends StatelessWidget {
   }
 }
 
-/// 右中央にしっぽが付く吹き出し。
+/// 角丸枠の吹き出し（トゲなし）。
 ///
 /// Example:
 /// ```dart
@@ -105,7 +105,7 @@ class AdviceSpeechPanel extends StatelessWidget {
 /// );
 /// ```
 class _SpeechBubble extends StatelessWidget {
-  /// [child] を角丸枠と右しっぽで包む。
+  /// [child] を角丸枠で包む。
   ///
   /// Example:
   /// ```dart
@@ -130,7 +130,7 @@ class _SpeechBubble extends StatelessWidget {
   /// 本文。
   final Widget child;
 
-  /// しっぽ付き外形の上に本文パディングを載せる。
+  /// 角丸外形の上に本文パディングを載せる。
   ///
   /// Example:
   /// ```dart
@@ -145,14 +145,14 @@ class _SpeechBubble extends StatelessWidget {
     return CustomPaint(
       painter: _SpeechBubblePainter(color: color, borderColor: borderColor),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 18, 10),
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
         child: child,
       ),
     );
   }
 }
 
-/// 角丸矩形と右向き三角形を描く。
+/// 角丸矩形のみを塗る。
 class _SpeechBubblePainter extends CustomPainter {
   /// [color] と [borderColor] で吹き出し外形を塗る。
   ///
@@ -171,7 +171,7 @@ class _SpeechBubblePainter extends CustomPainter {
   /// 枠線。
   final Color borderColor;
 
-  /// 本体と右しっぽの Path を塗りと枠で描く。
+  /// 角丸矩形の Path を塗りと枠で描く。
   ///
   /// Example:
   /// ```dart
@@ -180,17 +180,11 @@ class _SpeechBubblePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     const radius = 12.0;
-    const tail = 8.0;
     final body = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width - tail, size.height),
+      Rect.fromLTWH(0, 0, size.width, size.height),
       const Radius.circular(radius),
     );
-    final path = Path()
-      ..addRRect(body)
-      ..moveTo(size.width - tail, size.height / 2 - 6)
-      ..lineTo(size.width, size.height / 2)
-      ..lineTo(size.width - tail, size.height / 2 + 6)
-      ..close();
+    final path = Path()..addRRect(body);
     canvas.drawPath(path, Paint()..color = color);
     canvas.drawPath(
       path,
