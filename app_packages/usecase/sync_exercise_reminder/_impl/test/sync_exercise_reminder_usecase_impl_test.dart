@@ -5,9 +5,8 @@ import 'package:domain_notification_settings/domain_notification_settings.dart';
 import 'package:infra_local_notification_testing/infra_local_notification_testing.dart';
 import 'package:test/test.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
-import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
-
 import 'package:usecase_sync_exercise_reminder_impl/src/exercise_reminder_copy.dart';
+import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
 
 ExerciseHistory history({
   required String id,
