@@ -53,11 +53,17 @@ class TopScreenBody extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 16,
           children: [
-            FSelect<PeriodTotalMetric>(
+            FSelectMenuTile<PeriodTotalMetric>.fromMap(
+              {
+                for (final metric in PeriodTotalMetric.values)
+                  _metricLabel(metric): metric,
+              },
+              title: Text(_metricLabel(entity.metric)),
               enabled: !saving.value,
-              control: .lifted(
-                value: entity.metric,
-                onChange: (metric) async {
+              selectControl: .lifted(
+                value: {entity.metric},
+                onChange: (values) async {
+                  final metric = values.difference({entity.metric}).firstOrNull;
                   if (metric == null ||
                       metric == entity.metric ||
                       saving.value) {
@@ -75,10 +81,6 @@ class TopScreenBody extends HookConsumerWidget {
                   }
                 },
               ),
-              items: {
-                for (final metric in PeriodTotalMetric.values)
-                  _metricLabel(metric): metric,
-              },
             ),
             Row(
               spacing: 8,
