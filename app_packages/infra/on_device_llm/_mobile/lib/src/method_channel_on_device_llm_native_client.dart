@@ -42,8 +42,8 @@ final class MethodChannelOnDeviceLlmNativeClient
   /// セッション ID の衝突を避ける乱数。
   final Random _random = Random();
 
-  /// 進行中の [prepare] を共有する。同時呼び出しは同じ Future を待つ。
-  Future<void>? _prepareInFlight;
+  /// 同一 download EventChannel 名の進行中 [prepare] を共有する。
+  static final Map<String, Future<void>> _prepareInFlightByChannel = {};
 
   /// Map 戻り値の method を呼び出す。
   ///
@@ -188,13 +188,16 @@ final class MethodChannelOnDeviceLlmNativeClient
 
   /// 進行中の準備があればそれを共有し、なければ download 購読を開始する。
   ///
+  /// 同一 [downloadEventChannel] 名のインスタンス間でも共有する。
+  ///
   /// Example:
   /// ```dart
   /// await MethodChannelOnDeviceLlmNativeClient().prepare();
   /// ```
   @override
   Future<void> prepare() async {
-    final inFlight = _prepareInFlight;
+    final channelName = downloadEventChannel.name;
+    final inFlight = _prepareInFlightByChannel[channelName];
     if (inFlight != null) {
       return inFlight;
     }
@@ -208,18 +211,18 @@ final class MethodChannelOnDeviceLlmNativeClient
     }
 
     // getAvailability 待ちのあいだに別呼び出しが開始している場合は共有する。
-    final raced = _prepareInFlight;
+    final raced = _prepareInFlightByChannel[channelName];
     if (raced != null) {
       return raced;
     }
 
     final future = _runPrepare();
-    _prepareInFlight = future;
+    _prepareInFlightByChannel[channelName] = future;
     try {
       await future;
     } finally {
-      if (identical(_prepareInFlight, future)) {
-        _prepareInFlight = null;
+      if (identical(_prepareInFlightByChannel[channelName], future)) {
+        _prepareInFlightByChannel.remove(channelName);
       }
     }
   }
