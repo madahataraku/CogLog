@@ -184,6 +184,14 @@ final class _ThrowingExerciseHistoryRepository
   }
 
   @override
+  Future<List<ExerciseHistory>> listByMonth({
+    required int year,
+    required int month,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<String?> photoAbsolutePath(String id) {
     throw UnimplementedError();
   }
