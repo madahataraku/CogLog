@@ -194,6 +194,11 @@ final class MethodChannelOnDeviceLlmNativeClient
   /// ```
   @override
   Future<void> prepare() async {
+    final inFlight = _prepareInFlight;
+    if (inFlight != null) {
+      return inFlight;
+    }
+
     final state = await getAvailability();
     if (state.isReady) {
       return;
@@ -202,9 +207,10 @@ final class MethodChannelOnDeviceLlmNativeClient
       throw StateError('OnDeviceLlm model is unavailable: ${state.message}');
     }
 
-    final existing = _prepareInFlight;
-    if (existing != null) {
-      return existing;
+    // getAvailability 待ちのあいだに別呼び出しが開始している場合は共有する。
+    final raced = _prepareInFlight;
+    if (raced != null) {
+      return raced;
     }
 
     final future = _runPrepare();
