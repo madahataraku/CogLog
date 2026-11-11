@@ -44,6 +44,9 @@ class AppSettingsScreenBody extends ConsumerWidget {
         ],
       ),
       child: ListView(
+        // FScaffold の childPad とヘッダで余白を持つため、ListView 既定の
+        // MediaQuery top padding による AppBar 直下の空きを抑える。
+        padding: EdgeInsets.zero,
         children: [
           FTileGroup(
             children: [
@@ -63,6 +66,7 @@ class AppSettingsScreenBody extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 24),
           FTileGroup(
             children: [
               FTile(
