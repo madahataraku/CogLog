@@ -3,28 +3,20 @@ package dev.flutter_device_ai
 import android.content.Context
 import android.os.SystemClock
 import com.google.mlkit.genai.prompt.Generation
-import com.google.mlkit.genai.prompt.GenerationConfig
 import com.google.mlkit.genai.prompt.GenerativeModel
-import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Process-wide Gemini Nano client.
  *
- * Do **not** call [Generation.getClient] from a ContentProvider: an early failure
- * can leave GenAI static state unusable for the rest of the process (seen as
- * permanent `getClient` NPE with `modelReady=false` even after minutes).
- * Playground creates the client only after the Activity/ViewModel is up.
+ * Create the client only on the first GenAI API call (availability / generate /
+ * download), matching Gemini Nano Playground (Hilt inject into ViewModel after
+ * Activity start). Do not call [Generation.getClient] from a ContentProvider or
+ * from [io.flutter.embedding.engine.plugins.FlutterPlugin.onAttachedToEngine]:
+ * early failures have left permanent `getClient` NPEs (`modelReady=false`).
  */
 internal object SharedGenerativeModel {
     @Volatile
     private var model: GenerativeModel? = null
-
-    private val genAiExecutor = AtomicReference(
-        Executors.newSingleThreadExecutor { runnable ->
-            Thread(runnable, "flutter-device-ai-genai").apply { isDaemon = true }
-        },
-    )
 
     /** [SystemClock.elapsedRealtime] when the process first touched this holder. */
     @Volatile
@@ -52,18 +44,15 @@ internal object SharedGenerativeModel {
     private fun formatError(e: Throwable): String {
         val head = "${e.javaClass.name}: ${e.message ?: ""}".trim()
         val stack = e.stackTrace
-            .take(6)
+            .take(8)
             .joinToString(" <- ") { "${it.className}.${it.methodName}:${it.lineNumber}" }
         return if (stack.isEmpty()) head else "$head | stack: $stack"
     }
 
     /**
-     * Creates the client if needed. Safe to call after Application/Activity start.
+     * Creates the client if needed via plain [Generation.getClient] (Playground).
      *
-     * Uses an explicit [GenerationConfig] worker executor so construction does not
-     * depend on [com.google.mlkit.common.sdkinternal.MlKitThreadPool] internals.
-     *
-     * @param appContext unused today; kept so call sites pass application context.
+     * @param appContext kept for call-site consistency; GenAI resolves context via MlKit.
      */
     @Synchronized
     @Suppress("UNUSED_PARAMETER")
@@ -71,10 +60,8 @@ internal object SharedGenerativeModel {
         markProcessStart()
         model?.let { return it }
         return try {
-            val config = GenerationConfig.Builder().apply {
-                workerExecutor = genAiExecutor.get()
-            }.build()
-            Generation.getClient(config).also {
+            // Same entry as Nano Playground / ML Kit samples — no custom GenerationConfig.
+            Generation.getClient().also {
                 model = it
                 createdAtElapsedMs = SystemClock.elapsedRealtime()
                 lastError = null
@@ -83,15 +70,6 @@ internal object SharedGenerativeModel {
             lastError = "getClient=${formatError(e)}"
             throw e
         }
-    }
-
-    /**
-     * Best-effort construction after the app is up (plugin attach / first GenAI call).
-     * Must not be invoked from a ContentProvider.
-     */
-    fun warm(appContext: Context) {
-        markProcessStart()
-        runCatching { get(appContext) }
     }
 
     /** Elapsed ms since construction, or 0 if not yet created. */

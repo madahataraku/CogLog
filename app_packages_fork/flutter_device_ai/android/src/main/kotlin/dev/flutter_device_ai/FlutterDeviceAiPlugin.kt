@@ -108,8 +108,8 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             }
         })
 
-        // ContentProvider では getClient しない。エンジン接続後に初めて温める（Playground 相当）。
-        SharedGenerativeModel.warm(binding.applicationContext)
+        // getClient は最初の GenAI API 呼び出しまで遅延（Playground の ViewModel 注入相当）。
+        SharedGenerativeModel.markProcessStart()
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {

@@ -6,8 +6,9 @@ CogLog changes:
 
 - Android `checkStatus()` / GenAI / download failures include the Java exception class name (and cause chain + short stack) so the debug screen can show why AICore queries fail when `e.message` is null.
 - Android pins `com.google.mlkit:genai-prompt` to `1.0.0-beta2` (same as Gemini Nano Playground). `beta3`/`beta4` request AICore feature IDs that many shipping builds lack. Map numeric error code `16` (`NOT_SUPPORTED` in `genai-common` beta4) without referencing the named constant (beta2 depends on beta3).
-- Android defers `Generation.getClient` until after app start (plugin attach / first GenAI call). ContentProvider only marks process start — early getClient in a provider left permanent `getClient` NPEs (`modelReady=false`).
-- Client uses an explicit `GenerationConfig` worker executor; waits ~2s settle; retries NPE without recreating a live client (mlkit#1071).
+- Android defers `Generation.getClient` until the first GenAI API call (not ContentProvider / not plugin attach). Early getClient left permanent NPEs (`modelReady=false`).
+- Uses plain `Generation.getClient()` like Nano Playground; waits ~2s settle; retries NPE without recreating a live client (mlkit#1071).
+- Ships `consumer-rules.pro` keep rules for ML Kit GenAI (R8 `getClient` NPE class of bug, mlkit#1018).
 - Declares AICore `BIND_SERVICE` permission explicitly.
 - GenAI `checkStatus` / generate / download run on `Dispatchers.IO` (Playground pattern).
 - `getPlatformInfo` diagnostic notes include `genai-prompt` version, `modelReady`, `clientAgeMs`, `processAgeMs`, `warmError` (with short stack), and AICore version fields.

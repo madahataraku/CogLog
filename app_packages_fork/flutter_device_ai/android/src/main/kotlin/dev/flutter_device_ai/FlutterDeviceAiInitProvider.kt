@@ -11,7 +11,8 @@ import android.net.Uri
  * Intentionally does **not** call [com.google.mlkit.genai.prompt.Generation.getClient]:
  * early getClient failures during ContentProvider init have left GenAI unusable for
  * the whole process (`modelReady=false`, repeated getClient NPE). Client creation
- * happens later from the Flutter plugin / first GenAI call, like Nano Playground.
+ * happens on the first GenAI MethodChannel call (availability / generate), like
+ * Nano Playground creating the client from a ViewModel after Activity start.
  *
  * Manifest `initOrder` stays below ML Kit's `MlKitInitProvider` (99).
  */
