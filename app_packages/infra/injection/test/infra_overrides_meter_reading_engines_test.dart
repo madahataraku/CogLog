@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_injection/infra_injection.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
@@ -6,8 +7,27 @@ import 'package:infra_meter_reading_mobile/infra_meter_reading_mobile.dart';
 import 'package:riverpod/riverpod.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  const mlKitChannel = MethodChannel('google_mlkit_text_recognizer');
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(mlKitChannel, (call) async {
+          switch (call.method) {
+            case 'vision#closeTextRecognizer':
+            case 'vision#startTextRecognizer':
+              return null;
+            default:
+              return null;
+          }
+        });
+  });
+
   tearDown(() {
     debugDefaultTargetPlatformOverride = null;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(mlKitChannel, null);
   });
 
   test('iOS は visionOcr → foundationModel', () {
