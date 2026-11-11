@@ -1,13 +1,15 @@
 id,ja,en,description
 title,運動履歴,Exercise history,画面タイトル
-empty,この月の運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。,"No exercise history this month. Create one from Meter record by photographing the meter panel or entering values manually.",空リストの案内
 error,運動履歴を読み込めませんでした,Could not load exercise history,一覧の読込失敗
 retry,再試行,Retry,再試行ボタン
 month_label,{year}年{month}月,{year}/{month},月セレクタのラベル
-calories,消費カロリー,Calories,リスト項目の消費カロリー
-duration,運動時間,Duration,リスト項目の運動時間
-distance,走行距離,Distance,リスト項目の走行距離
-calories_unit,kcal,kcal,消費カロリーの単位
-distance_unit,km,km,走行距離の単位
-created_at,作成開始日時,Created at,リスト項目の作成開始日時
-load_more_error,続きを読み込めませんでした,Could not load more,追加読込の失敗
+weekday_mon,月,Mon,カレンダー曜日（月曜）
+weekday_tue,火,Tue,カレンダー曜日（火曜）
+weekday_wed,水,Wed,カレンダー曜日（水曜）
+weekday_thu,木,Thu,カレンダー曜日（木曜）
+weekday_fri,金,Fri,カレンダー曜日（金曜）
+weekday_sat,土,Sat,カレンダー曜日（土曜）
+weekday_sun,日,Sun,カレンダー曜日（日曜）
+stamp_semantics_one,{day}日、運動履歴1件,"Day {day}, 1 exercise history",スタンプ日1件の VoiceOver 等
+stamp_semantics_other,{day}日、運動履歴{count}件,"Day {day}, {count} exercise histories",スタンプ日複数件の VoiceOver 等
+count_badge,{count},{count},同一日複数件のカレンダー上件数

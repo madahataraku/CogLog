@@ -85,6 +85,15 @@ mixin class L10nStringsMixin {
         'screen_feature_exercise_history_detail_missing',
       );
 
+  /// 同一日複数件の何件中何件目
+  String screen_feature_exercise_history_detail_page_position({
+    required String current,
+    required String total,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_exercise_history_detail_page_position',
+    arguments: [current, total],
+  );
+
   /// 写真のラベル
   String get screen_feature_exercise_history_detail_photo =>
       LocalizeStringDelegate.get(

@@ -63,6 +63,28 @@ final class FixedExerciseHistoryRepository
     return matched.sublist(offset, end);
   }
 
+  /// 現地暦月の全件を作成開始日時の降順で返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.listByMonth(year: 2026, month: 11);
+  /// ```
+  @override
+  Future<List<ExerciseHistory>> listByMonth({
+    required int year,
+    required int month,
+  }) async {
+    final window = PeriodWindow.month(DateTime(year, month));
+    return histories.where((h) => window.contains(h.recordedAt)).toList()
+      ..sort((a, b) {
+        final byCreated = b.creationStartedAt.compareTo(a.creationStartedAt);
+        if (byCreated != 0) {
+          return byCreated;
+        }
+        return b.id.compareTo(a.id);
+      });
+  }
+
   /// [histories] から ID で探す。
   ///
   /// Example:

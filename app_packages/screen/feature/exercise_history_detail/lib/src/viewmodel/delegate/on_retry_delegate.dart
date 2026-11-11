@@ -43,6 +43,7 @@ final class OnRetryDelegate {
         return null;
       }
       final id = current.id;
+      final generation = current.detailLoadGeneration + 1;
       await emitter.emit(
         current.copyWith(
           loading: true,
@@ -50,9 +51,10 @@ final class OnRetryDelegate {
           clearHistory: true,
           clearPhotoAbsolutePath: true,
           clearError: true,
+          detailLoadGeneration: generation,
         ),
       );
-      return id;
+      return (id: id, generation: generation);
     });
     if (prep == null) {
       return;
@@ -60,7 +62,8 @@ final class OnRetryDelegate {
     await loadExerciseHistoryDetail(
       state: state,
       loadDetailUsecase: loadDetailUsecase,
-      id: prep,
+      id: prep.id,
+      startedGeneration: prep.generation,
     );
   }
 }

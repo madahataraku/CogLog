@@ -584,17 +584,12 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_yes;
       },
-      'screen_feature_exercise_history_calories': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_calories;
-      },
-      'screen_feature_exercise_history_calories_unit': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_calories_unit;
-      },
-      'screen_feature_exercise_history_created_at': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_created_at;
+      'screen_feature_exercise_history_count_badge': (source) {
+        // Has Placeholders
+        var index = 0;
+        String count = source.arguments[index];
+        index++;
+        return l10n.screen_feature_exercise_history_count_badge(count);
       },
       'screen_feature_exercise_history_detail_average_speed': (source) {
         // No Placeholders
@@ -648,6 +643,18 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_missing;
       },
+      'screen_feature_exercise_history_detail_page_position': (source) {
+        // Has Placeholders
+        var index = 0;
+        String current = source.arguments[index];
+        index++;
+        String total = source.arguments[index];
+        index++;
+        return l10n.screen_feature_exercise_history_detail_page_position(
+          current,
+          total,
+        );
+      },
       'screen_feature_exercise_history_detail_photo': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_photo;
@@ -672,29 +679,9 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_title;
       },
-      'screen_feature_exercise_history_distance': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_distance;
-      },
-      'screen_feature_exercise_history_distance_unit': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_distance_unit;
-      },
-      'screen_feature_exercise_history_duration': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_duration;
-      },
-      'screen_feature_exercise_history_empty': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_empty;
-      },
       'screen_feature_exercise_history_error': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_error;
-      },
-      'screen_feature_exercise_history_load_more_error': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_load_more_error;
       },
       'screen_feature_exercise_history_month_label': (source) {
         // Has Placeholders
@@ -709,9 +696,56 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_retry;
       },
+      'screen_feature_exercise_history_stamp_semantics_one': (source) {
+        // Has Placeholders
+        var index = 0;
+        String day = source.arguments[index];
+        index++;
+        return l10n.screen_feature_exercise_history_stamp_semantics_one(day);
+      },
+      'screen_feature_exercise_history_stamp_semantics_other': (source) {
+        // Has Placeholders
+        var index = 0;
+        String day = source.arguments[index];
+        index++;
+        String count = source.arguments[index];
+        index++;
+        return l10n.screen_feature_exercise_history_stamp_semantics_other(
+          day,
+          count,
+        );
+      },
       'screen_feature_exercise_history_title': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_title;
+      },
+      'screen_feature_exercise_history_weekday_fri': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_weekday_fri;
+      },
+      'screen_feature_exercise_history_weekday_mon': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_weekday_mon;
+      },
+      'screen_feature_exercise_history_weekday_sat': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_weekday_sat;
+      },
+      'screen_feature_exercise_history_weekday_sun': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_weekday_sun;
+      },
+      'screen_feature_exercise_history_weekday_thu': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_weekday_thu;
+      },
+      'screen_feature_exercise_history_weekday_tue': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_weekday_tue;
+      },
+      'screen_feature_exercise_history_weekday_wed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_weekday_wed;
       },
       'screen_feature_goal_settings_auto_update_description': (source) {
         // No Placeholders

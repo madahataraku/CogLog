@@ -18,3 +18,4 @@ photo,メーターパネル写真,Meter panel photo,写真のラベル
 calories_unit,kcal,kcal,消費カロリーの単位
 distance_unit,km,km,走行距離の単位
 average_speed_unit,km/h,km/h,平均速度の単位
+page_position,{current} / {total},{current} / {total},同一日複数件の何件中何件目

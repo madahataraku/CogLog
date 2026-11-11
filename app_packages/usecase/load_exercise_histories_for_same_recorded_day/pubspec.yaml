@@ -1,0 +1,14 @@
+name: usecase_load_exercise_histories_for_same_recorded_day
+description: Loads same recorded local-day exercise history ids for detail paging.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

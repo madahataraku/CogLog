@@ -1,0 +1,15 @@
+name: usecase_load_exercise_history_month
+description: Loads all exercise histories for a calendar month.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  domain_exercise_history: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

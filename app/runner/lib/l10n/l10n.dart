@@ -901,23 +901,11 @@ abstract class L10n {
   /// **'はい'**
   String get screen_feature_debug_yes;
 
-  /// リスト項目の消費カロリー
+  /// 同一日複数件のカレンダー上件数
   ///
   /// In ja, this message translates to:
-  /// **'消費カロリー'**
-  String get screen_feature_exercise_history_calories;
-
-  /// 消費カロリーの単位
-  ///
-  /// In ja, this message translates to:
-  /// **'kcal'**
-  String get screen_feature_exercise_history_calories_unit;
-
-  /// リスト項目の作成開始日時
-  ///
-  /// In ja, this message translates to:
-  /// **'作成開始日時'**
-  String get screen_feature_exercise_history_created_at;
+  /// **'{count}'**
+  String screen_feature_exercise_history_count_badge(String count);
 
   /// 平均速度のラベル
   ///
@@ -997,6 +985,15 @@ abstract class L10n {
   /// **'この運動履歴はありません'**
   String get screen_feature_exercise_history_detail_missing;
 
+  /// 同一日複数件の何件中何件目
+  ///
+  /// In ja, this message translates to:
+  /// **'{current} / {total}'**
+  String screen_feature_exercise_history_detail_page_position(
+    String current,
+    String total,
+  );
+
   /// 写真のラベル
   ///
   /// In ja, this message translates to:
@@ -1033,41 +1030,11 @@ abstract class L10n {
   /// **'運動履歴詳細'**
   String get screen_feature_exercise_history_detail_title;
 
-  /// リスト項目の走行距離
-  ///
-  /// In ja, this message translates to:
-  /// **'走行距離'**
-  String get screen_feature_exercise_history_distance;
-
-  /// 走行距離の単位
-  ///
-  /// In ja, this message translates to:
-  /// **'km'**
-  String get screen_feature_exercise_history_distance_unit;
-
-  /// リスト項目の運動時間
-  ///
-  /// In ja, this message translates to:
-  /// **'運動時間'**
-  String get screen_feature_exercise_history_duration;
-
-  /// 空リストの案内
-  ///
-  /// In ja, this message translates to:
-  /// **'この月の運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。'**
-  String get screen_feature_exercise_history_empty;
-
   /// 一覧の読込失敗
   ///
   /// In ja, this message translates to:
   /// **'運動履歴を読み込めませんでした'**
   String get screen_feature_exercise_history_error;
-
-  /// 追加読込の失敗
-  ///
-  /// In ja, this message translates to:
-  /// **'続きを読み込めませんでした'**
-  String get screen_feature_exercise_history_load_more_error;
 
   /// 月セレクタのラベル
   ///
@@ -1081,11 +1048,68 @@ abstract class L10n {
   /// **'再試行'**
   String get screen_feature_exercise_history_retry;
 
+  /// スタンプ日1件の VoiceOver 等
+  ///
+  /// In ja, this message translates to:
+  /// **'{day}日、運動履歴1件'**
+  String screen_feature_exercise_history_stamp_semantics_one(String day);
+
+  /// スタンプ日複数件の VoiceOver 等
+  ///
+  /// In ja, this message translates to:
+  /// **'{day}日、運動履歴{count}件'**
+  String screen_feature_exercise_history_stamp_semantics_other(
+    String day,
+    String count,
+  );
+
   /// 画面タイトル
   ///
   /// In ja, this message translates to:
   /// **'運動履歴'**
   String get screen_feature_exercise_history_title;
+
+  /// カレンダー曜日（金曜）
+  ///
+  /// In ja, this message translates to:
+  /// **'金'**
+  String get screen_feature_exercise_history_weekday_fri;
+
+  /// カレンダー曜日（月曜）
+  ///
+  /// In ja, this message translates to:
+  /// **'月'**
+  String get screen_feature_exercise_history_weekday_mon;
+
+  /// カレンダー曜日（土曜）
+  ///
+  /// In ja, this message translates to:
+  /// **'土'**
+  String get screen_feature_exercise_history_weekday_sat;
+
+  /// カレンダー曜日（日曜）
+  ///
+  /// In ja, this message translates to:
+  /// **'日'**
+  String get screen_feature_exercise_history_weekday_sun;
+
+  /// カレンダー曜日（木曜）
+  ///
+  /// In ja, this message translates to:
+  /// **'木'**
+  String get screen_feature_exercise_history_weekday_thu;
+
+  /// カレンダー曜日（火曜）
+  ///
+  /// In ja, this message translates to:
+  /// **'火'**
+  String get screen_feature_exercise_history_weekday_tue;
+
+  /// カレンダー曜日（水曜）
+  ///
+  /// In ja, this message translates to:
+  /// **'水'**
+  String get screen_feature_exercise_history_weekday_wed;
 
   /// 自動更新の説明
   ///

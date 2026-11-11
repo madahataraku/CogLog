@@ -4,11 +4,13 @@ import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
+import 'package:usecase_load_exercise_histories_for_same_recorded_day/usecase_load_exercise_histories_for_same_recorded_day.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 
 import 'delegate/exercise_history_detail_state_to_entity_delegate.dart';
 import 'delegate/on_back_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
+import 'delegate/on_page_changed_delegate.dart';
 import 'delegate/on_retry_delegate.dart';
 import 'entity/exercise_history_detail_screen_entity.dart';
 import 'state/exercise_history_detail_screen_state.dart';
@@ -23,7 +25,7 @@ part 'exercise_history_detail_screen_view_model.action.dart';
 /// ```
 @internal
 final class ExerciseHistoryDetailScreenViewModel {
-  /// 詳細 Usecase と遷移を注入して作る。
+  /// 詳細・同一日 Usecase と遷移を注入して作る。
   ///
   /// Example:
   /// ```dart
@@ -39,6 +41,9 @@ final class ExerciseHistoryDetailScreenViewModel {
             loadDetailUsecase: ref.watch(
               LoadExerciseHistoryDetailUsecase.provider,
             ),
+            loadSameDayUsecase: ref.watch(
+              LoadExerciseHistoriesForSameRecordedDayUsecase.provider,
+            ),
             navigation: ref.watch(screenNavigationProvider),
             stateToEntity: const ExerciseHistoryDetailStateToEntityDelegate(),
           );
@@ -49,6 +54,7 @@ final class ExerciseHistoryDetailScreenViewModel {
         },
         dependencies: [
           LoadExerciseHistoryDetailUsecase.provider,
+          LoadExerciseHistoriesForSameRecordedDayUsecase.provider,
           screenNavigationProvider,
         ],
       );
@@ -60,6 +66,10 @@ final class ExerciseHistoryDetailScreenViewModel {
   /// 詳細の読み込み。
   @visibleForTesting
   final LoadExerciseHistoryDetailUsecase loadDetailUsecase;
+
+  /// 同一記録日 ID 列の読み込み。
+  @visibleForTesting
+  final LoadExerciseHistoriesForSameRecordedDayUsecase loadSameDayUsecase;
 
   /// 戻る遷移。
   @visibleForTesting
@@ -78,6 +88,7 @@ final class ExerciseHistoryDetailScreenViewModel {
   const ExerciseHistoryDetailScreenViewModel._({
     required this.state,
     required this.loadDetailUsecase,
+    required this.loadSameDayUsecase,
     required this.navigation,
     required this.stateToEntity,
   });

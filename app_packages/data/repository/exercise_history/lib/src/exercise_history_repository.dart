@@ -35,6 +35,19 @@ abstract interface class ExerciseHistoryRepository {
     required int limit,
   });
 
+  /// [year]/[month] の現地暦月（記録日時）の全件を、作成開始日時の降順で返す。
+  ///
+  /// 月の境界は [PeriodWindow.month] と同じ半開区間。同時刻は id 降順。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.listByMonth(year: 2026, month: 11);
+  /// ```
+  Future<List<ExerciseHistory>> listByMonth({
+    required int year,
+    required int month,
+  });
+
   /// ID で 1 件返す。無ければ null。
   ///
   /// Example:
