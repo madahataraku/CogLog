@@ -257,7 +257,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: true,
-        hasNewAchievements: false,
+        hasNewAchievements: true,
       ),
     );
     final session = OnDeviceLlmGuidanceSession();
@@ -266,6 +266,7 @@ void main() {
       session: session,
     ).execute();
     expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.hasNewAchievements, isTrue);
     expect(session.hasPresented, isTrue);
   });
 
