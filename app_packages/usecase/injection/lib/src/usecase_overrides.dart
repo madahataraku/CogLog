@@ -1,3 +1,4 @@
+import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
@@ -15,10 +16,14 @@ import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 import 'package:riverpod/misc.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
+import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
+import 'package:usecase_evaluate_achievements_impl/usecase_evaluate_achievements_impl.dart';
 import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
 import 'package:usecase_evaluate_daily_goal_auto_update_impl/usecase_evaluate_daily_goal_auto_update_impl.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
+import 'package:usecase_load_achievements/usecase_load_achievements.dart';
+import 'package:usecase_load_achievements_impl/usecase_load_achievements_impl.dart';
 import 'package:usecase_load_app_runtime_info/usecase_load_app_runtime_info.dart';
 import 'package:usecase_load_app_runtime_info_impl/usecase_load_app_runtime_info_impl.dart';
 import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
@@ -110,6 +115,19 @@ List<Override> usecaseOverrides({
     (ref) => EvaluateDailyGoalAutoUpdateUsecaseImpl(
       goals: ref.watch(dailyGoalRepositoryProvider),
       histories: ref.watch(exerciseHistoryRepositoryProvider),
+    ),
+  ),
+  EvaluateAchievementsUsecase.provider.overrideWith(
+    (ref) => EvaluateAchievementsUsecaseImpl(
+      achievements: ref.watch(achievementRepositoryProvider),
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+    ),
+  ),
+  LoadAchievementsUsecase.provider.overrideWith(
+    (ref) => LoadAchievementsUsecaseImpl(
+      achievements: ref.watch(achievementRepositoryProvider),
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+      evaluate: ref.watch(EvaluateAchievementsUsecase.provider),
     ),
   ),
   GenerateTopAdviceUsecase.provider.overrideWith(
@@ -211,6 +229,7 @@ List<Override> usecaseOverrides({
       evaluateAutoUpdate: ref.watch(
         EvaluateDailyGoalAutoUpdateUsecase.provider,
       ),
+      evaluateAchievements: ref.watch(EvaluateAchievementsUsecase.provider),
       syncReminder: ref.watch(SyncExerciseReminderUsecase.provider),
     ),
   ),

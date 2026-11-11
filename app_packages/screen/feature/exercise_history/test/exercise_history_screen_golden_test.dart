@@ -22,6 +22,9 @@ final class _Nav implements ScreenNavigation {
   void openAppSettings() {}
 
   @override
+  void openAchievements() {}
+
+  @override
   void openDebug() {}
 
   @override

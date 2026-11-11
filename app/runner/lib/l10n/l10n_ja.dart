@@ -21,6 +21,331 @@ class L10nJa extends L10n {
   String get foundation_resources_app_name => 'CogLog';
 
   @override
+  String get screen_feature_achievement_back_semantics => '戻る';
+
+  @override
+  String get screen_feature_achievement_condition_best_distance =>
+      '2件目以降の運動で過去最高走行距離を更新する';
+
+  @override
+  String get screen_feature_achievement_condition_best_duration =>
+      '2件目以降の運動で過去最高運動時間を更新する';
+
+  @override
+  String get screen_feature_achievement_condition_calories_100 =>
+      '累計消費カロリー100 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_1000 =>
+      '累計消費カロリー1,000 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_10000 =>
+      '累計消費カロリー10,000 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_150 =>
+      '累計消費カロリー150 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_1500 =>
+      '累計消費カロリー1,500 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_200 =>
+      '累計消費カロリー200 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_300 =>
+      '累計消費カロリー300 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_3000 =>
+      '累計消費カロリー3,000 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_50 =>
+      '累計消費カロリー50 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_500 =>
+      '累計消費カロリー500 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_calories_5000 =>
+      '累計消費カロリー5,000 kcal';
+
+  @override
+  String get screen_feature_achievement_condition_count_100 => '100回目の運動を達成する';
+
+  @override
+  String get screen_feature_achievement_condition_day_11_11 => '11月11日に運動する';
+
+  @override
+  String get screen_feature_achievement_condition_distance_1 => '累計1km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_10 => '累計10km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_100 => '累計100km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_1000 => '累計1,000km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_10000 =>
+      '累計10,000km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_40075 =>
+      '累計40,075km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_50 => '累計50km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_500 => '累計500km';
+
+  @override
+  String get screen_feature_achievement_condition_distance_5000 => '累計5,000km';
+
+  @override
+  String get screen_feature_achievement_condition_first_record =>
+      '初めて運動記録を登録する';
+
+  @override
+  String get screen_feature_achievement_condition_gap_restart_30 =>
+      '記録日間隔が30日超の空白のあと運動を再開する';
+
+  @override
+  String get screen_feature_achievement_condition_leap_day => '2月29日に運動する';
+
+  @override
+  String get screen_feature_achievement_condition_same_day_2 => '1日に2回運動する';
+
+  @override
+  String get screen_feature_achievement_condition_single_duration_10m =>
+      '1回の運動で10分以上';
+
+  @override
+  String get screen_feature_achievement_condition_single_duration_30m =>
+      '1回の運動で30分以上';
+
+  @override
+  String get screen_feature_achievement_condition_single_duration_60m =>
+      '1回の運動で60分以上';
+
+  @override
+  String get screen_feature_achievement_condition_streak_14 => '14日間連続で運動する';
+
+  @override
+  String get screen_feature_achievement_condition_streak_3 => '3日間連続で運動する';
+
+  @override
+  String get screen_feature_achievement_condition_streak_30 => '30日間連続で運動する';
+
+  @override
+  String get screen_feature_achievement_condition_streak_365 => '365日間連続で運動する';
+
+  @override
+  String get screen_feature_achievement_condition_streak_60 => '60日間連続で運動する';
+
+  @override
+  String get screen_feature_achievement_condition_streak_7 => '7日間連続で運動する';
+
+  @override
+  String get screen_feature_achievement_condition_streak_90 => '90日間連続で運動する';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_1000h =>
+      '累計運動時間1,000時間';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_100h =>
+      '累計運動時間100時間';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_10h =>
+      '累計運動時間10時間';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_24h =>
+      '累計運動時間24時間';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_300h =>
+      '累計運動時間300時間';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_48h =>
+      '累計運動時間48時間';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_96h =>
+      '累計運動時間96時間';
+
+  @override
+  String get screen_feature_achievement_condition_unique_100 => '累計100日運動する';
+
+  @override
+  String get screen_feature_achievement_condition_year_end_new_year =>
+      'ある年末の12/29–31とその直後の年始1/1–3の6日すべてに運動する';
+
+  @override
+  String get screen_feature_achievement_load_failed => '読み込みに失敗しました';
+
+  @override
+  String get screen_feature_achievement_locked_name => '？？？？？';
+
+  @override
+  String get screen_feature_achievement_name_best_distance => '昨日の自分を超えろ';
+
+  @override
+  String get screen_feature_achievement_name_best_duration => '自己ベスト更新';
+
+  @override
+  String get screen_feature_achievement_name_calories_100 => 'バナナ1本分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_1000 => 'ショートケーキ2個分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_10000 => 'カレーライス20皿分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_150 => 'りんご1個分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_1500 => 'ピザ5切れ分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_200 => 'おにぎり1個分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_300 => 'どら焼き1個分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_3000 => 'ラーメン5杯分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_50 => 'いちご10個分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_500 => 'ハンバーガー1個分！';
+
+  @override
+  String get screen_feature_achievement_name_calories_5000 => 'ホールケーキ10個分！';
+
+  @override
+  String get screen_feature_achievement_name_count_100 => '100回記念';
+
+  @override
+  String get screen_feature_achievement_name_day_11_11 => 'ゾロ目記念日';
+
+  @override
+  String get screen_feature_achievement_name_distance_1 => 'はじめての1km';
+
+  @override
+  String get screen_feature_achievement_name_distance_10 => '10kmライダー';
+
+  @override
+  String get screen_feature_achievement_name_distance_100 => '100kmライダー';
+
+  @override
+  String get screen_feature_achievement_name_distance_1000 => '1,000kmライダー';
+
+  @override
+  String get screen_feature_achievement_name_distance_10000 => '10,000kmライダー';
+
+  @override
+  String get screen_feature_achievement_name_distance_40075 => '地球一周への道';
+
+  @override
+  String get screen_feature_achievement_name_distance_50 => '50kmライダー';
+
+  @override
+  String get screen_feature_achievement_name_distance_500 => '500kmライダー';
+
+  @override
+  String get screen_feature_achievement_name_distance_5000 => '5,000kmライダー';
+
+  @override
+  String get screen_feature_achievement_name_first_record => 'はじめの一歩';
+
+  @override
+  String get screen_feature_achievement_name_gap_restart_30 => '復活のライダー';
+
+  @override
+  String get screen_feature_achievement_name_leap_day => 'うるう年ライダー';
+
+  @override
+  String get screen_feature_achievement_name_same_day_2 => '完璧主義者';
+
+  @override
+  String get screen_feature_achievement_name_single_duration_10m => 'まずは10分';
+
+  @override
+  String get screen_feature_achievement_name_single_duration_30m => '30分ライダー';
+
+  @override
+  String get screen_feature_achievement_name_single_duration_60m => '1時間の挑戦者';
+
+  @override
+  String get screen_feature_achievement_name_streak_14 => '習慣の定着';
+
+  @override
+  String get screen_feature_achievement_name_streak_3 => '三日坊主卒業';
+
+  @override
+  String get screen_feature_achievement_name_streak_30 => '習慣の達人';
+
+  @override
+  String get screen_feature_achievement_name_streak_365 => '一年皆勤賞';
+
+  @override
+  String get screen_feature_achievement_name_streak_60 => '二カ月の軌跡';
+
+  @override
+  String get screen_feature_achievement_name_streak_7 => '習慣の芽生え';
+
+  @override
+  String get screen_feature_achievement_name_streak_90 => '三カ月の証';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_1000h => '千時間の伝説';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_100h => '時間の達人';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_10h => '時間の積み重ね';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_24h => '丸一日の軌跡';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_300h => '時間の覇者';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_48h => '二日分の積み重ね';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_96h => '四日分の到達';
+
+  @override
+  String get screen_feature_achievement_name_unique_100 => '継続は力なり';
+
+  @override
+  String get screen_feature_achievement_name_year_end_new_year => '年末年始も休まず営業';
+
+  @override
+  String get screen_feature_achievement_retry => '再試行';
+
+  @override
+  String get screen_feature_achievement_title => 'アチーブメント';
+
+  @override
   String get screen_feature_app_settings_back_semantics => '戻る';
 
   @override
@@ -317,6 +642,26 @@ class L10nJa extends L10n {
   String get screen_feature_main_nav_trends => '推移';
 
   @override
+  String screen_feature_meter_capture_achievement_unlocked_body(
+    String condition,
+  ) {
+    return '$condition';
+  }
+
+  @override
+  String screen_feature_meter_capture_achievement_unlocked_summary_title(
+    String count,
+    String firstName,
+  ) {
+    return 'アチーブメントを$count件獲得：$firstNameほか';
+  }
+
+  @override
+  String screen_feature_meter_capture_achievement_unlocked_title(String name) {
+    return '$name';
+  }
+
+  @override
   String get screen_feature_meter_capture_average_speed => '平均速度 (km/h)';
 
   @override
@@ -406,6 +751,9 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_achievement_title => '目標達成率';
+
+  @override
+  String get screen_feature_top_achievements_semantics => 'アチーブメント';
 
   @override
   String get screen_feature_top_actual_label => '実績';

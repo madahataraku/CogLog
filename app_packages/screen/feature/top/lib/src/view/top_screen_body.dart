@@ -42,6 +42,11 @@ class TopScreenBody extends HookConsumerWidget {
         title: Text(strings.foundation_resources_app_name),
         suffixes: [
           FHeaderAction(
+            icon: const Icon(FLucideIcons.trophy),
+            onPress: viewModel.onOpenAchievements,
+            semanticsLabel: strings.screen_feature_top_achievements_semantics,
+          ),
+          FHeaderAction(
             icon: const Icon(FLucideIcons.settings),
             onPress: viewModel.onOpenAppSettings,
             semanticsLabel: strings.screen_feature_top_settings_semantics,

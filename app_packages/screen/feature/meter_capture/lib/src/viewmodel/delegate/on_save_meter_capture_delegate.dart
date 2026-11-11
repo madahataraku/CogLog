@@ -1,3 +1,4 @@
+import 'package:domain_achievement/domain_achievement.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 
@@ -11,16 +12,22 @@ import '../state/meter_capture_screen_state.dart';
 /// const OnSaveMeterCaptureSuccess(goalAutoUpdated: false);
 /// ```
 final class OnSaveMeterCaptureSuccess {
-  /// [goalAutoUpdated] を持つ成功結果を作る。
+  /// [goalAutoUpdated] と新規獲得一覧を持つ成功結果を作る。
   ///
   /// Example:
   /// ```dart
   /// const OnSaveMeterCaptureSuccess(goalAutoUpdated: true);
   /// ```
-  const OnSaveMeterCaptureSuccess({required this.goalAutoUpdated});
+  const OnSaveMeterCaptureSuccess({
+    required this.goalAutoUpdated,
+    this.newlyUnlockedAchievements = const [],
+  });
 
   /// 保存後の目標自動更新が適用されたか。
   final bool goalAutoUpdated;
+
+  /// トースト対象の新規獲得。無いときは空。
+  final List<AchievementUnlock> newlyUnlockedAchievements;
 }
 
 /// 登録可能条件を満たすとき運動履歴を保存し、成功結果を返す。
@@ -126,6 +133,7 @@ final class OnSaveMeterCaptureDelegate {
           });
           return OnSaveMeterCaptureSuccess(
             goalAutoUpdated: result.goalAutoUpdated,
+            newlyUnlockedAchievements: result.newlyUnlockedAchievements,
           );
       }
     } on Object {

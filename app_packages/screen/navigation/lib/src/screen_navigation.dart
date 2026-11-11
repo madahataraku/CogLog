@@ -28,6 +28,14 @@ abstract interface class ScreenNavigation {
   /// ```
   void openAppSettings();
 
+  /// アチーブメント画面をホームタブのスタックへ積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openAchievements();
+  /// ```
+  void openAchievements();
+
   /// デバッグ画面をアプリ設定の子として積む。
   ///
   /// Example:

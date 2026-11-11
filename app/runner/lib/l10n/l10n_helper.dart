@@ -60,6 +60,402 @@ final class L10nHelper {
         // No Placeholders
         return l10n.foundation_resources_app_name;
       },
+      'screen_feature_achievement_back_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_back_semantics;
+      },
+      'screen_feature_achievement_condition_best_distance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_best_distance;
+      },
+      'screen_feature_achievement_condition_best_duration': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_best_duration;
+      },
+      'screen_feature_achievement_condition_calories_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_100;
+      },
+      'screen_feature_achievement_condition_calories_1000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_1000;
+      },
+      'screen_feature_achievement_condition_calories_10000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_10000;
+      },
+      'screen_feature_achievement_condition_calories_150': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_150;
+      },
+      'screen_feature_achievement_condition_calories_1500': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_1500;
+      },
+      'screen_feature_achievement_condition_calories_200': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_200;
+      },
+      'screen_feature_achievement_condition_calories_300': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_300;
+      },
+      'screen_feature_achievement_condition_calories_3000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_3000;
+      },
+      'screen_feature_achievement_condition_calories_50': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_50;
+      },
+      'screen_feature_achievement_condition_calories_500': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_500;
+      },
+      'screen_feature_achievement_condition_calories_5000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_calories_5000;
+      },
+      'screen_feature_achievement_condition_count_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_count_100;
+      },
+      'screen_feature_achievement_condition_day_11_11': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_day_11_11;
+      },
+      'screen_feature_achievement_condition_distance_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_1;
+      },
+      'screen_feature_achievement_condition_distance_10': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_10;
+      },
+      'screen_feature_achievement_condition_distance_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_100;
+      },
+      'screen_feature_achievement_condition_distance_1000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_1000;
+      },
+      'screen_feature_achievement_condition_distance_10000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_10000;
+      },
+      'screen_feature_achievement_condition_distance_40075': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_40075;
+      },
+      'screen_feature_achievement_condition_distance_50': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_50;
+      },
+      'screen_feature_achievement_condition_distance_500': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_500;
+      },
+      'screen_feature_achievement_condition_distance_5000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_distance_5000;
+      },
+      'screen_feature_achievement_condition_first_record': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_first_record;
+      },
+      'screen_feature_achievement_condition_gap_restart_30': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_gap_restart_30;
+      },
+      'screen_feature_achievement_condition_leap_day': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_leap_day;
+      },
+      'screen_feature_achievement_condition_same_day_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_same_day_2;
+      },
+      'screen_feature_achievement_condition_single_duration_10m': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_single_duration_10m;
+      },
+      'screen_feature_achievement_condition_single_duration_30m': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_single_duration_30m;
+      },
+      'screen_feature_achievement_condition_single_duration_60m': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_single_duration_60m;
+      },
+      'screen_feature_achievement_condition_streak_14': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_streak_14;
+      },
+      'screen_feature_achievement_condition_streak_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_streak_3;
+      },
+      'screen_feature_achievement_condition_streak_30': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_streak_30;
+      },
+      'screen_feature_achievement_condition_streak_365': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_streak_365;
+      },
+      'screen_feature_achievement_condition_streak_60': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_streak_60;
+      },
+      'screen_feature_achievement_condition_streak_7': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_streak_7;
+      },
+      'screen_feature_achievement_condition_streak_90': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_streak_90;
+      },
+      'screen_feature_achievement_condition_total_duration_1000h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_total_duration_1000h;
+      },
+      'screen_feature_achievement_condition_total_duration_100h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_total_duration_100h;
+      },
+      'screen_feature_achievement_condition_total_duration_10h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_total_duration_10h;
+      },
+      'screen_feature_achievement_condition_total_duration_24h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_total_duration_24h;
+      },
+      'screen_feature_achievement_condition_total_duration_300h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_total_duration_300h;
+      },
+      'screen_feature_achievement_condition_total_duration_48h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_total_duration_48h;
+      },
+      'screen_feature_achievement_condition_total_duration_96h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_total_duration_96h;
+      },
+      'screen_feature_achievement_condition_unique_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_unique_100;
+      },
+      'screen_feature_achievement_condition_year_end_new_year': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_condition_year_end_new_year;
+      },
+      'screen_feature_achievement_load_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_load_failed;
+      },
+      'screen_feature_achievement_locked_name': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_locked_name;
+      },
+      'screen_feature_achievement_name_best_distance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_best_distance;
+      },
+      'screen_feature_achievement_name_best_duration': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_best_duration;
+      },
+      'screen_feature_achievement_name_calories_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_100;
+      },
+      'screen_feature_achievement_name_calories_1000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_1000;
+      },
+      'screen_feature_achievement_name_calories_10000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_10000;
+      },
+      'screen_feature_achievement_name_calories_150': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_150;
+      },
+      'screen_feature_achievement_name_calories_1500': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_1500;
+      },
+      'screen_feature_achievement_name_calories_200': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_200;
+      },
+      'screen_feature_achievement_name_calories_300': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_300;
+      },
+      'screen_feature_achievement_name_calories_3000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_3000;
+      },
+      'screen_feature_achievement_name_calories_50': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_50;
+      },
+      'screen_feature_achievement_name_calories_500': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_500;
+      },
+      'screen_feature_achievement_name_calories_5000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_calories_5000;
+      },
+      'screen_feature_achievement_name_count_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_count_100;
+      },
+      'screen_feature_achievement_name_day_11_11': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_day_11_11;
+      },
+      'screen_feature_achievement_name_distance_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_1;
+      },
+      'screen_feature_achievement_name_distance_10': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_10;
+      },
+      'screen_feature_achievement_name_distance_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_100;
+      },
+      'screen_feature_achievement_name_distance_1000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_1000;
+      },
+      'screen_feature_achievement_name_distance_10000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_10000;
+      },
+      'screen_feature_achievement_name_distance_40075': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_40075;
+      },
+      'screen_feature_achievement_name_distance_50': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_50;
+      },
+      'screen_feature_achievement_name_distance_500': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_500;
+      },
+      'screen_feature_achievement_name_distance_5000': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_distance_5000;
+      },
+      'screen_feature_achievement_name_first_record': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_first_record;
+      },
+      'screen_feature_achievement_name_gap_restart_30': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_gap_restart_30;
+      },
+      'screen_feature_achievement_name_leap_day': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_leap_day;
+      },
+      'screen_feature_achievement_name_same_day_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_same_day_2;
+      },
+      'screen_feature_achievement_name_single_duration_10m': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_single_duration_10m;
+      },
+      'screen_feature_achievement_name_single_duration_30m': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_single_duration_30m;
+      },
+      'screen_feature_achievement_name_single_duration_60m': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_single_duration_60m;
+      },
+      'screen_feature_achievement_name_streak_14': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_streak_14;
+      },
+      'screen_feature_achievement_name_streak_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_streak_3;
+      },
+      'screen_feature_achievement_name_streak_30': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_streak_30;
+      },
+      'screen_feature_achievement_name_streak_365': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_streak_365;
+      },
+      'screen_feature_achievement_name_streak_60': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_streak_60;
+      },
+      'screen_feature_achievement_name_streak_7': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_streak_7;
+      },
+      'screen_feature_achievement_name_streak_90': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_streak_90;
+      },
+      'screen_feature_achievement_name_total_duration_1000h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_total_duration_1000h;
+      },
+      'screen_feature_achievement_name_total_duration_100h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_total_duration_100h;
+      },
+      'screen_feature_achievement_name_total_duration_10h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_total_duration_10h;
+      },
+      'screen_feature_achievement_name_total_duration_24h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_total_duration_24h;
+      },
+      'screen_feature_achievement_name_total_duration_300h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_total_duration_300h;
+      },
+      'screen_feature_achievement_name_total_duration_48h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_total_duration_48h;
+      },
+      'screen_feature_achievement_name_total_duration_96h': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_total_duration_96h;
+      },
+      'screen_feature_achievement_name_unique_100': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_unique_100;
+      },
+      'screen_feature_achievement_name_year_end_new_year': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_name_year_end_new_year;
+      },
+      'screen_feature_achievement_retry': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_retry;
+      },
+      'screen_feature_achievement_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_title;
+      },
       'screen_feature_app_settings_back_semantics': (source) {
         // No Placeholders
         return l10n.screen_feature_app_settings_back_semantics;
@@ -451,6 +847,38 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_main_nav_trends;
       },
+      'screen_feature_meter_capture_achievement_unlocked_body': (source) {
+        // Has Placeholders
+        var index = 0;
+        String condition = source.arguments[index];
+        index++;
+        return l10n.screen_feature_meter_capture_achievement_unlocked_body(
+          condition,
+        );
+      },
+      'screen_feature_meter_capture_achievement_unlocked_summary_title':
+          (source) {
+            // Has Placeholders
+            var index = 0;
+            String count = source.arguments[index];
+            index++;
+            String firstName = source.arguments[index];
+            index++;
+            return l10n
+                .screen_feature_meter_capture_achievement_unlocked_summary_title(
+                  count,
+                  firstName,
+                );
+          },
+      'screen_feature_meter_capture_achievement_unlocked_title': (source) {
+        // Has Placeholders
+        var index = 0;
+        String name = source.arguments[index];
+        index++;
+        return l10n.screen_feature_meter_capture_achievement_unlocked_title(
+          name,
+        );
+      },
       'screen_feature_meter_capture_average_speed': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_average_speed;
@@ -566,6 +994,10 @@ final class L10nHelper {
       'screen_feature_top_achievement_title': (source) {
         // No Placeholders
         return l10n.screen_feature_top_achievement_title;
+      },
+      'screen_feature_top_achievements_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_achievements_semantics;
       },
       'screen_feature_top_actual_label': (source) {
         // No Placeholders
