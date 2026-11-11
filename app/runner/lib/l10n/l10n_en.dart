@@ -119,13 +119,9 @@ class L10nEn extends L10n {
   String get screen_feature_debug_yes => 'Yes';
 
   @override
-  String get screen_feature_exercise_history_calories => 'Calories';
-
-  @override
-  String get screen_feature_exercise_history_calories_unit => 'kcal';
-
-  @override
-  String get screen_feature_exercise_history_created_at => 'Created at';
+  String screen_feature_exercise_history_count_badge(String count) {
+    return '$count';
+  }
 
   @override
   String get screen_feature_exercise_history_detail_average_speed =>
@@ -194,25 +190,8 @@ class L10nEn extends L10n {
       'Exercise history detail';
 
   @override
-  String get screen_feature_exercise_history_distance => 'Distance';
-
-  @override
-  String get screen_feature_exercise_history_distance_unit => 'km';
-
-  @override
-  String get screen_feature_exercise_history_duration => 'Duration';
-
-  @override
-  String get screen_feature_exercise_history_empty =>
-      'No exercise history this month. Create one from Meter record by photographing the meter panel or entering values manually.';
-
-  @override
   String get screen_feature_exercise_history_error =>
       'Could not load exercise history';
-
-  @override
-  String get screen_feature_exercise_history_load_more_error =>
-      'Could not load more';
 
   @override
   String screen_feature_exercise_history_month_label(
@@ -226,7 +205,36 @@ class L10nEn extends L10n {
   String get screen_feature_exercise_history_retry => 'Retry';
 
   @override
+  String screen_feature_exercise_history_stamp_semantics(
+    String day,
+    String count,
+  ) {
+    return 'Day $day, $count exercise histories';
+  }
+
+  @override
   String get screen_feature_exercise_history_title => 'Exercise history';
+
+  @override
+  String get screen_feature_exercise_history_weekday_fri => 'Fri';
+
+  @override
+  String get screen_feature_exercise_history_weekday_mon => 'Mon';
+
+  @override
+  String get screen_feature_exercise_history_weekday_sat => 'Sat';
+
+  @override
+  String get screen_feature_exercise_history_weekday_sun => 'Sun';
+
+  @override
+  String get screen_feature_exercise_history_weekday_thu => 'Thu';
+
+  @override
+  String get screen_feature_exercise_history_weekday_tue => 'Tue';
+
+  @override
+  String get screen_feature_exercise_history_weekday_wed => 'Wed';
 
   @override
   String get screen_feature_goal_settings_auto_update_description =>

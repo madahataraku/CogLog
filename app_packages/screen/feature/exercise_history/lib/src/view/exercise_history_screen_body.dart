@@ -1,4 +1,3 @@
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -6,16 +5,17 @@ import 'package:meta/meta.dart';
 
 import '../strings.dart';
 import '../viewmodel/exercise_history_screen_view_model.dart';
+import 'exercise_history_calendar.dart';
 import 'exercise_history_screen_providers.dart';
 
-/// 月切替・一覧・無限スクロール・再試行。
+/// 月切替・カレンダー・読込／エラー表示。
 ///
 /// Example:
 /// ```dart
 /// const ExerciseHistoryScreenBody();
 /// ```
 @internal
-class ExerciseHistoryScreenBody extends HookConsumerWidget {
+class ExerciseHistoryScreenBody extends ConsumerWidget {
   /// 本文を作る。
   ///
   /// Example:
@@ -34,22 +34,6 @@ class ExerciseHistoryScreenBody extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final entity = ref.watch(ExerciseHistoryScreenProviders.entity);
     final viewModel = ref.watch(ExerciseHistoryScreenViewModel.provider);
-    final controller = useScrollController();
-
-    useEffect(() {
-      void onScroll() {
-        if (!controller.hasClients) {
-          return;
-        }
-        final position = controller.position;
-        if (position.pixels >= position.maxScrollExtent - 200) {
-          viewModel.onLoadMore();
-        }
-      }
-
-      controller.addListener(onScroll);
-      return () => controller.removeListener(onScroll);
-    }, [controller, viewModel]);
 
     return FScaffold(
       header: FHeader(
@@ -84,14 +68,17 @@ class ExerciseHistoryScreenBody extends HookConsumerWidget {
               ],
             ),
           ),
-          if (entity.errorText != null)
+          if (entity.showError)
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 12,
                 children: [
-                  FAlert(variant: .destructive, title: Text(entity.errorText!)),
+                  FAlert(
+                    variant: .destructive,
+                    title: Text(entity.errorText ?? ''),
+                  ),
                   if (entity.canRetry)
                     FButton(
                       onPress: viewModel.onRetry,
@@ -106,82 +93,12 @@ class ExerciseHistoryScreenBody extends HookConsumerWidget {
             const Expanded(child: Center(child: FCircularProgress()))
           else
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: viewModel.onRefresh,
-                child: entity.showEmpty
-                    ? CustomScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        slivers: [
-                          SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(24),
-                                child: Text(
-                                  strings.screen_feature_exercise_history_empty,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : ListView.builder(
-                        controller: controller,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount:
-                            entity.items.length +
-                            (entity.showLoadMoreSpinner ||
-                                    entity.canRetryLoadMore
-                                ? 1
-                                : 0),
-                        itemBuilder: (context, index) {
-                          if (index >= entity.items.length) {
-                            if (entity.canRetryLoadMore) {
-                              return Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  spacing: 8,
-                                  children: [
-                                    Text(entity.loadMoreErrorText ?? ''),
-                                    FButton(
-                                      onPress: viewModel.onRetry,
-                                      child: Text(
-                                        strings
-                                            .screen_feature_exercise_history_retry,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                            return const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Center(child: FCircularProgress()),
-                            );
-                          }
-                          final item = entity.items[index];
-                          return Padding(
-                            padding: index == 0
-                                ? const EdgeInsets.only(top: 8, bottom: 8)
-                                : const EdgeInsets.only(bottom: 8),
-                            child: FTile(
-                              title: Text(item.createdAtText),
-                              subtitle: Text(
-                                '${strings.screen_feature_exercise_history_calories}: '
-                                '${item.caloriesText} '
-                                '${strings.screen_feature_exercise_history_calories_unit}\n'
-                                '${strings.screen_feature_exercise_history_duration}: '
-                                '${item.durationText}\n'
-                                '${strings.screen_feature_exercise_history_distance}: '
-                                '${item.distanceText} '
-                                '${strings.screen_feature_exercise_history_distance_unit}',
-                              ),
-                              onPress: () => viewModel.onTapItem(id: item.id),
-                            ),
-                          );
-                        },
-                      ),
+              child: SingleChildScrollView(
+                child: ExerciseHistoryCalendar(
+                  weekdayLabels: entity.weekdayLabels,
+                  dayCells: entity.dayCells,
+                  onDayPressed: (day) => viewModel.onTapDay(day: day),
+                ),
               ),
             ),
         ],

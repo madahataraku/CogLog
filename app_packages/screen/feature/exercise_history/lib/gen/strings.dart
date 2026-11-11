@@ -9,47 +9,16 @@ import 'package:monolith_localization_runtime/src/localize_string_delegate.dart'
 mixin class L10nStringsMixin {
   const L10nStringsMixin();
 
-  /// リスト項目の消費カロリー
-  String get screen_feature_exercise_history_calories =>
-      LocalizeStringDelegate.get('screen_feature_exercise_history_calories');
-
-  /// 消費カロリーの単位
-  String get screen_feature_exercise_history_calories_unit =>
+  /// 同一日複数件のカレンダー上件数
+  String screen_feature_exercise_history_count_badge({required String count}) =>
       LocalizeStringDelegate.get(
-        'screen_feature_exercise_history_calories_unit',
+        'screen_feature_exercise_history_count_badge',
+        arguments: [count],
       );
-
-  /// リスト項目の作成開始日時
-  String get screen_feature_exercise_history_created_at =>
-      LocalizeStringDelegate.get('screen_feature_exercise_history_created_at');
-
-  /// リスト項目の走行距離
-  String get screen_feature_exercise_history_distance =>
-      LocalizeStringDelegate.get('screen_feature_exercise_history_distance');
-
-  /// 走行距離の単位
-  String get screen_feature_exercise_history_distance_unit =>
-      LocalizeStringDelegate.get(
-        'screen_feature_exercise_history_distance_unit',
-      );
-
-  /// リスト項目の運動時間
-  String get screen_feature_exercise_history_duration =>
-      LocalizeStringDelegate.get('screen_feature_exercise_history_duration');
-
-  /// 空リストの案内
-  String get screen_feature_exercise_history_empty =>
-      LocalizeStringDelegate.get('screen_feature_exercise_history_empty');
 
   /// 一覧の読込失敗
   String get screen_feature_exercise_history_error =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_error');
-
-  /// 追加読込の失敗
-  String get screen_feature_exercise_history_load_more_error =>
-      LocalizeStringDelegate.get(
-        'screen_feature_exercise_history_load_more_error',
-      );
 
   /// 月セレクタのラベル
   String screen_feature_exercise_history_month_label({
@@ -64,7 +33,44 @@ mixin class L10nStringsMixin {
   String get screen_feature_exercise_history_retry =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_retry');
 
+  /// スタンプ日の VoiceOver 等
+  String screen_feature_exercise_history_stamp_semantics({
+    required String day,
+    required String count,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_exercise_history_stamp_semantics',
+    arguments: [day, count],
+  );
+
   /// 画面タイトル
   String get screen_feature_exercise_history_title =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_title');
+
+  /// カレンダー曜日（金曜）
+  String get screen_feature_exercise_history_weekday_fri =>
+      LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_fri');
+
+  /// カレンダー曜日（月曜）
+  String get screen_feature_exercise_history_weekday_mon =>
+      LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_mon');
+
+  /// カレンダー曜日（土曜）
+  String get screen_feature_exercise_history_weekday_sat =>
+      LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_sat');
+
+  /// カレンダー曜日（日曜）
+  String get screen_feature_exercise_history_weekday_sun =>
+      LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_sun');
+
+  /// カレンダー曜日（木曜）
+  String get screen_feature_exercise_history_weekday_thu =>
+      LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_thu');
+
+  /// カレンダー曜日（火曜）
+  String get screen_feature_exercise_history_weekday_tue =>
+      LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_tue');
+
+  /// カレンダー曜日（水曜）
+  String get screen_feature_exercise_history_weekday_wed =>
+      LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_wed');
 }

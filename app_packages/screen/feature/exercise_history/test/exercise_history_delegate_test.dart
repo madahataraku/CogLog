@@ -1,54 +1,88 @@
-import 'dart:async';
+import 'dart:convert';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/delegate/exercise_history_state_to_entity_delegate.dart';
-import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_initialize_delegate.dart';
-import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_load_more_delegate.dart';
+import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_cold_start_delegate.dart';
+import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_reload_selected_month_delegate.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_select_month_delegate.dart';
+import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_tap_day_delegate.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/state/exercise_history_screen_state.dart';
+import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
-import 'package:usecase_load_exercise_history_page/usecase_load_exercise_history_page.dart';
+import 'package:usecase_load_exercise_history_month/usecase_load_exercise_history_month.dart';
 
 ExerciseHistory _history({
   required String id,
-  required DateTime creationStartedAt,
-  double calories = 10,
-  double distance = 1,
-}) => ExerciseHistory(
-  id: id,
-  savedAt: creationStartedAt,
-  creationStartedAt: creationStartedAt,
-  capturedAt: creationStartedAt,
-  recordedAt: creationStartedAt,
-  recordedAtManuallySet: false,
-  distanceKm: distance,
-  duration: const Duration(minutes: 30),
-  caloriesKcal: calories,
-  averageSpeedKmh: 2,
-  photoRelativePath: 'exercise_histories/$id/meter.jpg',
-);
+  required DateTime recordedAt,
+  DateTime? creationStartedAt,
+}) {
+  final created = creationStartedAt ?? recordedAt;
+  return ExerciseHistory(
+    id: id,
+    savedAt: created,
+    creationStartedAt: created,
+    capturedAt: created,
+    recordedAt: recordedAt,
+    recordedAtManuallySet: false,
+    distanceKm: 1,
+    duration: const Duration(minutes: 30),
+    caloriesKcal: 10,
+    averageSpeedKmh: 2,
+    photoRelativePath: 'exercise_histories/$id/meter.jpg',
+  );
+}
 
-final class _LoadPage implements LoadExerciseHistoryPageUsecase {
-  _LoadPage(this._handler);
+final class _LoadMonth implements LoadExerciseHistoryMonthUsecase {
+  _LoadMonth(this._handler);
 
-  final Future<LoadExerciseHistoryPageResult> Function(
-    LoadExerciseHistoryPageRequest request,
+  final Future<LoadExerciseHistoryMonthResult> Function(
+    LoadExerciseHistoryMonthRequest request,
   )
   _handler;
   var calls = 0;
-  LoadExerciseHistoryPageRequest? lastRequest;
+  LoadExerciseHistoryMonthRequest? lastRequest;
 
   @override
-  Future<LoadExerciseHistoryPageResult> execute(
-    LoadExerciseHistoryPageRequest request,
+  Future<LoadExerciseHistoryMonthResult> execute(
+    LoadExerciseHistoryMonthRequest request,
   ) async {
     calls += 1;
     lastRequest = request;
     return _handler(request);
   }
+}
+
+final class _Nav implements ScreenNavigation {
+  String? openedId;
+
+  @override
+  void openExerciseHistoryDetail({required String id}) {
+    openedId = id;
+  }
+
+  @override
+  void openAppSettings() {}
+
+  @override
+  void openDebug() {}
+
+  @override
+  void openNotificationSettings() {}
+
+  @override
+  void openOssLicenses() {}
+
+  @override
+  void openOssLicenseDetail({required String packageName}) {}
+
+  @override
+  void pop() {}
+
+  @override
+  void goToHomeTab() {}
 }
 
 void main() {
@@ -68,14 +102,14 @@ void main() {
     LocalizeStringDelegate.resetDelegateForTest();
   });
 
-  test('初期化で当月を読み、items を入れる', () async {
-    final item = _history(id: 'a', creationStartedAt: DateTime(2026, 11, 5));
-    final load = _LoadPage(
-      (_) async => LoadExerciseHistoryPageResult(items: [item], hasMore: false),
+  test('ColdStart で当月を読み、items を入れる', () async {
+    final item = _history(id: 'a', recordedAt: DateTime(2026, 11, 5));
+    final load = _LoadMonth(
+      (_) async => LoadExerciseHistoryMonthResult(items: [item]),
     );
-    await OnInitializeDelegate(
+    await OnColdStartDelegate(
       state: state,
-      loadPageUsecase: load,
+      loadMonthUsecase: load,
       now: DateTime(2026, 11, 8),
     ).execute();
 
@@ -83,90 +117,38 @@ void main() {
     expect(state.state.month, 11);
     expect(state.state.loading, isFalse);
     expect(state.state.items, [item]);
-    expect(state.state.hasMore, isFalse);
+    expect(state.state.reloadGeneration, 1);
     expect(load.calls, 1);
-    expect(load.lastRequest?.offset, 0);
+    expect(load.lastRequest?.year, 2026);
+    expect(load.lastRequest?.month, 11);
   });
 
-  test('loadMore 失敗でも items を残す', () async {
-    final first = List.generate(
-      30,
-      (i) => _history(
-        id: 'id-$i',
-        creationStartedAt: DateTime(2026, 11, 1).add(Duration(minutes: i)),
-      ),
-    );
+  test('ReloadSelectedMonth は year/month を変えず items を更新する', () async {
+    final old = _history(id: 'old', recordedAt: DateTime(2026, 11, 1));
+    final next = _history(id: 'new', recordedAt: DateTime(2026, 11, 2));
     state = MutableStateStream(
       ExerciseHistoryScreenState(
         year: 2026,
         month: 11,
-        items: first,
+        items: [old],
         loading: false,
-        refreshing: false,
-        loadingMore: false,
-        hasMore: true,
         loadError: null,
-        loadMoreError: null,
+        reloadGeneration: 3,
       ),
     );
-    final load = _LoadPage((_) async => throw StateError('fail'));
-    await OnLoadMoreDelegate(state: state, loadPageUsecase: load).execute();
-
-    expect(state.state.items, first);
-    expect(state.state.loadingMore, isFalse);
-    expect(state.state.loadMoreError, isA<StateError>());
-  });
-
-  test('loadMore 完了時に offset が変わっていれば追記しない', () async {
-    final first = List.generate(
-      30,
-      (i) => _history(
-        id: 'id-$i',
-        creationStartedAt: DateTime(2026, 11, 1).add(Duration(minutes: i)),
-      ),
+    final load = _LoadMonth(
+      (_) async => LoadExerciseHistoryMonthResult(items: [next]),
     );
-    final refreshed = [
-      _history(id: 'refreshed', creationStartedAt: DateTime(2026, 11, 2)),
-    ];
-    state = MutableStateStream(
-      ExerciseHistoryScreenState(
-        year: 2026,
-        month: 11,
-        items: first,
-        loading: false,
-        refreshing: false,
-        loadingMore: false,
-        hasMore: true,
-        loadError: null,
-        loadMoreError: null,
-      ),
-    );
-    final gate = Completer<void>();
-    final load = _LoadPage((_) async {
-      await gate.future;
-      return LoadExerciseHistoryPageResult(
-        items: [
-          _history(id: 'page2', creationStartedAt: DateTime(2026, 11, 3)),
-        ],
-        hasMore: false,
-      );
-    });
-    final pending = OnLoadMoreDelegate(
+    await OnReloadSelectedMonthDelegate(
       state: state,
-      loadPageUsecase: load,
+      loadMonthUsecase: load,
     ).execute();
-    await Future<void>.delayed(Duration.zero);
-    await state.updateWithLock((current, emitter) async {
-      await emitter.emit(
-        current.copyWith(items: refreshed, hasMore: false, loadingMore: true),
-      );
-    });
-    gate.complete();
-    await pending;
 
-    expect(state.state.items, refreshed);
-    expect(state.state.loadingMore, isFalse);
-    expect(state.state.items.any((e) => e.id == 'page2'), isFalse);
+    expect(state.state.year, 2026);
+    expect(state.state.month, 11);
+    expect(state.state.items, [next]);
+    expect(state.state.reloadGeneration, 4);
+    expect(load.calls, 1);
   });
 
   test('月切替で items をクリアして読み直す', () async {
@@ -174,22 +156,19 @@ void main() {
       ExerciseHistoryScreenState(
         year: 2026,
         month: 11,
-        items: [_history(id: 'old', creationStartedAt: DateTime(2026, 11, 1))],
+        items: [_history(id: 'old', recordedAt: DateTime(2026, 11, 1))],
         loading: false,
-        refreshing: false,
-        loadingMore: false,
-        hasMore: false,
         loadError: null,
-        loadMoreError: null,
+        reloadGeneration: 1,
       ),
     );
-    final next = _history(id: 'new', creationStartedAt: DateTime(2026, 10, 1));
-    final load = _LoadPage(
-      (_) async => LoadExerciseHistoryPageResult(items: [next], hasMore: false),
+    final next = _history(id: 'new', recordedAt: DateTime(2026, 10, 1));
+    final load = _LoadMonth(
+      (_) async => LoadExerciseHistoryMonthResult(items: [next]),
     );
     await OnSelectMonthDelegate(
       state: state,
-      loadPageUsecase: load,
+      loadMonthUsecase: load,
     ).execute(year: 2026, month: 10);
 
     expect(state.state.year, 2026);
@@ -198,39 +177,80 @@ void main() {
     expect(load.lastRequest?.month, 10);
   });
 
-  test('state_to_entity は空と月ラベルと書式を出す', () {
+  test('TapDay は作成開始が新しい方の id で詳細を開く', () {
+    final older = _history(
+      id: 'older',
+      recordedAt: DateTime(2026, 11, 5, 10),
+      creationStartedAt: DateTime(2026, 11, 5, 9),
+    );
+    final newer = _history(
+      id: 'newer',
+      recordedAt: DateTime(2026, 11, 5, 11),
+      creationStartedAt: DateTime(2026, 11, 5, 12),
+    );
+    state = MutableStateStream(
+      ExerciseHistoryScreenState(
+        year: 2026,
+        month: 11,
+        items: [older, newer],
+        loading: false,
+        loadError: null,
+        reloadGeneration: 1,
+      ),
+    );
+    final nav = _Nav();
+    OnTapDayDelegate(state: state, navigation: nav).execute(day: 5);
+    expect(nav.openedId, 'newer');
+  });
+
+  test('state_to_entity は記録日にスタンプし月曜オフセットを付ける', () {
     const delegate = ExerciseHistoryStateToEntityDelegate();
     final empty = delegate.execute(
       ExerciseHistoryScreenState.initial(year: 2026, month: 11),
     );
-    expect(empty.showEmpty, isTrue);
+    expect(empty.showLoading, isFalse);
+    expect(empty.showError, isFalse);
     expect(empty.monthLabel, contains('2026'));
     expect(empty.monthLabel, contains('11'));
+    expect(empty.weekdayLabels, ['月', '火', '水', '木', '金', '土', '日']);
+    // 2026-11-01 は日曜 → 月曜始まりで先頭空白 6
+    expect(empty.dayCells.take(6).every((c) => c.day == null), isTrue);
+    expect(empty.dayCells[6].day, 1);
+    expect(empty.dayCells.where((c) => c.day != null).length, 30);
+    expect(empty.dayCells.length % 7, 0);
 
-    final withItem = delegate.execute(
+    final stamped = delegate.execute(
       ExerciseHistoryScreenState(
         year: 2026,
         month: 11,
         items: [
           _history(
             id: 'a',
-            creationStartedAt: DateTime(2026, 11, 5, 12, 30),
-            calories: 12.34,
-            distance: 1.25,
+            recordedAt: DateTime(2026, 11, 5, 8),
+            creationStartedAt: DateTime(2026, 11, 4, 20),
           ),
+          _history(id: 'b', recordedAt: DateTime(2026, 11, 5, 9)),
+          _history(id: 'c', recordedAt: DateTime(2026, 11, 6)),
         ],
         loading: false,
-        refreshing: false,
-        loadingMore: false,
-        hasMore: false,
         loadError: null,
-        loadMoreError: null,
+        reloadGeneration: 1,
       ),
     );
-    expect(withItem.showEmpty, isFalse);
-    expect(withItem.items.single.caloriesText, '12.3');
-    expect(withItem.items.single.distanceText, '1.3');
-    expect(withItem.items.single.durationText, '0h30m');
-    expect(withItem.items.single.createdAtText, '2026-11-05 12:30');
+    final day5 = stamped.dayCells.firstWhere((c) => c.day == 5);
+    final day6 = stamped.dayCells.firstWhere((c) => c.day == 6);
+    final day4 = stamped.dayCells.firstWhere((c) => c.day == 4);
+    expect(day5.stampCount, 2);
+    expect(day5.isTappable, isTrue);
+    expect(day5.semanticsLabel, contains('2'));
+    expect(day6.stampCount, 1);
+    expect(day4.stampCount, 0);
+    expect(day4.isTappable, isFalse);
+  });
+
+  test('stamp_semantics 文言が StringsTestHelper から取れる', () {
+    final ja = jsonDecode(StringsTestHelper.ja) as Map<String, Object?>;
+    expect(ja['screen_feature_exercise_history_stamp_semantics'], isNotNull);
+    expect(ja['screen_feature_exercise_history_count_badge'], isNotNull);
   });
 }

@@ -1,25 +1,39 @@
 part of 'exercise_history_screen_view_model.dart';
 
-/// 運動履歴一覧の操作。
+/// 運動履歴カレンダーの操作。
 @internal
 extension ExerciseHistoryScreenViewModelActions
     on ExerciseHistoryScreenViewModel {
-  /// 現地当月の先頭頁を読み込む。
+  /// 初回表示で現地当月を読む。
   ///
   /// Example:
   /// ```dart
-  /// viewModel.onInitialize();
+  /// viewModel.onColdStart();
   /// ```
-  Future<void> onInitialize() {
-    final delegate = OnInitializeDelegate(
+  Future<void> onColdStart() {
+    final delegate = OnColdStartDelegate(
       state: state,
-      loadPageUsecase: loadPageUsecase,
+      loadMonthUsecase: loadMonthUsecase,
       now: clock(),
     );
     return delegate.execute();
   }
 
-  /// 月を切り替えて先頭から読み直す。
+  /// 選択中の月を年月そのまま再取得する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onReloadSelectedMonth();
+  /// ```
+  Future<void> onReloadSelectedMonth() {
+    final delegate = OnReloadSelectedMonthDelegate(
+      state: state,
+      loadMonthUsecase: loadMonthUsecase,
+    );
+    return delegate.execute();
+  }
+
+  /// 月を切り替えて読み直す。
   ///
   /// Example:
   /// ```dart
@@ -28,7 +42,7 @@ extension ExerciseHistoryScreenViewModelActions
   Future<void> onSelectMonth({required int year, required int month}) {
     final delegate = OnSelectMonthDelegate(
       state: state,
-      loadPageUsecase: loadPageUsecase,
+      loadMonthUsecase: loadMonthUsecase,
     );
     return delegate.execute(year: year, month: month);
   }
@@ -61,35 +75,7 @@ extension ExerciseHistoryScreenViewModelActions
     return onSelectMonth(year: current.year, month: current.month + 1);
   }
 
-  /// 続きの頁を読む。
-  ///
-  /// Example:
-  /// ```dart
-  /// viewModel.onLoadMore();
-  /// ```
-  Future<void> onLoadMore() {
-    final delegate = OnLoadMoreDelegate(
-      state: state,
-      loadPageUsecase: loadPageUsecase,
-    );
-    return delegate.execute();
-  }
-
-  /// Pull to refresh で先頭から読み直す。
-  ///
-  /// Example:
-  /// ```dart
-  /// viewModel.onRefresh();
-  /// ```
-  Future<void> onRefresh() {
-    final delegate = OnRefreshDelegate(
-      state: state,
-      loadPageUsecase: loadPageUsecase,
-    );
-    return delegate.execute();
-  }
-
-  /// 失敗した読込を再試行する。
+  /// 失敗した月読込を再試行する。
   ///
   /// Example:
   /// ```dart
@@ -98,18 +84,18 @@ extension ExerciseHistoryScreenViewModelActions
   Future<void> onRetry() {
     final delegate = OnRetryDelegate(
       state: state,
-      loadPageUsecase: loadPageUsecase,
+      loadMonthUsecase: loadMonthUsecase,
     );
     return delegate.execute();
   }
 
-  /// 詳細へ遷移する。
+  /// スタンプ日の先頭詳細へ遷移する。
   ///
   /// Example:
   /// ```dart
-  /// viewModel.onTapItem(id: 'id');
+  /// viewModel.onTapDay(day: 5);
   /// ```
-  void onTapItem({required String id}) {
-    OnTapItemDelegate(navigation: navigation).execute(id: id);
+  void onTapDay({required int day}) {
+    OnTapDayDelegate(state: state, navigation: navigation).execute(day: day);
   }
 }

@@ -145,17 +145,14 @@
   "@screen_feature_debug_yes": {
     "description": "真の表示"
   },
-  "screen_feature_exercise_history_calories": "Calories",
-  "@screen_feature_exercise_history_calories": {
-    "description": "リスト項目の消費カロリー"
-  },
-  "screen_feature_exercise_history_calories_unit": "kcal",
-  "@screen_feature_exercise_history_calories_unit": {
-    "description": "消費カロリーの単位"
-  },
-  "screen_feature_exercise_history_created_at": "Created at",
-  "@screen_feature_exercise_history_created_at": {
-    "description": "リスト項目の作成開始日時"
+  "screen_feature_exercise_history_count_badge": "{count}",
+  "@screen_feature_exercise_history_count_badge": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    },
+    "description": "同一日複数件のカレンダー上件数"
   },
   "screen_feature_exercise_history_detail_average_speed": "Average speed",
   "@screen_feature_exercise_history_detail_average_speed": {
@@ -233,29 +230,9 @@
   "@screen_feature_exercise_history_detail_title": {
     "description": "画面タイトル"
   },
-  "screen_feature_exercise_history_distance": "Distance",
-  "@screen_feature_exercise_history_distance": {
-    "description": "リスト項目の走行距離"
-  },
-  "screen_feature_exercise_history_distance_unit": "km",
-  "@screen_feature_exercise_history_distance_unit": {
-    "description": "走行距離の単位"
-  },
-  "screen_feature_exercise_history_duration": "Duration",
-  "@screen_feature_exercise_history_duration": {
-    "description": "リスト項目の運動時間"
-  },
-  "screen_feature_exercise_history_empty": "No exercise history this month. Create one from Meter record by photographing the meter panel or entering values manually.",
-  "@screen_feature_exercise_history_empty": {
-    "description": "空リストの案内"
-  },
   "screen_feature_exercise_history_error": "Could not load exercise history",
   "@screen_feature_exercise_history_error": {
     "description": "一覧の読込失敗"
-  },
-  "screen_feature_exercise_history_load_more_error": "Could not load more",
-  "@screen_feature_exercise_history_load_more_error": {
-    "description": "追加読込の失敗"
   },
   "screen_feature_exercise_history_month_label": "{year}/{month}",
   "@screen_feature_exercise_history_month_label": {
@@ -273,9 +250,49 @@
   "@screen_feature_exercise_history_retry": {
     "description": "再試行ボタン"
   },
+  "screen_feature_exercise_history_stamp_semantics": "Day {day}, {count} exercise histories",
+  "@screen_feature_exercise_history_stamp_semantics": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    },
+    "description": "スタンプ日の VoiceOver 等"
+  },
   "screen_feature_exercise_history_title": "Exercise history",
   "@screen_feature_exercise_history_title": {
     "description": "画面タイトル"
+  },
+  "screen_feature_exercise_history_weekday_fri": "Fri",
+  "@screen_feature_exercise_history_weekday_fri": {
+    "description": "カレンダー曜日（金曜）"
+  },
+  "screen_feature_exercise_history_weekday_mon": "Mon",
+  "@screen_feature_exercise_history_weekday_mon": {
+    "description": "カレンダー曜日（月曜）"
+  },
+  "screen_feature_exercise_history_weekday_sat": "Sat",
+  "@screen_feature_exercise_history_weekday_sat": {
+    "description": "カレンダー曜日（土曜）"
+  },
+  "screen_feature_exercise_history_weekday_sun": "Sun",
+  "@screen_feature_exercise_history_weekday_sun": {
+    "description": "カレンダー曜日（日曜）"
+  },
+  "screen_feature_exercise_history_weekday_thu": "Thu",
+  "@screen_feature_exercise_history_weekday_thu": {
+    "description": "カレンダー曜日（木曜）"
+  },
+  "screen_feature_exercise_history_weekday_tue": "Tue",
+  "@screen_feature_exercise_history_weekday_tue": {
+    "description": "カレンダー曜日（火曜）"
+  },
+  "screen_feature_exercise_history_weekday_wed": "Wed",
+  "@screen_feature_exercise_history_weekday_wed": {
+    "description": "カレンダー曜日（水曜）"
   },
   "screen_feature_goal_settings_auto_update_description": "Raises goals by level after consecutive achievements",
   "@screen_feature_goal_settings_auto_update_description": {

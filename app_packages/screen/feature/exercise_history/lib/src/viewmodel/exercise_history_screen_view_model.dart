@@ -4,21 +4,20 @@ import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
-import 'package:usecase_load_exercise_history_page/usecase_load_exercise_history_page.dart';
+import 'package:usecase_load_exercise_history_month/usecase_load_exercise_history_month.dart';
 
 import 'delegate/exercise_history_state_to_entity_delegate.dart';
-import 'delegate/on_initialize_delegate.dart';
-import 'delegate/on_load_more_delegate.dart';
-import 'delegate/on_refresh_delegate.dart';
+import 'delegate/on_cold_start_delegate.dart';
+import 'delegate/on_reload_selected_month_delegate.dart';
 import 'delegate/on_retry_delegate.dart';
 import 'delegate/on_select_month_delegate.dart';
-import 'delegate/on_tap_item_delegate.dart';
+import 'delegate/on_tap_day_delegate.dart';
 import 'entity/exercise_history_screen_entity.dart';
 import 'state/exercise_history_screen_state.dart';
 
 part 'exercise_history_screen_view_model.action.dart';
 
-/// 運動履歴一覧の状態と表示。
+/// 運動履歴カレンダーの状態と表示。
 ///
 /// Example:
 /// ```dart
@@ -26,7 +25,7 @@ part 'exercise_history_screen_view_model.action.dart';
 /// ```
 @internal
 final class ExerciseHistoryScreenViewModel {
-  /// 一覧 Usecase と遷移を注入して作る。
+  /// 月 Usecase と遷移を注入して作る。
   ///
   /// Example:
   /// ```dart
@@ -39,7 +38,7 @@ final class ExerciseHistoryScreenViewModel {
         state: MutableStateStream(
           ExerciseHistoryScreenState.initial(year: now.year, month: now.month),
         ),
-        loadPageUsecase: ref.watch(LoadExerciseHistoryPageUsecase.provider),
+        loadMonthUsecase: ref.watch(LoadExerciseHistoryMonthUsecase.provider),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const ExerciseHistoryStateToEntityDelegate(),
         clock: DateTime.now,
@@ -50,7 +49,7 @@ final class ExerciseHistoryScreenViewModel {
       return result;
     },
     dependencies: [
-      LoadExerciseHistoryPageUsecase.provider,
+      LoadExerciseHistoryMonthUsecase.provider,
       screenNavigationProvider,
     ],
   );
@@ -59,9 +58,9 @@ final class ExerciseHistoryScreenViewModel {
   @visibleForTesting
   final MutableStateStream<ExerciseHistoryScreenState> state;
 
-  /// 一覧頁の読み込み。
+  /// 月内全件の読み込み。
   @visibleForTesting
-  final LoadExerciseHistoryPageUsecase loadPageUsecase;
+  final LoadExerciseHistoryMonthUsecase loadMonthUsecase;
 
   /// 詳細への遷移。
   @visibleForTesting
@@ -83,7 +82,7 @@ final class ExerciseHistoryScreenViewModel {
   /// ```
   const ExerciseHistoryScreenViewModel._({
     required this.state,
-    required this.loadPageUsecase,
+    required this.loadMonthUsecase,
     required this.navigation,
     required this.stateToEntity,
     required this.clock,
