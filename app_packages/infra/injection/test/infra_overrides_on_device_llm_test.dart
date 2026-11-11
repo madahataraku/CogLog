@@ -10,24 +10,18 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  test('android は FlutterDeviceAiOnDeviceLlm', () {
+  test('android は PluginOnDeviceLlm', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
-    expect(
-      container.read(onDeviceLlmProvider),
-      isA<FlutterDeviceAiOnDeviceLlm>(),
-    );
+    expect(container.read(onDeviceLlmProvider), isA<PluginOnDeviceLlm>());
   });
 
-  test('iOS は FlutterDeviceAiOnDeviceLlm', () {
+  test('iOS は PluginOnDeviceLlm', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
-    expect(
-      container.read(onDeviceLlmProvider),
-      isA<FlutterDeviceAiOnDeviceLlm>(),
-    );
+    expect(container.read(onDeviceLlmProvider), isA<PluginOnDeviceLlm>());
   });
 
   test('linux は UnavailableOnDeviceLlm', () {

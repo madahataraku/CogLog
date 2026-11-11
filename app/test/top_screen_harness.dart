@@ -46,7 +46,7 @@ Future<ScreenGraph> pumpTopScreen(
           documentsDirectory: documents,
           histories: FixedExerciseHistoryRepository(histories),
         ),
-        // Widget テストの既定 OS は Android。本番 DI の FlutterDeviceAi は
+        // Widget テストの既定 OS は Android。本番 DI のオンデバイス LLM は
         // readiness がチャネル待ちで止まるため、固定 Fake に差し替える。
         // メーター写真も実カメラ初期化で progress が回り続けるため Fake にする。
         // ヘルス読取もプラグイン未実装のため Unavailable にする。

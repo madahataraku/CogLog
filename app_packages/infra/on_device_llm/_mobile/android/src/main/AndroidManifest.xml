@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Required by genai-prompt to bind AICore (also declared in the AAR). -->
+  <uses-permission android:name="com.google.android.apps.aicore.service.BIND_SERVICE" />
+  <queries>
+    <package android:name="com.google.android.aicore" />
+  </queries>
+  <application>
+    <!-- Mark process start only; do not call Generation.getClient here. -->
+    <provider
+      android:name="io.github.madahataraku.coglog.on_device_llm.OnDeviceLlmInitProvider"
+      android:authorities="${applicationId}.ondevicellm.init"
+      android:exported="false"
+      android:initOrder="98" />
+  </application>
+</manifest>

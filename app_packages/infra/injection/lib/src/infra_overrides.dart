@@ -41,7 +41,7 @@ List<Override> infraOverrides({
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
       case TargetPlatform.android:
-        return FlutterDeviceAiOnDeviceLlm();
+        return PluginOnDeviceLlm();
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
