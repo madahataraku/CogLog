@@ -33,7 +33,7 @@ final class _Nav implements ScreenNavigation {
   void openAppSettings() {}
 
   @override
-  void openAchievements() {}
+  Future<void> openAchievements() async {}
 
   @override
   void openDebug() {}

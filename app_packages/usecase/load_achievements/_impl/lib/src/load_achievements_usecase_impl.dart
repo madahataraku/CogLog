@@ -60,8 +60,17 @@ final class LoadAchievementsUsecaseImpl implements LoadAchievementsUsecase {
 
       final unlocks = await achievements.readUnlocks();
       final unlockedIds = {for (final unlock in unlocks) unlock.id};
+      final unlockById = {for (final unlock in unlocks) unlock.id: unlock};
       final all = await histories.list();
       final progress = AchievementEvaluator.evaluate(all, request.now);
+
+      DateTime? lastViewedAt;
+      try {
+        lastViewedAt = await achievements.readLastViewedAt();
+      } on Object {
+        // 閲覧日時が読めなくても一覧は出す。新規は付けない。
+        lastViewedAt = null;
+      }
 
       final rows = [
         for (final item in progress)
@@ -72,6 +81,13 @@ final class LoadAchievementsUsecaseImpl implements LoadAchievementsUsecase {
             target: item.target,
             progressRatio: item.ratio,
             binaryProgress: item.binaryProgress,
+            isNew:
+                unlockedIds.contains(item.id) &&
+                unlockById[item.id] != null &&
+                achievementIsNew(
+                  unlock: unlockById[item.id]!,
+                  lastViewedAt: lastViewedAt,
+                ),
           ),
       ];
       return LoadAchievementsSuccess(rows);

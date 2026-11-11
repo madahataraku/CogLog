@@ -11,23 +11,26 @@ import 'on_initialize_delegate.dart';
 /// OnRetryDelegate(
 ///   state: state,
 ///   loadUsecase: loadUsecase,
+///   markViewed: markViewed,
 ///   now: DateTime(2026, 11, 10),
 /// );
 /// ```
 final class OnRetryDelegate {
-  /// [state] と読込 Usecase、基準時刻を受け取る。
+  /// [state] と読込・閲覧更新 Usecase、基準時刻を受け取る。
   ///
   /// Example:
   /// ```dart
   /// OnRetryDelegate(
   ///   state: state,
   ///   loadUsecase: loadUsecase,
+  ///   markViewed: markViewed,
   ///   now: DateTime(2026, 11, 10),
   /// );
   /// ```
   const OnRetryDelegate({
     required this.state,
     required this.loadUsecase,
+    required this.markViewed,
     required this.now,
   });
 
@@ -36,6 +39,9 @@ final class OnRetryDelegate {
 
   /// 一覧の読込。
   final LoadAchievementsUsecase loadUsecase;
+
+  /// Ready 後の最終閲覧更新。
+  final MarkAchievementsViewedUsecase markViewed;
 
   /// 進捗算出の基準時刻。
   final DateTime now;
@@ -65,6 +71,7 @@ final class OnRetryDelegate {
     await loadAchievementsIntoState(
       state: state,
       loadUsecase: loadUsecase,
+      markViewed: markViewed,
       now: now,
     );
   }

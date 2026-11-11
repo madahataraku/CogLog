@@ -697,6 +697,12 @@ abstract class L10n {
   /// **'年末年始も休まず営業'**
   String get screen_feature_achievement_name_year_end_new_year;
 
+  /// 一覧行の新規ドット a11y
+  ///
+  /// In ja, this message translates to:
+  /// **'新規獲得'**
+  String get screen_feature_achievement_new_semantics;
+
   /// 再試行ボタン
   ///
   /// In ja, this message translates to:
@@ -1457,6 +1463,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標達成率'**
   String get screen_feature_top_achievement_title;
+
+  /// ホーム trophy の新規ドット a11y
+  ///
+  /// In ja, this message translates to:
+  /// **'新規アチーブメントあり'**
+  String get screen_feature_top_achievements_new_semantics;
 
   /// ホーム右上
   ///

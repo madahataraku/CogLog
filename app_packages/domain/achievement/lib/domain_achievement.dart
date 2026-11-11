@@ -16,6 +16,7 @@ export 'src/achievement_criterion.dart';
 export 'src/achievement_definition.dart';
 export 'src/achievement_evaluator.dart';
 export 'src/achievement_id.dart';
+export 'src/achievement_is_new.dart';
 export 'src/achievement_local_date.dart';
 export 'src/achievement_progress.dart';
 export 'src/achievement_unlock.dart';

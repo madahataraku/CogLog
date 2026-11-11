@@ -381,6 +381,9 @@ class L10nEn extends L10n {
       'Open through New Year';
 
   @override
+  String get screen_feature_achievement_new_semantics => 'New achievement';
+
+  @override
   String get screen_feature_achievement_retry => 'Retry';
 
   @override
@@ -811,6 +814,10 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_achievement_title => 'Goal progress';
+
+  @override
+  String get screen_feature_top_achievements_new_semantics =>
+      'New achievements available';
 
   @override
   String get screen_feature_top_achievements_semantics => 'Achievements';

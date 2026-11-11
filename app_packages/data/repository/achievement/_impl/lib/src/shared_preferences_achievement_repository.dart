@@ -23,6 +23,9 @@ final class SharedPreferencesAchievementRepository
   /// 獲得一覧の JSON 配列キー。
   static const _unlocksKey = 'achievement_unlocks';
 
+  /// 最終閲覧日時の ISO8601 キー。
+  static const _lastViewedAtKey = 'achievement_last_viewed_at';
+
   /// カタログ上の既知 id。
   static final Set<AchievementId> _knownIds = {
     for (final definition in AchievementCatalog.all) definition.id,
@@ -59,6 +62,44 @@ final class SharedPreferencesAchievementRepository
     } on Object {
       // 破損 JSON でも起動と評価を継続するため空にする。
       return const [];
+    }
+  }
+
+  /// キー無し・破損・パース失敗は null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readLastViewedAt();
+  /// ```
+  @override
+  Future<DateTime?> readLastViewedAt() async {
+    final raw = _preferences.getString(_lastViewedAtKey);
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    final parsed = DateTime.tryParse(raw);
+    return parsed?.toUtc();
+  }
+
+  /// UTC の ISO8601 で書き、失敗時は reload して例外を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeLastViewedAt(DateTime.utc(2026, 11, 11));
+  /// ```
+  @override
+  Future<void> writeLastViewedAt(DateTime viewedAt) async {
+    final payload = viewedAt.toUtc().toIso8601String();
+    var saved = false;
+    try {
+      saved = await _preferences.setString(_lastViewedAtKey, payload);
+    } on Object {
+      await _preferences.reload();
+      rethrow;
+    }
+    if (!saved) {
+      await _preferences.reload();
+      throw StateError('$_lastViewedAtKey を保存できなかった。');
     }
   }
 

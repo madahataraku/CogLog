@@ -105,4 +105,36 @@ void main() {
 
     expect(await repository.readUnlocks(), isEmpty);
   });
+
+  test('最終閲覧日時の未保存は null', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    expect(await repository.readLastViewedAt(), isNull);
+  });
+
+  test('最終閲覧日時を書いて読める', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+    final viewedAt = DateTime.utc(2026, 11, 11, 9);
+
+    await repository.writeLastViewedAt(viewedAt);
+
+    expect(await repository.readLastViewedAt(), viewedAt);
+  });
+
+  test('最終閲覧日時の破損文字は null', () async {
+    SharedPreferences.setMockInitialValues({
+      'achievement_last_viewed_at': 'not-a-date',
+    });
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    expect(await repository.readLastViewedAt(), isNull);
+  });
 }

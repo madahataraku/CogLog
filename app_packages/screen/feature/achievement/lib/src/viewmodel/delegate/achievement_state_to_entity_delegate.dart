@@ -41,6 +41,7 @@ final class AchievementStateToEntityDelegate {
             condition: resolveAchievementCondition(row.id),
             unlocked: row.unlocked,
             progressRatio: row.progressRatio,
+            isNew: row.isNew,
           ),
       ]),
     };

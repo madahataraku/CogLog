@@ -405,6 +405,10 @@
   "@screen_feature_achievement_name_year_end_new_year": {
     "description": "アチーブメント名 year_end_new_year"
   },
+  "screen_feature_achievement_new_semantics": "New achievement",
+  "@screen_feature_achievement_new_semantics": {
+    "description": "一覧行の新規ドット a11y"
+  },
   "screen_feature_achievement_retry": "Retry",
   "@screen_feature_achievement_retry": {
     "description": "再試行ボタン"
@@ -956,6 +960,10 @@
   "screen_feature_top_achievement_title": "Goal progress",
   "@screen_feature_top_achievement_title": {
     "description": "目標達成率セクションの見出し"
+  },
+  "screen_feature_top_achievements_new_semantics": "New achievements available",
+  "@screen_feature_top_achievements_new_semantics": {
+    "description": "ホーム trophy の新規ドット a11y"
   },
   "screen_feature_top_achievements_semantics": "Achievements",
   "@screen_feature_top_achievements_semantics": {

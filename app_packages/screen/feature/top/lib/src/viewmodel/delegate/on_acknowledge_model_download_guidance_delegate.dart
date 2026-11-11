@@ -55,6 +55,7 @@ final class OnAcknowledgeModelDownloadGuidanceDelegate {
           adviceText: current.adviceText,
           adviceTone: current.adviceTone,
           pendingModelDownloadGuidance: false,
+          hasNewAchievements: false,
         ),
       );
     });

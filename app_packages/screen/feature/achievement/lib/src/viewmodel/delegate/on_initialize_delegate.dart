@@ -11,23 +11,26 @@ import '../state/achievement_screen_state.dart';
 /// OnInitializeDelegate(
 ///   state: state,
 ///   loadUsecase: loadUsecase,
+///   markViewed: markViewed,
 ///   now: DateTime(2026, 11, 10),
 /// );
 /// ```
 final class OnInitializeDelegate {
-  /// [state] と読込 Usecase、基準時刻を受け取る。
+  /// [state] と読込・閲覧更新 Usecase、基準時刻を受け取る。
   ///
   /// Example:
   /// ```dart
   /// OnInitializeDelegate(
   ///   state: state,
   ///   loadUsecase: loadUsecase,
+  ///   markViewed: markViewed,
   ///   now: DateTime(2026, 11, 10),
   /// );
   /// ```
   const OnInitializeDelegate({
     required this.state,
     required this.loadUsecase,
+    required this.markViewed,
     required this.now,
   });
 
@@ -36,6 +39,9 @@ final class OnInitializeDelegate {
 
   /// 一覧の読込。
   final LoadAchievementsUsecase loadUsecase;
+
+  /// Ready 後の最終閲覧更新。
+  final MarkAchievementsViewedUsecase markViewed;
 
   /// 進捗算出の基準時刻。
   final DateTime now;
@@ -57,6 +63,7 @@ final class OnInitializeDelegate {
     await loadAchievementsIntoState(
       state: state,
       loadUsecase: loadUsecase,
+      markViewed: markViewed,
       now: now,
     );
   }
@@ -69,6 +76,7 @@ final class OnInitializeDelegate {
 /// loadAchievementsIntoState(
 ///   state: state,
 ///   loadUsecase: usecase,
+///   markViewed: markViewed,
 ///   now: DateTime(2026, 11, 10),
 /// );
 /// ```
@@ -76,6 +84,7 @@ final class OnInitializeDelegate {
 Future<void> loadAchievementsIntoState({
   required MutableStateStream<AchievementScreenState> state,
   required LoadAchievementsUsecase loadUsecase,
+  required MarkAchievementsViewedUsecase markViewed,
   required DateTime now,
 }) async {
   try {
@@ -89,6 +98,13 @@ Future<void> loadAchievementsIntoState({
       });
     } on StateStreamClosedException {
       return;
+    }
+    if (result is LoadAchievementsSuccess) {
+      try {
+        await markViewed.execute(MarkAchievementsViewedRequest(now: now));
+      } on Object {
+        // 一覧は出したまま。閲覧日時だけ次回に持ち越す。
+      }
     }
   } on Object {
     try {

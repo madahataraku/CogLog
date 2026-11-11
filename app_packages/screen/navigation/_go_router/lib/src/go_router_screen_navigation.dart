@@ -165,15 +165,15 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
     router.push('/settings');
   }
 
-  /// アチーブメント画面をホームタブのスタックへ積む。
+  /// アチーブメント画面をホームタブのスタックへ積み、閉じるまで待つ。
   ///
   /// Example:
   /// ```dart
-  /// navigation.openAchievements();
+  /// await navigation.openAchievements();
   /// ```
   @override
-  void openAchievements() {
-    router.push('/achievements');
+  Future<void> openAchievements() {
+    return router.push<void>('/achievements');
   }
 
   /// デバッグ画面を積む。

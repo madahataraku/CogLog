@@ -4,6 +4,7 @@ import 'package:data_repository_top_screen_metric_testing/data_repository_top_sc
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:test/test.dart';
+import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_load_top_screen_impl/usecase_load_top_screen_impl.dart';
 
@@ -27,6 +28,13 @@ ExerciseHistory ride({
   );
 }
 
+final class _FixedNewIndicator implements LoadAchievementNewIndicatorUsecase {
+  const _FixedNewIndicator([this.value = false]);
+  final bool value;
+  @override
+  Future<bool> execute({required DateTime now}) async => value;
+}
+
 void main() {
   final now = DateTime(2026, 11, 5, 15);
 
@@ -35,6 +43,7 @@ void main() {
       histories: const FixedExerciseHistoryRepository([]),
       metrics: MemoryTopScreenMetricRepository(),
       goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.metric, PeriodTotalMetric.calories);
@@ -61,6 +70,7 @@ void main() {
       ]),
       metrics: MemoryTopScreenMetricRepository(),
       goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.today.count, 1);
@@ -86,6 +96,7 @@ void main() {
       ]),
       metrics: MemoryTopScreenMetricRepository(),
       goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.consecutiveExerciseDays, 2);
@@ -103,6 +114,7 @@ void main() {
       ]),
       metrics: MemoryTopScreenMetricRepository(),
       goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.today.distanceKm, closeTo(2.28, 1e-9));
@@ -123,6 +135,7 @@ void main() {
       histories: const FixedExerciseHistoryRepository([]),
       metrics: metrics,
       goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.metric, PeriodTotalMetric.duration);
@@ -133,6 +146,7 @@ void main() {
       histories: const FixedExerciseHistoryRepository([]),
       metrics: MemoryTopScreenMetricRepository(),
       goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.goal.hasDuration, isFalse);
@@ -153,6 +167,7 @@ void main() {
       histories: const FixedExerciseHistoryRepository([]),
       metrics: MemoryTopScreenMetricRepository(),
       goals: goals,
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.goal.duration, const Duration(minutes: 30));
@@ -169,6 +184,7 @@ void main() {
       histories: FixedExerciseHistoryRepository([todayRide]),
       metrics: MemoryTopScreenMetricRepository(),
       goals: goals,
+      newIndicator: const _FixedNewIndicator(),
     ).execute(LoadTopScreenRequest(now: now));
 
     final swapped = result.withMetric(PeriodTotalMetric.distance);
@@ -177,5 +193,16 @@ void main() {
     expect(swapped.todayHistories, hasLength(1));
     expect(swapped.today, result.today);
     expect(swapped.consecutiveExerciseDays, result.consecutiveExerciseDays);
+    expect(swapped.hasNewAchievements, result.hasNewAchievements);
+  });
+
+  test('newIndicator が true なら hasNewAchievements true', () async {
+    final result = await LoadTopScreenUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      metrics: MemoryTopScreenMetricRepository(),
+      goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(true),
+    ).execute(LoadTopScreenRequest(now: now));
+    expect(result.hasNewAchievements, isTrue);
   });
 }

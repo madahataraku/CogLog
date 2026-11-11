@@ -13,6 +13,7 @@ extension AchievementScreenViewModelActions on AchievementScreenViewModel {
     return OnInitializeDelegate(
       state: state,
       loadUsecase: loadUsecase,
+      markViewed: markViewed,
       now: now(),
     ).execute();
   }
@@ -27,6 +28,7 @@ extension AchievementScreenViewModelActions on AchievementScreenViewModel {
     return OnRetryDelegate(
       state: state,
       loadUsecase: loadUsecase,
+      markViewed: markViewed,
       now: now(),
     ).execute();
   }

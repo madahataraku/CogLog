@@ -13,6 +13,7 @@ import 'package:domain_achievement/domain_achievement.dart';
 ///   target: 1,
 ///   progressRatio: 0,
 ///   binaryProgress: true,
+///   isNew: false,
 /// );
 /// ```
 final class AchievementRow {
@@ -27,6 +28,7 @@ final class AchievementRow {
   ///   target: 3,
   ///   progressRatio: 1,
   ///   binaryProgress: false,
+  ///   isNew: true,
   /// );
   /// ```
   const AchievementRow({
@@ -36,6 +38,7 @@ final class AchievementRow {
     required this.target,
     required this.progressRatio,
     required this.binaryProgress,
+    required this.isNew,
   });
 
   /// アチーブメント識別子。文言キー解決に使う。
@@ -55,4 +58,7 @@ final class AchievementRow {
 
   /// 二値進捗か。画面の進捗バー表現に使う。
   final bool binaryProgress;
+
+  /// 最終閲覧より後の獲得で、かつ開放済みのとき true。
+  final bool isNew;
 }
