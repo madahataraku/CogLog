@@ -2,9 +2,9 @@
 ///
 /// Example:
 /// ```dart
-/// FlutterDeviceAiOnDeviceLlm();
+/// PluginOnDeviceLlm();
 /// ```
 library;
 
-export 'src/flutter_device_ai_on_device_llm.dart';
+export 'src/plugin_on_device_llm.dart';
 export 'src/unavailable_on_device_llm.dart';

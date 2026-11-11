@@ -104,7 +104,7 @@ reviews:
       mode: warning
       requirements: |
         タイトルは変更内容が分かる1文にする。WIP、仮、テストだけのタイトルは避ける。
-    # ベンダーした flutter_device_ai など、上流コードの docstring 網羅は要求しない。
+    # ネイティブ移植コードなど、docstring 網羅は要求しない。
     docstrings:
       mode: off
     custom_checks:

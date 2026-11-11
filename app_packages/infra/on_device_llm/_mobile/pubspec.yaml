@@ -1,5 +1,5 @@
 name: infra_on_device_llm_mobile
-description: Mobile on-device LLM backed by flutter_device_ai.
+description: Mobile on-device LLM backed by OS models (Gemini Nano / Foundation Models).
 publish_to: none
 resolution: workspace
 version: 0.1.0+1
@@ -11,7 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_device_ai: any
   foundation_app_log: any
   infra_on_device_llm: any
   meta: any
@@ -21,3 +20,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test: any
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: io.github.madahataraku.coglog.on_device_llm
+        pluginClass: OnDeviceLlmPlugin
+      ios:
+        pluginClass: OnDeviceLlmPlugin
