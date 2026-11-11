@@ -108,7 +108,7 @@ class FlutterDeviceAiPlugin : FlutterPlugin, MethodCallHandler {
             }
         })
 
-        // ContentProvider でも温めるが、エンジン再アタッチ時の保険として再実行する。
+        // ContentProvider では getClient しない。エンジン接続後に初めて温める（Playground 相当）。
         SharedGenerativeModel.warm(binding.applicationContext)
     }
 

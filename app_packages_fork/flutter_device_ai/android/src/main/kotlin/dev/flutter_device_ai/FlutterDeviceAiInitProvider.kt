@@ -4,23 +4,20 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import com.google.mlkit.common.MlKit
 
 /**
- * Marks process start and initializes ML Kit during app startup, before Flutter
- * attaches plugins. Defers [Generation.getClient] warm to a background attempt
- * so MlKitContext is ready (mlkit#1071 / MlKitContext init).
+ * Records process start only.
  *
- * Manifest `initOrder` must be lower than ML Kit's `MlKitInitProvider` (99)
- * so that provider runs first when present.
+ * Intentionally does **not** call [com.google.mlkit.genai.prompt.Generation.getClient]:
+ * early getClient failures during ContentProvider init have left GenAI unusable for
+ * the whole process (`modelReady=false`, repeated getClient NPE). Client creation
+ * happens later from the Flutter plugin / first GenAI call, like Nano Playground.
+ *
+ * Manifest `initOrder` stays below ML Kit's `MlKitInitProvider` (99).
  */
 class FlutterDeviceAiInitProvider : ContentProvider() {
     override fun onCreate(): Boolean {
         SharedGenerativeModel.markProcessStart()
-        val ctx = context?.applicationContext ?: return true
-        runCatching { MlKit.initialize(ctx) }
-        // Warm after ML Kit init; failures are kept in SharedGenerativeModel.lastError.
-        SharedGenerativeModel.warm(ctx)
         return true
     }
 
