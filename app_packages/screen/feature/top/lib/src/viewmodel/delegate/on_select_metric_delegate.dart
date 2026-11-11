@@ -61,6 +61,7 @@ final class OnSelectMetricDelegate {
           adviceText: current.adviceText,
           adviceTone: current.adviceTone,
           pendingModelDownloadGuidance: current.pendingModelDownloadGuidance,
+          hasNewAchievements: current.hasNewAchievements,
         ),
       );
     });

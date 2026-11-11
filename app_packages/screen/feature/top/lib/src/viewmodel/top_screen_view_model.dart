@@ -6,6 +6,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
+import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
@@ -56,7 +57,9 @@ final class TopScreenViewModel {
         ),
         guidanceSession: ref.watch(ModelDownloadGuidanceProviders.session),
         navigation: ref.watch(screenNavigationProvider),
+        newIndicator: ref.watch(LoadAchievementNewIndicatorUsecase.provider),
         stateToEntity: const TopScreenStateToEntityDelegate(),
+        now: DateTime.now,
       );
       ref.onDispose(() {
         unawaited(result._close());
@@ -71,6 +74,7 @@ final class TopScreenViewModel {
       PrepareOnDeviceLlmModelUsecase.provider,
       ModelDownloadGuidanceProviders.session,
       screenNavigationProvider,
+      LoadAchievementNewIndicatorUsecase.provider,
     ],
   );
 
@@ -106,9 +110,17 @@ final class TopScreenViewModel {
   @visibleForTesting
   final ScreenNavigation navigation;
 
+  /// 新規アチーブメント有無。
+  @visibleForTesting
+  final LoadAchievementNewIndicatorUsecase newIndicator;
+
   /// State から表示文字列への変換。
   @visibleForTesting
   final TopScreenStateToEntityDelegate stateToEntity;
+
+  /// 新規判定の基準時刻。
+  @visibleForTesting
+  final DateTime Function() now;
 
   /// 注入された依存から ViewModel を作る。
   ///
@@ -125,7 +137,9 @@ final class TopScreenViewModel {
     required this.prepareOnDeviceLlmModelUsecase,
     required this.guidanceSession,
     required this.navigation,
+    required this.newIndicator,
     required this.stateToEntity,
+    required this.now,
   });
 
   /// 表示に使う文字列。

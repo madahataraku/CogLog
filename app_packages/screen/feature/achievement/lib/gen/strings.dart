@@ -553,6 +553,10 @@ mixin class L10nStringsMixin {
         'screen_feature_achievement_name_year_end_new_year',
       );
 
+  /// 一覧行の新規ドット a11y
+  String get screen_feature_achievement_new_semantics =>
+      LocalizeStringDelegate.get('screen_feature_achievement_new_semantics');
+
   /// 再試行ボタン
   String get screen_feature_achievement_retry =>
       LocalizeStringDelegate.get('screen_feature_achievement_retry');

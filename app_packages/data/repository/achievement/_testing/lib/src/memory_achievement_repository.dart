@@ -24,6 +24,8 @@ final class MemoryAchievementRepository implements AchievementRepository {
 
   final Map<AchievementId, AchievementUnlock> _byId = {};
 
+  DateTime? _lastViewedAt;
+
   /// まだ書いていなければ空。
   ///
   /// Example:
@@ -33,6 +35,26 @@ final class MemoryAchievementRepository implements AchievementRepository {
   @override
   Future<List<AchievementUnlock>> readUnlocks() async =>
       _byId.values.toList(growable: false);
+
+  /// 未保存なら null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readLastViewedAt();
+  /// ```
+  @override
+  Future<DateTime?> readLastViewedAt() async => _lastViewedAt;
+
+  /// メモリ上の最終閲覧日時を上書きする。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeLastViewedAt(DateTime.utc(2026, 11, 11));
+  /// ```
+  @override
+  Future<void> writeLastViewedAt(DateTime viewedAt) async {
+    _lastViewedAt = viewedAt.toUtc();
+  }
 
   /// 未所持の id だけ足す。既存 id の獲得日時は変えない。
   ///

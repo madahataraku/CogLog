@@ -29,4 +29,15 @@ void main() {
       );
     }
   });
+
+  test('新規 semantics キーが ja/en にある', () {
+    expect(
+      StringsTestHelper.ja.contains('screen_feature_achievement_new_semantics'),
+      isTrue,
+    );
+    expect(
+      StringsTestHelper.en.contains('screen_feature_achievement_new_semantics'),
+      isTrue,
+    );
+  });
 }

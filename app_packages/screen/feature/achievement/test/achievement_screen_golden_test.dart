@@ -17,7 +17,7 @@ final class _Nav implements ScreenNavigation {
   void openAppSettings() {}
 
   @override
-  void openAchievements() {}
+  Future<void> openAchievements() async {}
 
   @override
   void openDebug() {}
@@ -36,6 +36,11 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void goToHomeTab() {}
+}
+
+final class _FakeMark implements MarkAchievementsViewedUsecase {
+  @override
+  Future<void> execute(MarkAchievementsViewedRequest request) async {}
 }
 
 final class _FakeLoad implements LoadAchievementsUsecase {
@@ -57,6 +62,7 @@ const _mixedRows = [
     target: 1,
     progressRatio: 1,
     binaryProgress: true,
+    isNew: true,
   ),
   AchievementRow(
     id: 'streak_3',
@@ -65,6 +71,7 @@ const _mixedRows = [
     target: 3,
     progressRatio: 1 / 3,
     binaryProgress: false,
+    isNew: false,
   ),
   AchievementRow(
     id: 'distance_1',
@@ -73,6 +80,7 @@ const _mixedRows = [
     target: 1,
     progressRatio: 0.4,
     binaryProgress: false,
+    isNew: false,
   ),
 ];
 
@@ -84,6 +92,7 @@ const _allUnlockedRows = [
     target: 1,
     progressRatio: 1,
     binaryProgress: true,
+    isNew: false,
   ),
   AchievementRow(
     id: 'streak_3',
@@ -92,6 +101,7 @@ const _allUnlockedRows = [
     target: 3,
     progressRatio: 1,
     binaryProgress: false,
+    isNew: false,
   ),
   AchievementRow(
     id: 'calories_50',
@@ -100,6 +110,7 @@ const _allUnlockedRows = [
     target: 50,
     progressRatio: 1,
     binaryProgress: false,
+    isNew: false,
   ),
 ];
 
@@ -128,6 +139,9 @@ Future<void> _pumpAchievement(
         screenNavigationProvider.overrideWith((ref) => _Nav()),
         LoadAchievementsUsecase.provider.overrideWith(
           (ref) => _FakeLoad(result),
+        ),
+        MarkAchievementsViewedUsecase.provider.overrideWith(
+          (ref) => _FakeMark(),
         ),
       ],
       child: MaterialApp(

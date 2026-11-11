@@ -85,6 +85,7 @@ List<Override> usecaseOverrides({
       histories: ref.watch(exerciseHistoryRepositoryProvider),
       metrics: ref.watch(topScreenMetricRepositoryProvider),
       goals: ref.watch(dailyGoalRepositoryProvider),
+      newIndicator: ref.watch(LoadAchievementNewIndicatorUsecase.provider),
     ),
   ),
   LoadTrendsUsecase.provider.overrideWith(
@@ -128,6 +129,16 @@ List<Override> usecaseOverrides({
       achievements: ref.watch(achievementRepositoryProvider),
       histories: ref.watch(exerciseHistoryRepositoryProvider),
       evaluate: ref.watch(EvaluateAchievementsUsecase.provider),
+    ),
+  ),
+  MarkAchievementsViewedUsecase.provider.overrideWith(
+    (ref) => MarkAchievementsViewedUsecaseImpl(
+      achievements: ref.watch(achievementRepositoryProvider),
+    ),
+  ),
+  LoadAchievementNewIndicatorUsecase.provider.overrideWith(
+    (ref) => LoadAchievementNewIndicatorUsecaseImpl(
+      achievements: ref.watch(achievementRepositoryProvider),
     ),
   ),
   GenerateTopAdviceUsecase.provider.overrideWith(

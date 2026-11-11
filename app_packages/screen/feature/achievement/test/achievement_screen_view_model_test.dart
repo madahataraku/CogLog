@@ -15,7 +15,7 @@ final class _Nav implements ScreenNavigation {
   void openAppSettings() {}
 
   @override
-  void openAchievements() {}
+  Future<void> openAchievements() async {}
 
   @override
   void openDebug() {}
@@ -53,6 +53,15 @@ final class _FakeLoad implements LoadAchievementsUsecase {
   }
 }
 
+final class _FakeMark implements MarkAchievementsViewedUsecase {
+  var calls = 0;
+
+  @override
+  Future<void> execute(MarkAchievementsViewedRequest request) async {
+    calls += 1;
+  }
+}
+
 void main() {
   test('読込失敗後の再試行で ready になる', () async {
     final load = _FakeLoad(result: const LoadAchievementsFailed());
@@ -61,6 +70,9 @@ void main() {
       overrides: [
         screenNavigationProvider.overrideWith((ref) => nav),
         LoadAchievementsUsecase.provider.overrideWith((ref) => load),
+        MarkAchievementsViewedUsecase.provider.overrideWith(
+          (ref) => _FakeMark(),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -80,6 +92,7 @@ void main() {
         target: 1,
         progressRatio: 1,
         binaryProgress: true,
+        isNew: false,
       ),
     ]);
 
@@ -101,6 +114,7 @@ void main() {
           target: 3,
           progressRatio: 1 / 3,
           binaryProgress: false,
+          isNew: false,
         ),
       ]),
     );
@@ -108,6 +122,9 @@ void main() {
       overrides: [
         screenNavigationProvider.overrideWith((ref) => _Nav()),
         LoadAchievementsUsecase.provider.overrideWith((ref) => load),
+        MarkAchievementsViewedUsecase.provider.overrideWith(
+          (ref) => _FakeMark(),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -132,6 +149,7 @@ void main() {
           target: 1,
           progressRatio: 1,
           binaryProgress: true,
+          isNew: false,
         ),
       ]),
     );
@@ -139,6 +157,9 @@ void main() {
       overrides: [
         screenNavigationProvider.overrideWith((ref) => _Nav()),
         LoadAchievementsUsecase.provider.overrideWith((ref) => load),
+        MarkAchievementsViewedUsecase.provider.overrideWith(
+          (ref) => _FakeMark(),
+        ),
       ],
     );
     addTearDown(container.dispose);

@@ -340,6 +340,9 @@ class L10nJa extends L10n {
   String get screen_feature_achievement_name_year_end_new_year => '年末年始も休まず営業';
 
   @override
+  String get screen_feature_achievement_new_semantics => '新規獲得';
+
+  @override
   String get screen_feature_achievement_retry => '再試行';
 
   @override
@@ -751,6 +754,9 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_achievement_title => '目標達成率';
+
+  @override
+  String get screen_feature_top_achievements_new_semantics => '新規アチーブメントあり';
 
   @override
   String get screen_feature_top_achievements_semantics => 'アチーブメント';

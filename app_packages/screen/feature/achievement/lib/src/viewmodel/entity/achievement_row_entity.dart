@@ -10,10 +10,11 @@ import 'package:domain_achievement/domain_achievement.dart';
 ///   condition: '初めて運動記録を登録する',
 ///   unlocked: false,
 ///   progressRatio: 0,
+///   isNew: false,
 /// );
 /// ```
 final class AchievementRowEntity {
-  /// 表示名と条件・進捗を持つ行を作る。
+  /// 表示名と条件・進捗・新規有無を持つ行を作る。
   ///
   /// Example:
   /// ```dart
@@ -23,6 +24,7 @@ final class AchievementRowEntity {
   ///   condition: '3日間連続で運動する',
   ///   unlocked: true,
   ///   progressRatio: 1,
+  ///   isNew: true,
   /// );
   /// ```
   const AchievementRowEntity({
@@ -31,6 +33,7 @@ final class AchievementRowEntity {
     required this.condition,
     required this.unlocked,
     required this.progressRatio,
+    required this.isNew,
   });
 
   /// アチーブメント識別子。
@@ -45,6 +48,9 @@ final class AchievementRowEntity {
   /// 獲得済みか。
   final bool unlocked;
 
-  /// 進捗率。未開放行のバーに使う。
+  /// 進捗率。ゲージに使う。
   final double progressRatio;
+
+  /// 新規獲得ドットを出すとき true。
+  final bool isNew;
 }

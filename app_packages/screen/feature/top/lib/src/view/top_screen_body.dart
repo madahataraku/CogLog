@@ -42,7 +42,28 @@ class TopScreenBody extends HookConsumerWidget {
         title: Text(strings.foundation_resources_app_name),
         suffixes: [
           FHeaderAction(
-            icon: const Icon(FLucideIcons.trophy),
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Icon(FLucideIcons.trophy),
+                if (entity.hasNewAchievements)
+                  Positioned(
+                    right: -2,
+                    top: -2,
+                    child: Semantics(
+                      label:
+                          strings.screen_feature_top_achievements_new_semantics,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: context.theme.colors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const SizedBox(width: 8, height: 8),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             onPress: viewModel.onOpenAchievements,
             semanticsLabel: strings.screen_feature_top_achievements_semantics,
           ),

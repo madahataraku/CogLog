@@ -111,6 +111,7 @@ final class OnInitializeDelegate {
           adviceText: advice.advice,
           adviceTone: advice.tone,
           pendingModelDownloadGuidance: false,
+          hasNewAchievements: result.hasNewAchievements,
         ),
       );
     });
@@ -137,6 +138,7 @@ final class OnInitializeDelegate {
           adviceText: current.adviceText,
           adviceTone: current.adviceTone,
           pendingModelDownloadGuidance: true,
+          hasNewAchievements: current.hasNewAchievements,
         ),
       );
     });

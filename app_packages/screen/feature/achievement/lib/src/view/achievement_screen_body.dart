@@ -78,9 +78,9 @@ class AchievementScreenBody extends ConsumerWidget {
   }
 }
 
-/// 1 行分の名前・条件・未開放時の進捗バー。
+/// 1 行分の枠・名前・条件・進捗バー・新規ドット。
 class _AchievementRowView extends StatelessWidget {
-  /// [row] を縦に並べる。
+  /// [row] を枠付きで縦に並べる。
   ///
   /// Example:
   /// ```dart
@@ -91,6 +91,7 @@ class _AchievementRowView extends StatelessWidget {
   ///     condition: '初めて運動記録を登録する',
   ///     unlocked: false,
   ///     progressRatio: 0,
+  ///     isNew: false,
   ///   ),
   /// );
   /// ```
@@ -99,7 +100,7 @@ class _AchievementRowView extends StatelessWidget {
   /// 表示する行。
   final AchievementRowEntity row;
 
-  /// 名前と条件を出し、未開放なら進捗バーも出す。
+  /// 枠とゲージを描画する。
   ///
   /// Example:
   /// ```dart
@@ -110,6 +111,7 @@ class _AchievementRowView extends StatelessWidget {
   ///     condition: '初めて運動記録を登録する',
   ///     unlocked: false,
   ///     progressRatio: 0,
+  ///     isNew: false,
   ///   ),
   /// );
   /// ```
@@ -121,15 +123,47 @@ class _AchievementRowView extends StatelessWidget {
     final conditionStyle = context.theme.typography.body.sm.copyWith(
       color: context.theme.colors.mutedForeground,
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: 8,
-      children: [
-        Text(row.name, style: titleStyle),
-        Text(row.condition, style: conditionStyle),
-        if (!row.unlocked)
-          LinearProgressIndicator(value: row.progressRatio.clamp(0.0, 1.0)),
-      ],
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: row.unlocked
+            ? context.theme.colors.primary.withValues(alpha: 0.12)
+            : context.theme.colors.background,
+        border: Border.all(
+          color: row.unlocked
+              ? context.theme.colors.primary
+              : context.theme.colors.border,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 8,
+          children: [
+            Row(
+              children: [
+                Expanded(child: Text(row.name, style: titleStyle)),
+                if (row.isNew)
+                  Semantics(
+                    label: strings.screen_feature_achievement_new_semantics,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: context.theme.colors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const SizedBox(width: 8, height: 8),
+                    ),
+                  ),
+              ],
+            ),
+            Text(row.condition, style: conditionStyle),
+            LinearProgressIndicator(
+              value: row.unlocked ? 1.0 : row.progressRatio.clamp(0.0, 1.0),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

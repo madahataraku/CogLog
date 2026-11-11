@@ -34,6 +34,7 @@ final class AchievementScreenViewModel {
       final result = AchievementScreenViewModel._(
         state: MutableStateStream(AchievementScreenState.initial),
         loadUsecase: ref.watch(LoadAchievementsUsecase.provider),
+        markViewed: ref.watch(MarkAchievementsViewedUsecase.provider),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const AchievementStateToEntityDelegate(),
         now: () => DateTime.now(),
@@ -43,7 +44,11 @@ final class AchievementScreenViewModel {
       });
       return result;
     },
-    dependencies: [LoadAchievementsUsecase.provider, screenNavigationProvider],
+    dependencies: [
+      LoadAchievementsUsecase.provider,
+      MarkAchievementsViewedUsecase.provider,
+      screenNavigationProvider,
+    ],
   );
 
   /// 画面状態。
@@ -53,6 +58,10 @@ final class AchievementScreenViewModel {
   /// 一覧の読込。
   @visibleForTesting
   final LoadAchievementsUsecase loadUsecase;
+
+  /// Ready 後の最終閲覧更新。
+  @visibleForTesting
+  final MarkAchievementsViewedUsecase markViewed;
 
   /// 画面遷移。
   @visibleForTesting
@@ -75,6 +84,7 @@ final class AchievementScreenViewModel {
   const AchievementScreenViewModel._({
     required this.state,
     required this.loadUsecase,
+    required this.markViewed,
     required this.navigation,
     required this.stateToEntity,
     required this.now,

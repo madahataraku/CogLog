@@ -448,6 +448,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_achievement_name_year_end_new_year;
       },
+      'screen_feature_achievement_new_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_new_semantics;
+      },
       'screen_feature_achievement_retry': (source) {
         // No Placeholders
         return l10n.screen_feature_achievement_retry;
@@ -994,6 +998,10 @@ final class L10nHelper {
       'screen_feature_top_achievement_title': (source) {
         // No Placeholders
         return l10n.screen_feature_top_achievement_title;
+      },
+      'screen_feature_top_achievements_new_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_achievements_new_semantics;
       },
       'screen_feature_top_achievements_semantics': (source) {
         // No Placeholders

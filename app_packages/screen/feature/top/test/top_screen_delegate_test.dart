@@ -103,6 +103,7 @@ const _loadResult = LoadTopScreenResult(
   goal: DailyGoal.unset,
   todayHistories: [],
   consecutiveExerciseDays: 0,
+  hasNewAchievements: false,
 );
 
 void main() {
@@ -256,6 +257,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: true,
+        hasNewAchievements: true,
       ),
     );
     final session = OnDeviceLlmGuidanceSession();
@@ -264,6 +266,7 @@ void main() {
       session: session,
     ).execute();
     expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.hasNewAchievements, isTrue);
     expect(session.hasPresented, isTrue);
   });
 
@@ -295,6 +298,7 @@ void main() {
         adviceText: '助言',
         adviceTone: AdviceTone.confused,
         pendingModelDownloadGuidance: false,
+        hasNewAchievements: false,
       ),
     );
     final save = _Save();
@@ -323,6 +327,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: false,
+        hasNewAchievements: false,
       ),
     );
     await expectLater(
@@ -354,6 +359,7 @@ void main() {
         adviceText: '定型',
         adviceTone: AdviceTone.realized,
         pendingModelDownloadGuidance: false,
+        hasNewAchievements: false,
       ),
     );
     expect(entity.todayText, '1.3');
@@ -381,6 +387,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: false,
+        hasNewAchievements: false,
       ),
     );
     expect(entity.calories.percentText, '150%');
@@ -411,6 +418,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: false,
+        hasNewAchievements: false,
       ),
     );
     expect(entity.duration.percentText, '0%');

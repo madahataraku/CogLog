@@ -4,6 +4,7 @@ locked_name,？？？？？,?????,未開放時の表示名
 load_failed,読み込みに失敗しました,Failed to load achievements,一覧失敗
 retry,再試行,Retry,再試行ボタン
 back_semantics,戻る,Back,戻る a11y
+new_semantics,新規獲得,New achievement,一覧行の新規ドット a11y
 name_first_record,はじめの一歩,First step,アチーブメント名 first_record
 condition_first_record,初めて運動記録を登録する,Log your first exercise record,達成条件 first_record
 name_streak_3,三日坊主卒業,Three-day streak,アチーブメント名 streak_3

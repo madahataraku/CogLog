@@ -2,6 +2,7 @@ import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 
 /// Repository からトップ画面の合計と目標を読む。
@@ -12,12 +13,13 @@ import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 ///   histories: histories,
 ///   metrics: metrics,
 ///   goals: goals,
+///   newIndicator: newIndicator,
 /// ).execute(
 ///   LoadTopScreenRequest(now: DateTime(2026, 11, 5, 15)),
 /// );
 /// ```
 final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
-  /// [histories]・[metrics]・[goals] を読む実装を作る。
+  /// [histories]・[metrics]・[goals]・[newIndicator] を読む実装を作る。
   ///
   /// Example:
   /// ```dart
@@ -25,12 +27,14 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
   ///   histories: histories,
   ///   metrics: metrics,
   ///   goals: goals,
+  ///   newIndicator: newIndicator,
   /// );
   /// ```
   const LoadTopScreenUsecaseImpl({
     required this.histories,
     required this.metrics,
     required this.goals,
+    required this.newIndicator,
   });
 
   /// 運動履歴の読み出し。
@@ -41,6 +45,9 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
 
   /// 一日あたり目標の読み出し。
   final DailyGoalRepository goals;
+
+  /// 新規アチーブメント有無。
+  final LoadAchievementNewIndicatorUsecase newIndicator;
 
   /// 保存済み指標が無ければ消費カロリーにする。
   ///
@@ -59,6 +66,7 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
       for (final history in all)
         if (todayWindow.contains(history.recordedAt)) history,
     ];
+    final hasNew = await newIndicator.execute(now: request.now);
     return LoadTopScreenResult(
       metric: metric,
       today: PeriodAggregate.of(all, todayWindow),
@@ -67,6 +75,7 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
       goal: goal,
       todayHistories: todayHistories,
       consecutiveExerciseDays: ConsecutiveExerciseDays.of(all, now),
+      hasNewAchievements: hasNew,
     );
   }
 }

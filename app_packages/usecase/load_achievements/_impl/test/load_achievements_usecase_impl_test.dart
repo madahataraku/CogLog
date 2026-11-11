@@ -94,6 +94,39 @@ void main() {
     expect(await achievements.readUnlocks(), isNotEmpty);
   });
 
+  test('最終閲覧より後の獲得に isNew を付け、閲覧日時は書かない', () async {
+    final achievements = MemoryAchievementRepository();
+    await achievements.writeLastViewedAt(DateTime.utc(2026, 11, 1));
+    await achievements.mergeUnlocks([
+      AchievementUnlock(
+        id: 'first_record',
+        unlockedAt: DateTime.utc(2026, 11, 10),
+      ),
+    ]);
+    final histories = MemoryExerciseHistoryRepository();
+    await histories.create(
+      creationStartedAt: DateTime(2026, 11, 10, 10),
+      capturedAt: DateTime(2026, 11, 10, 10),
+      recordedAt: DateTime(2026, 11, 10, 10),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 30),
+      caloriesKcal: 100,
+      averageSpeedKmh: 2,
+      photoBytes: photo,
+    );
+
+    final result = await build(
+      achievements: achievements,
+      histories: histories,
+    ).execute(LoadAchievementsRequest(now: now));
+
+    final rows = (result as LoadAchievementsSuccess).rows;
+    final first = rows.firstWhere((row) => row.id == 'first_record');
+    expect(first.isNew, isTrue);
+    expect(await achievements.readLastViewedAt(), DateTime.utc(2026, 11, 1));
+  });
+
   test('読込例外は failed', () async {
     final result = await build(
       achievements: _ThrowingAchievementRepository(),
@@ -130,6 +163,12 @@ final class _ThrowingAchievementRepository implements AchievementRepository {
   Future<List<AchievementUnlock>> readUnlocks() async {
     throw StateError('read failed');
   }
+
+  @override
+  Future<DateTime?> readLastViewedAt() async => null;
+
+  @override
+  Future<void> writeLastViewedAt(DateTime viewedAt) async {}
 }
 
 /// [list] で必ず失敗する。

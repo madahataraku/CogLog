@@ -28,6 +28,22 @@ abstract interface class AchievementRepository {
   /// ]);
   /// ```
   Future<void> mergeUnlocks(List<AchievementUnlock> unlocks);
+
+  /// 最終閲覧日時を返す。未保存・破損は null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readLastViewedAt();
+  /// ```
+  Future<DateTime?> readLastViewedAt();
+
+  /// 最終閲覧日時を UTC で保存する。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.writeLastViewedAt(DateTime.utc(2026, 11, 11));
+  /// ```
+  Future<void> writeLastViewedAt(DateTime viewedAt);
 }
 
 /// アチーブメント Repository の注入点。未接続のときは失敗する。
