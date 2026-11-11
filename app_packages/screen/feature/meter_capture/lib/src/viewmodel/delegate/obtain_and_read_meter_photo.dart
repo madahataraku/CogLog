@@ -1,7 +1,9 @@
 import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
+import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
+import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../state/meter_capture_camera_ui.dart';
 import '../state/meter_capture_screen_state.dart';
@@ -18,6 +20,8 @@ import 'on_read_meter_delegate.dart';
 ///   state: state,
 ///   obtainMeterPhotoUsecase: obtain,
 ///   readMeterPanelUsecase: read,
+///   evaluateOnDeviceLlmGuidanceUsecase: evaluate,
+///   guidanceSession: session,
 ///   source: ObtainMeterPhotoSource.camera,
 /// );
 /// ```
@@ -26,6 +30,9 @@ Future<void> obtainAndReadMeterPhoto({
   required MutableStateStream<MeterCaptureScreenState> state,
   required ObtainMeterPhotoUsecase obtainMeterPhotoUsecase,
   required ReadMeterPanelUsecase readMeterPanelUsecase,
+  required EvaluateOnDeviceLlmGuidanceUsecase
+  evaluateOnDeviceLlmGuidanceUsecase,
+  required OnDeviceLlmGuidanceSession guidanceSession,
   required ObtainMeterPhotoSource source,
 }) async {
   if (state.state.reading || state.state.saving) {
@@ -107,6 +114,8 @@ Future<void> obtainAndReadMeterPhoto({
       await OnReadMeterDelegate(
         state: state,
         readMeterPanelUsecase: readMeterPanelUsecase,
+        evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+        guidanceSession: guidanceSession,
       ).execute(photoBytes: bytes, expectedGeneration: generation);
   }
 }

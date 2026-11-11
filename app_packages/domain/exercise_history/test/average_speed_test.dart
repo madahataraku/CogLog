@@ -56,7 +56,18 @@ void main() {
     expect(updated.fromPanel, isTrue);
   });
 
-  test('A6: クリア後は再計算し userEdited / fromPanel は false', () {
+  test('A6: 運動時間 0 でもパネル平均速度は残る', () {
+    final resolved = resolveInitialAverageSpeed(
+      merged: const MeterReadingValues(
+        duration: Duration.zero,
+        averageSpeedKmh: 10,
+      ),
+    );
+    expect(resolved.speed, 10);
+    expect(resolved.fromPanel, isTrue);
+  });
+
+  test('A7: クリア後は再計算し userEdited / fromPanel は false', () {
     final updated = recalculateAverageSpeedIfNeeded(
       distanceKm: 1,
       duration: const Duration(hours: 1),

@@ -8,7 +8,7 @@
 /// );
 /// ```
 final class OnDeviceLlmNativePlatformInfo {
-  /// [backend] と任意の [diagnosticNotes] を持つ。
+  /// [backend] と任意の [diagnosticNotes] / [supportsVision] を持つ。
   ///
   /// Example:
   /// ```dart
@@ -17,6 +17,7 @@ final class OnDeviceLlmNativePlatformInfo {
   const OnDeviceLlmNativePlatformInfo({
     required this.backend,
     this.diagnosticNotes,
+    this.supportsVision = false,
   });
 
   /// MethodChannel の Map から復元する。
@@ -29,6 +30,7 @@ final class OnDeviceLlmNativePlatformInfo {
     return OnDeviceLlmNativePlatformInfo(
       backend: map['backend'] as String? ?? 'unsupported',
       diagnosticNotes: map['diagnosticNotes'] as String?,
+      supportsVision: map['supportsVision'] as bool? ?? false,
     );
   }
 
@@ -37,4 +39,7 @@ final class OnDeviceLlmNativePlatformInfo {
 
   /// 診断メモ（Android FORK 必須項目を含むことがある）。
   final String? diagnosticNotes;
+
+  /// 画像入力付き生成が使えるとき true。
+  final bool supportsVision;
 }

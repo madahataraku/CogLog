@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'on_device_llm_native_availability.dart';
 import 'on_device_llm_native_platform_info.dart';
 
@@ -35,6 +37,21 @@ abstract interface class OnDeviceLlmNativeClient {
   /// await client.generate(prompt: 'hi');
   /// ```
   Future<String> generate({required String prompt});
+
+  /// [imageBytes] 付きで短文を生成する。
+  ///
+  /// Example:
+  /// ```dart
+  /// final client = MethodChannelOnDeviceLlmNativeClient();
+  /// await client.generateWithImage(
+  ///   prompt: 'hi',
+  ///   imageBytes: Uint8List(0),
+  /// );
+  /// ```
+  Future<String> generateWithImage({
+    required String prompt,
+    required Uint8List imageBytes,
+  });
 
   /// readiness を見ずに生成を試す。
   ///

@@ -134,4 +134,38 @@ void main() {
     expect(result.values.distanceKm, 5);
     expect(result.averageSpeedFromPanel, isTrue);
   });
+
+  test('タイムアウト: 先頭 hang なら空に近い結果', () async {
+    final hang = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.mlKit,
+      hangOnRead: true,
+    );
+    final result = await ReadMeterPanelUsecaseImpl(
+      engines: [hang],
+      timeout: const Duration(milliseconds: 20),
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(result.values.distanceKm, isNull);
+    expect(result.values.averageSpeedKmh, isNull);
+    expect(result.averageSpeedFromPanel, isFalse);
+  });
+
+  test('タイムアウト: 部分マージ後 hang なら部分結果', () async {
+    final partial = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.mlKit,
+      values: const MeterReadingValues(distanceKm: 7, averageSpeedKmh: 11),
+    );
+    final hang = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.geminiNano,
+      hangOnRead: true,
+    );
+    final result = await ReadMeterPanelUsecaseImpl(
+      engines: [partial, hang],
+      timeout: const Duration(milliseconds: 20),
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(result.values.distanceKm, 7);
+    expect(result.values.averageSpeedKmh, 11);
+    expect(result.averageSpeedFromPanel, isTrue);
+  });
 }

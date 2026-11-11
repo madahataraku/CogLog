@@ -1,4 +1,4 @@
-/// 入力欄へ出す表示用文字列。
+/// 入力欄へ出す表示用文字列と誘導予約。
 ///
 /// Example:
 /// ```dart
@@ -10,10 +10,11 @@
 ///   averageSpeedText: '2.0',
 ///   caloriesText: '100',
 ///   recordedAtText: '2026-11-08T12:00:00.000',
+///   pendingModelDownloadGuidance: false,
 /// );
 /// ```
 final class MeterCaptureScreenEntity {
-  /// 表示用文字列をすべて指定して作る。
+  /// 表示用文字列と誘導予約をすべて指定して作る。
   ///
   /// Example:
   /// ```dart
@@ -25,6 +26,7 @@ final class MeterCaptureScreenEntity {
   ///   averageSpeedText: '2.0',
   ///   caloriesText: '100',
   ///   recordedAtText: '2026-11-08T12:00:00.000',
+  ///   pendingModelDownloadGuidance: false,
   /// );
   /// ```
   const MeterCaptureScreenEntity({
@@ -35,6 +37,7 @@ final class MeterCaptureScreenEntity {
     required this.averageSpeedText,
     required this.caloriesText,
     required this.recordedAtText,
+    required this.pendingModelDownloadGuidance,
   });
 
   /// 走行距離の表示文字列。
@@ -57,4 +60,7 @@ final class MeterCaptureScreenEntity {
 
   /// 記録日時の表示文字列。
   final String recordedAtText;
+
+  /// モデル未ダウンロード誘導を表示予約しているとき true。
+  final bool pendingModelDownloadGuidance;
 }

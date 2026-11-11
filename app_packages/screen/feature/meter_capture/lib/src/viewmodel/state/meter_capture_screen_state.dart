@@ -40,6 +40,7 @@ final class MeterCaptureScreenState {
     this.previewAspectRatio = 0.75,
     this.captureError = false,
     this.cameraSessionGeneration = 0,
+    this.pendingModelDownloadGuidance = false,
   });
 
   /// 初期状態（1 ステップ目）。
@@ -108,6 +109,9 @@ final class MeterCaptureScreenState {
   /// タブ離脱などで増える世代。非同期完了の破棄判定に使う。
   final int cameraSessionGeneration;
 
+  /// モデル未ダウンロード誘導を表示予約しているとき true。
+  final bool pendingModelDownloadGuidance;
+
   /// 一部だけ差し替えた新しい状態を返す。
   ///
   /// Example:
@@ -145,6 +149,7 @@ final class MeterCaptureScreenState {
     double? previewAspectRatio,
     bool? captureError,
     int? cameraSessionGeneration,
+    bool? pendingModelDownloadGuidance,
   }) => MeterCaptureScreenState(
     step: step ?? this.step,
     photoBytes: clearPhotoBytes ? null : (photoBytes ?? this.photoBytes),
@@ -177,5 +182,7 @@ final class MeterCaptureScreenState {
     captureError: captureError ?? this.captureError,
     cameraSessionGeneration:
         cameraSessionGeneration ?? this.cameraSessionGeneration,
+    pendingModelDownloadGuidance:
+        pendingModelDownloadGuidance ?? this.pendingModelDownloadGuidance,
   );
 }

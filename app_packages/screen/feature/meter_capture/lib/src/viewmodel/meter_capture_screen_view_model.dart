@@ -7,17 +7,21 @@ import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_control_meter_in_app_camera/usecase_control_meter_in_app_camera.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
+import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import 'delegate/meter_capture_state_to_entity_delegate.dart';
+import 'delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'delegate/on_apply_camera_status_delegate.dart';
 import 'delegate/on_back_to_step1_delegate.dart';
 import 'delegate/on_capture_photo_delegate.dart';
 import 'delegate/on_field_changed_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
 import 'delegate/on_pick_library_photo_delegate.dart';
+import 'delegate/on_prepare_model_download_guidance_delegate.dart';
 import 'delegate/on_save_meter_capture_delegate.dart';
 import 'entity/meter_capture_screen_entity.dart';
 import 'state/meter_capture_screen_state.dart';
@@ -26,7 +30,7 @@ part 'meter_capture_screen_view_model.action.dart';
 
 /// メーター記録画面の状態と表示。
 ///
-/// 可変な値は [state] だけが持つ。Usecase と [ScreenNavigation] のみに依存する。
+/// 可変な値は [state] だけが持つ。Usecase・誘導セッション・[ScreenNavigation] に依存する。
 ///
 /// Example:
 /// ```dart
@@ -34,7 +38,7 @@ part 'meter_capture_screen_view_model.action.dart';
 /// ```
 @internal
 final class MeterCaptureScreenViewModel {
-  /// Usecase と遷移を注入して作る。
+  /// Usecase・誘導セッション・遷移を注入して作る。
   ///
   /// Example:
   /// ```dart
@@ -51,6 +55,13 @@ final class MeterCaptureScreenViewModel {
         controlMeterInAppCameraUsecase: ref.watch(
           ControlMeterInAppCameraUsecase.provider,
         ),
+        evaluateOnDeviceLlmGuidanceUsecase: ref.watch(
+          EvaluateOnDeviceLlmGuidanceUsecase.provider,
+        ),
+        prepareOnDeviceLlmModelUsecase: ref.watch(
+          PrepareOnDeviceLlmModelUsecase.provider,
+        ),
+        guidanceSession: ref.watch(ModelDownloadGuidanceProviders.session),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const MeterCaptureStateToEntityDelegate(),
       );
@@ -72,6 +83,9 @@ final class MeterCaptureScreenViewModel {
       SaveMeterCaptureUsecase.provider,
       OpenAppSettingsUsecase.provider,
       ControlMeterInAppCameraUsecase.provider,
+      EvaluateOnDeviceLlmGuidanceUsecase.provider,
+      PrepareOnDeviceLlmModelUsecase.provider,
+      ModelDownloadGuidanceProviders.session,
       screenNavigationProvider,
     ],
   );
@@ -99,6 +113,18 @@ final class MeterCaptureScreenViewModel {
   /// アプリ内カメラ制御。
   @visibleForTesting
   final ControlMeterInAppCameraUsecase controlMeterInAppCameraUsecase;
+
+  /// モデル未ダウンロード誘導の要否。
+  @visibleForTesting
+  final EvaluateOnDeviceLlmGuidanceUsecase evaluateOnDeviceLlmGuidanceUsecase;
+
+  /// モデル準備。
+  @visibleForTesting
+  final PrepareOnDeviceLlmModelUsecase prepareOnDeviceLlmModelUsecase;
+
+  /// プロセス内の誘導再表示抑制。
+  @visibleForTesting
+  final OnDeviceLlmGuidanceSession guidanceSession;
 
   /// ホームタブへの遷移。
   @visibleForTesting
@@ -129,6 +155,9 @@ final class MeterCaptureScreenViewModel {
     required this.saveMeterCaptureUsecase,
     required this.openAppSettingsUsecase,
     required this.controlMeterInAppCameraUsecase,
+    required this.evaluateOnDeviceLlmGuidanceUsecase,
+    required this.prepareOnDeviceLlmModelUsecase,
+    required this.guidanceSession,
     required this.navigation,
     required this.stateToEntity,
   });

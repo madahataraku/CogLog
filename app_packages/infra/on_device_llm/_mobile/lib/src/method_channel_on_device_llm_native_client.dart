@@ -78,16 +78,22 @@ final class MethodChannelOnDeviceLlmNativeClient
       's${DateTime.now().microsecondsSinceEpoch.toRadixString(36)}'
       '${_random.nextInt(1 << 20).toRadixString(36)}';
 
-  /// セッションを開いて [prompt] を送り、本文を返す。
+  /// セッションを開いて任意の [imageBytes] と [prompt] を送り、本文を返す。
   ///
   /// Example:
   /// ```dart
   /// await client._runSession('hi');
   /// ```
-  Future<String> _runSession(String prompt) async {
+  Future<String> _runSession(String prompt, {Uint8List? imageBytes}) async {
     final sessionId = _newSessionId();
     await _invoke<void>('createSession', {'sessionId': sessionId});
     try {
+      if (imageBytes != null) {
+        await _invoke<void>('sessionAddImage', {
+          'sessionId': sessionId,
+          'imageBytes': imageBytes,
+        });
+      }
       await _invoke<void>('sessionAddQuery', {
         'sessionId': sessionId,
         'text': prompt,
@@ -181,6 +187,21 @@ final class MethodChannelOnDeviceLlmNativeClient
 
   @override
   Future<String> generate({required String prompt}) => _runSession(prompt);
+
+  /// 既存セッション method 列で画像付き生成する。新規 MethodChannel 名は作らない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await MethodChannelOnDeviceLlmNativeClient().generateWithImage(
+  ///   prompt: 'hi',
+  ///   imageBytes: Uint8List(0),
+  /// );
+  /// ```
+  @override
+  Future<String> generateWithImage({
+    required String prompt,
+    required Uint8List imageBytes,
+  }) => _runSession(prompt, imageBytes: imageBytes);
 
   @override
   Future<String> diagnoseGenerate({required String prompt}) =>

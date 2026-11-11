@@ -40,6 +40,7 @@ final class MeterCaptureStateToEntityDelegate {
       averageSpeedText: _optionalNumber(state.averageSpeedKmh),
       caloriesText: _optionalNumber(state.caloriesKcal),
       recordedAtText: state.recordedAt?.toLocal().toIso8601String() ?? '',
+      pendingModelDownloadGuidance: state.pendingModelDownloadGuidance,
     );
   }
 

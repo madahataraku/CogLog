@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
@@ -22,6 +23,7 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
     OnDeviceLlmReadiness? readiness,
     OnDeviceLlmAvailabilitySnapshot? availabilitySnapshot,
     this.response = 'fake advice',
+    this.supportsVisionValue = false,
     this.throwOnGenerate = false,
     this.throwOnIsAvailable = false,
     this.throwOnReadiness = false,
@@ -55,6 +57,9 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
   /// [generate] が返す文。
   final String response;
 
+  /// [supportsVision] が返す値。
+  final bool supportsVisionValue;
+
   /// true のとき [generate] が失敗する。
   final bool throwOnGenerate;
 
@@ -70,17 +75,23 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
   /// true のとき [prepareModel] が失敗する。
   final bool throwOnPrepareModel;
 
-  /// true のとき [generate] が完了しない。
+  /// true のとき [generate] / [generateWithImage] が完了しない。
   final bool hangOnGenerate;
 
   /// [generate] が呼ばれた回数。
   int generateCallCount = 0;
+
+  /// [generateWithImage] が呼ばれた回数。
+  int generateWithImageCallCount = 0;
 
   /// [prepareModel] が呼ばれた回数。
   int prepareModelCallCount = 0;
 
   /// 最後に渡されたプロンプト。
   String? lastPrompt;
+
+  /// 最後に [generateWithImage] へ渡された画像バイト。
+  Uint8List? lastImageBytes;
 
   /// [readinessValue] を返す。
   ///
@@ -110,6 +121,15 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
     return readinessValue == OnDeviceLlmReadiness.ready;
   }
 
+  /// [supportsVisionValue] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.supportsVision;
+  /// ```
+  @override
+  Future<bool> get supportsVision async => supportsVisionValue;
+
   /// [availabilitySnapshotValue] を返す。
   ///
   /// Example:
@@ -134,6 +154,32 @@ final class FakeOnDeviceLlm implements OnDeviceLlm {
   Future<String> generate(String prompt) async {
     generateCallCount += 1;
     lastPrompt = prompt;
+    if (throwOnGenerate) {
+      throw StateError('FakeOnDeviceLlm generate failed');
+    }
+    if (hangOnGenerate) {
+      return Completer<String>().future;
+    }
+    return response;
+  }
+
+  /// [generate] と同じ失敗・待機設定で [response] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.generateWithImage(
+  ///   prompt: 'prompt',
+  ///   imageBytes: Uint8List(0),
+  /// );
+  /// ```
+  @override
+  Future<String> generateWithImage({
+    required String prompt,
+    required Uint8List imageBytes,
+  }) async {
+    generateWithImageCallCount += 1;
+    lastPrompt = prompt;
+    lastImageBytes = imageBytes;
     if (throwOnGenerate) {
       throw StateError('FakeOnDeviceLlm generate failed');
     }

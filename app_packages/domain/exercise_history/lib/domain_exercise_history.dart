@@ -11,6 +11,7 @@ library;
 export 'src/average_speed.dart';
 export 'src/consecutive_exercise_days.dart';
 export 'src/exercise_history.dart';
+export 'src/meter_panel_text_parser.dart';
 export 'src/meter_reading_merger.dart';
 export 'src/meter_reading_values.dart';
 export 'src/period_aggregate.dart';
