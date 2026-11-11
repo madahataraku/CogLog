@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
@@ -24,6 +25,7 @@ final class FakeMeterReadingEngine implements MeterReadingEngine {
     this.available = true,
     this.values = const MeterReadingValues(),
     this.throwOnRead = false,
+    this.hangOnRead = false,
   });
 
   /// エンジン種別。
@@ -38,6 +40,9 @@ final class FakeMeterReadingEngine implements MeterReadingEngine {
 
   /// true のとき [read] が失敗する。
   final bool throwOnRead;
+
+  /// true のとき [read] が完了しない。
+  final bool hangOnRead;
 
   /// [read] が呼ばれた回数。
   int readCallCount = 0;
@@ -67,6 +72,9 @@ final class FakeMeterReadingEngine implements MeterReadingEngine {
     lastPhotoBytes = photoBytes;
     if (throwOnRead) {
       throw StateError('FakeMeterReadingEngine($kind) read failed');
+    }
+    if (hangOnRead) {
+      return Completer<MeterReadingValues>().future;
     }
     return values;
   }

@@ -5,17 +5,21 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/can_submit_meter_capture.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/meter_capture_state_to_entity_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_back_to_step1_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_capture_photo_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_field_changed_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_read_meter_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_save_meter_capture_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_camera_ui.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_screen_state.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_step.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
+import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 final class _Obtain implements ObtainMeterPhotoUsecase {
   _Obtain(this.result);
@@ -50,15 +54,36 @@ final class _DeferredObtain implements ObtainMeterPhotoUsecase {
 }
 
 final class _Read implements ReadMeterPanelUsecase {
-  _Read(this.result);
+  _Read(this.result, {this.delay = Duration.zero});
 
   final ReadMeterPanelResult result;
+  final Duration delay;
   var calls = 0;
 
   @override
   Future<ReadMeterPanelResult> execute(ReadMeterPanelRequest request) async {
     calls += 1;
+    if (delay > Duration.zero) {
+      await Future<void>.delayed(delay);
+    }
     return result;
+  }
+}
+
+final class _Evaluate implements EvaluateOnDeviceLlmGuidanceUsecase {
+  _Evaluate({this.shouldShow = false, this.delay = Duration.zero});
+
+  final bool shouldShow;
+  final Duration delay;
+  var calls = 0;
+
+  @override
+  Future<OnDeviceLlmGuidanceDecision> execute() async {
+    calls += 1;
+    if (delay > Duration.zero) {
+      await Future<void>.delayed(delay);
+    }
+    return OnDeviceLlmGuidanceDecision(shouldShow: shouldShow);
   }
 }
 
@@ -132,6 +157,8 @@ void main() {
       state: state,
       obtainMeterPhotoUsecase: obtain,
       readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
     ).execute();
 
     expect(obtain.calls, 1);
@@ -157,6 +184,8 @@ void main() {
       state: state,
       obtainMeterPhotoUsecase: obtain,
       readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
     ).execute();
 
     await state.updateWithLock((current, emitter) async {
@@ -194,6 +223,8 @@ void main() {
       state: state,
       obtainMeterPhotoUsecase: obtain,
       readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
     ).execute();
 
     expect(read.calls, 0);
@@ -459,6 +490,8 @@ void main() {
       state: state,
       obtainMeterPhotoUsecase: obtain,
       readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
     ).execute();
 
     expect(read.calls, 1);
@@ -470,6 +503,95 @@ void main() {
     expect(state.state.capturedAt, isNotNull);
     expect(state.state.recordedAt, state.state.capturedAt);
     expect(state.state.recordedAtManuallySet, isFalse);
+  });
+
+  test('未ダウンロードかつ未提示なら pending true', () async {
+    final evaluate = _Evaluate(shouldShow: true);
+    await OnReadMeterDelegate(
+      state: state,
+      readMeterPanelUsecase: _Read(
+        const ReadMeterPanelResult(
+          values: MeterReadingValues(),
+          averageSpeedFromPanel: false,
+        ),
+      ),
+      evaluateOnDeviceLlmGuidanceUsecase: evaluate,
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+    ).execute(photoBytes: Uint8List(0));
+
+    expect(evaluate.calls, 1);
+    expect(state.state.pendingModelDownloadGuidance, isTrue);
+    expect(state.state.step, MeterCaptureStep.edit);
+    expect(state.state.reading, isFalse);
+  });
+
+  test('markPresented 済みなら pending false かつ評価しない', () async {
+    final session = OnDeviceLlmGuidanceSession()..markPresented();
+    final evaluate = _Evaluate(shouldShow: true);
+    await OnReadMeterDelegate(
+      state: state,
+      readMeterPanelUsecase: _Read(
+        const ReadMeterPanelResult(
+          values: MeterReadingValues(),
+          averageSpeedFromPanel: false,
+        ),
+      ),
+      evaluateOnDeviceLlmGuidanceUsecase: evaluate,
+      guidanceSession: session,
+    ).execute(photoBytes: Uint8List(0));
+
+    expect(evaluate.calls, 0);
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.step, MeterCaptureStep.edit);
+  });
+
+  test('誘導判定は読み取りをブロックしない', () async {
+    final evaluate = _Evaluate(
+      shouldShow: true,
+      delay: const Duration(milliseconds: 50),
+    );
+    final read = _Read(
+      const ReadMeterPanelResult(
+        values: MeterReadingValues(distanceKm: 1),
+        averageSpeedFromPanel: false,
+      ),
+      delay: const Duration(milliseconds: 10),
+    );
+    final future = OnReadMeterDelegate(
+      state: state,
+      readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: evaluate,
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+    ).execute(photoBytes: Uint8List(0));
+
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    expect(state.state.reading, isFalse);
+    expect(state.state.step, MeterCaptureStep.edit);
+    expect(state.state.distanceKm, 1);
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(evaluate.calls, 1);
+    expect(read.calls, 1);
+
+    await future;
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(state.state.pendingModelDownloadGuidance, isTrue);
+  });
+
+  test('acknowledge 後は pending false かつ hasPresented', () async {
+    state = MutableStateStream(
+      const MeterCaptureScreenState(
+        step: MeterCaptureStep.edit,
+        pendingModelDownloadGuidance: true,
+      ),
+    );
+    final session = OnDeviceLlmGuidanceSession();
+    await OnAcknowledgeModelDownloadGuidanceDelegate(
+      state: state,
+      session: session,
+    ).execute();
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(session.hasPresented, isTrue);
   });
 
   test('平均速度クリアは fromPanel を落として再計算する', () async {
@@ -528,6 +650,7 @@ void main() {
     expect(empty.distanceText, '');
     expect(empty.hoursText, '');
     expect(empty.recordedAtText, '');
+    expect(empty.pendingModelDownloadGuidance, isFalse);
 
     final filled = delegate.execute(
       MeterCaptureScreenState(
@@ -537,6 +660,7 @@ void main() {
         averageSpeedKmh: 2,
         caloriesKcal: 100,
         recordedAt: DateTime(2026, 11, 8, 12),
+        pendingModelDownloadGuidance: true,
       ),
     );
     expect(filled.distanceText, '1.5');
@@ -546,6 +670,7 @@ void main() {
     expect(filled.averageSpeedText, '2.0');
     expect(filled.caloriesText, '100.0');
     expect(filled.recordedAtText, DateTime(2026, 11, 8, 12).toIso8601String());
+    expect(filled.pendingModelDownloadGuidance, isTrue);
   });
 
   test('StateToEntity は UTC の記録日時をローカル時刻に変換する', () {

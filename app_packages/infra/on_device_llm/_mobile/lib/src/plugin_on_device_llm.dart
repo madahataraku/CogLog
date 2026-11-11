@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
 import 'map_plugin_readiness.dart';
 import 'method_channel_on_device_llm_native_client.dart';
 import 'on_device_llm_native_client.dart';
+import 'on_device_llm_native_platform_info.dart';
 
 /// OS モデルだけを使う [OnDeviceLlm]（自前 Flutter plugin）。
 ///
@@ -49,6 +52,21 @@ final class PluginOnDeviceLlm implements OnDeviceLlm {
   @override
   Future<bool> get isAvailable async =>
       (await readiness) == OnDeviceLlmReadiness.ready;
+
+  /// [getPlatformInfo] の [OnDeviceLlmNativePlatformInfo.supportsVision]。
+  ///
+  /// Example:
+  /// ```dart
+  /// await PluginOnDeviceLlm().supportsVision;
+  /// ```
+  @override
+  Future<bool> get supportsVision async {
+    try {
+      return (await _client.getPlatformInfo()).supportsVision;
+    } on Object {
+      return false;
+    }
+  }
 
   /// ネイティブ availability と platformInfo を診断スナップショットへ写す。
   ///
@@ -100,6 +118,26 @@ final class PluginOnDeviceLlm implements OnDeviceLlm {
       throw StateError('OnDeviceLlm is not ready');
     }
     return _client.generate(prompt: prompt);
+  }
+
+  /// 画像付きネイティブ生成の本文を返す。ready でなければ失敗する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await PluginOnDeviceLlm().generateWithImage(
+  ///   prompt: 'hello',
+  ///   imageBytes: Uint8List(0),
+  /// );
+  /// ```
+  @override
+  Future<String> generateWithImage({
+    required String prompt,
+    required Uint8List imageBytes,
+  }) async {
+    if (!await isAvailable) {
+      throw StateError('OnDeviceLlm is not ready');
+    }
+    return _client.generateWithImage(prompt: prompt, imageBytes: imageBytes);
   }
 
   /// 準備状態を問わずネイティブ生成を試し、接続失敗の型名を拾う。

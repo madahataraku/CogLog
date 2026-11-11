@@ -106,6 +106,8 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
       state: state,
       obtainMeterPhotoUsecase: obtainMeterPhotoUsecase,
       readMeterPanelUsecase: readMeterPanelUsecase,
+      evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+      guidanceSession: guidanceSession,
     );
     return delegate.execute();
   }
@@ -121,6 +123,8 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
       state: state,
       obtainMeterPhotoUsecase: obtainMeterPhotoUsecase,
       readMeterPanelUsecase: readMeterPanelUsecase,
+      evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+      guidanceSession: guidanceSession,
     );
     return delegate.execute();
   }
@@ -227,6 +231,31 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
       saveMeterCaptureUsecase: saveMeterCaptureUsecase,
     );
     return delegate.execute();
+  }
+
+  /// 誘導予約を消費し、同一プロセスでの再表示を止める。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeModelDownloadGuidance();
+  /// ```
+  Future<void> onAcknowledgeModelDownloadGuidance() {
+    return OnAcknowledgeModelDownloadGuidanceDelegate(
+      state: state,
+      session: guidanceSession,
+    ).execute();
+  }
+
+  /// モデル準備を依頼する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onPrepareModelDownloadGuidance();
+  /// ```
+  Future<void> onPrepareModelDownloadGuidance() {
+    return OnPrepareModelDownloadGuidanceDelegate(
+      prepareOnDeviceLlmModelUsecase: prepareOnDeviceLlmModelUsecase,
+    ).execute();
   }
 
   /// ホームタブへ切り替える。

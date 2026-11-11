@@ -18,6 +18,7 @@ import 'package:infra_on_device_llm_mobile/infra_on_device_llm_mobile.dart';
 import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 import 'package:infra_oss_license_catalog_impl/infra_oss_license_catalog_impl.dart';
 import 'package:riverpod/misc.dart';
+import 'package:riverpod/riverpod.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
@@ -52,9 +53,7 @@ List<Override> infraOverrides({
   meterPhotoSourceProvider.overrideWith(
     (ref) => meterPhotoSource ?? MobileMeterPhotoSource(),
   ),
-  meterReadingEnginesProvider.overrideWith(
-    (ref) => _unavailableMeterReadingEngines(),
-  ),
+  meterReadingEnginesProvider.overrideWith((ref) => _meterReadingEngines(ref)),
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
   ),
@@ -97,23 +96,40 @@ List<Override> infraOverrides({
   ),
 ];
 
-/// OS ごとの未接続エンジン列。iOS は Vision→Foundation、Android は ML Kit→Gemini Nano。
+/// OS ごとの読み取りエンジン列。iOS は Vision→Foundation、Android は ML Kit→Gemini Nano。
 ///
 /// Example:
 /// ```dart
-/// _unavailableMeterReadingEngines();
+/// _meterReadingEngines(ref);
 /// ```
-List<MeterReadingEngine> _unavailableMeterReadingEngines() {
+List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
+  final llm = ref.watch(onDeviceLlmProvider);
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
-      return const [
-        UnavailableMeterReadingEngine(MeterReadingEngineKind.visionOcr),
-        UnavailableMeterReadingEngine(MeterReadingEngineKind.foundationModel),
+      final vision = VisionMeterTextRecognizer();
+      ref.onDispose(vision.close);
+      return [
+        OcrMeterReadingEngine(
+          kind: MeterReadingEngineKind.visionOcr,
+          recognizer: vision,
+        ),
+        LlmMeterReadingEngine(
+          kind: MeterReadingEngineKind.foundationModel,
+          llm: llm,
+        ),
       ];
     case TargetPlatform.android:
-      return const [
-        UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit),
-        UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano),
+      final mlKit = MlKitMeterTextRecognizer();
+      ref.onDispose(mlKit.close);
+      return [
+        OcrMeterReadingEngine(
+          kind: MeterReadingEngineKind.mlKit,
+          recognizer: mlKit,
+        ),
+        LlmMeterReadingEngine(
+          kind: MeterReadingEngineKind.geminiNano,
+          llm: llm,
+        ),
       ];
     case TargetPlatform.fuchsia:
     case TargetPlatform.linux:

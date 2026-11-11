@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
 /// 利用不可の端末上 LLM。
@@ -36,6 +38,15 @@ final class UnavailableOnDeviceLlm implements OnDeviceLlm {
   @override
   Future<bool> get isAvailable async => false;
 
+  /// 常に false。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableOnDeviceLlm().supportsVision;
+  /// ```
+  @override
+  Future<bool> get supportsVision async => false;
+
   /// 利用不可の固定スナップショット。
   ///
   /// Example:
@@ -59,6 +70,23 @@ final class UnavailableOnDeviceLlm implements OnDeviceLlm {
   /// ```
   @override
   Future<String> generate(String prompt) async {
+    throw StateError('OnDeviceLlm is unavailable');
+  }
+
+  /// 利用不可のため呼ばない想定。呼ばれたら失敗する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableOnDeviceLlm().generateWithImage(
+  ///   prompt: 'prompt',
+  ///   imageBytes: Uint8List(0),
+  /// );
+  /// ```
+  @override
+  Future<String> generateWithImage({
+    required String prompt,
+    required Uint8List imageBytes,
+  }) async {
     throw StateError('OnDeviceLlm is unavailable');
   }
 

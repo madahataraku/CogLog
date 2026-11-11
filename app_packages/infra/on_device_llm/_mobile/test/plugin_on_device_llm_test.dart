@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_mobile/infra_on_device_llm_mobile.dart';
@@ -19,11 +21,19 @@ final class _FakeClient implements OnDeviceLlmNativeClient {
       reason: 'ready',
       message: 'ok',
     ),
+    this.platformInfo = const OnDeviceLlmNativePlatformInfo(
+      backend: 'androidMlKitGenAi',
+      diagnosticNotes: 'modelReady=true',
+      supportsVision: true,
+    ),
     this.throwOnAvailability = false,
   });
 
   /// 返す可用性。
   OnDeviceLlmNativeAvailability availability;
+
+  /// 返すプラットフォーム診断。
+  OnDeviceLlmNativePlatformInfo platformInfo;
 
   /// 生成本文の接頭辞。
   final String replyPrefix = 'reply:';
@@ -33,6 +43,9 @@ final class _FakeClient implements OnDeviceLlmNativeClient {
 
   /// [prepare] が呼ばれたか。
   bool prepareCalled = false;
+
+  /// 最後に [generateWithImage] へ渡された画像。
+  Uint8List? lastImageBytes;
 
   /// 固定した [availability] を返す。
   ///
@@ -48,18 +61,14 @@ final class _FakeClient implements OnDeviceLlmNativeClient {
     return availability;
   }
 
-  /// Android 風の診断情報を返す。
+  /// [platformInfo] を返す。
   ///
   /// Example:
   /// ```dart
   /// await _FakeClient().getPlatformInfo();
   /// ```
   @override
-  Future<OnDeviceLlmNativePlatformInfo> getPlatformInfo() async =>
-      const OnDeviceLlmNativePlatformInfo(
-        backend: 'androidMlKitGenAi',
-        diagnosticNotes: 'modelReady=true',
-      );
+  Future<OnDeviceLlmNativePlatformInfo> getPlatformInfo() async => platformInfo;
 
   /// [replyPrefix] 付きで [prompt] を返す。
   ///
@@ -70,6 +79,24 @@ final class _FakeClient implements OnDeviceLlmNativeClient {
   @override
   Future<String> generate({required String prompt}) async =>
       '$replyPrefix$prompt';
+
+  /// 画像付きで [replyPrefix] 付き本文を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _FakeClient().generateWithImage(
+  ///   prompt: 'hi',
+  ///   imageBytes: Uint8List(0),
+  /// );
+  /// ```
+  @override
+  Future<String> generateWithImage({
+    required String prompt,
+    required Uint8List imageBytes,
+  }) async {
+    lastImageBytes = imageBytes;
+    return '$replyPrefix$prompt';
+  }
 
   /// 診断用に `diag:` 接頭辞で [prompt] を返す。
   ///
@@ -135,6 +162,43 @@ void main() {
   test('ready で generate は本文を返す', () async {
     final text = await PluginOnDeviceLlm(client: _FakeClient()).generate('hi');
     expect(text, 'reply:hi');
+  });
+
+  test('supportsVision は platformInfo を写す', () async {
+    final llm = PluginOnDeviceLlm(
+      client: _FakeClient(
+        platformInfo: const OnDeviceLlmNativePlatformInfo(
+          backend: 'iosFoundationModels',
+          supportsVision: false,
+        ),
+      ),
+    );
+    expect(await llm.supportsVision, isFalse);
+  });
+
+  test('ready で generateWithImage は本文を返す', () async {
+    final client = _FakeClient();
+    final bytes = Uint8List.fromList([1, 2, 3]);
+    final text = await PluginOnDeviceLlm(client: client)
+        .generateWithImage(prompt: 'panel', imageBytes: bytes);
+    expect(text, 'reply:panel');
+    expect(client.lastImageBytes, bytes);
+  });
+
+  test('非 ready で generateWithImage は StateError', () async {
+    final llm = PluginOnDeviceLlm(
+      client: _FakeClient(
+        availability: const OnDeviceLlmNativeAvailability(
+          status: 'unavailable',
+          reason: 'deviceNotEligible',
+          message: 'no',
+        ),
+      ),
+    );
+    await expectLater(
+      llm.generateWithImage(prompt: 'x', imageBytes: Uint8List(0)),
+      throwsStateError,
+    );
   });
 
   test('prepareModel は client.prepare を呼ぶ', () async {

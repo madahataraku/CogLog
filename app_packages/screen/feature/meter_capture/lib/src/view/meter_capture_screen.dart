@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:screen_navigation/screen_navigation.dart';
+import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../viewmodel/meter_capture_screen_view_model.dart';
 import '../viewmodel/state/meter_capture_step.dart';
@@ -25,7 +26,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
   /// ```
   const MeterCaptureScreen({super.key});
 
-  /// タブ選択とライフサイクルに合わせてカメラを開始／停止する。
+  /// タブ選択とライフサイクルに合わせてカメラを開始／停止し、誘導予約をダイアログへ渡す。
   ///
   /// Example:
   /// ```dart
@@ -34,6 +35,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(MeterCaptureScreenViewModel.provider);
+    final entity = ref.watch(MeterCaptureScreenProviders.entity);
     final step = ref.watch(
       MeterCaptureScreenProviders.state.select((state) => state.step),
     );
@@ -58,6 +60,24 @@ class MeterCaptureScreen extends HookConsumerWidget {
       }
       return null;
     }, [viewModel, selected, lifecycle, step]);
+
+    useEffect(() {
+      if (!entity.pendingModelDownloadGuidance) {
+        return null;
+      }
+      // 予約時点で同期的に提示済みにし、再入とのレースを防ぐ。
+      unawaited(viewModel.onAcknowledgeModelDownloadGuidance());
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!context.mounted) {
+          return;
+        }
+        await ModelDownloadGuidanceLauncher.show(
+          context,
+          onPrepare: viewModel.onPrepareModelDownloadGuidance,
+        );
+      });
+      return null;
+    }, [entity.pendingModelDownloadGuidance, viewModel]);
 
     return const MeterCaptureScreenBody();
   }

@@ -18,9 +18,11 @@ import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_s
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_control_meter_in_app_camera/usecase_control_meter_in_app_camera.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
+import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 /// テスト用のメーター写真バイト。
 late final Uint8List _pngBytes;
@@ -83,6 +85,18 @@ final class _OpenSettingsNever implements OpenAppSettingsUsecase {
   Future<void> execute() async {}
 }
 
+final class _GuidanceNever implements EvaluateOnDeviceLlmGuidanceUsecase {
+  @override
+  Future<OnDeviceLlmGuidanceDecision> execute() async {
+    return const OnDeviceLlmGuidanceDecision(shouldShow: false);
+  }
+}
+
+final class _PrepareNever implements PrepareOnDeviceLlmModelUsecase {
+  @override
+  Future<void> execute() async {}
+}
+
 final class _ControlCamera implements ControlMeterInAppCameraUsecase {
   final _controller = StreamController<MeterInAppCameraUiStatus>.broadcast();
   MeterInAppCameraUiStatus _current = const MeterInAppCameraUiIdle();
@@ -120,6 +134,15 @@ List<Override> _baseOverrides() => [
   OpenAppSettingsUsecase.provider.overrideWith((ref) => _OpenSettingsNever()),
   ControlMeterInAppCameraUsecase.provider.overrideWith(
     (ref) => _ControlCamera(),
+  ),
+  EvaluateOnDeviceLlmGuidanceUsecase.provider.overrideWith(
+    (ref) => _GuidanceNever(),
+  ),
+  PrepareOnDeviceLlmModelUsecase.provider.overrideWith(
+    (ref) => _PrepareNever(),
+  ),
+  ModelDownloadGuidanceProviders.session.overrideWith(
+    (ref) => OnDeviceLlmGuidanceSession(),
   ),
   screenNavigationProvider.overrideWithValue(_Nav()),
 ];

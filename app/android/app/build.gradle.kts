@@ -102,6 +102,8 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // google_mlkit_text_recognition の日本語モデルは compileOnly のため実行時依存を足す。
+    implementation("com.google.mlkit:text-recognition-japanese:16.0.1")
 }
 
 flutter {

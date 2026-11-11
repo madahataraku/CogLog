@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:riverpod/riverpod.dart';
 
 import 'on_device_llm_availability_snapshot.dart';
@@ -28,6 +30,14 @@ abstract interface class OnDeviceLlm {
   /// ```
   Future<bool> get isAvailable;
 
+  /// 画像入力付き生成が使えるとき true。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.supportsVision;
+  /// ```
+  Future<bool> get supportsVision;
+
   /// デバッグ用の詳細。業務経路では使わない。
   ///
   /// Example:
@@ -43,6 +53,22 @@ abstract interface class OnDeviceLlm {
   /// await llm.generate('今日の運動について短く助言して');
   /// ```
   Future<String> generate(String prompt);
+
+  /// [prompt] と [imageBytes] から短文を生成する。
+  ///
+  /// [supportsVision] が false のときは失敗してよい。
+  ///
+  /// Example:
+  /// ```dart
+  /// await llm.generateWithImage(
+  ///   prompt: 'panel',
+  ///   imageBytes: Uint8List(0),
+  /// );
+  /// ```
+  Future<String> generateWithImage({
+    required String prompt,
+    required Uint8List imageBytes,
+  });
 
   /// 診断専用。準備状態を問わず生成を試し、失敗理由を例外で返す。
   ///
