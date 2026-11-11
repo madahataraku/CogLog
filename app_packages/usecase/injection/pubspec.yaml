@@ -37,6 +37,10 @@ dependencies:
   usecase_load_exercise_history_detail_impl: any
   usecase_load_exercise_history_page: any
   usecase_load_exercise_history_page_impl: any
+  usecase_load_exercise_history_month: any
+  usecase_load_exercise_history_month_impl: any
+  usecase_load_exercise_histories_for_same_recorded_day: any
+  usecase_load_exercise_histories_for_same_recorded_day_impl: any
   usecase_load_oss_licenses: any
   usecase_load_oss_licenses_impl: any
   usecase_load_top_screen: any

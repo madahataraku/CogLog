@@ -25,6 +25,10 @@ import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
 import 'package:usecase_load_daily_goal_impl/usecase_load_daily_goal_impl.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 import 'package:usecase_load_exercise_history_detail_impl/usecase_load_exercise_history_detail_impl.dart';
+import 'package:usecase_load_exercise_histories_for_same_recorded_day/usecase_load_exercise_histories_for_same_recorded_day.dart';
+import 'package:usecase_load_exercise_histories_for_same_recorded_day_impl/usecase_load_exercise_histories_for_same_recorded_day_impl.dart';
+import 'package:usecase_load_exercise_history_month/usecase_load_exercise_history_month.dart';
+import 'package:usecase_load_exercise_history_month_impl/usecase_load_exercise_history_month_impl.dart';
 import 'package:usecase_load_exercise_history_page/usecase_load_exercise_history_page.dart';
 import 'package:usecase_load_exercise_history_page_impl/usecase_load_exercise_history_page_impl.dart';
 import 'package:usecase_load_oss_licenses/usecase_load_oss_licenses.dart';
@@ -123,6 +127,16 @@ List<Override> usecaseOverrides({
   ),
   LoadExerciseHistoryPageUsecase.provider.overrideWith(
     (ref) => LoadExerciseHistoryPageUsecaseImpl(
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+    ),
+  ),
+  LoadExerciseHistoryMonthUsecase.provider.overrideWith(
+    (ref) => LoadExerciseHistoryMonthUsecaseImpl(
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+    ),
+  ),
+  LoadExerciseHistoriesForSameRecordedDayUsecase.provider.overrideWith(
+    (ref) => LoadExerciseHistoriesForSameRecordedDayUsecaseImpl(
       histories: ref.watch(exerciseHistoryRepositoryProvider),
     ),
   ),
