@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
@@ -108,6 +109,18 @@ Future<void> _pumpPanelGolden(
         ),
       ),
     );
+    await tester.pumpAndSettle();
+    // アドバイザー PNG のデコード完了前に撮ると light Golden が空になる。
+    await tester.runAsync(() async {
+      final context = tester.element(find.byType(AdviceSpeechPanel));
+      await precacheImage(
+        AssetImage(
+          'assets/advisor/${tone.name}.png',
+          package: 'screen_feature_top',
+        ),
+        context,
+      );
+    });
     await tester.pumpAndSettle();
     await expectLater(
       find.byType(AdviceSpeechPanel),
