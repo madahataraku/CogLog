@@ -1,13 +1,13 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 
-/// 運動履歴詳細が持つ読込結果。
+/// 運動履歴詳細が持つ読込結果と同一日ページ位置。
 ///
 /// Example:
 /// ```dart
 /// ExerciseHistoryDetailScreenState.initial(id: 'id');
 /// ```
 final class ExerciseHistoryDetailScreenState {
-  /// ID と読込結果を持つ。
+  /// ID・同一日列・読込結果を持つ。
   ///
   /// Example:
   /// ```dart
@@ -15,6 +15,9 @@ final class ExerciseHistoryDetailScreenState {
   /// ```
   const ExerciseHistoryDetailScreenState({
     required this.id,
+    required this.sameDayIds,
+    required this.pageIndex,
+    required this.pageLoading,
     required this.loading,
     required this.history,
     required this.photoAbsolutePath,
@@ -31,6 +34,9 @@ final class ExerciseHistoryDetailScreenState {
   factory ExerciseHistoryDetailScreenState.initial({required String id}) =>
       ExerciseHistoryDetailScreenState(
         id: id,
+        sameDayIds: const [],
+        pageIndex: 0,
+        pageLoading: false,
         loading: false,
         history: null,
         photoAbsolutePath: null,
@@ -41,7 +47,16 @@ final class ExerciseHistoryDetailScreenState {
   /// 対象の運動履歴 ID。
   final String id;
 
-  /// 読込中か。
+  /// 同一記録日の ID 列（作成開始日時降順）。
+  final List<String> sameDayIds;
+
+  /// [sameDayIds] 内の表示位置。
+  final int pageIndex;
+
+  /// ページめくり後の詳細読込中。
+  final bool pageLoading;
+
+  /// 初回などの詳細読込中か。
   final bool loading;
 
   /// 成功時の運動履歴。
@@ -64,6 +79,9 @@ final class ExerciseHistoryDetailScreenState {
   /// ```
   ExerciseHistoryDetailScreenState copyWith({
     String? id,
+    List<String>? sameDayIds,
+    int? pageIndex,
+    bool? pageLoading,
     bool? loading,
     ExerciseHistory? history,
     bool clearHistory = false,
@@ -74,6 +92,9 @@ final class ExerciseHistoryDetailScreenState {
     bool clearError = false,
   }) => ExerciseHistoryDetailScreenState(
     id: id ?? this.id,
+    sameDayIds: sameDayIds ?? this.sameDayIds,
+    pageIndex: pageIndex ?? this.pageIndex,
+    pageLoading: pageLoading ?? this.pageLoading,
     loading: loading ?? this.loading,
     history: clearHistory ? null : (history ?? this.history),
     photoAbsolutePath: clearPhotoAbsolutePath

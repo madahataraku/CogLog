@@ -247,6 +247,18 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_missing;
       },
+      'screen_feature_exercise_history_detail_page_position': (source) {
+        // Has Placeholders
+        var index = 0;
+        String current = source.arguments[index];
+        index++;
+        String total = source.arguments[index];
+        index++;
+        return l10n.screen_feature_exercise_history_detail_page_position(
+          current,
+          total,
+        );
+      },
       'screen_feature_exercise_history_detail_photo': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_photo;

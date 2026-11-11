@@ -1,30 +1,34 @@
 import 'package:state_stream/state_stream.dart';
+import 'package:usecase_load_exercise_histories_for_same_recorded_day/usecase_load_exercise_histories_for_same_recorded_day.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 
 import '../state/exercise_history_detail_screen_state.dart';
 
-/// 詳細を読み、State を置き換える。
+/// 詳細と同一日 ID 列を読み、State を置き換える。
 ///
 /// Example:
 /// ```dart
 /// OnInitializeDelegate(
 ///   state: state,
 ///   loadDetailUsecase: loadDetailUsecase,
+///   loadSameDayUsecase: loadSameDayUsecase,
 /// ).execute(id: 'id');
 /// ```
 final class OnInitializeDelegate {
-  /// [state] と詳細 Usecase を受け取る。
+  /// [state] と詳細・同一日 Usecase を受け取る。
   ///
   /// Example:
   /// ```dart
   /// OnInitializeDelegate(
   ///   state: state,
   ///   loadDetailUsecase: loadDetailUsecase,
+  ///   loadSameDayUsecase: loadSameDayUsecase,
   /// );
   /// ```
   const OnInitializeDelegate({
     required this.state,
     required this.loadDetailUsecase,
+    required this.loadSameDayUsecase,
   });
 
   /// 更新する画面状態。
@@ -33,7 +37,10 @@ final class OnInitializeDelegate {
   /// 詳細の読み込み。
   final LoadExerciseHistoryDetailUsecase loadDetailUsecase;
 
-  /// [id] の詳細を読む。
+  /// 同一記録日 ID 列の読み込み。
+  final LoadExerciseHistoriesForSameRecordedDayUsecase loadSameDayUsecase;
+
+  /// [id] の詳細を読み、続けて同一日列を載せる。
   ///
   /// Example:
   /// ```dart
@@ -53,11 +60,48 @@ final class OnInitializeDelegate {
     if (!shouldLoad) {
       return;
     }
+
     await loadExerciseHistoryDetail(
       state: state,
       loadDetailUsecase: loadDetailUsecase,
       id: id,
     );
+
+    final afterDetail = state.state;
+    if (afterDetail.missing || afterDetail.error != null) {
+      return;
+    }
+
+    try {
+      final same = await loadSameDayUsecase.execute(
+        LoadExerciseHistoriesForSameRecordedDayRequest(id: id),
+      );
+      await state.updateWithLock((current, emitter) async {
+        if (current.id != id) {
+          return;
+        }
+        switch (same) {
+          case LoadExerciseHistoriesForSameRecordedDaySuccess(
+            :final ids,
+            :final initialIndex,
+          ):
+            await emitter.emit(
+              current.copyWith(sameDayIds: ids, pageIndex: initialIndex),
+            );
+          case LoadExerciseHistoriesForSameRecordedDayNotFound():
+            await emitter.emit(
+              current.copyWith(sameDayIds: [id], pageIndex: 0),
+            );
+        }
+      });
+    } catch (_) {
+      await state.updateWithLock((current, emitter) async {
+        if (current.id != id) {
+          return;
+        }
+        await emitter.emit(current.copyWith(sameDayIds: [id], pageIndex: 0));
+      });
+    }
   }
 }
 

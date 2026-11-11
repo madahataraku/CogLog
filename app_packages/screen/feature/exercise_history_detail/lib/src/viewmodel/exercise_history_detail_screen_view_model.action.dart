@@ -4,7 +4,7 @@ part of 'exercise_history_detail_screen_view_model.dart';
 @internal
 extension ExerciseHistoryDetailScreenViewModelActions
     on ExerciseHistoryDetailScreenViewModel {
-  /// [id] の詳細を読み込む。
+  /// [id] の詳細と同一日列を読み込む。
   ///
   /// Example:
   /// ```dart
@@ -14,8 +14,23 @@ extension ExerciseHistoryDetailScreenViewModelActions
     final delegate = OnInitializeDelegate(
       state: state,
       loadDetailUsecase: loadDetailUsecase,
+      loadSameDayUsecase: loadSameDayUsecase,
     );
     return delegate.execute(id: id);
+  }
+
+  /// 同一日の [index] へページをめくる。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onPageChanged(index: 1);
+  /// ```
+  Future<void> onPageChanged({required int index}) {
+    final delegate = OnPageChangedDelegate(
+      state: state,
+      loadDetailUsecase: loadDetailUsecase,
+    );
+    return delegate.execute(index: index);
   }
 
   /// 読込失敗を再試行する。

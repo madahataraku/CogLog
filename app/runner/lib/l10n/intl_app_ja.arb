@@ -206,6 +206,18 @@
   "@screen_feature_exercise_history_detail_missing": {
     "description": "不在"
   },
+  "screen_feature_exercise_history_detail_page_position": "{current} / {total}",
+  "@screen_feature_exercise_history_detail_page_position": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    },
+    "description": "同一日複数件の何件中何件目"
+  },
   "screen_feature_exercise_history_detail_photo": "メーターパネル写真",
   "@screen_feature_exercise_history_detail_photo": {
     "description": "写真のラベル"

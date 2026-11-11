@@ -391,6 +391,15 @@ abstract class L10n {
   /// **'この運動履歴はありません'**
   String get screen_feature_exercise_history_detail_missing;
 
+  /// 同一日複数件の何件中何件目
+  ///
+  /// In ja, this message translates to:
+  /// **'{current} / {total}'**
+  String screen_feature_exercise_history_detail_page_position(
+    String current,
+    String total,
+  );
+
   /// 写真のラベル
   ///
   /// In ja, this message translates to:

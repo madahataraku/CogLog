@@ -8,6 +8,10 @@
 ///   showError: false,
 ///   canRetry: false,
 ///   errorText: null,
+///   showPagePosition: false,
+///   pageCurrent: 1,
+///   pageTotal: 1,
+///   pageLoading: false,
 ///   caloriesText: '',
 ///   durationText: '',
 ///   distanceText: '',
@@ -33,6 +37,10 @@ final class ExerciseHistoryDetailScreenEntity {
   ///   showError: false,
   ///   canRetry: false,
   ///   errorText: null,
+  ///   showPagePosition: false,
+  ///   pageCurrent: 1,
+  ///   pageTotal: 0,
+  ///   pageLoading: false,
   ///   caloriesText: '',
   ///   durationText: '',
   ///   distanceText: '',
@@ -53,6 +61,10 @@ final class ExerciseHistoryDetailScreenEntity {
     required this.showError,
     required this.canRetry,
     required this.errorText,
+    required this.showPagePosition,
+    required this.pageCurrent,
+    required this.pageTotal,
+    required this.pageLoading,
     required this.caloriesText,
     required this.durationText,
     required this.distanceText,
@@ -81,6 +93,18 @@ final class ExerciseHistoryDetailScreenEntity {
 
   /// エラー文言。無ければ null。
   final String? errorText;
+
+  /// 同一日複数件の件数位置を出すか。
+  final bool showPagePosition;
+
+  /// 何件中の何件目か（1 始まり）。
+  final int pageCurrent;
+
+  /// 同一日の件数。
+  final int pageTotal;
+
+  /// ページめくり後の詳細読込中か。
+  final bool pageLoading;
 
   /// 消費カロリー。
   final String caloriesText;

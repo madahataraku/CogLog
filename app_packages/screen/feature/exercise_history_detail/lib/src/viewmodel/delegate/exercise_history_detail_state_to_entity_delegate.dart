@@ -32,14 +32,23 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
   ExerciseHistoryDetailScreenEntity execute(
     ExerciseHistoryDetailScreenState state,
   ) {
+    final showPagePosition = state.sameDayIds.length > 1;
+    final pageCurrent = state.pageIndex + 1;
+    final pageTotal = state.sameDayIds.length;
+    final pageLoading = state.pageLoading;
+
     final history = state.history;
     if (state.loading && history == null && state.error == null) {
-      return const ExerciseHistoryDetailScreenEntity(
+      return ExerciseHistoryDetailScreenEntity(
         showLoading: true,
         showMissing: false,
         showError: false,
         canRetry: false,
         errorText: null,
+        showPagePosition: showPagePosition,
+        pageCurrent: pageCurrent,
+        pageTotal: pageTotal,
+        pageLoading: pageLoading,
         caloriesText: '',
         durationText: '',
         distanceText: '',
@@ -55,12 +64,16 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
       );
     }
     if (state.missing) {
-      return const ExerciseHistoryDetailScreenEntity(
+      return ExerciseHistoryDetailScreenEntity(
         showLoading: false,
         showMissing: true,
         showError: false,
         canRetry: false,
         errorText: null,
+        showPagePosition: showPagePosition,
+        pageCurrent: pageCurrent,
+        pageTotal: pageTotal,
+        pageLoading: pageLoading,
         caloriesText: '',
         durationText: '',
         distanceText: '',
@@ -82,6 +95,10 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
         showError: true,
         canRetry: true,
         errorText: strings.screen_feature_exercise_history_detail_error,
+        showPagePosition: showPagePosition,
+        pageCurrent: pageCurrent,
+        pageTotal: pageTotal,
+        pageLoading: pageLoading,
         caloriesText: '',
         durationText: '',
         distanceText: '',
@@ -97,12 +114,16 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
       );
     }
     if (history == null) {
-      return const ExerciseHistoryDetailScreenEntity(
+      return ExerciseHistoryDetailScreenEntity(
         showLoading: false,
         showMissing: false,
         showError: false,
         canRetry: false,
         errorText: null,
+        showPagePosition: showPagePosition,
+        pageCurrent: pageCurrent,
+        pageTotal: pageTotal,
+        pageLoading: pageLoading,
         caloriesText: '',
         durationText: '',
         distanceText: '',
@@ -124,6 +145,10 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
       showError: false,
       canRetry: false,
       errorText: null,
+      showPagePosition: showPagePosition,
+      pageCurrent: pageCurrent,
+      pageTotal: pageTotal,
+      pageLoading: pageLoading,
       caloriesText:
           '${PeriodTotalText.oneDecimal(history.caloriesKcal)} '
           '${strings.screen_feature_exercise_history_detail_calories_unit}',

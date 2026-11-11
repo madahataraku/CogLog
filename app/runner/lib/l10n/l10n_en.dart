@@ -168,6 +168,14 @@ class L10nEn extends L10n {
       'This exercise history was not found';
 
   @override
+  String screen_feature_exercise_history_detail_page_position(
+    String current,
+    String total,
+  ) {
+    return '$current / $total';
+  }
+
+  @override
   String get screen_feature_exercise_history_detail_photo =>
       'Meter panel photo';
 

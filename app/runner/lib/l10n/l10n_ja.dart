@@ -163,6 +163,14 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_detail_missing => 'この運動履歴はありません';
 
   @override
+  String screen_feature_exercise_history_detail_page_position(
+    String current,
+    String total,
+  ) {
+    return '$current / $total';
+  }
+
+  @override
   String get screen_feature_exercise_history_detail_photo => 'メーターパネル写真';
 
   @override
