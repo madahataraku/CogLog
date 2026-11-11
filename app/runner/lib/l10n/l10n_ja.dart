@@ -118,13 +118,9 @@ class L10nJa extends L10n {
   String get screen_feature_debug_yes => 'はい';
 
   @override
-  String get screen_feature_exercise_history_calories => '消費カロリー';
-
-  @override
-  String get screen_feature_exercise_history_calories_unit => 'kcal';
-
-  @override
-  String get screen_feature_exercise_history_created_at => '作成開始日時';
+  String screen_feature_exercise_history_count_badge(String count) {
+    return '$count';
+  }
 
   @override
   String get screen_feature_exercise_history_detail_average_speed => '平均速度';
@@ -185,23 +181,7 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_detail_title => '運動履歴詳細';
 
   @override
-  String get screen_feature_exercise_history_distance => '走行距離';
-
-  @override
-  String get screen_feature_exercise_history_distance_unit => 'km';
-
-  @override
-  String get screen_feature_exercise_history_duration => '運動時間';
-
-  @override
-  String get screen_feature_exercise_history_empty =>
-      'この月の運動履歴がありません。メーター記録から、メーターパネルの撮影または手入力で運動履歴を作成してください。';
-
-  @override
   String get screen_feature_exercise_history_error => '運動履歴を読み込めませんでした';
-
-  @override
-  String get screen_feature_exercise_history_load_more_error => '続きを読み込めませんでした';
 
   @override
   String screen_feature_exercise_history_month_label(
@@ -215,7 +195,36 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_retry => '再試行';
 
   @override
+  String screen_feature_exercise_history_stamp_semantics(
+    String day,
+    String count,
+  ) {
+    return '$day日、運動履歴$count件';
+  }
+
+  @override
   String get screen_feature_exercise_history_title => '運動履歴';
+
+  @override
+  String get screen_feature_exercise_history_weekday_fri => '金';
+
+  @override
+  String get screen_feature_exercise_history_weekday_mon => '月';
+
+  @override
+  String get screen_feature_exercise_history_weekday_sat => '土';
+
+  @override
+  String get screen_feature_exercise_history_weekday_sun => '日';
+
+  @override
+  String get screen_feature_exercise_history_weekday_thu => '木';
+
+  @override
+  String get screen_feature_exercise_history_weekday_tue => '火';
+
+  @override
+  String get screen_feature_exercise_history_weekday_wed => '水';
 
   @override
   String get screen_feature_goal_settings_auto_update_description =>

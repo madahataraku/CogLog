@@ -1,13 +1,13 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 
-/// 運動履歴一覧が持つ月・頁・読込フラグ。
+/// 運動履歴カレンダーが持つ月・履歴・読込フラグ。
 ///
 /// Example:
 /// ```dart
 /// ExerciseHistoryScreenState.initial(year: 2026, month: 11);
 /// ```
 final class ExerciseHistoryScreenState {
-  /// 月とリストと読込状態を持つ。
+  /// 月と履歴と読込状態を持つ。
   ///
   /// Example:
   /// ```dart
@@ -18,11 +18,8 @@ final class ExerciseHistoryScreenState {
     required this.month,
     required this.items,
     required this.loading,
-    required this.refreshing,
-    required this.loadingMore,
-    required this.hasMore,
     required this.loadError,
-    required this.loadMoreError,
+    required this.reloadGeneration,
   });
 
   /// 指定月の未読込状態。
@@ -39,11 +36,8 @@ final class ExerciseHistoryScreenState {
     month: month,
     items: const [],
     loading: false,
-    refreshing: false,
-    loadingMore: false,
-    hasMore: true,
     loadError: null,
-    loadMoreError: null,
+    reloadGeneration: 0,
   );
 
   /// 選んでいる西暦年。
@@ -55,23 +49,14 @@ final class ExerciseHistoryScreenState {
   /// 読み済みの運動履歴。
   final List<ExerciseHistory> items;
 
-  /// 初回または月切替の読込中。
+  /// 月データの読込中。
   final bool loading;
 
-  /// Pull to refresh 中。
-  final bool refreshing;
-
-  /// 末尾追加読込中。
-  final bool loadingMore;
-
-  /// 同じ月で続きがあり得るか。
-  final bool hasMore;
-
-  /// 初回／月切替の失敗。
+  /// 月データの読込失敗。
   final Object? loadError;
 
-  /// 追加読込の失敗。
-  final Object? loadMoreError;
+  /// 競合する再取得を捨てるための世代。
+  final int reloadGeneration;
 
   /// 一部だけ差し替えた新しい状態を返す。
   ///
@@ -84,24 +69,15 @@ final class ExerciseHistoryScreenState {
     int? month,
     List<ExerciseHistory>? items,
     bool? loading,
-    bool? refreshing,
-    bool? loadingMore,
-    bool? hasMore,
     Object? loadError,
     bool clearLoadError = false,
-    Object? loadMoreError,
-    bool clearLoadMoreError = false,
+    int? reloadGeneration,
   }) => ExerciseHistoryScreenState(
     year: year ?? this.year,
     month: month ?? this.month,
     items: items ?? this.items,
     loading: loading ?? this.loading,
-    refreshing: refreshing ?? this.refreshing,
-    loadingMore: loadingMore ?? this.loadingMore,
-    hasMore: hasMore ?? this.hasMore,
     loadError: clearLoadError ? null : (loadError ?? this.loadError),
-    loadMoreError: clearLoadMoreError
-        ? null
-        : (loadMoreError ?? this.loadMoreError),
+    reloadGeneration: reloadGeneration ?? this.reloadGeneration,
   );
 }
