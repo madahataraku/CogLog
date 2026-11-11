@@ -21,6 +21,372 @@ class L10nEn extends L10n {
   String get foundation_resources_app_name => 'CogLog';
 
   @override
+  String get screen_feature_achievement_back_semantics => 'Back';
+
+  @override
+  String get screen_feature_achievement_condition_best_distance =>
+      'Beat your best distance on a later ride';
+
+  @override
+  String get screen_feature_achievement_condition_best_duration =>
+      'Beat your best duration on a later ride';
+
+  @override
+  String get screen_feature_achievement_condition_calories_100 =>
+      'Burn 100 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_1000 =>
+      'Burn 1,000 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_10000 =>
+      'Burn 10,000 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_150 =>
+      'Burn 150 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_1500 =>
+      'Burn 1,500 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_200 =>
+      'Burn 200 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_300 =>
+      'Burn 300 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_3000 =>
+      'Burn 3,000 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_50 =>
+      'Burn 50 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_500 =>
+      'Burn 500 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_calories_5000 =>
+      'Burn 5,000 kcal total';
+
+  @override
+  String get screen_feature_achievement_condition_count_100 =>
+      'Complete your 100th exercise';
+
+  @override
+  String get screen_feature_achievement_condition_day_11_11 =>
+      'Exercise on November 11';
+
+  @override
+  String get screen_feature_achievement_condition_distance_1 =>
+      'Reach 1 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_10 =>
+      'Reach 10 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_100 =>
+      'Reach 100 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_1000 =>
+      'Reach 1,000 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_10000 =>
+      'Reach 10,000 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_40075 =>
+      'Reach 40,075 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_50 =>
+      'Reach 50 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_500 =>
+      'Reach 500 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_distance_5000 =>
+      'Reach 5,000 km total distance';
+
+  @override
+  String get screen_feature_achievement_condition_first_record =>
+      'Log your first exercise record';
+
+  @override
+  String get screen_feature_achievement_condition_gap_restart_30 =>
+      'Resume exercise after more than 30 days without exercise';
+
+  @override
+  String get screen_feature_achievement_condition_leap_day =>
+      'Exercise on February 29';
+
+  @override
+  String get screen_feature_achievement_condition_same_day_2 =>
+      'Exercise twice on the same day';
+
+  @override
+  String get screen_feature_achievement_condition_single_duration_10m =>
+      'Exercise for 10+ minutes in one session';
+
+  @override
+  String get screen_feature_achievement_condition_single_duration_30m =>
+      'Exercise for 30+ minutes in one session';
+
+  @override
+  String get screen_feature_achievement_condition_single_duration_60m =>
+      'Exercise for 60+ minutes in one session';
+
+  @override
+  String get screen_feature_achievement_condition_streak_14 =>
+      'Exercise 14 days in a row';
+
+  @override
+  String get screen_feature_achievement_condition_streak_3 =>
+      'Exercise 3 days in a row';
+
+  @override
+  String get screen_feature_achievement_condition_streak_30 =>
+      'Exercise 30 days in a row';
+
+  @override
+  String get screen_feature_achievement_condition_streak_365 =>
+      'Exercise 365 days in a row';
+
+  @override
+  String get screen_feature_achievement_condition_streak_60 =>
+      'Exercise 60 days in a row';
+
+  @override
+  String get screen_feature_achievement_condition_streak_7 =>
+      'Exercise 7 days in a row';
+
+  @override
+  String get screen_feature_achievement_condition_streak_90 =>
+      'Exercise 90 days in a row';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_1000h =>
+      'Reach 1,000 hours total exercise time';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_100h =>
+      'Reach 100 hours total exercise time';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_10h =>
+      'Reach 10 hours total exercise time';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_24h =>
+      'Reach 24 hours total exercise time';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_300h =>
+      'Reach 300 hours total exercise time';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_48h =>
+      'Reach 48 hours total exercise time';
+
+  @override
+  String get screen_feature_achievement_condition_total_duration_96h =>
+      'Reach 96 hours total exercise time';
+
+  @override
+  String get screen_feature_achievement_condition_unique_100 =>
+      'Exercise on 100 unique days';
+
+  @override
+  String get screen_feature_achievement_condition_year_end_new_year =>
+      'Exercise all 6 days from Dec 29–31 and Jan 1–3';
+
+  @override
+  String get screen_feature_achievement_load_failed =>
+      'Failed to load achievements';
+
+  @override
+  String get screen_feature_achievement_locked_name => '?????';
+
+  @override
+  String get screen_feature_achievement_name_best_distance =>
+      'Beat yesterday\'s you';
+
+  @override
+  String get screen_feature_achievement_name_best_duration =>
+      'New personal best';
+
+  @override
+  String get screen_feature_achievement_name_calories_100 => 'One banana!';
+
+  @override
+  String get screen_feature_achievement_name_calories_1000 => 'Two shortcakes!';
+
+  @override
+  String get screen_feature_achievement_name_calories_10000 =>
+      'Twenty curry plates!';
+
+  @override
+  String get screen_feature_achievement_name_calories_150 => 'One apple!';
+
+  @override
+  String get screen_feature_achievement_name_calories_1500 =>
+      'Five pizza slices!';
+
+  @override
+  String get screen_feature_achievement_name_calories_200 => 'One rice ball!';
+
+  @override
+  String get screen_feature_achievement_name_calories_300 => 'One dorayaki!';
+
+  @override
+  String get screen_feature_achievement_name_calories_3000 =>
+      'Five bowls of ramen!';
+
+  @override
+  String get screen_feature_achievement_name_calories_50 => '10 strawberries!';
+
+  @override
+  String get screen_feature_achievement_name_calories_500 => 'One hamburger!';
+
+  @override
+  String get screen_feature_achievement_name_calories_5000 =>
+      'Ten whole cakes!';
+
+  @override
+  String get screen_feature_achievement_name_count_100 => '100th ride';
+
+  @override
+  String get screen_feature_achievement_name_day_11_11 => 'Double-11 day';
+
+  @override
+  String get screen_feature_achievement_name_distance_1 => 'First kilometer';
+
+  @override
+  String get screen_feature_achievement_name_distance_10 => '10 km rider';
+
+  @override
+  String get screen_feature_achievement_name_distance_100 => '100 km rider';
+
+  @override
+  String get screen_feature_achievement_name_distance_1000 => '1,000 km rider';
+
+  @override
+  String get screen_feature_achievement_name_distance_10000 =>
+      '10,000 km rider';
+
+  @override
+  String get screen_feature_achievement_name_distance_40075 =>
+      'Around the world path';
+
+  @override
+  String get screen_feature_achievement_name_distance_50 => '50 km rider';
+
+  @override
+  String get screen_feature_achievement_name_distance_500 => '500 km rider';
+
+  @override
+  String get screen_feature_achievement_name_distance_5000 => '5,000 km rider';
+
+  @override
+  String get screen_feature_achievement_name_first_record => 'First step';
+
+  @override
+  String get screen_feature_achievement_name_gap_restart_30 => 'Comeback rider';
+
+  @override
+  String get screen_feature_achievement_name_leap_day => 'Leap day rider';
+
+  @override
+  String get screen_feature_achievement_name_same_day_2 => 'Perfectionist';
+
+  @override
+  String get screen_feature_achievement_name_single_duration_10m =>
+      'First 10 minutes';
+
+  @override
+  String get screen_feature_achievement_name_single_duration_30m =>
+      '30-minute rider';
+
+  @override
+  String get screen_feature_achievement_name_single_duration_60m =>
+      'One-hour challenger';
+
+  @override
+  String get screen_feature_achievement_name_streak_14 => 'Habit formed';
+
+  @override
+  String get screen_feature_achievement_name_streak_3 => 'Three-day streak';
+
+  @override
+  String get screen_feature_achievement_name_streak_30 => 'Habit master';
+
+  @override
+  String get screen_feature_achievement_name_streak_365 =>
+      'Year of perfect attendance';
+
+  @override
+  String get screen_feature_achievement_name_streak_60 => 'Two-month trail';
+
+  @override
+  String get screen_feature_achievement_name_streak_7 => 'Habit sprouting';
+
+  @override
+  String get screen_feature_achievement_name_streak_90 => 'Three-month proof';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_1000h =>
+      'Thousand-hour legend';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_100h =>
+      'Time master';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_10h =>
+      'Hours add up';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_24h =>
+      'A full day of riding';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_300h =>
+      'Time champion';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_48h =>
+      'Two days stacked';
+
+  @override
+  String get screen_feature_achievement_name_total_duration_96h =>
+      'Four days reached';
+
+  @override
+  String get screen_feature_achievement_name_unique_100 =>
+      'Consistency is power';
+
+  @override
+  String get screen_feature_achievement_name_year_end_new_year =>
+      'Open through New Year';
+
+  @override
+  String get screen_feature_achievement_retry => 'Retry';
+
+  @override
+  String get screen_feature_achievement_title => 'Achievements';
+
+  @override
   String get screen_feature_app_settings_back_semantics => 'Back';
 
   @override
@@ -310,6 +676,26 @@ class L10nEn extends L10n {
   String get screen_feature_main_nav_trends => 'Trends';
 
   @override
+  String screen_feature_meter_capture_achievement_unlocked_body(
+    String condition,
+  ) {
+    return '$condition';
+  }
+
+  @override
+  String screen_feature_meter_capture_achievement_unlocked_summary_title(
+    String count,
+    String firstName,
+  ) {
+    return '$count achievements unlocked: $firstName and more';
+  }
+
+  @override
+  String screen_feature_meter_capture_achievement_unlocked_title(String name) {
+    return 'Unlocked: $name';
+  }
+
+  @override
   String get screen_feature_meter_capture_average_speed =>
       'Average speed (km/h)';
 
@@ -404,6 +790,9 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_achievement_title => 'Goal progress';
+
+  @override
+  String get screen_feature_top_achievements_semantics => 'Achievements';
 
   @override
   String get screen_feature_top_actual_label => 'Actual';

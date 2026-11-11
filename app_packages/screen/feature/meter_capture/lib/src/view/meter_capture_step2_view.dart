@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:screen_feature_achievement/screen_feature_achievement.dart';
 
 import '../strings.dart';
 import '../viewmodel/can_submit_meter_capture.dart';
@@ -262,6 +263,41 @@ class MeterCaptureStep2View extends HookConsumerWidget {
                         strings.screen_feature_meter_capture_goal_auto_updated,
                       ),
                     );
+                  }
+                  final newly = success.newlyUnlockedAchievements;
+                  if (newly.isNotEmpty && context.mounted) {
+                    if (newly.length == 1) {
+                      final id = newly.first.id;
+                      showFToast(
+                        context: context,
+                        title: Text(
+                          strings
+                              .screen_feature_meter_capture_achievement_unlocked_title(
+                                name: resolveAchievementName(id),
+                              ),
+                        ),
+                        description: Text(
+                          strings
+                              .screen_feature_meter_capture_achievement_unlocked_body(
+                                condition: resolveAchievementCondition(id),
+                              ),
+                        ),
+                      );
+                    } else {
+                      final ordered = sortAchievementsByCatalogOrder(newly);
+                      showFToast(
+                        context: context,
+                        title: Text(
+                          strings
+                              .screen_feature_meter_capture_achievement_unlocked_summary_title(
+                                count: '${ordered.length}',
+                                firstName: resolveAchievementName(
+                                  ordered.first.id,
+                                ),
+                              ),
+                        ),
+                      );
+                    }
                   }
                   viewModel.goToHomeTab();
                 },

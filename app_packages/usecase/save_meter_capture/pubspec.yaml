@@ -8,6 +8,7 @@ environment:
   sdk: ^3.13.7
 
 dependencies:
+  domain_achievement: any
   domain_exercise_history: any
   riverpod: any
 

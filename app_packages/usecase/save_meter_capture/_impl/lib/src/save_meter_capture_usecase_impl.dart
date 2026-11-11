@@ -1,5 +1,7 @@
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
+import 'package:domain_achievement/domain_achievement.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
+import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
 import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
@@ -12,6 +14,7 @@ import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.da
 ///   histories: histories,
 ///   health: health,
 ///   evaluateAutoUpdate: evaluateAutoUpdate,
+///   evaluateAchievements: evaluateAchievements,
 /// ).execute(
 ///   SaveMeterCaptureRequest(
 ///     creationStartedAt: DateTime.timestamp(),
@@ -27,7 +30,7 @@ import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.da
 /// );
 /// ```
 final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
-  /// [histories]・[health]・[evaluateAutoUpdate] を使う実装を作る。
+  /// [histories]・[health]・[evaluateAutoUpdate]・[evaluateAchievements] を使う実装を作る。
   ///
   /// Example:
   /// ```dart
@@ -35,12 +38,14 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
   ///   histories: histories,
   ///   health: health,
   ///   evaluateAutoUpdate: evaluateAutoUpdate,
+  ///   evaluateAchievements: evaluateAchievements,
   /// );
   /// ```
   const SaveMeterCaptureUsecaseImpl({
     required this.histories,
     required this.health,
     required this.evaluateAutoUpdate,
+    required this.evaluateAchievements,
     required this.syncReminder,
   });
 
@@ -53,10 +58,13 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
   /// 保存後の目標自動更新。
   final EvaluateDailyGoalAutoUpdateUsecase evaluateAutoUpdate;
 
+  /// 保存後のアチーブメント評価。
+  final EvaluateAchievementsUsecase evaluateAchievements;
+
   /// 保存後のリマインド同期。
   final SyncExerciseReminderUsecase syncReminder;
 
-  /// [request] を検証し、作成後にヘルスへ書き、自動更新を判定する。
+  /// [request] を検証し、作成後にヘルスへ書き、自動更新とアチーブメントを判定する。
   ///
   /// Example:
   /// ```dart
@@ -108,11 +116,23 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
         // 通知の同期失敗で、保存済みの履歴を saveFailed にしない。
       }
 
+      var newlyUnlocked = const <AchievementUnlock>[];
+      try {
+        final evaluated = await evaluateAchievements.execute(
+          EvaluateAchievementsRequest(now: now, emitNotifications: true),
+        );
+        newlyUnlocked = evaluated.newlyUnlocked;
+      } on Object {
+        // アチーブメント評価失敗でも保存 success を維持するため newly を空にする。
+        newlyUnlocked = const [];
+      }
+
       return SaveMeterCaptureResult(
         outcome: SaveMeterCaptureOutcome.success,
         history: history,
         healthWriteSucceeded: healthWriteSucceeded,
         goalAutoUpdated: autoUpdate.applied,
+        newlyUnlockedAchievements: newlyUnlocked,
       );
     } on Object {
       return const SaveMeterCaptureResult(

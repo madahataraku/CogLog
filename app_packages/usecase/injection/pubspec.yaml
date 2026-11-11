@@ -8,6 +8,7 @@ environment:
   sdk: ^3.13.7
 
 dependencies:
+  data_repository_achievement: any
   data_repository_daily_goal: any
   data_repository_exercise_history: any
   data_repository_notification_settings: any
@@ -25,10 +26,14 @@ dependencies:
   riverpod: any
   usecase_diagnose_on_device_llm: any
   usecase_diagnose_on_device_llm_impl: any
+  usecase_evaluate_achievements: any
+  usecase_evaluate_achievements_impl: any
   usecase_evaluate_daily_goal_auto_update: any
   usecase_evaluate_daily_goal_auto_update_impl: any
   usecase_generate_top_advice: any
   usecase_generate_top_advice_impl: any
+  usecase_load_achievements: any
+  usecase_load_achievements_impl: any
   usecase_load_app_runtime_info: any
   usecase_load_app_runtime_info_impl: any
   usecase_load_daily_goal: any

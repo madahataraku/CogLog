@@ -1,0 +1,21 @@
+name: usecase_evaluate_achievements_impl
+description: Evaluates achievements through history and unlock repositories.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_achievement: any
+  data_repository_exercise_history: any
+  domain_achievement: any
+  usecase_evaluate_achievements: any
+
+dev_dependencies:
+  data_repository_achievement_testing: any
+  data_repository_exercise_history_testing: any
+  domain_exercise_history: any
+  flutter_lints: any
+  test: any

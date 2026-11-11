@@ -115,6 +115,600 @@ abstract class L10n {
   /// **'CogLog'**
   String get foundation_resources_app_name;
 
+  /// 戻る a11y
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_achievement_back_semantics;
+
+  /// 達成条件 best_distance
+  ///
+  /// In ja, this message translates to:
+  /// **'2件目以降の運動で過去最高走行距離を更新する'**
+  String get screen_feature_achievement_condition_best_distance;
+
+  /// 達成条件 best_duration
+  ///
+  /// In ja, this message translates to:
+  /// **'2件目以降の運動で過去最高運動時間を更新する'**
+  String get screen_feature_achievement_condition_best_duration;
+
+  /// 達成条件 calories_100
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー100 kcal'**
+  String get screen_feature_achievement_condition_calories_100;
+
+  /// 達成条件 calories_1000
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー1,000 kcal'**
+  String get screen_feature_achievement_condition_calories_1000;
+
+  /// 達成条件 calories_10000
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー10,000 kcal'**
+  String get screen_feature_achievement_condition_calories_10000;
+
+  /// 達成条件 calories_150
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー150 kcal'**
+  String get screen_feature_achievement_condition_calories_150;
+
+  /// 達成条件 calories_1500
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー1,500 kcal'**
+  String get screen_feature_achievement_condition_calories_1500;
+
+  /// 達成条件 calories_200
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー200 kcal'**
+  String get screen_feature_achievement_condition_calories_200;
+
+  /// 達成条件 calories_300
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー300 kcal'**
+  String get screen_feature_achievement_condition_calories_300;
+
+  /// 達成条件 calories_3000
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー3,000 kcal'**
+  String get screen_feature_achievement_condition_calories_3000;
+
+  /// 達成条件 calories_50
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー50 kcal'**
+  String get screen_feature_achievement_condition_calories_50;
+
+  /// 達成条件 calories_500
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー500 kcal'**
+  String get screen_feature_achievement_condition_calories_500;
+
+  /// 達成条件 calories_5000
+  ///
+  /// In ja, this message translates to:
+  /// **'累計消費カロリー5,000 kcal'**
+  String get screen_feature_achievement_condition_calories_5000;
+
+  /// 達成条件 count_100
+  ///
+  /// In ja, this message translates to:
+  /// **'100回目の運動を達成する'**
+  String get screen_feature_achievement_condition_count_100;
+
+  /// 達成条件 day_11_11
+  ///
+  /// In ja, this message translates to:
+  /// **'11月11日に運動する'**
+  String get screen_feature_achievement_condition_day_11_11;
+
+  /// 達成条件 distance_1
+  ///
+  /// In ja, this message translates to:
+  /// **'累計1km'**
+  String get screen_feature_achievement_condition_distance_1;
+
+  /// 達成条件 distance_10
+  ///
+  /// In ja, this message translates to:
+  /// **'累計10km'**
+  String get screen_feature_achievement_condition_distance_10;
+
+  /// 達成条件 distance_100
+  ///
+  /// In ja, this message translates to:
+  /// **'累計100km'**
+  String get screen_feature_achievement_condition_distance_100;
+
+  /// 達成条件 distance_1000
+  ///
+  /// In ja, this message translates to:
+  /// **'累計1,000km'**
+  String get screen_feature_achievement_condition_distance_1000;
+
+  /// 達成条件 distance_10000
+  ///
+  /// In ja, this message translates to:
+  /// **'累計10,000km'**
+  String get screen_feature_achievement_condition_distance_10000;
+
+  /// 達成条件 distance_40075
+  ///
+  /// In ja, this message translates to:
+  /// **'累計40,075km'**
+  String get screen_feature_achievement_condition_distance_40075;
+
+  /// 達成条件 distance_50
+  ///
+  /// In ja, this message translates to:
+  /// **'累計50km'**
+  String get screen_feature_achievement_condition_distance_50;
+
+  /// 達成条件 distance_500
+  ///
+  /// In ja, this message translates to:
+  /// **'累計500km'**
+  String get screen_feature_achievement_condition_distance_500;
+
+  /// 達成条件 distance_5000
+  ///
+  /// In ja, this message translates to:
+  /// **'累計5,000km'**
+  String get screen_feature_achievement_condition_distance_5000;
+
+  /// 達成条件 first_record
+  ///
+  /// In ja, this message translates to:
+  /// **'初めて運動記録を登録する'**
+  String get screen_feature_achievement_condition_first_record;
+
+  /// 達成条件 gap_restart_30
+  ///
+  /// In ja, this message translates to:
+  /// **'記録日間隔が30日超の空白のあと運動を再開する'**
+  String get screen_feature_achievement_condition_gap_restart_30;
+
+  /// 達成条件 leap_day
+  ///
+  /// In ja, this message translates to:
+  /// **'2月29日に運動する'**
+  String get screen_feature_achievement_condition_leap_day;
+
+  /// 達成条件 same_day_2
+  ///
+  /// In ja, this message translates to:
+  /// **'1日に2回運動する'**
+  String get screen_feature_achievement_condition_same_day_2;
+
+  /// 達成条件 single_duration_10m
+  ///
+  /// In ja, this message translates to:
+  /// **'1回の運動で10分以上'**
+  String get screen_feature_achievement_condition_single_duration_10m;
+
+  /// 達成条件 single_duration_30m
+  ///
+  /// In ja, this message translates to:
+  /// **'1回の運動で30分以上'**
+  String get screen_feature_achievement_condition_single_duration_30m;
+
+  /// 達成条件 single_duration_60m
+  ///
+  /// In ja, this message translates to:
+  /// **'1回の運動で60分以上'**
+  String get screen_feature_achievement_condition_single_duration_60m;
+
+  /// 達成条件 streak_14
+  ///
+  /// In ja, this message translates to:
+  /// **'14日間連続で運動する'**
+  String get screen_feature_achievement_condition_streak_14;
+
+  /// 達成条件 streak_3
+  ///
+  /// In ja, this message translates to:
+  /// **'3日間連続で運動する'**
+  String get screen_feature_achievement_condition_streak_3;
+
+  /// 達成条件 streak_30
+  ///
+  /// In ja, this message translates to:
+  /// **'30日間連続で運動する'**
+  String get screen_feature_achievement_condition_streak_30;
+
+  /// 達成条件 streak_365
+  ///
+  /// In ja, this message translates to:
+  /// **'365日間連続で運動する'**
+  String get screen_feature_achievement_condition_streak_365;
+
+  /// 達成条件 streak_60
+  ///
+  /// In ja, this message translates to:
+  /// **'60日間連続で運動する'**
+  String get screen_feature_achievement_condition_streak_60;
+
+  /// 達成条件 streak_7
+  ///
+  /// In ja, this message translates to:
+  /// **'7日間連続で運動する'**
+  String get screen_feature_achievement_condition_streak_7;
+
+  /// 達成条件 streak_90
+  ///
+  /// In ja, this message translates to:
+  /// **'90日間連続で運動する'**
+  String get screen_feature_achievement_condition_streak_90;
+
+  /// 達成条件 total_duration_1000h
+  ///
+  /// In ja, this message translates to:
+  /// **'累計運動時間1,000時間'**
+  String get screen_feature_achievement_condition_total_duration_1000h;
+
+  /// 達成条件 total_duration_100h
+  ///
+  /// In ja, this message translates to:
+  /// **'累計運動時間100時間'**
+  String get screen_feature_achievement_condition_total_duration_100h;
+
+  /// 達成条件 total_duration_10h
+  ///
+  /// In ja, this message translates to:
+  /// **'累計運動時間10時間'**
+  String get screen_feature_achievement_condition_total_duration_10h;
+
+  /// 達成条件 total_duration_24h
+  ///
+  /// In ja, this message translates to:
+  /// **'累計運動時間24時間'**
+  String get screen_feature_achievement_condition_total_duration_24h;
+
+  /// 達成条件 total_duration_300h
+  ///
+  /// In ja, this message translates to:
+  /// **'累計運動時間300時間'**
+  String get screen_feature_achievement_condition_total_duration_300h;
+
+  /// 達成条件 total_duration_48h
+  ///
+  /// In ja, this message translates to:
+  /// **'累計運動時間48時間'**
+  String get screen_feature_achievement_condition_total_duration_48h;
+
+  /// 達成条件 total_duration_96h
+  ///
+  /// In ja, this message translates to:
+  /// **'累計運動時間96時間'**
+  String get screen_feature_achievement_condition_total_duration_96h;
+
+  /// 達成条件 unique_100
+  ///
+  /// In ja, this message translates to:
+  /// **'累計100日運動する'**
+  String get screen_feature_achievement_condition_unique_100;
+
+  /// 達成条件 year_end_new_year
+  ///
+  /// In ja, this message translates to:
+  /// **'ある年末の12/29–31とその直後の年始1/1–3の6日すべてに運動する'**
+  String get screen_feature_achievement_condition_year_end_new_year;
+
+  /// 一覧失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'読み込みに失敗しました'**
+  String get screen_feature_achievement_load_failed;
+
+  /// 未開放時の表示名
+  ///
+  /// In ja, this message translates to:
+  /// **'？？？？？'**
+  String get screen_feature_achievement_locked_name;
+
+  /// アチーブメント名 best_distance
+  ///
+  /// In ja, this message translates to:
+  /// **'昨日の自分を超えろ'**
+  String get screen_feature_achievement_name_best_distance;
+
+  /// アチーブメント名 best_duration
+  ///
+  /// In ja, this message translates to:
+  /// **'自己ベスト更新'**
+  String get screen_feature_achievement_name_best_duration;
+
+  /// アチーブメント名 calories_100
+  ///
+  /// In ja, this message translates to:
+  /// **'バナナ1本分！'**
+  String get screen_feature_achievement_name_calories_100;
+
+  /// アチーブメント名 calories_1000
+  ///
+  /// In ja, this message translates to:
+  /// **'ショートケーキ2個分！'**
+  String get screen_feature_achievement_name_calories_1000;
+
+  /// アチーブメント名 calories_10000
+  ///
+  /// In ja, this message translates to:
+  /// **'カレーライス20皿分！'**
+  String get screen_feature_achievement_name_calories_10000;
+
+  /// アチーブメント名 calories_150
+  ///
+  /// In ja, this message translates to:
+  /// **'りんご1個分！'**
+  String get screen_feature_achievement_name_calories_150;
+
+  /// アチーブメント名 calories_1500
+  ///
+  /// In ja, this message translates to:
+  /// **'ピザ5切れ分！'**
+  String get screen_feature_achievement_name_calories_1500;
+
+  /// アチーブメント名 calories_200
+  ///
+  /// In ja, this message translates to:
+  /// **'おにぎり1個分！'**
+  String get screen_feature_achievement_name_calories_200;
+
+  /// アチーブメント名 calories_300
+  ///
+  /// In ja, this message translates to:
+  /// **'どら焼き1個分！'**
+  String get screen_feature_achievement_name_calories_300;
+
+  /// アチーブメント名 calories_3000
+  ///
+  /// In ja, this message translates to:
+  /// **'ラーメン5杯分！'**
+  String get screen_feature_achievement_name_calories_3000;
+
+  /// アチーブメント名 calories_50
+  ///
+  /// In ja, this message translates to:
+  /// **'いちご10個分！'**
+  String get screen_feature_achievement_name_calories_50;
+
+  /// アチーブメント名 calories_500
+  ///
+  /// In ja, this message translates to:
+  /// **'ハンバーガー1個分！'**
+  String get screen_feature_achievement_name_calories_500;
+
+  /// アチーブメント名 calories_5000
+  ///
+  /// In ja, this message translates to:
+  /// **'ホールケーキ10個分！'**
+  String get screen_feature_achievement_name_calories_5000;
+
+  /// アチーブメント名 count_100
+  ///
+  /// In ja, this message translates to:
+  /// **'100回記念'**
+  String get screen_feature_achievement_name_count_100;
+
+  /// アチーブメント名 day_11_11
+  ///
+  /// In ja, this message translates to:
+  /// **'ゾロ目記念日'**
+  String get screen_feature_achievement_name_day_11_11;
+
+  /// アチーブメント名 distance_1
+  ///
+  /// In ja, this message translates to:
+  /// **'はじめての1km'**
+  String get screen_feature_achievement_name_distance_1;
+
+  /// アチーブメント名 distance_10
+  ///
+  /// In ja, this message translates to:
+  /// **'10kmライダー'**
+  String get screen_feature_achievement_name_distance_10;
+
+  /// アチーブメント名 distance_100
+  ///
+  /// In ja, this message translates to:
+  /// **'100kmライダー'**
+  String get screen_feature_achievement_name_distance_100;
+
+  /// アチーブメント名 distance_1000
+  ///
+  /// In ja, this message translates to:
+  /// **'1,000kmライダー'**
+  String get screen_feature_achievement_name_distance_1000;
+
+  /// アチーブメント名 distance_10000
+  ///
+  /// In ja, this message translates to:
+  /// **'10,000kmライダー'**
+  String get screen_feature_achievement_name_distance_10000;
+
+  /// アチーブメント名 distance_40075
+  ///
+  /// In ja, this message translates to:
+  /// **'地球一周への道'**
+  String get screen_feature_achievement_name_distance_40075;
+
+  /// アチーブメント名 distance_50
+  ///
+  /// In ja, this message translates to:
+  /// **'50kmライダー'**
+  String get screen_feature_achievement_name_distance_50;
+
+  /// アチーブメント名 distance_500
+  ///
+  /// In ja, this message translates to:
+  /// **'500kmライダー'**
+  String get screen_feature_achievement_name_distance_500;
+
+  /// アチーブメント名 distance_5000
+  ///
+  /// In ja, this message translates to:
+  /// **'5,000kmライダー'**
+  String get screen_feature_achievement_name_distance_5000;
+
+  /// アチーブメント名 first_record
+  ///
+  /// In ja, this message translates to:
+  /// **'はじめの一歩'**
+  String get screen_feature_achievement_name_first_record;
+
+  /// アチーブメント名 gap_restart_30
+  ///
+  /// In ja, this message translates to:
+  /// **'復活のライダー'**
+  String get screen_feature_achievement_name_gap_restart_30;
+
+  /// アチーブメント名 leap_day
+  ///
+  /// In ja, this message translates to:
+  /// **'うるう年ライダー'**
+  String get screen_feature_achievement_name_leap_day;
+
+  /// アチーブメント名 same_day_2
+  ///
+  /// In ja, this message translates to:
+  /// **'完璧主義者'**
+  String get screen_feature_achievement_name_same_day_2;
+
+  /// アチーブメント名 single_duration_10m
+  ///
+  /// In ja, this message translates to:
+  /// **'まずは10分'**
+  String get screen_feature_achievement_name_single_duration_10m;
+
+  /// アチーブメント名 single_duration_30m
+  ///
+  /// In ja, this message translates to:
+  /// **'30分ライダー'**
+  String get screen_feature_achievement_name_single_duration_30m;
+
+  /// アチーブメント名 single_duration_60m
+  ///
+  /// In ja, this message translates to:
+  /// **'1時間の挑戦者'**
+  String get screen_feature_achievement_name_single_duration_60m;
+
+  /// アチーブメント名 streak_14
+  ///
+  /// In ja, this message translates to:
+  /// **'習慣の定着'**
+  String get screen_feature_achievement_name_streak_14;
+
+  /// アチーブメント名 streak_3
+  ///
+  /// In ja, this message translates to:
+  /// **'三日坊主卒業'**
+  String get screen_feature_achievement_name_streak_3;
+
+  /// アチーブメント名 streak_30
+  ///
+  /// In ja, this message translates to:
+  /// **'習慣の達人'**
+  String get screen_feature_achievement_name_streak_30;
+
+  /// アチーブメント名 streak_365
+  ///
+  /// In ja, this message translates to:
+  /// **'一年皆勤賞'**
+  String get screen_feature_achievement_name_streak_365;
+
+  /// アチーブメント名 streak_60
+  ///
+  /// In ja, this message translates to:
+  /// **'二カ月の軌跡'**
+  String get screen_feature_achievement_name_streak_60;
+
+  /// アチーブメント名 streak_7
+  ///
+  /// In ja, this message translates to:
+  /// **'習慣の芽生え'**
+  String get screen_feature_achievement_name_streak_7;
+
+  /// アチーブメント名 streak_90
+  ///
+  /// In ja, this message translates to:
+  /// **'三カ月の証'**
+  String get screen_feature_achievement_name_streak_90;
+
+  /// アチーブメント名 total_duration_1000h
+  ///
+  /// In ja, this message translates to:
+  /// **'千時間の伝説'**
+  String get screen_feature_achievement_name_total_duration_1000h;
+
+  /// アチーブメント名 total_duration_100h
+  ///
+  /// In ja, this message translates to:
+  /// **'時間の達人'**
+  String get screen_feature_achievement_name_total_duration_100h;
+
+  /// アチーブメント名 total_duration_10h
+  ///
+  /// In ja, this message translates to:
+  /// **'時間の積み重ね'**
+  String get screen_feature_achievement_name_total_duration_10h;
+
+  /// アチーブメント名 total_duration_24h
+  ///
+  /// In ja, this message translates to:
+  /// **'丸一日の軌跡'**
+  String get screen_feature_achievement_name_total_duration_24h;
+
+  /// アチーブメント名 total_duration_300h
+  ///
+  /// In ja, this message translates to:
+  /// **'時間の覇者'**
+  String get screen_feature_achievement_name_total_duration_300h;
+
+  /// アチーブメント名 total_duration_48h
+  ///
+  /// In ja, this message translates to:
+  /// **'二日分の積み重ね'**
+  String get screen_feature_achievement_name_total_duration_48h;
+
+  /// アチーブメント名 total_duration_96h
+  ///
+  /// In ja, this message translates to:
+  /// **'四日分の到達'**
+  String get screen_feature_achievement_name_total_duration_96h;
+
+  /// アチーブメント名 unique_100
+  ///
+  /// In ja, this message translates to:
+  /// **'継続は力なり'**
+  String get screen_feature_achievement_name_unique_100;
+
+  /// アチーブメント名 year_end_new_year
+  ///
+  /// In ja, this message translates to:
+  /// **'年末年始も休まず営業'**
+  String get screen_feature_achievement_name_year_end_new_year;
+
+  /// 再試行ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'再試行'**
+  String get screen_feature_achievement_retry;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'アチーブメント'**
+  String get screen_feature_achievement_title;
+
   /// 戻るボタンの代替テキスト
   ///
   /// In ja, this message translates to:
@@ -643,6 +1237,29 @@ abstract class L10n {
   /// **'推移'**
   String get screen_feature_main_nav_trends;
 
+  /// 単件トースト本文
+  ///
+  /// In ja, this message translates to:
+  /// **'{condition}'**
+  String screen_feature_meter_capture_achievement_unlocked_body(
+    String condition,
+  );
+
+  /// 複数要約
+  ///
+  /// In ja, this message translates to:
+  /// **'アチーブメントを{count}件獲得：{firstName}ほか'**
+  String screen_feature_meter_capture_achievement_unlocked_summary_title(
+    String count,
+    String firstName,
+  );
+
+  /// 単件トーストタイトル（name引数）
+  ///
+  /// In ja, this message translates to:
+  /// **'{name}'**
+  String screen_feature_meter_capture_achievement_unlocked_title(String name);
+
   /// 入力ラベル
   ///
   /// In ja, this message translates to:
@@ -816,6 +1433,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標達成率'**
   String get screen_feature_top_achievement_title;
+
+  /// ホーム右上
+  ///
+  /// In ja, this message translates to:
+  /// **'アチーブメント'**
+  String get screen_feature_top_achievements_semantics;
 
   /// 実績のラベル
   ///
