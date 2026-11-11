@@ -71,4 +71,15 @@ void main() {
     expect(MeterPanelTextParser.parse('Distance 10 mi').distanceKm, isNull);
     expect(MeterPanelTextParser.parse('Speed 10 mph').averageSpeedKmh, isNull);
   });
+
+  test('未登録単位 cm は距離として取り込まない', () {
+    expect(MeterPanelTextParser.parse('Distance 100 cm').distanceKm, isNull);
+  });
+
+  test('句読点の直後の次ラベルを越えない', () {
+    final values = MeterPanelTextParser.parse('距離 --、時間 0:30:00 消費 80 kcal');
+    expect(values.distanceKm, isNull);
+    expect(values.duration, const Duration(minutes: 30));
+    expect(values.caloriesKcal, 80);
+  });
 }

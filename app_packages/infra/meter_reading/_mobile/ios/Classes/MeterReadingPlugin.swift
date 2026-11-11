@@ -68,7 +68,12 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
       request.recognitionLanguages = ["ja-JP", "en-US"]
     }
 
-    let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+    let orientation = Self.cgImageOrientation(from: image.imageOrientation)
+    let handler = VNImageRequestHandler(
+      cgImage: cgImage,
+      orientation: orientation,
+      options: [:]
+    )
     DispatchQueue.global(qos: .userInitiated).async {
       do {
         try handler.perform([request])
@@ -81,6 +86,23 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
           )
         )
       }
+    }
+  }
+
+  /// Maps UIImage orientation to the CGImagePropertyOrientation Vision expects.
+  private static func cgImageOrientation(
+    from orientation: UIImage.Orientation
+  ) -> CGImagePropertyOrientation {
+    switch orientation {
+    case .up: return .up
+    case .down: return .down
+    case .left: return .left
+    case .right: return .right
+    case .upMirrored: return .upMirrored
+    case .downMirrored: return .downMirrored
+    case .leftMirrored: return .leftMirrored
+    case .rightMirrored: return .rightMirrored
+    @unknown default: return .up
     }
   }
 }

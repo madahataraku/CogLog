@@ -14,4 +14,12 @@ abstract interface class MeterTextRecognizer {
   /// await recognizer.recognize(Uint8List(0));
   /// ```
   Future<String> recognize(Uint8List photoBytes);
+
+  /// ネイティブ認識器など保持資源を解放する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await recognizer.close();
+  /// ```
+  Future<void> close();
 }

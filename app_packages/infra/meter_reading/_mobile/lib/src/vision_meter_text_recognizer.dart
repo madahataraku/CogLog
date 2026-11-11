@@ -35,4 +35,13 @@ final class VisionMeterTextRecognizer implements MeterTextRecognizer {
     });
     return text ?? '';
   }
+
+  /// MethodChannel のみのため解放対象はない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await VisionMeterTextRecognizer().close();
+  /// ```
+  @override
+  Future<void> close() async {}
 }

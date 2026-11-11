@@ -37,6 +37,15 @@ final class _FakeRecognizer implements MeterTextRecognizer {
     }
     return text;
   }
+
+  /// Fake では何もしない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _FakeRecognizer('x').close();
+  /// ```
+  @override
+  Future<void> close() async {}
 }
 
 void main() {

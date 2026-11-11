@@ -106,10 +106,12 @@ List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
   final llm = ref.watch(onDeviceLlmProvider);
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
+      final vision = VisionMeterTextRecognizer();
+      ref.onDispose(vision.close);
       return [
         OcrMeterReadingEngine(
           kind: MeterReadingEngineKind.visionOcr,
-          recognizer: VisionMeterTextRecognizer(),
+          recognizer: vision,
         ),
         LlmMeterReadingEngine(
           kind: MeterReadingEngineKind.foundationModel,
@@ -117,10 +119,12 @@ List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
         ),
       ];
     case TargetPlatform.android:
+      final mlKit = MlKitMeterTextRecognizer();
+      ref.onDispose(mlKit.close);
       return [
         OcrMeterReadingEngine(
           kind: MeterReadingEngineKind.mlKit,
-          recognizer: MlKitMeterTextRecognizer(),
+          recognizer: mlKit,
         ),
         LlmMeterReadingEngine(
           kind: MeterReadingEngineKind.geminiNano,

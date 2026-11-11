@@ -43,6 +43,15 @@ final class MlKitMeterTextRecognizer implements MeterTextRecognizer {
     return _recognizeViaTempFile(photoBytes);
   }
 
+  /// ML Kit の [TextRecognizer] を閉じる。
+  ///
+  /// Example:
+  /// ```dart
+  /// await MlKitMeterTextRecognizer().close();
+  /// ```
+  @override
+  Future<void> close() => _recognizer.close();
+
   /// JPEG/PNG を RGBA にデコードできればディスク非経由で認識する。
   ///
   /// Example:

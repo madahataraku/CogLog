@@ -46,20 +46,17 @@ abstract final class MeterPanelTextParser {
         normalized,
         const ['distance_km', 'distance', '走行距離', '距離'],
         unitHints: const ['km'],
-        rejectUnits: const ['mi', 'mile', 'miles', 'm'],
       ),
       duration: _firstDuration(normalized),
       caloriesKcal: _firstNumberAfterLabels(
         normalized,
         const ['calories_kcal', 'calorie', 'calories', '消費カロリー', 'カロリー', '消費'],
         unitHints: const ['kcal', 'cal'],
-        rejectUnits: const ['kj'],
       ),
       averageSpeedKmh: _firstNumberAfterLabels(
         normalized,
         const ['average_speed_kmh', 'average_speed', 'speed', '平均速度', '速度'],
         unitHints: const ['km/h', 'kmh'],
-        rejectUnits: const ['mph', 'mi/h'],
       ),
     );
   }
@@ -87,11 +84,15 @@ abstract final class MeterPanelTextParser {
   }
 
   /// ラベル直後の最初の妥当な数値を返す。次ラベルを越えない。
+  ///
+  /// Example:
+  /// ```dart
+  /// _firstNumberAfterLabels('距離 12.3 km', ['距離'], unitHints: ['km']); // 12.3
+  /// ```
   static double? _firstNumberAfterLabels(
     String text,
     List<String> labels, {
     required List<String> unitHints,
-    List<String> rejectUnits = const [],
   }) {
     for (final label in labels) {
       final pattern = RegExp(
@@ -100,23 +101,25 @@ abstract final class MeterPanelTextParser {
       );
       for (final match in pattern.allMatches(text)) {
         final segment = _segmentUntilNextLabel(text, match.end);
-        if (!_unitAllowed(
-          segment,
-          unitHints: unitHints,
-          rejectUnits: rejectUnits,
-        )) {
+        final value = _parseFiniteNumber(segment);
+        if (value == null || !_isPlausibleMetric(value)) {
           continue;
         }
-        final value = _parseFiniteNumber(segment);
-        if (value != null && _isPlausibleMetric(value)) {
-          return value;
+        if (!_unitAllowed(segment, unitHints: unitHints)) {
+          continue;
         }
+        return value;
       }
     }
     return null;
   }
 
   /// [from] から次の項目ラベル直前までの部分文字列。
+  ///
+  /// Example:
+  /// ```dart
+  /// _segmentUntilNextLabel('12.3 km 時間 1:00:00', 0); // '12.3 km '
+  /// ```
   static String _segmentUntilNextLabel(String text, int from) {
     if (from >= text.length) {
       return '';
@@ -124,14 +127,15 @@ abstract final class MeterPanelTextParser {
     var end = text.length;
     for (final label in _boundaryLabels) {
       final next = RegExp(
-        '(?:^|\\s)${RegExp.escape(label)}(?:\\s|[=:]|\$)',
+        '(?:^|([\\s、,，.。;；:：!！?？\\-—–]))${RegExp.escape(label)}(?=[\\s=:\\d]|\$)',
         caseSensitive: false,
       ).firstMatch(text.substring(from));
       if (next == null) {
         continue;
       }
-      final absolute = from + next.start;
-      if (absolute > from && absolute < end) {
+      final prefixLength = next.group(1)?.length ?? 0;
+      final absolute = from + next.start + prefixLength;
+      if (absolute >= from && absolute < end) {
         end = absolute;
       }
     }
@@ -142,57 +146,31 @@ abstract final class MeterPanelTextParser {
     return text.substring(from, end);
   }
 
-  /// 対応単位のみ許可。拒否単位があれば未取得。単位無しは許可。
-  static bool _unitAllowed(
-    String segment, {
-    required List<String> unitHints,
-    required List<String> rejectUnits,
-  }) {
+  /// 許可単位のみ受け入れる。単位無しは許可。未登録単位は拒否。
+  ///
+  /// Example:
+  /// ```dart
+  /// _unitAllowed('12.3 km', unitHints: ['km']); // true
+  /// _unitAllowed('100 cm', unitHints: ['km']); // false
+  /// ```
+  static bool _unitAllowed(String segment, {required List<String> unitHints}) {
     final cleaned = segment.replaceAll(',', '').toLowerCase();
-    for (final reject in rejectUnits) {
-      if (_containsUnitToken(cleaned, reject)) {
-        return false;
-      }
+    final number = RegExp(r'-?\d+(?:\.\d+)?').firstMatch(cleaned);
+    if (number == null) {
+      return false;
     }
-    const knownUnits = [
-      'km/h',
-      'kmh',
-      'km',
-      'kcal',
-      'cal',
-      'miles',
-      'mile',
-      'mph',
-      'mi/h',
-      'mi',
-      'kj',
-      'm',
-    ];
-    var sawUnit = false;
-    for (final unit in knownUnits) {
-      if (_containsUnitToken(cleaned, unit)) {
-        sawUnit = true;
-        break;
-      }
-    }
-    if (!sawUnit) {
+    final after = cleaned.substring(number.end).trimLeft();
+    final unitMatch = RegExp(r'^([a-z]+(?:/[a-z]+)?)').firstMatch(after);
+    if (unitMatch == null) {
       return true;
     }
+    final unit = unitMatch.group(1)!;
     for (final hint in unitHints) {
-      if (_containsUnitToken(cleaned, hint.toLowerCase())) {
+      if (unit == hint.toLowerCase()) {
         return true;
       }
     }
     return false;
-  }
-
-  /// [unit] が数値に付く／単独トークンとして含まれるか。
-  static bool _containsUnitToken(String text, String unit) {
-    final escaped = RegExp.escape(unit);
-    return RegExp(
-      '(?:^|[^a-z/])$escaped(?:[^a-z/]|\$)',
-      caseSensitive: false,
-    ).hasMatch(text);
   }
 
   /// 時間ラベル付きの Duration を最初の妥当な候補から取る。
