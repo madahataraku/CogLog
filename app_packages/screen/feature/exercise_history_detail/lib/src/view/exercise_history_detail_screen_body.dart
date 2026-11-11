@@ -71,36 +71,6 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
                 ],
               ),
             )
-          : entity.showError
-          ? Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: 12,
-                children: [
-                  if (entity.showPagePosition)
-                    Text(
-                      strings
-                          .screen_feature_exercise_history_detail_page_position(
-                            current: '${entity.pageCurrent}',
-                            total: '${entity.pageTotal}',
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                  FAlert(
-                    variant: .destructive,
-                    title: Text(entity.errorText ?? ''),
-                  ),
-                  if (entity.canRetry)
-                    FButton(
-                      onPress: viewModel.onRetry,
-                      child: Text(
-                        strings.screen_feature_exercise_history_detail_retry,
-                      ),
-                    ),
-                ],
-              ),
-            )
           : entity.showPagePosition
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -127,6 +97,29 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
                       if (index != pageIndex) {
                         return const SizedBox.shrink();
                       }
+                      if (entity.showError) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            spacing: 12,
+                            children: [
+                              FAlert(
+                                variant: .destructive,
+                                title: Text(entity.errorText ?? ''),
+                              ),
+                              if (entity.canRetry)
+                                FButton(
+                                  onPress: viewModel.onRetry,
+                                  child: Text(
+                                    strings
+                                        .screen_feature_exercise_history_detail_retry,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      }
                       if (entity.pageLoading) {
                         return const Center(child: FCircularProgress());
                       }
@@ -138,6 +131,27 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
                   ),
                 ),
               ],
+            )
+          : entity.showError
+          ? Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 12,
+                children: [
+                  FAlert(
+                    variant: .destructive,
+                    title: Text(entity.errorText ?? ''),
+                  ),
+                  if (entity.canRetry)
+                    FButton(
+                      onPress: viewModel.onRetry,
+                      child: Text(
+                        strings.screen_feature_exercise_history_detail_retry,
+                      ),
+                    ),
+                ],
+              ),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),

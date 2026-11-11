@@ -213,7 +213,12 @@ class L10nEn extends L10n {
   String get screen_feature_exercise_history_retry => 'Retry';
 
   @override
-  String screen_feature_exercise_history_stamp_semantics(
+  String screen_feature_exercise_history_stamp_semantics_one(String day) {
+    return 'Day $day, 1 exercise history';
+  }
+
+  @override
+  String screen_feature_exercise_history_stamp_semantics_other(
     String day,
     String count,
   ) {

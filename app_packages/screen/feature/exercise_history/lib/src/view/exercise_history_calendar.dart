@@ -85,6 +85,8 @@ class ExerciseHistoryCalendar extends StatelessWidget {
             return Semantics(
               label: cell.semanticsLabel,
               button: cell.isTappable,
+              excludeSemantics: true,
+              onTap: cell.isTappable ? () => onDayPressed(cell.day!) : null,
               child: GestureDetector(
                 onTap: cell.isTappable ? () => onDayPressed(cell.day!) : null,
                 child: Column(

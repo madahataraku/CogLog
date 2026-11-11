@@ -300,14 +300,24 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_retry;
       },
-      'screen_feature_exercise_history_stamp_semantics': (source) {
+      'screen_feature_exercise_history_stamp_semantics_one': (source) {
+        // Has Placeholders
+        var index = 0;
+        String day = source.arguments[index];
+        index++;
+        return l10n.screen_feature_exercise_history_stamp_semantics_one(day);
+      },
+      'screen_feature_exercise_history_stamp_semantics_other': (source) {
         // Has Placeholders
         var index = 0;
         String day = source.arguments[index];
         index++;
         String count = source.arguments[index];
         index++;
-        return l10n.screen_feature_exercise_history_stamp_semantics(day, count);
+        return l10n.screen_feature_exercise_history_stamp_semantics_other(
+          day,
+          count,
+        );
       },
       'screen_feature_exercise_history_title': (source) {
         // No Placeholders

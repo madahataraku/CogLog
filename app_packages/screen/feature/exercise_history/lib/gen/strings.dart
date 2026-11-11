@@ -33,12 +33,20 @@ mixin class L10nStringsMixin {
   String get screen_feature_exercise_history_retry =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_retry');
 
-  /// スタンプ日の VoiceOver 等
-  String screen_feature_exercise_history_stamp_semantics({
+  /// スタンプ日1件の VoiceOver 等
+  String screen_feature_exercise_history_stamp_semantics_one({
+    required String day,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_exercise_history_stamp_semantics_one',
+    arguments: [day],
+  );
+
+  /// スタンプ日複数件の VoiceOver 等
+  String screen_feature_exercise_history_stamp_semantics_other({
     required String day,
     required String count,
   }) => LocalizeStringDelegate.get(
-    'screen_feature_exercise_history_stamp_semantics',
+    'screen_feature_exercise_history_stamp_semantics_other',
     arguments: [day, count],
   );
 

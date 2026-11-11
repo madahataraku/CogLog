@@ -19,9 +19,9 @@ void main() {
   test('同一記録日の ID を作成開始日時降順で返し initialIndex を付ける', () async {
     final repo = MemoryExerciseHistoryRepository();
     final older = await repo.create(
-      creationStartedAt: DateTime.utc(2026, 11, 5, 8),
-      capturedAt: DateTime.utc(2026, 11, 5, 8),
-      recordedAt: DateTime.utc(2026, 11, 5, 12),
+      creationStartedAt: DateTime(2026, 11, 5, 8),
+      capturedAt: DateTime(2026, 11, 5, 8),
+      recordedAt: DateTime(2026, 11, 5, 12),
       recordedAtManuallySet: false,
       distanceKm: 1,
       duration: const Duration(minutes: 1),
@@ -30,9 +30,9 @@ void main() {
       photoBytes: Uint8List.fromList([1]),
     );
     final newer = await repo.create(
-      creationStartedAt: DateTime.utc(2026, 11, 5, 10),
-      capturedAt: DateTime.utc(2026, 11, 5, 10),
-      recordedAt: DateTime.utc(2026, 11, 5, 18),
+      creationStartedAt: DateTime(2026, 11, 5, 10),
+      capturedAt: DateTime(2026, 11, 5, 10),
+      recordedAt: DateTime(2026, 11, 5, 18),
       recordedAtManuallySet: false,
       distanceKm: 2,
       duration: const Duration(minutes: 2),
@@ -41,9 +41,9 @@ void main() {
       photoBytes: Uint8List.fromList([2]),
     );
     await repo.create(
-      creationStartedAt: DateTime.utc(2026, 11, 6, 8),
-      capturedAt: DateTime.utc(2026, 11, 6, 8),
-      recordedAt: DateTime.utc(2026, 11, 6, 12),
+      creationStartedAt: DateTime(2026, 11, 6, 8),
+      capturedAt: DateTime(2026, 11, 6, 8),
+      recordedAt: DateTime(2026, 11, 6, 12),
       recordedAtManuallySet: false,
       distanceKm: 3,
       duration: const Duration(minutes: 3),

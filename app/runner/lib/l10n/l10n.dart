@@ -454,11 +454,17 @@ abstract class L10n {
   /// **'再試行'**
   String get screen_feature_exercise_history_retry;
 
-  /// スタンプ日の VoiceOver 等
+  /// スタンプ日1件の VoiceOver 等
+  ///
+  /// In ja, this message translates to:
+  /// **'{day}日、運動履歴1件'**
+  String screen_feature_exercise_history_stamp_semantics_one(String day);
+
+  /// スタンプ日複数件の VoiceOver 等
   ///
   /// In ja, this message translates to:
   /// **'{day}日、運動履歴{count}件'**
-  String screen_feature_exercise_history_stamp_semantics(
+  String screen_feature_exercise_history_stamp_semantics_other(
     String day,
     String count,
   );

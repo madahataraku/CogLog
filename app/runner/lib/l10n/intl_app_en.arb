@@ -262,8 +262,17 @@
   "@screen_feature_exercise_history_retry": {
     "description": "再試行ボタン"
   },
-  "screen_feature_exercise_history_stamp_semantics": "Day {day}, {count} exercise histories",
-  "@screen_feature_exercise_history_stamp_semantics": {
+  "screen_feature_exercise_history_stamp_semantics_one": "Day {day}, 1 exercise history",
+  "@screen_feature_exercise_history_stamp_semantics_one": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    },
+    "description": "スタンプ日1件の VoiceOver 等"
+  },
+  "screen_feature_exercise_history_stamp_semantics_other": "Day {day}, {count} exercise histories",
+  "@screen_feature_exercise_history_stamp_semantics_other": {
     "placeholders": {
       "day": {
         "type": "String"
@@ -272,7 +281,7 @@
         "type": "String"
       }
     },
-    "description": "スタンプ日の VoiceOver 等"
+    "description": "スタンプ日複数件の VoiceOver 等"
   },
   "screen_feature_exercise_history_title": "Exercise history",
   "@screen_feature_exercise_history_title": {

@@ -481,9 +481,9 @@ void main() {
 
   test('listByMonth は月境界を守り全件を作成開始日時降順で返す', () async {
     final inMonthOlder = await repo.create(
-      creationStartedAt: DateTime.utc(2026, 11, 1, 8),
-      capturedAt: DateTime.utc(2026, 11, 1, 8),
-      recordedAt: DateTime.utc(2026, 11, 1),
+      creationStartedAt: DateTime(2026, 11, 1, 8),
+      capturedAt: DateTime(2026, 11, 1, 8),
+      recordedAt: DateTime(2026, 11, 1),
       recordedAtManuallySet: false,
       distanceKm: 1,
       duration: const Duration(minutes: 1),
@@ -492,9 +492,9 @@ void main() {
       photoBytes: Uint8List.fromList([1]),
     );
     final inMonthNewer = await repo.create(
-      creationStartedAt: DateTime.utc(2026, 11, 30, 8),
-      capturedAt: DateTime.utc(2026, 11, 30, 8),
-      recordedAt: DateTime.utc(2026, 11, 30, 23),
+      creationStartedAt: DateTime(2026, 11, 30, 8),
+      capturedAt: DateTime(2026, 11, 30, 8),
+      recordedAt: DateTime(2026, 11, 30, 23),
       recordedAtManuallySet: false,
       distanceKm: 2,
       duration: const Duration(minutes: 2),
@@ -503,9 +503,9 @@ void main() {
       photoBytes: Uint8List.fromList([2]),
     );
     await repo.create(
-      creationStartedAt: DateTime.utc(2026, 12, 1, 0),
-      capturedAt: DateTime.utc(2026, 12, 1, 0),
-      recordedAt: DateTime.utc(2026, 12, 1),
+      creationStartedAt: DateTime(2026, 12, 1, 0),
+      capturedAt: DateTime(2026, 12, 1, 0),
+      recordedAt: DateTime(2026, 12, 1),
       recordedAtManuallySet: false,
       distanceKm: 3,
       duration: const Duration(minutes: 3),

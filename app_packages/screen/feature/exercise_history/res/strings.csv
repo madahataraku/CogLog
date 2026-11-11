@@ -10,5 +10,6 @@ weekday_thu,木,Thu,カレンダー曜日（木曜）
 weekday_fri,金,Fri,カレンダー曜日（金曜）
 weekday_sat,土,Sat,カレンダー曜日（土曜）
 weekday_sun,日,Sun,カレンダー曜日（日曜）
-stamp_semantics,{day}日、運動履歴{count}件,"Day {day}, {count} exercise histories",スタンプ日の VoiceOver 等
+stamp_semantics_one,{day}日、運動履歴1件,"Day {day}, 1 exercise history",スタンプ日1件の VoiceOver 等
+stamp_semantics_other,{day}日、運動履歴{count}件,"Day {day}, {count} exercise histories",スタンプ日複数件の VoiceOver 等
 count_badge,{count},{count},同一日複数件のカレンダー上件数

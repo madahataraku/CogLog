@@ -101,7 +101,11 @@ final class ExerciseHistoryStateToEntityDelegate {
     isTappable: stampCount > 0,
     semanticsLabel: stampCount == 0
         ? '$day'
-        : strings.screen_feature_exercise_history_stamp_semantics(
+        : stampCount == 1
+        ? strings.screen_feature_exercise_history_stamp_semantics_one(
+            day: '$day',
+          )
+        : strings.screen_feature_exercise_history_stamp_semantics_other(
             day: '$day',
             count: '$stampCount',
           ),

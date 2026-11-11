@@ -250,7 +250,14 @@ void main() {
 
   test('stamp_semantics 文言が StringsTestHelper から取れる', () {
     final ja = jsonDecode(StringsTestHelper.ja) as Map<String, Object?>;
-    expect(ja['screen_feature_exercise_history_stamp_semantics'], isNotNull);
+    expect(
+      ja['screen_feature_exercise_history_stamp_semantics_one'],
+      isNotNull,
+    );
+    expect(
+      ja['screen_feature_exercise_history_stamp_semantics_other'],
+      isNotNull,
+    );
     expect(ja['screen_feature_exercise_history_count_badge'], isNotNull);
   });
 }
