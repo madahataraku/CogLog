@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:screen_feature_achievement/screen_feature_achievement.dart';
 import 'package:screen_feature_app_settings/screen_feature_app_settings.dart';
 import 'package:screen_feature_debug/screen_feature_debug.dart';
 import 'package:screen_feature_exercise_history/screen_feature_exercise_history.dart';
@@ -52,6 +53,10 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                   path: '/',
                   builder: (context, state) => const TopScreen(),
                   routes: [
+                    GoRoute(
+                      path: 'achievements',
+                      builder: (context, state) => const AchievementScreen(),
+                    ),
                     GoRoute(
                       path: 'settings',
                       builder: (context, state) => const AppSettingsScreen(),
@@ -158,6 +163,17 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   @override
   void openAppSettings() {
     router.push('/settings');
+  }
+
+  /// アチーブメント画面をホームタブのスタックへ積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openAchievements();
+  /// ```
+  @override
+  void openAchievements() {
+    router.push('/achievements');
   }
 
   /// デバッグ画面を積む。

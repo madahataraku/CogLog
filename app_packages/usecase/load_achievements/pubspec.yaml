@@ -1,0 +1,15 @@
+name: usecase_load_achievements
+description: Load achievement rows for the achievements screen.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  domain_achievement: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

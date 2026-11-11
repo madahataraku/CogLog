@@ -76,6 +76,16 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     ).execute();
   }
 
+  /// アチーブメント画面を開く。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onOpenAchievements();
+  /// ```
+  void onOpenAchievements() {
+    OnOpenAchievementsDelegate(navigation: navigation).execute();
+  }
+
   /// アプリ設定を開く。
   ///
   /// Example:
