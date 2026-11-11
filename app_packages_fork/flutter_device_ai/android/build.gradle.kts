@@ -61,5 +61,7 @@ dependencies {
     // See googlesamples/mlkit#1061 (feature 648 vs shipping 636).
     implementation("com.google.mlkit:genai-prompt:1.0.0-beta2")
     implementation("com.google.mlkit:common:18.11.0")
+    // Keep coroutines artifacts on one line; genai-prompt pulls an older guava bridge.
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.11.0")
 }
