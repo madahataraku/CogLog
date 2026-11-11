@@ -47,6 +47,7 @@ android {
     defaultConfig {
         // ML Kit GenAI requires API 26.
         minSdk = 26
+        consumerProguardFiles("consumer-rules.pro")
     }
 }
 
