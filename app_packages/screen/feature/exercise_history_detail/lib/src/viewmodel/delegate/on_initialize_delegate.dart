@@ -99,13 +99,19 @@ final class OnInitializeDelegate {
             );
         }
       });
+    } on StateStreamClosedException {
+      return;
     } catch (_) {
-      await state.updateWithLock((current, emitter) async {
-        if (current.id != id || current.detailLoadGeneration != generation) {
-          return;
-        }
-        await emitter.emit(current.copyWith(sameDayIds: [id], pageIndex: 0));
-      });
+      try {
+        await state.updateWithLock((current, emitter) async {
+          if (current.id != id || current.detailLoadGeneration != generation) {
+            return;
+          }
+          await emitter.emit(current.copyWith(sameDayIds: [id], pageIndex: 0));
+        });
+      } on StateStreamClosedException {
+        return;
+      }
     }
   }
 }
