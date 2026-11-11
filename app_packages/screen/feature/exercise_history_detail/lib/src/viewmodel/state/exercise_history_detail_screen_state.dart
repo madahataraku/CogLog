@@ -18,6 +18,7 @@ final class ExerciseHistoryDetailScreenState {
     required this.sameDayIds,
     required this.pageIndex,
     required this.pageLoading,
+    required this.detailLoadGeneration,
     required this.loading,
     required this.history,
     required this.photoAbsolutePath,
@@ -37,6 +38,7 @@ final class ExerciseHistoryDetailScreenState {
         sameDayIds: const [],
         pageIndex: 0,
         pageLoading: false,
+        detailLoadGeneration: 0,
         loading: false,
         history: null,
         photoAbsolutePath: null,
@@ -55,6 +57,9 @@ final class ExerciseHistoryDetailScreenState {
 
   /// ページめくり後の詳細読込中。
   final bool pageLoading;
+
+  /// 詳細読込の世代。古い非同期結果を捨てる。
+  final int detailLoadGeneration;
 
   /// 初回などの詳細読込中か。
   final bool loading;
@@ -82,6 +87,7 @@ final class ExerciseHistoryDetailScreenState {
     List<String>? sameDayIds,
     int? pageIndex,
     bool? pageLoading,
+    int? detailLoadGeneration,
     bool? loading,
     ExerciseHistory? history,
     bool clearHistory = false,
@@ -95,6 +101,7 @@ final class ExerciseHistoryDetailScreenState {
     sameDayIds: sameDayIds ?? this.sameDayIds,
     pageIndex: pageIndex ?? this.pageIndex,
     pageLoading: pageLoading ?? this.pageLoading,
+    detailLoadGeneration: detailLoadGeneration ?? this.detailLoadGeneration,
     loading: loading ?? this.loading,
     history: clearHistory ? null : (history ?? this.history),
     photoAbsolutePath: clearPhotoAbsolutePath

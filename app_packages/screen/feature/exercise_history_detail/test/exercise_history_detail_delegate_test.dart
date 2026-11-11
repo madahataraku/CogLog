@@ -54,6 +54,36 @@ final class _LoadDetail implements LoadExerciseHistoryDetailUsecase {
   }
 }
 
+/// 最初の `a` 要求だけ遅延失敗し、続く `a` は成功する。
+final class _RaceLoadDetail implements LoadExerciseHistoryDetailUsecase {
+  _RaceLoadDetail({required this.historyA, required this.historyB});
+
+  final ExerciseHistory historyA;
+  final ExerciseHistory historyB;
+  var aCalls = 0;
+
+  @override
+  Future<LoadExerciseHistoryDetailResult> execute(
+    LoadExerciseHistoryDetailRequest request,
+  ) async {
+    if (request.id == 'b') {
+      return LoadExerciseHistoryDetailSuccess(
+        history: historyB,
+        photoAbsolutePath: null,
+      );
+    }
+    aCalls += 1;
+    if (aCalls == 1) {
+      await Future<void>.delayed(const Duration(milliseconds: 40));
+      throw StateError('stale a fail');
+    }
+    return LoadExerciseHistoryDetailSuccess(
+      history: historyA,
+      photoAbsolutePath: null,
+    );
+  }
+}
+
 final class _LoadSameDay
     implements LoadExerciseHistoriesForSameRecordedDayUsecase {
   _LoadSameDay(this.result, {this.throwError = false});
@@ -210,6 +240,41 @@ void main() {
     expect(state.state.history, isNull);
   });
 
+  test('同一 ID への再遷移では古い失敗結果を捨てる', () async {
+    final historyA = _history(id: 'a');
+    final historyB = _history(id: 'b');
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          id: 'a',
+          sameDayIds: const ['a', 'b'],
+          pageIndex: 0,
+          history: historyA,
+          loading: false,
+        ),
+      );
+    });
+
+    final loadDetail = _RaceLoadDetail(historyA: historyA, historyB: historyB);
+    final delegate = OnPageChangedDelegate(
+      state: state,
+      loadDetailUsecase: loadDetail,
+    );
+
+    final firstA = delegate.execute(index: 0);
+    await Future<void>.delayed(const Duration(milliseconds: 5));
+    await delegate.execute(index: 1);
+    await Future<void>.delayed(const Duration(milliseconds: 5));
+    await delegate.execute(index: 0);
+    await firstA;
+
+    expect(state.state.id, 'a');
+    expect(state.state.pageIndex, 0);
+    expect(state.state.pageLoading, isFalse);
+    expect(state.state.history, historyA);
+    expect(state.state.error, isNull);
+  });
+
   test('複数件は showPagePosition、1 件は非表示', () {
     const delegate = ExerciseHistoryDetailStateToEntityDelegate();
     final multi = delegate.execute(
@@ -218,6 +283,7 @@ void main() {
         sameDayIds: const ['b', 'a', 'c'],
         pageIndex: 1,
         pageLoading: false,
+        detailLoadGeneration: 0,
         loading: false,
         history: _history(id: 'a', edited: true),
         photoAbsolutePath: null,
@@ -240,6 +306,7 @@ void main() {
         sameDayIds: const ['a'],
         pageIndex: 0,
         pageLoading: false,
+        detailLoadGeneration: 0,
         loading: false,
         history: _history(id: 'a'),
         photoAbsolutePath: null,
@@ -260,6 +327,7 @@ void main() {
         sameDayIds: [],
         pageIndex: 0,
         pageLoading: false,
+        detailLoadGeneration: 0,
         loading: false,
         history: null,
         photoAbsolutePath: null,

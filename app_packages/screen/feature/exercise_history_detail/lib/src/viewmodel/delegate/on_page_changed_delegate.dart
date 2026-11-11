@@ -37,6 +37,8 @@ final class OnPageChangedDelegate {
   /// [index] の同一日 ID へ切り替えて詳細を読む。
   ///
   /// 失敗しても [ExerciseHistoryDetailScreenState.pageIndex] は戻さない。
+  /// 開始時に [ExerciseHistoryDetailScreenState.detailLoadGeneration] を進め、
+  /// 古い要求の結果は捨てる。
   ///
   /// Example:
   /// ```dart
@@ -48,14 +50,17 @@ final class OnPageChangedDelegate {
       return;
     }
     final id = ids[index];
+    late final int generation;
     try {
       await state.updateWithLock((current, emitter) async {
+        generation = current.detailLoadGeneration + 1;
         await emitter.emit(
           current.copyWith(
             id: id,
             pageIndex: index,
             pageLoading: true,
             clearError: true,
+            detailLoadGeneration: generation,
           ),
         );
       });
@@ -67,11 +72,12 @@ final class OnPageChangedDelegate {
       state: state,
       loadDetailUsecase: loadDetailUsecase,
       id: id,
+      startedGeneration: generation,
     );
 
     try {
       await state.updateWithLock((current, emitter) async {
-        if (current.id != id) {
+        if (current.detailLoadGeneration != generation) {
           return;
         }
         await emitter.emit(current.copyWith(pageLoading: false));

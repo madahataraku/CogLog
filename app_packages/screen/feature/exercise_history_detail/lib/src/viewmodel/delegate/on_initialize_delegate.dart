@@ -47,13 +47,15 @@ final class OnInitializeDelegate {
   /// delegate.execute(id: 'id');
   /// ```
   Future<void> execute({required String id}) async {
+    late final int generation;
     final shouldLoad = await state.updateWithLock((current, emitter) async {
       if (current.loading) {
         return false;
       }
+      generation = current.detailLoadGeneration + 1;
       await emitter.emit(
         ExerciseHistoryDetailScreenState.initial(id: id)
-            .copyWith(loading: true),
+            .copyWith(loading: true, detailLoadGeneration: generation),
       );
       return true;
     });
@@ -65,10 +67,13 @@ final class OnInitializeDelegate {
       state: state,
       loadDetailUsecase: loadDetailUsecase,
       id: id,
+      startedGeneration: generation,
     );
 
     final afterDetail = state.state;
-    if (afterDetail.missing || afterDetail.error != null) {
+    if (afterDetail.missing ||
+        afterDetail.error != null ||
+        afterDetail.detailLoadGeneration != generation) {
       return;
     }
 
@@ -77,7 +82,7 @@ final class OnInitializeDelegate {
         LoadExerciseHistoriesForSameRecordedDayRequest(id: id),
       );
       await state.updateWithLock((current, emitter) async {
-        if (current.id != id) {
+        if (current.id != id || current.detailLoadGeneration != generation) {
           return;
         }
         switch (same) {
@@ -96,7 +101,7 @@ final class OnInitializeDelegate {
       });
     } catch (_) {
       await state.updateWithLock((current, emitter) async {
-        if (current.id != id) {
+        if (current.id != id || current.detailLoadGeneration != generation) {
           return;
         }
         await emitter.emit(current.copyWith(sameDayIds: [id], pageIndex: 0));
@@ -113,12 +118,14 @@ final class OnInitializeDelegate {
 ///   state: state,
 ///   loadDetailUsecase: usecase,
 ///   id: 'id',
+///   startedGeneration: 1,
 /// );
 /// ```
 Future<void> loadExerciseHistoryDetail({
   required MutableStateStream<ExerciseHistoryDetailScreenState> state,
   required LoadExerciseHistoryDetailUsecase loadDetailUsecase,
   required String id,
+  required int startedGeneration,
 }) async {
   try {
     final result = await loadDetailUsecase.execute(
@@ -126,7 +133,8 @@ Future<void> loadExerciseHistoryDetail({
     );
     try {
       await state.updateWithLock((current, emitter) async {
-        if (current.id != id) {
+        if (current.id != id ||
+            current.detailLoadGeneration != startedGeneration) {
           return;
         }
         switch (result) {
@@ -162,7 +170,8 @@ Future<void> loadExerciseHistoryDetail({
   } catch (error) {
     try {
       await state.updateWithLock((current, emitter) async {
-        if (current.id != id) {
+        if (current.id != id ||
+            current.detailLoadGeneration != startedGeneration) {
           return;
         }
         await emitter.emit(
