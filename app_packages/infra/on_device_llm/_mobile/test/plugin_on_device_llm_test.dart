@@ -5,7 +5,14 @@ import 'package:infra_on_device_llm_mobile/src/on_device_llm_native_availability
 import 'package:infra_on_device_llm_mobile/src/on_device_llm_native_client.dart';
 import 'package:infra_on_device_llm_mobile/src/on_device_llm_native_platform_info.dart';
 
+/// [PluginOnDeviceLlm] 向けの固定応答クライアント。
 final class _FakeClient implements OnDeviceLlmNativeClient {
+  /// [availability] と例外フラグで振る舞いを固定する。
+  ///
+  /// Example:
+  /// ```dart
+  /// _FakeClient(throwOnAvailability: true);
+  /// ```
   _FakeClient({
     this.availability = const OnDeviceLlmNativeAvailability(
       status: 'available',
@@ -15,11 +22,24 @@ final class _FakeClient implements OnDeviceLlmNativeClient {
     this.throwOnAvailability = false,
   });
 
+  /// 返す可用性。
   OnDeviceLlmNativeAvailability availability;
+
+  /// 生成本文の接頭辞。
   final String replyPrefix = 'reply:';
+
+  /// true のとき [getAvailability] が失敗する。
   final bool throwOnAvailability;
+
+  /// [prepare] が呼ばれたか。
   bool prepareCalled = false;
 
+  /// 固定した [availability] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _FakeClient().getAvailability();
+  /// ```
   @override
   Future<OnDeviceLlmNativeAvailability> getAvailability() async {
     if (throwOnAvailability) {
@@ -28,6 +48,12 @@ final class _FakeClient implements OnDeviceLlmNativeClient {
     return availability;
   }
 
+  /// Android 風の診断情報を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _FakeClient().getPlatformInfo();
+  /// ```
   @override
   Future<OnDeviceLlmNativePlatformInfo> getPlatformInfo() async =>
       const OnDeviceLlmNativePlatformInfo(
@@ -35,14 +61,32 @@ final class _FakeClient implements OnDeviceLlmNativeClient {
         diagnosticNotes: 'modelReady=true',
       );
 
+  /// [replyPrefix] 付きで [prompt] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _FakeClient().generate(prompt: 'hi');
+  /// ```
   @override
   Future<String> generate({required String prompt}) async =>
       '$replyPrefix$prompt';
 
+  /// 診断用に `diag:` 接頭辞で [prompt] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _FakeClient().diagnoseGenerate(prompt: 'ping');
+  /// ```
   @override
   Future<String> diagnoseGenerate({required String prompt}) async =>
       'diag:$prompt';
 
+  /// 呼び出しを記録し、可用性を ready にする。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _FakeClient().prepare();
+  /// ```
   @override
   Future<void> prepare() async {
     prepareCalled = true;

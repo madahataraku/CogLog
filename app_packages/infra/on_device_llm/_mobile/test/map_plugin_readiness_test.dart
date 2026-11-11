@@ -4,6 +4,12 @@ import 'package:infra_on_device_llm_mobile/src/on_device_llm_native_availability
 import 'package:test/test.dart';
 
 void main() {
+  /// 写像テスト用の可用性を組み立てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// availability(status: 'available', reason: 'ready');
+  /// ```
   OnDeviceLlmNativeAvailability availability({
     required String status,
     required String reason,

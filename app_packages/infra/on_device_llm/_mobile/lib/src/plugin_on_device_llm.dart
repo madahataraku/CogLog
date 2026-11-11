@@ -2,6 +2,7 @@ import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
 import 'map_plugin_readiness.dart';
+import 'method_channel_on_device_llm_native_client.dart';
 import 'on_device_llm_native_client.dart';
 
 /// OS モデルだけを使う [OnDeviceLlm]（自前 Flutter plugin）。

@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.summary          = 'On-device LLM for CogLog using OS models only.'
   s.description      = 'Apple Foundation Models on iOS and Gemini Nano on Android.'
   s.homepage         = 'https://github.com/madahataraku/CogLog'
-  s.license          = { :type => 'MIT' }
+  s.license          = { :type => 'MIT', :file => '../LICENSE' }
   s.author           = { 'CogLog' => 'noreply@example.com' }
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*.{swift}'
