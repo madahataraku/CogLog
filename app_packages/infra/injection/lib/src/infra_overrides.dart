@@ -104,13 +104,12 @@ List<Override> infraOverrides({
 /// ```
 List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
   final llm = ref.watch(onDeviceLlmProvider);
-  final recognizer = MlKitMeterTextRecognizer();
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
       return [
         OcrMeterReadingEngine(
           kind: MeterReadingEngineKind.visionOcr,
-          recognizer: recognizer,
+          recognizer: VisionMeterTextRecognizer(),
         ),
         LlmMeterReadingEngine(
           kind: MeterReadingEngineKind.foundationModel,
@@ -121,7 +120,7 @@ List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
       return [
         OcrMeterReadingEngine(
           kind: MeterReadingEngineKind.mlKit,
-          recognizer: recognizer,
+          recognizer: MlKitMeterTextRecognizer(),
         ),
         LlmMeterReadingEngine(
           kind: MeterReadingEngineKind.geminiNano,

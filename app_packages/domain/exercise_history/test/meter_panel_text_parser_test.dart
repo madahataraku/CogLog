@@ -57,4 +57,18 @@ void main() {
   test('負の距離は未取得', () {
     expect(MeterPanelTextParser.parse('距離 -1 km').distanceKm, isNull);
   });
+
+  test('次ラベルの数値を距離に取り込まない', () {
+    final values = MeterPanelTextParser.parse(
+      'Distance -- Time 0:30:00 Calories 80',
+    );
+    expect(values.distanceKm, isNull);
+    expect(values.duration, const Duration(minutes: 30));
+    expect(values.caloriesKcal, 80);
+  });
+
+  test('mi / mph は未取得', () {
+    expect(MeterPanelTextParser.parse('Distance 10 mi').distanceKm, isNull);
+    expect(MeterPanelTextParser.parse('Speed 10 mph').averageSpeedKmh, isNull);
+  });
 }

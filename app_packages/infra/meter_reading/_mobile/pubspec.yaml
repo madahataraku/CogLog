@@ -22,3 +22,12 @@ dev_dependencies:
     sdk: flutter
   infra_on_device_llm_testing: any
   test: any
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: io.github.madahataraku.coglog.meter_reading
+        pluginClass: MeterReadingPlugin
+      ios:
+        pluginClass: MeterReadingPlugin

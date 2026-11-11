@@ -50,10 +50,12 @@ final class MlKitMeterTextRecognizer implements MeterTextRecognizer {
   /// await recognizer._tryRecognizeFromDecodedBytes(Uint8List(0));
   /// ```
   Future<String?> _tryRecognizeFromDecodedBytes(Uint8List photoBytes) async {
+    ui.Codec? codec;
+    ui.Image? image;
     try {
-      final codec = await ui.instantiateImageCodec(photoBytes);
+      codec = await ui.instantiateImageCodec(photoBytes);
       final frame = await codec.getNextFrame();
-      final image = frame.image;
+      image = frame.image;
       final byteData = await image.toByteData(
         format: ui.ImageByteFormat.rawRgba,
       );
@@ -70,6 +72,9 @@ final class MlKitMeterTextRecognizer implements MeterTextRecognizer {
     } on Object {
       // デコード不能や raw 認識失敗は一時ファイル経路へ。
       return null;
+    } finally {
+      image?.dispose();
+      codec?.dispose();
     }
   }
 
