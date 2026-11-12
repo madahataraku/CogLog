@@ -70,16 +70,19 @@ final class OnReloadDelegate {
         if (!_isCurrent(current, started)) {
           return;
         }
+        final failed = result.bodyReadFailed;
         await emitter.emit(
           current.copyWith(
             loading: false,
-            bodyReadFailed: result.bodyReadFailed,
+            bodyReadFailed: failed,
             bodyHistoryLimited: result.bodyHistoryLimited,
             bodyPermissionIncomplete: result.bodyPermissionIncomplete,
             healthPermissionUi: mapTrendsHealthUi(result.healthPermission),
-            buckets: result.buckets,
-            exerciseSeries: mapTrendsSeries(result.exerciseSeries),
-            bodySeries: mapTrendsSeries(result.bodySeries),
+            buckets: failed ? const [] : result.buckets,
+            exerciseSeries: failed
+                ? const {}
+                : mapTrendsSeries(result.exerciseSeries),
+            bodySeries: failed ? const {} : mapTrendsSeries(result.bodySeries),
           ),
         );
       });

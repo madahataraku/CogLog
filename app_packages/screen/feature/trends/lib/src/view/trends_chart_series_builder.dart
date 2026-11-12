@@ -7,6 +7,7 @@ import '../strings.dart';
 import '../viewmodel/entity/trends_visible_series.dart';
 
 /// 左右どちらの Y 軸か。
+@internal
 enum TrendsChartAxisSide {
   /// 左（primary）。
   left,
@@ -64,6 +65,55 @@ String formatTrendsChartDate(DateTime d) {
   final m = local.month.toString().padLeft(2, '0');
   final day = local.day.toString().padLeft(2, '0');
   return '$y-$m-$day';
+}
+
+/// ツールチップ用に [value] を指標ごとの桁数で整形する（集計値は変えない）。
+///
+/// Example:
+/// ```dart
+/// formatTrendsChartValue(
+///   0.30000000000000004,
+///   metric: TrendsMetricKind.exerciseDistanceKm,
+/// );
+/// ```
+@internal
+String formatTrendsChartValue(double value, {TrendsMetricKind? metric}) {
+  final digits = switch (metric) {
+    TrendsMetricKind.exerciseCaloriesKcal => 0,
+    TrendsMetricKind.exerciseDurationMinutes => 0,
+    TrendsMetricKind.exerciseDistanceKm => 2,
+    TrendsMetricKind.bodyWeightKg || TrendsMetricKind.bodyLeanMassKg => 1,
+    TrendsMetricKind.bodyFatPercent => 1,
+    null => 2,
+  };
+  final fixed = value.toStringAsFixed(digits);
+  if (digits == 0) {
+    return fixed;
+  }
+  return fixed
+      .replaceFirst(RegExp(r'0+$'), '')
+      .replaceFirst(RegExp(r'\.$'), '');
+}
+
+/// 凡例名から指標を逆引きする。見つからなければ null。
+///
+/// Example:
+/// ```dart
+/// metricForTrendsChartSeriesName(labelForTrendsMetric(
+///   TrendsMetricKind.bodyWeightKg,
+/// ));
+/// ```
+@internal
+TrendsMetricKind? metricForTrendsChartSeriesName(String? name) {
+  if (name == null || name.isEmpty) {
+    return null;
+  }
+  for (final metric in TrendsMetricKind.values) {
+    if (labelForTrendsMetric(metric) == name) {
+      return metric;
+    }
+  }
+  return null;
 }
 
 /// 指標の凡例・ツールチップ用ラベル。

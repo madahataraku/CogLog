@@ -1,4 +1,5 @@
 import 'package:domain_trends/domain_trends.dart';
+import 'package:meta/meta.dart';
 
 /// 推移画面の比較プリセット。
 ///
@@ -6,6 +7,7 @@ import 'package:domain_trends/domain_trends.dart';
 /// ```dart
 /// TrendsComparison.caloriesBodyKg;
 /// ```
+@internal
 enum TrendsComparison {
   /// 消費カロリー × 体重・除脂肪体重（初期）。
   caloriesBodyKg,
@@ -18,6 +20,7 @@ enum TrendsComparison {
 }
 
 /// 比較プリセットの派生属性。
+@internal
 extension TrendsComparisonX on TrendsComparison {
   /// 身体指標を 1 本でも含むか。
   ///

@@ -311,6 +311,36 @@ void main() {
     expect(state.state.healthPermissionUi, TrendsHealthPermissionUi.denied);
   });
 
+  test('OnReloadDelegate は bodyReadFailed ならバケットと系列を空にする', () async {
+    final buckets = TrendsBucketBuilder.build(
+      nowLocal: now,
+      spec: TrendsPeriodSpec.days30,
+    );
+    load.result = LoadTrendsResult(
+      buckets: buckets,
+      exerciseSeries: {
+        TrendsMetricKind.exerciseCaloriesKcal: const LoadTrendsSeries(
+          metric: TrendsMetricKind.exerciseCaloriesKcal,
+          points: [],
+          segments: [],
+        ),
+      },
+      bodySeries: const {},
+      healthPermission: LoadTrendsHealthPermission.unknown,
+      bodyReadFailed: true,
+    );
+    await OnReloadDelegate(
+      state: state,
+      loadTrendsUsecase: load,
+      now: now,
+    ).execute();
+    expect(state.state.bodyReadFailed, isTrue);
+    expect(state.state.buckets, isEmpty);
+    expect(state.state.exerciseSeries, isEmpty);
+    expect(state.state.bodySeries, isEmpty);
+    expect(state.state.healthPermissionUi, TrendsHealthPermissionUi.unknown);
+  });
+
   test('OnReloadDelegate は失敗時に loading を下ろし bodyReadFailed を立てる', () async {
     final buckets = TrendsBucketBuilder.build(
       nowLocal: now,

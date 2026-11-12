@@ -76,8 +76,14 @@ class TrendsChart extends StatelessWidget {
         break;
       }
     }
+    final xAxis = buckets.isEmpty
+        ? const DateTimeAxis()
+        : DateTimeAxis(
+            minimum: buckets.first.startInclusive,
+            maximum: buckets.last.endExclusive,
+          );
     return SfCartesianChart(
-      primaryXAxis: const DateTimeAxis(),
+      primaryXAxis: xAxis,
       primaryYAxis: NumericAxis(
         name: 'left',
         title: AxisTitle(text: leftUnit),
@@ -89,7 +95,11 @@ class TrendsChart extends StatelessWidget {
           title: AxisTitle(text: rightUnit),
         ),
       ],
-      legend: const Legend(isVisible: true, position: LegendPosition.top),
+      legend: const Legend(
+        isVisible: true,
+        position: LegendPosition.top,
+        toggleSeriesVisibility: false,
+      ),
       tooltipBehavior: TooltipBehavior(
         enable: true,
         builder:
@@ -104,10 +114,13 @@ class TrendsChart extends StatelessWidget {
               final title = seriesObj is CartesianSeries
                   ? (seriesObj.name ?? '')
                   : '';
+              final metric = metricForTrendsChartSeriesName(
+                seriesObj is CartesianSeries ? seriesObj.name : null,
+              );
               return Container(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  '$title\n${formatTrendsChartDate(p.representativeDate)}: ${p.value}',
+                  '$title\n${formatTrendsChartDate(p.representativeDate)}: ${formatTrendsChartValue(p.value, metric: metric)}',
                 ),
               );
             },

@@ -44,6 +44,27 @@ void main() {
     expect(lines.last.dashArray, [6.0, 4.0]);
   });
 
+  test('ツールチップ値は浮動小数ノイズを抑え指標桁で整形する', () {
+    expect(
+      formatTrendsChartValue(
+        0.30000000000000004,
+        metric: TrendsMetricKind.exerciseDistanceKm,
+      ),
+      '0.3',
+    );
+    expect(
+      formatTrendsChartValue(
+        100.4,
+        metric: TrendsMetricKind.exerciseCaloriesKcal,
+      ),
+      '100',
+    );
+    expect(
+      formatTrendsChartValue(62.56, metric: TrendsMetricKind.bodyWeightKg),
+      '62.6',
+    );
+  });
+
   test('凡例は Scatter のみ、kcal は left・kg は right', () {
     final point = TrendsSeriesPoint(
       representativeDate: DateTime(2026, 11, 10),

@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 
 import '../state/trends_comparison.dart';
@@ -10,6 +11,7 @@ import '../state/trends_screen_state.dart';
 /// OnSelectComparisonDelegate(state: state)
 ///     .execute(TrendsComparison.durationDistance);
 /// ```
+@internal
 final class OnSelectComparisonDelegate {
   /// [state] を受け取る。
   ///
