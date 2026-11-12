@@ -11,7 +11,6 @@ import 'load_trends_result.dart';
 ///   LoadTrendsRequest(
 ///     now: DateTime(2026, 11, 10),
 ///     period: TrendsPeriodKind.days30,
-///     groupIsBody: false,
 ///   ),
 /// );
 /// ```
@@ -29,7 +28,6 @@ abstract interface class LoadTrendsUsecase {
   ///   LoadTrendsRequest(
   ///     now: DateTime(2026, 11, 10),
   ///     period: TrendsPeriodKind.days30,
-  ///     groupIsBody: false,
   ///   ),
   /// );
   /// ```

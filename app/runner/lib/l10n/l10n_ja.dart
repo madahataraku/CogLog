@@ -824,19 +824,19 @@ class L10nJa extends L10n {
   String get screen_feature_trends_chart_placeholder => '読み込み中';
 
   @override
-  String get screen_feature_trends_group_body => '身体';
+  String get screen_feature_trends_comparison_calories_body_fat => 'カロリーと体脂肪率';
 
   @override
-  String get screen_feature_trends_group_exercise => '運動';
+  String get screen_feature_trends_comparison_calories_body_kg => 'カロリーと体重・除脂肪';
 
   @override
-  String get screen_feature_trends_group_label => 'グループ';
+  String get screen_feature_trends_comparison_duration_distance => '運動時間と走行距離';
+
+  @override
+  String get screen_feature_trends_comparison_label => '比較';
 
   @override
   String get screen_feature_trends_metric_body_fat => '体脂肪率';
-
-  @override
-  String get screen_feature_trends_metric_body_kg => '体重と除脂肪体重';
 
   @override
   String get screen_feature_trends_metric_body_lean_mass => '除脂肪体重';
@@ -852,9 +852,6 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_metric_duration => '運動時間';
-
-  @override
-  String get screen_feature_trends_metric_label => '指標';
 
   @override
   String get screen_feature_trends_open_os_settings => '設定を開く';
@@ -885,6 +882,21 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_title => '推移';
+
+  @override
+  String get screen_feature_trends_unit_kcal => 'kcal';
+
+  @override
+  String get screen_feature_trends_unit_kg => 'kg';
+
+  @override
+  String get screen_feature_trends_unit_km => 'km';
+
+  @override
+  String get screen_feature_trends_unit_minutes => '分';
+
+  @override
+  String get screen_feature_trends_unit_percent => '%';
 
   @override
   String get view_model_download_guidance_body =>

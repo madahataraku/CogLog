@@ -93,6 +93,8 @@ const allDependencies = <Package>[
   _future_context2,
   _glob,
   _go_router,
+  _google_mlkit_commons,
+  _google_mlkit_text_recognition,
   _graphs,
   _health,
   _hooks,
@@ -188,6 +190,8 @@ const allDependencies = <Package>[
   _stream_transform,
   _string_scanner,
   _sugar,
+  _syncfusion_flutter_charts,
+  _syncfusion_flutter_core,
   _synchronized,
   _term_glyph,
   _test,
@@ -4725,6 +4729,78 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// google_mlkit_commons 1.0.2
+const _google_mlkit_commons = Package(
+    name: 'google_mlkit_commons',
+    description: "A Flutter plugin with common classes and methods used across Google's standalone ML Kit plugins for mobile platforms.",
+    homepage: 'https://github.com/flutter-ml/google_ml_kit_flutter',
+    repository: 'https://github.com/flutter-ml/google_ml_kit_flutter/tree/master/packages/google_mlkit_commons',
+    authors: [],
+    version: '1.0.2',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2026 flutter-ml.dev.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
+/// google_mlkit_text_recognition 1.0.2
+const _google_mlkit_text_recognition = Package(
+    name: 'google_mlkit_text_recognition',
+    description: "A Flutter plugin to use Google's ML Kit Text Recognition to recognize text in any Chinese, Devanagari, Japanese, Korean and Latin character set.",
+    homepage: 'https://github.com/flutter-ml/google_ml_kit_flutter',
+    repository: 'https://github.com/flutter-ml/google_ml_kit_flutter/tree/master/packages/google_mlkit_text_recognition',
+    authors: [],
+    version: '1.0.2',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('google_mlkit_commons')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2026 flutter-ml.dev.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
   );
 
 /// graphs 2.3.2
@@ -39429,6 +39505,58 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.''',
   );
 
+/// syncfusion_flutter_charts 35.1.46
+const _syncfusion_flutter_charts = Package(
+    name: 'syncfusion_flutter_charts',
+    description: 'A Flutter Charts library which includes data visualization widgets such as cartesian and circular charts, to create real-time, interactive, high-performance, animated charts.',
+    homepage: 'https://github.com/syncfusion/flutter-widgets/tree/master/packages/syncfusion_flutter_charts',
+    authors: [],
+    version: '35.1.46',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('intl'), PackageRef('vector_math'), PackageRef('syncfusion_flutter_core'), PackageRef('material_ui')],
+    devDependencies: [],
+    license: '''Syncfusion<sup>&reg;</sup> License
+
+Syncfusion<sup>&reg;</sup> Flutter Chart package is available under the Syncfusion Essential Studio<sup>&reg;</sup> program, and can be licensed either under the Syncfusion<sup>&reg;</sup> Community License Program or the Syncfusion<sup>&reg;</sup> commercial license.
+
+To be qualified for the Syncfusion<sup>&reg;</sup> Community License Program you must have a gross revenue of less than one (1) million U.S. dollars (\$1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion<sup>&reg;</sup> terms and conditions.
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion<sup>&reg;</sup> license containing all terms and conditions.
+
+The Syncfusion<sup>&reg;</sup> license that contains the terms and conditions can be found at
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf''',
+  );
+
+/// syncfusion_flutter_core 35.1.46
+const _syncfusion_flutter_core = Package(
+    name: 'syncfusion_flutter_core',
+    description: 'Syncfusion Flutter Core is a dependent package for all the Syncfusion Flutter widgets.',
+    homepage: 'https://github.com/syncfusion/flutter-widgets/tree/master/packages/syncfusion_flutter_core',
+    authors: [],
+    version: '35.1.46',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('material_ui'), PackageRef('vector_math')],
+    devDependencies: [],
+    license: '''Syncfusion<sup>&reg;</sup> License
+
+Syncfusion<sup>&reg;</sup> Flutter Core package is available under the Syncfusion Essential Studio<sup>&reg;</sup> program, and can be licensed either under the Syncfusion<sup>&reg;</sup> Community License Program or the Syncfusion<sup>&reg;</sup> commercial license.
+
+To be qualified for the Syncfusion<sup>&reg;</sup> Community License Program you must have a gross revenue of less than one (1) million U.S. dollars (\$1,000,000.00 USD) per year and have less than five (5) developers in your organization, and agree to be bound by Syncfusion<sup>&reg;</sup> terms and conditions.
+
+Customers who do not qualify for the community license can contact sales@syncfusion.com for commercial licensing options.
+
+Under no circumstances can you use this product without (1) either a Community License or a commercial license and (2) without agreeing and abiding by Syncfusion<sup>&reg;</sup> license containing all terms and conditions.
+
+The Syncfusion<sup>&reg;</sup> license that contains the terms and conditions can be found at
+https://www.syncfusion.com/content/downloads/syncfusion_license.pdf''',
+  );
+
 /// synchronized 3.5.0
 const _synchronized = Package(
     name: 'synchronized',
@@ -40859,14 +40987,35 @@ const _infra_meter_reading = Package(
 /// infra_meter_reading_mobile 0.1.0+1
 const _infra_meter_reading_mobile = Package(
     name: 'infra_meter_reading_mobile',
-    description: 'Unavailable meter reading engines for CogLog mobile.',
+    description: 'Mobile meter reading engines (ML Kit OCR and on-device LLM) for CogLog.',
     authors: [],
     version: '0.1.0+1',
-    spdxIdentifiers: [],
+    spdxIdentifiers: ['MIT'],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_exercise_history'), PackageRef('infra_meter_reading')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+    dependencies: [PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('google_mlkit_text_recognition'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
+    license: '''MIT License
+
+Copyright (c) 2026 Seena
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
   );
 
 /// infra_meter_reading_testing 0.1.0+1
@@ -41068,7 +41217,7 @@ const _screen_feature_trends = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_trends'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_load_trends'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_request_health_body_permission')],
+    dependencies: [PackageRef('domain_trends'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('syncfusion_flutter_charts'), PackageRef('usecase_load_trends'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_request_health_body_permission')],
     devDependencies: [PackageRef('foundation_resources'), PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('infra_health_body_metrics')],
   );
 
@@ -41094,7 +41243,7 @@ const _screen_feature_meter_capture = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_achievement'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_feature_achievement'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_save_meter_capture')],
+    dependencies: [PackageRef('domain_achievement'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_feature_achievement'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_save_meter_capture'), PackageRef('view_model_download_guidance')],
     devDependencies: [PackageRef('foundation_resources'), PackageRef('flutter_lints'), PackageRef('flutter_test')],
   );
 

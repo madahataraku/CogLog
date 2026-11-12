@@ -10,6 +10,13 @@
 - `flutter run` と `dart run forui` は `app/` で実行する。
 - 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin（OS モデルのみ）を使う。AICore / GenAI の診断（例外型名を含む）もその実装が担う。
 
+## Syncfusion Charts
+
+- 推移グラフは `syncfusion_flutter_charts` を用いる。Community License（または Commercial）を利用する。
+- Flutter 向けパッケージ（v18.3 以降）はアプリ内のライセンスキー登録を必要としない。キーの dart-define 注入や `SyncfusionLicense.registerLicense` は行わない。
+- 実効バージョンはルート `pubspec.yaml` の `dependency_overrides` で固定する。
+- 依存は OSS ライセンス一覧の再生成対象に含める。
+
 ## フレーバー
 
 `monolith.yaml` の `define.flavors` は `development`、`production`、`test`。値はすべて文字列にする。`test` はテストが読む dart-define 用で、中身は development に揃える。ネイティブの `--flavor` には `test` を置かない（AGP が `test` で始まる productFlavor 名を拒否するためでもある）。

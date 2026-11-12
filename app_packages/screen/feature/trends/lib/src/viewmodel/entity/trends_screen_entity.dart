@@ -1,4 +1,4 @@
-import '../state/trends_metric_set.dart';
+import '../state/trends_comparison.dart';
 import '../state/trends_screen_state.dart';
 import 'trends_visible_series.dart';
 
@@ -8,8 +8,7 @@ import 'trends_visible_series.dart';
 /// ```dart
 /// TrendsScreenEntity(
 ///   period: TrendsPeriod.days30,
-///   group: TrendsMetricGroup.exercise,
-///   metricSet: TrendsMetricSet.exerciseCalories,
+///   comparison: TrendsComparison.caloriesBodyKg,
 ///   loading: false,
 ///   showRequestPermissionButton: false,
 ///   showRequestHistoryButton: false,
@@ -26,8 +25,7 @@ final class TrendsScreenEntity {
   /// ```dart
   /// TrendsScreenEntity(
   ///   period: TrendsPeriod.days30,
-  ///   group: TrendsMetricGroup.exercise,
-  ///   metricSet: TrendsMetricSet.exerciseCalories,
+  ///   comparison: TrendsComparison.caloriesBodyKg,
   ///   loading: true,
   ///   showRequestPermissionButton: false,
   ///   showRequestHistoryButton: false,
@@ -39,8 +37,7 @@ final class TrendsScreenEntity {
   /// ```
   const TrendsScreenEntity({
     required this.period,
-    required this.group,
-    required this.metricSet,
+    required this.comparison,
     required this.loading,
     required this.showRequestPermissionButton,
     required this.showRequestHistoryButton,
@@ -53,28 +50,25 @@ final class TrendsScreenEntity {
   /// 選んでいる期間。
   final TrendsPeriod period;
 
-  /// 選んでいる指標グループ。
-  final TrendsMetricGroup group;
-
-  /// グループ内の指標組。
-  final TrendsMetricSet metricSet;
+  /// 選んでいる比較プリセット。
+  final TrendsComparison comparison;
 
   /// 系列の読込中か。
   final bool loading;
 
-  /// 身体グループで許可リクエストボタンを出すか。
+  /// 身体を含む比較で許可リクエストボタンを出すか。
   final bool showRequestPermissionButton;
 
   /// 身体指標は許可済みだが Android 履歴許可が足りないとき出すか。
   final bool showRequestHistoryButton;
 
-  /// 身体グループで OS 設定ボタンを出すか。
+  /// 身体を含む比較で OS 設定ボタンを出すか。
   final bool showOpenSettingsButton;
 
   /// 系列の読込失敗時に再試行ボタンを出すか。
   final bool showRetryButton;
 
-  /// いま描く 1〜2 本の系列。
+  /// いま描く系列。
   final List<TrendsVisibleSeries> visibleSeries;
 
   /// グラフ X スロット数（バケット数）。
