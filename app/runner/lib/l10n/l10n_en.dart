@@ -831,19 +831,19 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_advice_no_exercise =>
-      'No exercise logged today. Start at a comfortable pace.';
+      'No exercise logged today. Logging makes the gap to your goals easier to see.';
 
   @override
   String get screen_feature_top_advice_template_1 =>
-      'Stay hydrated and keep a comfortable pace.';
+      'Keep going at your own pace while looking at your set goals and today\'s log.';
 
   @override
   String get screen_feature_top_advice_template_2 =>
-      'Nice work. Rest matters as much as the workout.';
+      'Nice work. A consecutive streak remains as a fact that continues.';
 
   @override
   String get screen_feature_top_advice_template_3 =>
-      'Small steps add up. Keep your own pace today.';
+      'Small steps add up. Keep going at your own pace today.';
 
   @override
   String get screen_feature_top_advisor_semantics => 'Advisor';

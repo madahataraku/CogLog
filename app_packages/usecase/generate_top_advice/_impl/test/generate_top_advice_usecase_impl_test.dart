@@ -79,12 +79,13 @@ void main() {
     expect(llm.lastPrompt, contains('goalDistanceKm=5.0'));
     expect(llm.lastPrompt, isNot(contains('goalDurationMinutes=')));
     expect(llm.lastPrompt, contains('consecutiveExerciseDays=3'));
-    expect(llm.lastPrompt, contains('Compare today totals with any set goals'));
+    expect(llm.lastPrompt, contains('Speak as a calm guide'));
     expect(
       llm.lastPrompt,
-      contains('Praise the consecutive exercise-day streak'),
+      contains('When locale=ja, write ADVICE in polite です・ます Japanese'),
     );
-    expect(llm.lastPrompt, contains('at most about 150 characters'));
+    expect(llm.lastPrompt, contains('state the gap factually only'));
+    expect(llm.lastPrompt, contains('aim for at most about 150 characters'));
     expect(llm.lastPrompt, contains('fun, confused, happy, realized'));
     expect(llm.lastPrompt, contains('TONE='));
     expect(

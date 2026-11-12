@@ -1491,25 +1491,25 @@ abstract class L10n {
   /// 履歴0件のワンポイント
   ///
   /// In ja, this message translates to:
-  /// **'今日はまだ運動の記録がありません。無理のないペースで始めましょう。'**
+  /// **'今日はまだ運動の記録がありません。記録があると、目標との差も見えやすくなります。'**
   String get screen_feature_top_advice_no_exercise;
 
   /// LLM不可時の定型1
   ///
   /// In ja, this message translates to:
-  /// **'水分をこまめに取って、無理のないペースを保ちましょう。'**
+  /// **'設定した目標と今日の記録を見ながら、自分のペースで続けましょう。'**
   String get screen_feature_top_advice_template_1;
 
   /// LLM不可時の定型2
   ///
   /// In ja, this message translates to:
-  /// **'よく動けました。回復のためにも休息を大切にしましょう。'**
+  /// **'よく動けました。連続の記録は、続いている事実として残っていきます。'**
   String get screen_feature_top_advice_template_2;
 
   /// LLM不可時の定型3
   ///
   /// In ja, this message translates to:
-  /// **'小さな積み重ねが続きます。今日も自分のペースで。'**
+  /// **'小さな積み重ねが続きます。今日も自分のペースで進めましょう。'**
   String get screen_feature_top_advice_template_3;
 
   /// アドバイスキャラクターの代替テキスト
