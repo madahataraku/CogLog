@@ -104,11 +104,19 @@ mixin class L10nStringsMixin {
   String get screen_feature_meter_capture_pick_library =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_pick_library');
 
+  /// 読み取り値の注意（完全・不完全）
+  String get screen_feature_meter_capture_read_caution =>
+      LocalizeStringDelegate.get('screen_feature_meter_capture_read_caution');
+
+  /// 自動読み取り完全時の成功
+  String get screen_feature_meter_capture_read_success =>
+      LocalizeStringDelegate.get('screen_feature_meter_capture_read_success');
+
   /// 読み取り待機
   String get screen_feature_meter_capture_reading =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_reading');
 
-  /// 記録日時
+  /// 運動した日時（旧・記録日時）
   String get screen_feature_meter_capture_recorded_at =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_recorded_at');
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:forui/forui.dart';
+import 'package:foundation_datetime/foundation_datetime.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
@@ -45,7 +46,11 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
     final minutesController = useTextEditingController();
     final secondsController = useTextEditingController();
     final caloriesController = useTextEditingController();
-    final recordedAtController = useTextEditingController();
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final recordedAt = entity.recordedAt;
+    final recordedAtLabel = recordedAt == null
+        ? ''
+        : formatFullLocalDateTime(recordedAt, languageCode: languageCode);
 
     useEffect(
       () {
@@ -60,13 +65,11 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
         }
 
         Object? parseNum(String s) => num.tryParse(s);
-        Object? parseTime(String s) => DateTime.tryParse(s)?.toUtc();
         sync(distanceController, entity.distanceText, parseNum);
         sync(hoursController, entity.hoursText, parseNum);
         sync(minutesController, entity.minutesText, parseNum);
         sync(secondsController, entity.secondsText, parseNum);
         sync(caloriesController, entity.caloriesText, parseNum);
-        sync(recordedAtController, entity.recordedAtText, parseTime);
         return null;
       },
       [
@@ -75,7 +78,6 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
         entity.minutesText,
         entity.secondsText,
         entity.caloriesText,
-        entity.recordedAtText,
       ],
     );
 
@@ -84,6 +86,38 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
       minutes: minutesController.text,
       seconds: secondsController.text,
     );
+
+    Future<void> pickExercisedAt() async {
+      final initial = (entity.recordedAt ?? DateTime.now()).toLocal();
+      final date = await showDatePicker(
+        context: context,
+        initialDate: initial,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
+      if (date == null || !context.mounted) {
+        return;
+      }
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initial),
+      );
+      if (time == null || !context.mounted) {
+        return;
+      }
+      final keepSecond =
+          time.hour == initial.hour && time.minute == initial.minute;
+      await viewModel.onRecordedAtChanged(
+        DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour,
+          time.minute,
+          keepSecond ? initial.second : 0,
+        ),
+      );
+    }
 
     Future<void> handleBack() async {
       if (entity.busy) {
@@ -325,18 +359,28 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
                       ),
                       enabled: !entity.busy,
                     ),
-                    FTextField(
-                      control: .managed(
-                        controller: recordedAtController,
-                        onChange: (_) => viewModel.onRecordedAtChanged(
-                          recordedAtController.text,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: 8,
+                      children: [
+                        Text(
+                          strings
+                              .screen_feature_exercise_history_edit_recorded_at,
                         ),
-                      ),
-                      label: Text(
-                        strings
-                            .screen_feature_exercise_history_edit_recorded_at,
-                      ),
-                      enabled: !entity.busy,
+                        TextButton(
+                          onPressed: entity.busy ? null : pickExercisedAt,
+                          style: TextButton.styleFrom(
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: Text(
+                            recordedAtLabel,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ],
                     ),
                     if (entity.saveErrorText != null)
                       Text(

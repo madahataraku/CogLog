@@ -1,3 +1,4 @@
+import 'meter_reading_message_kind.dart';
 import 'meter_reading_values.dart';
 
 /// 走行距離・運動時間・消費カロリーが揃い、運動時間が 0 より大きいか。
@@ -18,14 +19,38 @@ bool isCompleteMeterReadingCore(MeterReadingValues values) =>
     values.caloriesKcal != null &&
     values.duration! > Duration.zero;
 
+/// 読み取り値から画面メッセージ区分を決める。
+///
+/// Example:
+/// ```dart
+/// classifyMeterReadingMessages(const MeterReadingValues());
+/// ```
+MeterReadingMessageKind classifyMeterReadingMessages(
+  MeterReadingValues values,
+) {
+  if (isCompleteMeterReadingCore(values)) {
+    return MeterReadingMessageKind.complete;
+  }
+  final anyCore =
+      values.distanceKm != null ||
+      values.duration != null ||
+      values.caloriesKcal != null;
+  return anyCore
+      ? MeterReadingMessageKind.incomplete
+      : MeterReadingMessageKind.empty;
+}
+
 /// 手打ち案内を出すべき読み取り結果か。
+///
+/// [classifyMeterReadingMessages] が [MeterReadingMessageKind.complete]
+/// 以外のとき true。
 ///
 /// Example:
 /// ```dart
 /// needsMeterHandEntryGuidance(const MeterReadingValues());
 /// ```
 bool needsMeterHandEntryGuidance(MeterReadingValues values) =>
-    !isCompleteMeterReadingCore(values);
+    classifyMeterReadingMessages(values) != MeterReadingMessageKind.complete;
 
 /// 平均速度 (km/h) を距離と時間から求める。
 ///
@@ -44,7 +69,9 @@ double? calculateAverageSpeedKmh({
   return distanceKm / hours;
 }
 
-/// マージ結果から初期の平均速度とパネル由来フラグを決める。
+/// マージ結果から初期の平均速度を距離÷時間で求める。
+///
+/// パネルの平均速度は使わない。[fromPanel] は常に false。
 ///
 /// Example:
 /// ```dart
@@ -58,9 +85,6 @@ double? calculateAverageSpeedKmh({
 ({double? speed, bool fromPanel}) resolveInitialAverageSpeed({
   required MeterReadingValues merged,
 }) {
-  if (merged.averageSpeedKmh != null) {
-    return (speed: merged.averageSpeedKmh, fromPanel: true);
-  }
   if (merged.distanceKm != null &&
       merged.duration != null &&
       merged.duration! > Duration.zero) {
@@ -75,45 +99,21 @@ double? calculateAverageSpeedKmh({
   return (speed: null, fromPanel: false);
 }
 
-/// 手打ち中の平均速度更新。
+/// 距離と時間から平均速度を再計算する。
 ///
-/// [averageSpeedClearedByUser] が true のときはパネル由来を捨てて再計算する。
+/// どちらかが無いときは null。
 ///
 /// Example:
 /// ```dart
 /// recalculateAverageSpeedIfNeeded(
 ///   distanceKm: 1,
 ///   duration: const Duration(hours: 1),
-///   currentSpeed: 9,
-///   averageSpeedFromPanel: true,
-///   averageSpeedUserEdited: false,
-///   averageSpeedClearedByUser: true,
 /// );
 /// ```
-({double? speed, bool userEdited, bool fromPanel})
-recalculateAverageSpeedIfNeeded({
+double? recalculateAverageSpeedIfNeeded({
   required double? distanceKm,
   required Duration? duration,
-  required double? currentSpeed,
-  required bool averageSpeedFromPanel,
-  required bool averageSpeedUserEdited,
-  required bool averageSpeedClearedByUser,
 }) {
-  if (averageSpeedClearedByUser) {
-    final speed = (distanceKm != null && duration != null)
-        ? calculateAverageSpeedKmh(distanceKm: distanceKm, duration: duration)
-        : null;
-    return (speed: speed, userEdited: false, fromPanel: false);
-  }
-  if (averageSpeedFromPanel || averageSpeedUserEdited) {
-    return (
-      speed: currentSpeed,
-      userEdited: averageSpeedUserEdited,
-      fromPanel: averageSpeedFromPanel,
-    );
-  }
-  final speed = (distanceKm != null && duration != null)
-      ? calculateAverageSpeedKmh(distanceKm: distanceKm, duration: duration)
-      : null;
-  return (speed: speed, userEdited: false, fromPanel: false);
+  if (distanceKm == null || duration == null) return null;
+  return calculateAverageSpeedKmh(distanceKm: distanceKm, duration: duration);
 }

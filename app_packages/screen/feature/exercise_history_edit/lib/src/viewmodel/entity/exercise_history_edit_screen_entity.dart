@@ -16,7 +16,7 @@ import 'package:meta/meta.dart';
 ///   secondsText: '',
 ///   averageSpeedText: '',
 ///   caloriesText: '',
-///   recordedAtText: '',
+///   recordedAt: null,
 ///   showHandEntryGuidance: false,
 ///   isDirty: false,
 ///   busy: false,
@@ -48,7 +48,7 @@ final class ExerciseHistoryEditScreenEntity {
   ///   secondsText: '',
   ///   averageSpeedText: '',
   ///   caloriesText: '',
-  ///   recordedAtText: '',
+  ///   recordedAt: null,
   ///   showHandEntryGuidance: false,
   ///   isDirty: false,
   ///   busy: false,
@@ -74,7 +74,7 @@ final class ExerciseHistoryEditScreenEntity {
     required this.secondsText,
     required this.averageSpeedText,
     required this.caloriesText,
-    required this.recordedAtText,
+    required this.recordedAt,
     required this.showHandEntryGuidance,
     required this.isDirty,
     required this.busy,
@@ -121,8 +121,8 @@ final class ExerciseHistoryEditScreenEntity {
   /// 消費カロリー。
   final String caloriesText;
 
-  /// 記録日時。
-  final String recordedAtText;
+  /// 運動した日時。無ければ null。
+  final DateTime? recordedAt;
 
   /// 手打ち案内を出すか。
   final bool showHandEntryGuidance;

@@ -103,9 +103,19 @@ final class ExerciseHistoryDetailScreenViewModel {
     required this.stateToEntity,
   });
 
-  /// 表示に使う文字列とフラグ。
-  StateStream<ExerciseHistoryDetailScreenEntity> get entity =>
-      state.map(stateToEntity.execute);
+  /// Widget が監視する画面状態。
+  StateStream<ExerciseHistoryDetailScreenState> get screenState => state;
+
+  /// [screenState] を [languageCode] 向け Entity にする。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.toEntity(state.state, languageCode: 'ja');
+  /// ```
+  ExerciseHistoryDetailScreenEntity toEntity(
+    ExerciseHistoryDetailScreenState screenState, {
+    required String languageCode,
+  }) => stateToEntity.execute(screenState, languageCode: languageCode);
 
   /// 状態の Stream を閉じる。
   ///

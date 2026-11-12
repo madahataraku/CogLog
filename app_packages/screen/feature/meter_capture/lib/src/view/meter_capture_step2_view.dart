@@ -1,5 +1,6 @@
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:forui/forui.dart';
+import 'package:foundation_datetime/foundation_datetime.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
@@ -24,8 +25,10 @@ import '../viewmodel/state/meter_capture_screen_state.dart';
 ///     secondsText: '',
 ///     averageSpeedText: '',
 ///     caloriesText: '',
-///     recordedAtText: '',
+///     recordedAt: null,
 ///     pendingModelDownloadGuidance: false,
+///     showReadSuccessMessage: false,
+///     showReadCautionMessage: false,
 ///     showHandEntryGuidance: false,
 ///   ),
 /// );
@@ -45,8 +48,10 @@ class MeterCaptureStep2View extends HookConsumerWidget {
   ///     secondsText: '',
   ///     averageSpeedText: '',
   ///     caloriesText: '',
-  ///     recordedAtText: '',
+  ///     recordedAt: null,
   ///     pendingModelDownloadGuidance: false,
+  ///     showReadSuccessMessage: false,
+  ///     showReadCautionMessage: false,
   ///     showHandEntryGuidance: false,
   ///   ),
   /// );
@@ -76,8 +81,10 @@ class MeterCaptureStep2View extends HookConsumerWidget {
   ///     secondsText: '',
   ///     averageSpeedText: '',
   ///     caloriesText: '',
-  ///     recordedAtText: '',
+  ///     recordedAt: null,
   ///     pendingModelDownloadGuidance: false,
+  ///     showReadSuccessMessage: false,
+  ///     showReadCautionMessage: false,
   ///     showHandEntryGuidance: false,
   ///   ),
   /// );
@@ -91,7 +98,6 @@ class MeterCaptureStep2View extends HookConsumerWidget {
     final secondsController = useTextEditingController();
     final averageSpeedController = useTextEditingController();
     final caloriesController = useTextEditingController();
-    final recordedAtController = useTextEditingController();
     final busy = state.reading || state.saving;
     final canSubmit =
         canSubmitMeterCapture(
@@ -101,6 +107,11 @@ class MeterCaptureStep2View extends HookConsumerWidget {
           caloriesKcal: state.caloriesKcal,
         ) &&
         !state.inputsInvalid;
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final recordedAt = entity.recordedAt;
+    final recordedAtLabel = recordedAt == null
+        ? ''
+        : formatFullLocalDateTime(recordedAt, languageCode: languageCode);
 
     useEffect(
       () {
@@ -115,14 +126,12 @@ class MeterCaptureStep2View extends HookConsumerWidget {
         }
 
         Object? parseNum(String s) => num.tryParse(s);
-        Object? parseTime(String s) => DateTime.tryParse(s)?.toUtc();
         sync(distanceController, entity.distanceText, parseNum);
         sync(hoursController, entity.hoursText, parseNum);
         sync(minutesController, entity.minutesText, parseNum);
         sync(secondsController, entity.secondsText, parseNum);
         sync(averageSpeedController, entity.averageSpeedText, parseNum);
         sync(caloriesController, entity.caloriesText, parseNum);
-        sync(recordedAtController, entity.recordedAtText, parseTime);
         return null;
       },
       [
@@ -132,7 +141,6 @@ class MeterCaptureStep2View extends HookConsumerWidget {
         entity.secondsText,
         entity.averageSpeedText,
         entity.caloriesText,
-        entity.recordedAtText,
       ],
     );
 
@@ -141,6 +149,38 @@ class MeterCaptureStep2View extends HookConsumerWidget {
       minutes: minutesController.text,
       seconds: secondsController.text,
     );
+
+    Future<void> pickExercisedAt() async {
+      final initial = (entity.recordedAt ?? DateTime.now()).toLocal();
+      final date = await showDatePicker(
+        context: context,
+        initialDate: initial,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
+      if (date == null || !context.mounted) {
+        return;
+      }
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initial),
+      );
+      if (time == null || !context.mounted) {
+        return;
+      }
+      final keepSecond =
+          time.hour == initial.hour && time.minute == initial.minute;
+      await viewModel.onExercisedAtChanged(
+        DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour,
+          time.minute,
+          keepSecond ? initial.second : 0,
+        ),
+      );
+    }
 
     final photoBytes = state.photoBytes;
 
@@ -160,6 +200,16 @@ class MeterCaptureStep2View extends HookConsumerWidget {
             textAlign: TextAlign.center,
           ),
         ],
+        if (entity.showReadSuccessMessage)
+          Text(
+            strings.screen_feature_meter_capture_read_success,
+            textAlign: TextAlign.center,
+          ),
+        if (entity.showReadCautionMessage)
+          Text(
+            strings.screen_feature_meter_capture_read_caution,
+            textAlign: TextAlign.center,
+          ),
         if (entity.showHandEntryGuidance)
           Text(
             strings.screen_feature_meter_capture_hand_entry_guidance,
@@ -220,14 +270,10 @@ class MeterCaptureStep2View extends HookConsumerWidget {
           ],
         ),
         FTextField(
-          control: .managed(
-            controller: averageSpeedController,
-            onChange: (_) =>
-                viewModel.onAverageSpeedChanged(averageSpeedController.text),
-          ),
+          control: .managed(controller: averageSpeedController),
           label: Text(strings.screen_feature_meter_capture_average_speed),
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          enabled: !busy,
+          enabled: false,
         ),
         FTextField(
           control: .managed(
@@ -239,14 +285,22 @@ class MeterCaptureStep2View extends HookConsumerWidget {
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           enabled: !busy,
         ),
-        FTextField(
-          control: .managed(
-            controller: recordedAtController,
-            onChange: (_) =>
-                viewModel.onRecordedAtChanged(recordedAtController.text),
-          ),
-          label: Text(strings.screen_feature_meter_capture_recorded_at),
-          enabled: !busy,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 8,
+          children: [
+            Text(strings.screen_feature_meter_capture_recorded_at),
+            TextButton(
+              onPressed: busy ? null : pickExercisedAt,
+              style: TextButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(recordedAtLabel, textAlign: TextAlign.start),
+            ),
+          ],
         ),
         if (state.saveError)
           Text(

@@ -109,7 +109,7 @@ mixin class L10nStringsMixin {
         'screen_feature_exercise_history_detail_duration',
       );
 
-  /// 記録日時の手変更サフィックス
+  /// 運動した日時の手変更サフィックス
   String get screen_feature_exercise_history_detail_edited =>
       LocalizeStringDelegate.get(
         'screen_feature_exercise_history_detail_edited',
@@ -148,7 +148,7 @@ mixin class L10nStringsMixin {
         'screen_feature_exercise_history_detail_photo_error',
       );
 
-  /// 記録日時のラベル
+  /// 運動した日時（旧・記録日時）
   String get screen_feature_exercise_history_detail_recorded_at =>
       LocalizeStringDelegate.get(
         'screen_feature_exercise_history_detail_recorded_at',

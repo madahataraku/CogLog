@@ -20,7 +20,7 @@ duration_minutes,分,Minutes,運動時間・分
 duration_seconds,秒,Seconds,運動時間・秒
 distance,走行距離 (km),Distance (km),入力ラベル
 average_speed,平均速度 (km/h),Average speed (km/h),表示のみの平均速度
-recorded_at,記録日時,Recorded at,記録日時
+recorded_at,運動した日時,Exercise date and time,運動した日時
 photo,メーターパネル写真,Meter panel photo,写真のラベル
 photo_error,写真を表示できません,Could not show photo,写真の失敗表示
 permission_camera,カメラの許可が必要です,Camera permission is required,カメラ権限拒否

@@ -47,10 +47,10 @@ final class TrendsScreenState {
     this.reloadGeneration = 0,
   });
 
-  /// 初期は過去 30 日・カロリー×体重除脂肪・読込中。
+  /// 初期は過去 30 日・カロリー×体脂肪率・読込中。
   static const initial = TrendsScreenState(
     period: TrendsPeriod.days30,
-    comparison: TrendsComparison.caloriesBodyKg,
+    comparison: TrendsComparison.caloriesBodyFat,
     loading: true,
     bodyReadFailed: false,
     healthPermissionUi: TrendsHealthPermissionUi.unknown,

@@ -56,14 +56,14 @@ extension ExerciseHistoryEditScreenViewModelActions
     return OnFieldChangedDelegate(state: state).updateCalories(raw);
   }
 
-  /// 記録日時を更新する。
+  /// 運動した日時を更新する。
   ///
   /// Example:
   /// ```dart
-  /// await viewModel.onRecordedAtChanged('2026-11-08T12:00:00.000');
+  /// await viewModel.onRecordedAtChanged(DateTime(2026, 11, 8, 12));
   /// ```
-  Future<void> onRecordedAtChanged(String raw) {
-    return OnFieldChangedDelegate(state: state).updateRecordedAt(raw);
+  Future<void> onRecordedAtChanged(DateTime value) {
+    return OnFieldChangedDelegate(state: state).updateRecordedAt(value);
   }
 
   /// カメラで写真を撮り直す。

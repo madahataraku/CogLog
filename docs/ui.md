@@ -66,7 +66,8 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 
 - 詳細ヘッダ右上（suffixes）に編集（pencil）と削除（trash）。処理中は無効。
 - 写真は本文最上部。高さは画面高の最大約 30%（ConstrainedBox）。
-- 計測／記録は `FTileGroup`（カロリー・運動時間・距離・平均速度・記録日時）。メタは別 `FTileGroup`（撮影・保存・作成開始）。グループ間 24。
+- 計測／記録は `FTileGroup`（カロリー・運動時間・距離・平均速度・運動した日時）。メタは別 `FTileGroup`（撮影・保存・作成開始）。グループ間 24。
+- 日時は全文日時。編集の運動した日時は DateTime Picker（日付のあと時刻）。
 - 削除・編集の破棄は `view_confirm_dialog`（`showFDialog`、`barrierDismissible: false`）。
 - 編集は詳細の子ルート。遷移は `ScreenNavigation` のみ（`openExerciseHistoryEditAndWait`）。
 

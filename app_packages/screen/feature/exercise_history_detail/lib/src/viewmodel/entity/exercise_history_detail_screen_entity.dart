@@ -142,7 +142,7 @@ final class ExerciseHistoryDetailScreenEntity {
   /// 平均速度。
   final String averageSpeedText;
 
-  /// 記録日時（サフィックス無し）。
+  /// 運動した日時（サフィックス無し）。
   final String recordedAtText;
 
   /// 手変更時だけ付く「（編集済み）」。

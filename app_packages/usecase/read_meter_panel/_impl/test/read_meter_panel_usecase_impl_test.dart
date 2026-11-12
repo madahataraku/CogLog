@@ -33,7 +33,8 @@ void main() {
     expect(second.readCallCount, 0);
     expect(result.values.distanceKm, 10);
     expect(result.values.caloriesKcal, 100);
-    expect(result.averageSpeedFromPanel, isTrue);
+    expect(result.values.averageSpeedKmh, 10);
+    expect(result.averageSpeedFromPanel, isFalse);
   });
 
   // R2: 同項目は後勝ち。
@@ -132,7 +133,26 @@ void main() {
     expect(failing.readCallCount, 1);
     expect(ok.readCallCount, 1);
     expect(result.values.distanceKm, 5);
-    expect(result.averageSpeedFromPanel, isTrue);
+    expect(result.values.averageSpeedKmh, 5);
+    expect(result.averageSpeedFromPanel, isFalse);
+  });
+
+  test('パネル平均速度と計算値が違っても計算値を使い fromPanel は false', () async {
+    final engine = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.visionOcr,
+      values: const MeterReadingValues(
+        distanceKm: 10,
+        duration: Duration(hours: 1),
+        caloriesKcal: 100,
+        averageSpeedKmh: 99,
+      ),
+    );
+
+    final result = await ReadMeterPanelUsecaseImpl(engines: [engine])
+        .execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(result.values.averageSpeedKmh, 10);
+    expect(result.averageSpeedFromPanel, isFalse);
   });
 
   test('タイムアウト: 先頭 hang なら空に近い結果', () async {
@@ -165,7 +185,8 @@ void main() {
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(result.values.distanceKm, 7);
-    expect(result.values.averageSpeedKmh, 11);
-    expect(result.averageSpeedFromPanel, isTrue);
+    // 時間が無いためパネル速度は捨て、計算もできない。
+    expect(result.values.averageSpeedKmh, isNull);
+    expect(result.averageSpeedFromPanel, isFalse);
   });
 }

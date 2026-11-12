@@ -6,13 +6,13 @@ import '../viewmodel/exercise_history_detail_screen_view_model.dart';
 ///
 /// Example:
 /// ```dart
-/// ref.watch(ExerciseHistoryDetailScreenProviders.entity);
+/// ref.watch(ExerciseHistoryDetailScreenProviders.state);
 /// ```
 final class ExerciseHistoryDetailScreenProviders {
-  /// ViewModel の entity を監視する。
-  static final entity = StateStreamProvider.autoDispose.stateBy(
+  /// ViewModel の画面状態を監視する。
+  static final state = StateStreamProvider.autoDispose.stateBy(
     ExerciseHistoryDetailScreenViewModel.provider,
-    (ExerciseHistoryDetailScreenViewModel viewModel) => viewModel.entity,
+    (ExerciseHistoryDetailScreenViewModel viewModel) => viewModel.screenState,
   );
 
   /// インスタンス化しない。static のみの束ねである。

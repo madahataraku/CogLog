@@ -580,7 +580,7 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_exercise_history_detail_recorded_at =>
-      'Recorded at';
+      'Exercise date and time';
 
   @override
   String get screen_feature_exercise_history_detail_retry => 'Retry';
@@ -667,7 +667,8 @@ class L10nEn extends L10n {
   String get screen_feature_exercise_history_edit_reading => 'Reading…';
 
   @override
-  String get screen_feature_exercise_history_edit_recorded_at => 'Recorded at';
+  String get screen_feature_exercise_history_edit_recorded_at =>
+      'Exercise date and time';
 
   @override
   String get screen_feature_exercise_history_edit_retake =>
@@ -890,10 +891,19 @@ class L10nEn extends L10n {
   String get screen_feature_meter_capture_pick_library => 'Choose from library';
 
   @override
+  String get screen_feature_meter_capture_read_caution =>
+      'Automatic readings can be wrong. Correct them manually if needed.';
+
+  @override
+  String get screen_feature_meter_capture_read_success =>
+      'Read the exercise bike meter.';
+
+  @override
   String get screen_feature_meter_capture_reading => 'Reading…';
 
   @override
-  String get screen_feature_meter_capture_recorded_at => 'Recorded at';
+  String get screen_feature_meter_capture_recorded_at =>
+      'Exercise date and time';
 
   @override
   String get screen_feature_meter_capture_retake => 'Retake';

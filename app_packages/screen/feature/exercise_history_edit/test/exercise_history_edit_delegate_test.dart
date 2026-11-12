@@ -165,7 +165,7 @@ void main() {
     expect(state.state.dirty, isTrue);
   });
 
-  test('不正な記録日時のあと距離を直しても inputsInvalid が残る', () async {
+  test('運動した日時の変更で dirty になり距離変更後も維持する', () async {
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
         current.copyWith(
@@ -180,15 +180,16 @@ void main() {
       );
     });
     final fields = OnFieldChangedDelegate(state: state);
-    await fields.updateRecordedAt('not-a-date');
-    expect(state.state.inputsInvalid, isTrue);
-    expect(state.state.recordedAtInvalid, isTrue);
+    final next = DateTime(2026, 11, 8, 15, 30);
+    await fields.updateRecordedAt(next);
+    expect(state.state.recordedAt, next);
+    expect(state.state.recordedAtInvalid, isFalse);
+    expect(state.state.dirty, isTrue);
 
     await fields.updateDistance('2');
     expect(state.state.distanceKm, 2);
     expect(state.state.distanceInvalid, isFalse);
-    expect(state.state.recordedAtInvalid, isTrue);
-    expect(state.state.inputsInvalid, isTrue);
+    expect(state.state.recordedAt, next);
   });
 
   test('保存成功で PopResult を返す', () async {

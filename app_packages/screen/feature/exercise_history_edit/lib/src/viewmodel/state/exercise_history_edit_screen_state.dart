@@ -113,7 +113,7 @@ final class ExerciseHistoryEditScreenState {
   /// 消費カロリー入力が不正か。
   final bool caloriesInvalid;
 
-  /// 記録日時入力が不正か。
+  /// 運動した日時入力が不正か。
   final bool recordedAtInvalid;
 
   /// いずれかの入力が不正で保存できないか。
@@ -138,7 +138,7 @@ final class ExerciseHistoryEditScreenState {
   /// 撮影日時。
   final DateTime? capturedAt;
 
-  /// 記録日時。
+  /// 運動した日時。
   final DateTime? recordedAt;
 
   /// 走行距離 km。

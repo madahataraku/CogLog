@@ -624,7 +624,7 @@
   },
   "screen_feature_exercise_history_detail_edited": "（編集済み）",
   "@screen_feature_exercise_history_detail_edited": {
-    "description": "記録日時の手変更サフィックス"
+    "description": "運動した日時の手変更サフィックス"
   },
   "screen_feature_exercise_history_detail_error": "詳細を読み込めませんでした",
   "@screen_feature_exercise_history_detail_error": {
@@ -654,9 +654,9 @@
   "@screen_feature_exercise_history_detail_photo_error": {
     "description": "写真の失敗表示"
   },
-  "screen_feature_exercise_history_detail_recorded_at": "記録日時",
+  "screen_feature_exercise_history_detail_recorded_at": "運動した日時",
   "@screen_feature_exercise_history_detail_recorded_at": {
-    "description": "記録日時のラベル"
+    "description": "運動した日時（旧・記録日時）"
   },
   "screen_feature_exercise_history_detail_retry": "再試行",
   "@screen_feature_exercise_history_detail_retry": {
@@ -754,9 +754,9 @@
   "@screen_feature_exercise_history_edit_reading": {
     "description": "読み取り待機"
   },
-  "screen_feature_exercise_history_edit_recorded_at": "記録日時",
+  "screen_feature_exercise_history_edit_recorded_at": "運動した日時",
   "@screen_feature_exercise_history_edit_recorded_at": {
-    "description": "記録日時"
+    "description": "運動した日時"
   },
   "screen_feature_exercise_history_edit_retake": "カメラで撮り直す",
   "@screen_feature_exercise_history_edit_retake": {
@@ -1037,13 +1037,21 @@
   "@screen_feature_meter_capture_pick_library": {
     "description": "写真ライブラリ"
   },
+  "screen_feature_meter_capture_read_caution": "自動読み取りした値は誤っている場合があるため、その場合手動で修正してください。",
+  "@screen_feature_meter_capture_read_caution": {
+    "description": "読み取り値の注意（完全・不完全）"
+  },
+  "screen_feature_meter_capture_read_success": "エアロバイクのメーター内容を読み取りました。",
+  "@screen_feature_meter_capture_read_success": {
+    "description": "自動読み取り完全時の成功"
+  },
   "screen_feature_meter_capture_reading": "読み取り中…",
   "@screen_feature_meter_capture_reading": {
     "description": "読み取り待機"
   },
-  "screen_feature_meter_capture_recorded_at": "記録日時",
+  "screen_feature_meter_capture_recorded_at": "運動した日時",
   "@screen_feature_meter_capture_recorded_at": {
-    "description": "記録日時"
+    "description": "運動した日時（旧・記録日時）"
   },
   "screen_feature_meter_capture_retake": "撮り直す",
   "@screen_feature_meter_capture_retake": {

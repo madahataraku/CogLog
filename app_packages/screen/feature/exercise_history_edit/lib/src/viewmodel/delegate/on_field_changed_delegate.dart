@@ -211,35 +211,17 @@ final class OnFieldChangedDelegate {
     });
   }
 
-  /// 記録日時を更新する。
+  /// 運動した日時を更新する。
   ///
   /// Example:
   /// ```dart
-  /// await delegate.updateRecordedAt('2026-11-08T12:00:00.000');
+  /// await delegate.updateRecordedAt(DateTime(2026, 11, 8, 12));
   /// ```
-  Future<void> updateRecordedAt(String raw) async {
-    final trimmed = raw.trim();
-    if (trimmed.isEmpty) {
-      await state.updateWithLock((current, emitter) async {
-        await emitter.emit(
-          current.copyWith(recordedAtInvalid: true, dirty: true),
-        );
-      });
-      return;
-    }
-    final parsed = DateTime.tryParse(trimmed);
-    if (parsed == null) {
-      await state.updateWithLock((current, emitter) async {
-        await emitter.emit(
-          current.copyWith(recordedAtInvalid: true, dirty: true),
-        );
-      });
-      return;
-    }
+  Future<void> updateRecordedAt(DateTime value) async {
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
         current.copyWith(
-          recordedAt: parsed,
+          recordedAt: value,
           recordedAtInvalid: false,
           dirty: true,
         ),

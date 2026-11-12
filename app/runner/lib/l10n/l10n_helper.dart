@@ -1076,6 +1076,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_meter_capture_pick_library;
       },
+      'screen_feature_meter_capture_read_caution': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_read_caution;
+      },
+      'screen_feature_meter_capture_read_success': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_read_success;
+      },
       'screen_feature_meter_capture_reading': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_reading;

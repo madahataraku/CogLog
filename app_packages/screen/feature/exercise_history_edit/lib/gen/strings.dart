@@ -131,7 +131,7 @@ mixin class L10nStringsMixin {
         'screen_feature_exercise_history_edit_reading',
       );
 
-  /// 記録日時
+  /// 運動した日時
   String get screen_feature_exercise_history_edit_recorded_at =>
       LocalizeStringDelegate.get(
         'screen_feature_exercise_history_edit_recorded_at',

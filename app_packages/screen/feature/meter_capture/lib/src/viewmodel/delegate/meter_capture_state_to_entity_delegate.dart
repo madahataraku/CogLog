@@ -20,6 +20,8 @@ final class MeterCaptureStateToEntityDelegate {
 
   /// [state] の計測値を、未設定は空・設定済みは数値文字にする。
   ///
+  /// 運動した日時は [MeterCaptureScreenEntity.recordedAt] にそのまま載せる。
+  ///
   /// Example:
   /// ```dart
   /// const MeterCaptureStateToEntityDelegate().execute(
@@ -39,8 +41,10 @@ final class MeterCaptureStateToEntityDelegate {
           : '${duration.inSeconds.remainder(60)}',
       averageSpeedText: _optionalNumber(state.averageSpeedKmh),
       caloriesText: _optionalNumber(state.caloriesKcal),
-      recordedAtText: state.recordedAt?.toLocal().toIso8601String() ?? '',
+      recordedAt: state.recordedAt,
       pendingModelDownloadGuidance: state.pendingModelDownloadGuidance,
+      showReadSuccessMessage: state.showReadSuccessMessage,
+      showReadCautionMessage: state.showReadCautionMessage,
       showHandEntryGuidance: state.showHandEntryGuidance,
     );
   }

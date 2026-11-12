@@ -1,4 +1,5 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:foundation_datetime/foundation_datetime.dart';
 
 import '../../strings.dart';
 import '../entity/exercise_history_detail_screen_entity.dart';
@@ -10,6 +11,7 @@ import '../state/exercise_history_detail_screen_state.dart';
 /// ```dart
 /// const ExerciseHistoryDetailStateToEntityDelegate().execute(
 ///   ExerciseHistoryDetailScreenState.initial(id: 'id'),
+///   languageCode: 'ja',
 /// );
 /// ```
 final class ExerciseHistoryDetailStateToEntityDelegate {
@@ -23,15 +25,19 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
 
   /// [state] を文言付き Entity にする。
   ///
+  /// 日時は [languageCode] 向けの全文形式にする。
+  ///
   /// Example:
   /// ```dart
   /// const ExerciseHistoryDetailStateToEntityDelegate().execute(
   ///   ExerciseHistoryDetailScreenState.initial(id: 'id'),
+  ///   languageCode: 'ja',
   /// );
   /// ```
   ExerciseHistoryDetailScreenEntity execute(
-    ExerciseHistoryDetailScreenState state,
-  ) {
+    ExerciseHistoryDetailScreenState state, {
+    required String languageCode,
+  }) {
     final showPagePosition = state.sameDayIds.length > 1;
     final pageCurrent = state.pageIndex + 1;
     final pageTotal = state.sameDayIds.length;
@@ -131,32 +137,31 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
       distanceText:
           '${PeriodTotalText.oneDecimal(history.distanceKm)} '
           '${strings.screen_feature_exercise_history_detail_distance_unit}',
-      createdAtText: formatLocalDateTime(history.creationStartedAt),
-      capturedAtText: formatLocalDateTime(history.capturedAt),
+      createdAtText: formatFullLocalDateTime(
+        history.creationStartedAt,
+        languageCode: languageCode,
+      ),
+      capturedAtText: formatFullLocalDateTime(
+        history.capturedAt,
+        languageCode: languageCode,
+      ),
       averageSpeedText:
           '${PeriodTotalText.oneDecimal(history.averageSpeedKmh)} '
           '${strings.screen_feature_exercise_history_detail_average_speed_unit}',
-      recordedAtText: formatLocalDateTime(history.recordedAt),
+      recordedAtText: formatFullLocalDateTime(
+        history.recordedAt,
+        languageCode: languageCode,
+      ),
       recordedAtEditedSuffix: history.recordedAtManuallySet
           ? strings.screen_feature_exercise_history_detail_edited
           : '',
-      savedAtText: formatLocalDateTime(history.savedAt),
+      savedAtText: formatFullLocalDateTime(
+        history.savedAt,
+        languageCode: languageCode,
+      ),
       photoPath: path,
       showPhoto: path != null,
       showPhotoError: path == null,
     );
   }
-}
-
-/// 端末ローカルの `yyyy-MM-dd HH:mm` にする。
-///
-/// Example:
-/// ```dart
-/// formatLocalDateTime(DateTime.utc(2026, 11, 5, 3));
-/// ```
-String formatLocalDateTime(DateTime value) {
-  final local = value.toLocal();
-  String two(int n) => n.toString().padLeft(2, '0');
-  return '${local.year}-${two(local.month)}-${two(local.day)} '
-      '${two(local.hour)}:${two(local.minute)}';
 }
