@@ -306,11 +306,14 @@ jobs:
               )
 
           cert_der = _p12_leaf_der(p12_password)
-          cert_subject = subprocess.check_output(
-              ["openssl", "x509", "-inform", "DER", "-subject", "-noout"],
-              input=cert_der,
-              text=True,
-          ).strip()
+          cert_subject = (
+              subprocess.check_output(
+                  ["openssl", "x509", "-inform", "DER", "-subject", "-noout"],
+                  input=cert_der,
+              )
+              .decode("utf-8", errors="replace")
+              .strip()
+          )
           profile_certs = [
               bytes(entry) for entry in (profile.get("DeveloperCertificates") or [])
           ]
