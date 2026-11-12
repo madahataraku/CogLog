@@ -270,6 +270,59 @@ jobs:
                   % (team_id, sorted(profile_teams))
               )
 
+          p12_path = Path("secrets/ios/ios-distribution.p12")
+
+          def _p12_leaf_der(password: str) -> bytes:
+              last_error = b""
+              for extra in ([], ["-legacy"]):
+                  try:
+                      pem = subprocess.check_output(
+                          [
+                              "openssl",
+                              "pkcs12",
+                              "-in",
+                              str(p12_path),
+                              "-nokeys",
+                              "-clcerts",
+                              "-passin",
+                              "pass:%s" % password,
+                              *extra,
+                          ],
+                          stderr=subprocess.PIPE,
+                      )
+                  except subprocess.CalledProcessError as exc:
+                      last_error = exc.stderr or b""
+                      continue
+                  if b"BEGIN CERTIFICATE" not in pem:
+                      last_error = b"no certificate in p12"
+                      continue
+                  return subprocess.check_output(
+                      ["openssl", "x509", "-outform", "DER"],
+                      input=pem,
+                  )
+              raise SystemExit(
+                  "failed to read certificate from ios-distribution.p12: %s"
+                  % last_error.decode("utf-8", errors="replace").strip()
+              )
+
+          cert_der = _p12_leaf_der(p12_password)
+          cert_subject = subprocess.check_output(
+              ["openssl", "x509", "-inform", "DER", "-subject", "-noout"],
+              input=cert_der,
+              text=True,
+          ).strip()
+          profile_certs = [
+              bytes(entry) for entry in (profile.get("DeveloperCertificates") or [])
+          ]
+          if not any(entry == cert_der for entry in profile_certs):
+              raise SystemExit(
+                  "ios-distribution.p12 is not included in ios-adhoc.mobileprovision "
+                  "(%s). Apple Developer で Ad Hoc プロファイルをこの Distribution "
+                  "証明書を選んで作り直し、1Password の ios-adhoc.mobileprovision を"
+                  "差し替えるか、プロファイルに含まれる証明書の .p12 に置き換える。"
+                  % cert_subject
+              )
+
           profiles_dir = Path.home() / "Library/MobileDevice/Provisioning Profiles"
           profiles_dir.mkdir(parents=True, exist_ok=True)
           installed = profiles_dir / f"{profile_uuid}.mobileprovision"

@@ -153,7 +153,7 @@ op read --force --out-file secrets/ios/ios-adhoc.mobileprovision \
   "op://AppDevelopment/CogLog_develop/ios-adhoc.mobileprovision"
 ```
 
-同じアイテムのフィールド `ios-distribution-password` と `ios-team-id` も読む。プロファイル名は `.mobileprovision` から取り、リポジトリへは書かない。`BUNDLE_ID` / プロファイルの App ID は、そのフレーバーの Bundle Identifier と一致することを検証する。plist は `app/ios/Configurations/<CONFIGURATION>-<flavor>/` と `app/ios/Runner/GoogleService-Info.plist` へコピーする。IPA は `flutter build ipa --release --flavor <flavor> --export-options-plist ...` で出し、Firebase App Distribution のアプリ ID は plist の `GOOGLE_APP_ID` から解決する。
+同じアイテムのフィールド `ios-distribution-password` と `ios-team-id` も読む。プロファイル名は `.mobileprovision` から取り、リポジトリへは書かない。`BUNDLE_ID` / プロファイルの App ID は、そのフレーバーの Bundle Identifier と一致することを検証する。加えて、`ios-distribution.p12` のリーフ証明書が `ios-adhoc.mobileprovision` の `DeveloperCertificates` に含まれることも検証する。一致しないと Xcode が「Provisioning profile doesn't include signing certificate」で止む。直し方は Apple Developer で Ad Hoc プロファイルを、その Distribution 証明書を選んで作り直し 1Password の `ios-adhoc.mobileprovision` を差し替えるか、プロファイル側に含まれる証明書の `.p12` に置き換える。plist は `app/ios/Configurations/<CONFIGURATION>-<flavor>/` と `app/ios/Runner/GoogleService-Info.plist` へコピーする。IPA は `flutter build ipa --release --flavor <flavor> --export-options-plist ...` で出し、Firebase App Distribution のアプリ ID は plist の `GOOGLE_APP_ID` から解決する。
 
 配布用 secret は、GitHub の Environment `app-distribution` に置く。リポジトリ secret には置かない。Environment の Deployment branches は Selected branches で `main` だけを許可する。設定場所は **Settings → Environments → app-distribution** である。
 
@@ -210,4 +210,4 @@ keytool -genkeypair -v \
 
 `storePassword` と `keyPassword` は、そのときに入力したパスワードである。同じファイルを後から作り直すと、すでに配布した APK を上書き更新できなくなる。
 
-iOS の配布用証明書（`.p12`）と Ad Hoc プロファイル（`.mobileprovision`）も、リポジトリの外で用意してフレーバー別アイテムへ添付する。証明書やプロファイルを差し替えると、端末側の信頼やインストール条件が変わることがある。
+iOS の配布用証明書（`.p12`）と Ad Hoc プロファイル（`.mobileprovision`）も、リポジトリの外で用意してフレーバー別アイテムへ添付する。**同じ Apple Distribution 証明書**でプロファイルを発行し、その証明書を `.p12` として添付する。証明書やプロファイルを差し替えると、端末側の信頼やインストール条件が変わることがある。
