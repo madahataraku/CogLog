@@ -131,6 +131,7 @@ final class MemoryExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -152,6 +153,7 @@ final class MemoryExerciseHistoryRepository
       caloriesKcal: caloriesKcal,
       averageSpeedKmh: averageSpeedKmh,
       photoRelativePath: path,
+      healthWorkoutId: healthWorkoutId,
     );
     _items.add(item);
     return item;
@@ -169,6 +171,7 @@ final class MemoryExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     Uint8List? photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -194,6 +197,7 @@ final class MemoryExerciseHistoryRepository
       caloriesKcal: caloriesKcal,
       averageSpeedKmh: averageSpeedKmh,
       photoRelativePath: previous.photoRelativePath,
+      healthWorkoutId: healthWorkoutId,
     );
     _items[index] = next;
     return next;

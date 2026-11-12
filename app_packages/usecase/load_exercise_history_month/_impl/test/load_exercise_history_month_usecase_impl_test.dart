@@ -17,6 +17,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
     await repo.create(
@@ -28,6 +29,7 @@ void main() {
       duration: const Duration(minutes: 2),
       caloriesKcal: 2,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([2]),
     );
     final usecase = LoadExerciseHistoryMonthUsecaseImpl(histories: repo);

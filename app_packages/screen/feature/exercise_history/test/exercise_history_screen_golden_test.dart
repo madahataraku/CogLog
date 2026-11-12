@@ -63,6 +63,7 @@ ExerciseHistory _history({required String id, required DateTime recordedAt}) =>
       caloriesKcal: 10,
       averageSpeedKmh: 2,
       photoRelativePath: 'exercise_histories/$id/meter.jpg',
+      healthWorkoutId: null,
     );
 
 Future<void> _prepareSurface(WidgetTester tester) async {

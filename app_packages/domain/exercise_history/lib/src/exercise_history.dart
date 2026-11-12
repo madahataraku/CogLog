@@ -18,6 +18,7 @@
 ///   averageSpeedKmh: 2.5,
 ///   photoRelativePath:
 ///       'exercise_histories/11111111-1111-4111-8111-111111111111/meter.jpg',
+///   healthWorkoutId: null,
 /// );
 /// ```
 final class ExerciseHistory {
@@ -38,6 +39,7 @@ final class ExerciseHistory {
   ///   averageSpeedKmh: 1,
   ///   photoRelativePath:
   ///       'exercise_histories/11111111-1111-4111-8111-111111111111/meter.jpg',
+  ///   healthWorkoutId: null,
   /// );
   /// ```
   const ExerciseHistory({
@@ -52,6 +54,7 @@ final class ExerciseHistory {
     required this.caloriesKcal,
     required this.averageSpeedKmh,
     required this.photoRelativePath,
+    required this.healthWorkoutId,
   });
 
   /// 運動履歴 ID。
@@ -86,4 +89,7 @@ final class ExerciseHistory {
 
   /// Documents からの写真相対パス。
   final String photoRelativePath;
+
+  /// ヘルスサービス上のサイクリング外部 ID。未対応・失敗時は null。
+  final String? healthWorkoutId;
 }

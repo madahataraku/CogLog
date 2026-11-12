@@ -133,6 +133,17 @@ class $ExerciseHistoriesTable extends ExerciseHistories
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       );
+  static const VerificationMeta _healthWorkoutIdMeta = const VerificationMeta(
+    'healthWorkoutId',
+  );
+  @override
+  late final GeneratedColumn<String> healthWorkoutId = GeneratedColumn<String>(
+    'health_workout_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -146,6 +157,7 @@ class $ExerciseHistoriesTable extends ExerciseHistories
     caloriesKcal,
     averageSpeedKmh,
     photoRelativePath,
+    healthWorkoutId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -259,6 +271,15 @@ class $ExerciseHistoriesTable extends ExerciseHistories
     } else if (isInserting) {
       context.missing(_photoRelativePathMeta);
     }
+    if (data.containsKey('health_workout_id')) {
+      context.handle(
+        _healthWorkoutIdMeta,
+        healthWorkoutId.isAcceptableOrUnknown(
+          data['health_workout_id']!,
+          _healthWorkoutIdMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -312,6 +333,10 @@ class $ExerciseHistoriesTable extends ExerciseHistories
         DriftSqlType.string,
         data['${effectivePrefix}photo_relative_path'],
       )!,
+      healthWorkoutId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}health_workout_id'],
+      ),
     );
   }
 
@@ -355,6 +380,9 @@ class ExerciseHistoryRow extends DataClass
 
   /// Documents からの写真相対パス。
   final String photoRelativePath;
+
+  /// ヘルスサービス上のサイクリング外部 ID。未対応・失敗時は null。
+  final String? healthWorkoutId;
   const ExerciseHistoryRow({
     required this.id,
     required this.savedAt,
@@ -367,6 +395,7 @@ class ExerciseHistoryRow extends DataClass
     required this.caloriesKcal,
     required this.averageSpeedKmh,
     required this.photoRelativePath,
+    this.healthWorkoutId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -382,6 +411,9 @@ class ExerciseHistoryRow extends DataClass
     map['calories_kcal'] = Variable<double>(caloriesKcal);
     map['average_speed_kmh'] = Variable<double>(averageSpeedKmh);
     map['photo_relative_path'] = Variable<String>(photoRelativePath);
+    if (!nullToAbsent || healthWorkoutId != null) {
+      map['health_workout_id'] = Variable<String>(healthWorkoutId);
+    }
     return map;
   }
 
@@ -398,6 +430,9 @@ class ExerciseHistoryRow extends DataClass
       caloriesKcal: Value(caloriesKcal),
       averageSpeedKmh: Value(averageSpeedKmh),
       photoRelativePath: Value(photoRelativePath),
+      healthWorkoutId: healthWorkoutId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(healthWorkoutId),
     );
   }
 
@@ -420,6 +455,7 @@ class ExerciseHistoryRow extends DataClass
       caloriesKcal: serializer.fromJson<double>(json['caloriesKcal']),
       averageSpeedKmh: serializer.fromJson<double>(json['averageSpeedKmh']),
       photoRelativePath: serializer.fromJson<String>(json['photoRelativePath']),
+      healthWorkoutId: serializer.fromJson<String?>(json['healthWorkoutId']),
     );
   }
   @override
@@ -437,6 +473,7 @@ class ExerciseHistoryRow extends DataClass
       'caloriesKcal': serializer.toJson<double>(caloriesKcal),
       'averageSpeedKmh': serializer.toJson<double>(averageSpeedKmh),
       'photoRelativePath': serializer.toJson<String>(photoRelativePath),
+      'healthWorkoutId': serializer.toJson<String?>(healthWorkoutId),
     };
   }
 
@@ -452,6 +489,7 @@ class ExerciseHistoryRow extends DataClass
     double? caloriesKcal,
     double? averageSpeedKmh,
     String? photoRelativePath,
+    Value<String?> healthWorkoutId = const Value.absent(),
   }) => ExerciseHistoryRow(
     id: id ?? this.id,
     savedAt: savedAt ?? this.savedAt,
@@ -464,6 +502,9 @@ class ExerciseHistoryRow extends DataClass
     caloriesKcal: caloriesKcal ?? this.caloriesKcal,
     averageSpeedKmh: averageSpeedKmh ?? this.averageSpeedKmh,
     photoRelativePath: photoRelativePath ?? this.photoRelativePath,
+    healthWorkoutId: healthWorkoutId.present
+        ? healthWorkoutId.value
+        : this.healthWorkoutId,
   );
   ExerciseHistoryRow copyWithCompanion(ExerciseHistoriesCompanion data) {
     return ExerciseHistoryRow(
@@ -496,6 +537,9 @@ class ExerciseHistoryRow extends DataClass
       photoRelativePath: data.photoRelativePath.present
           ? data.photoRelativePath.value
           : this.photoRelativePath,
+      healthWorkoutId: data.healthWorkoutId.present
+          ? data.healthWorkoutId.value
+          : this.healthWorkoutId,
     );
   }
 
@@ -512,7 +556,8 @@ class ExerciseHistoryRow extends DataClass
           ..write('durationMs: $durationMs, ')
           ..write('caloriesKcal: $caloriesKcal, ')
           ..write('averageSpeedKmh: $averageSpeedKmh, ')
-          ..write('photoRelativePath: $photoRelativePath')
+          ..write('photoRelativePath: $photoRelativePath, ')
+          ..write('healthWorkoutId: $healthWorkoutId')
           ..write(')'))
         .toString();
   }
@@ -530,6 +575,7 @@ class ExerciseHistoryRow extends DataClass
     caloriesKcal,
     averageSpeedKmh,
     photoRelativePath,
+    healthWorkoutId,
   );
   @override
   bool operator ==(Object other) =>
@@ -545,7 +591,8 @@ class ExerciseHistoryRow extends DataClass
           other.durationMs == this.durationMs &&
           other.caloriesKcal == this.caloriesKcal &&
           other.averageSpeedKmh == this.averageSpeedKmh &&
-          other.photoRelativePath == this.photoRelativePath);
+          other.photoRelativePath == this.photoRelativePath &&
+          other.healthWorkoutId == this.healthWorkoutId);
 }
 
 class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
@@ -560,6 +607,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
   final Value<double> caloriesKcal;
   final Value<double> averageSpeedKmh;
   final Value<String> photoRelativePath;
+  final Value<String?> healthWorkoutId;
   final Value<int> rowid;
   const ExerciseHistoriesCompanion({
     this.id = const Value.absent(),
@@ -573,6 +621,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
     this.caloriesKcal = const Value.absent(),
     this.averageSpeedKmh = const Value.absent(),
     this.photoRelativePath = const Value.absent(),
+    this.healthWorkoutId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ExerciseHistoriesCompanion.insert({
@@ -587,6 +636,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
     required double caloriesKcal,
     required double averageSpeedKmh,
     required String photoRelativePath,
+    this.healthWorkoutId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        savedAt = Value(savedAt),
@@ -611,6 +661,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
     Expression<double>? caloriesKcal,
     Expression<double>? averageSpeedKmh,
     Expression<String>? photoRelativePath,
+    Expression<String>? healthWorkoutId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -626,6 +677,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
       if (caloriesKcal != null) 'calories_kcal': caloriesKcal,
       if (averageSpeedKmh != null) 'average_speed_kmh': averageSpeedKmh,
       if (photoRelativePath != null) 'photo_relative_path': photoRelativePath,
+      if (healthWorkoutId != null) 'health_workout_id': healthWorkoutId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -642,6 +694,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
     Value<double>? caloriesKcal,
     Value<double>? averageSpeedKmh,
     Value<String>? photoRelativePath,
+    Value<String?>? healthWorkoutId,
     Value<int>? rowid,
   }) {
     return ExerciseHistoriesCompanion(
@@ -657,6 +710,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
       caloriesKcal: caloriesKcal ?? this.caloriesKcal,
       averageSpeedKmh: averageSpeedKmh ?? this.averageSpeedKmh,
       photoRelativePath: photoRelativePath ?? this.photoRelativePath,
+      healthWorkoutId: healthWorkoutId ?? this.healthWorkoutId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -699,6 +753,9 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
     if (photoRelativePath.present) {
       map['photo_relative_path'] = Variable<String>(photoRelativePath.value);
     }
+    if (healthWorkoutId.present) {
+      map['health_workout_id'] = Variable<String>(healthWorkoutId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -719,6 +776,7 @@ class ExerciseHistoriesCompanion extends UpdateCompanion<ExerciseHistoryRow> {
           ..write('caloriesKcal: $caloriesKcal, ')
           ..write('averageSpeedKmh: $averageSpeedKmh, ')
           ..write('photoRelativePath: $photoRelativePath, ')
+          ..write('healthWorkoutId: $healthWorkoutId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -750,6 +808,7 @@ typedef $$ExerciseHistoriesTableCreateCompanionBuilder =
       required double caloriesKcal,
       required double averageSpeedKmh,
       required String photoRelativePath,
+      Value<String?> healthWorkoutId,
       Value<int> rowid,
     });
 typedef $$ExerciseHistoriesTableUpdateCompanionBuilder =
@@ -765,6 +824,7 @@ typedef $$ExerciseHistoriesTableUpdateCompanionBuilder =
       Value<double> caloriesKcal,
       Value<double> averageSpeedKmh,
       Value<String> photoRelativePath,
+      Value<String?> healthWorkoutId,
       Value<int> rowid,
     });
 
@@ -829,6 +889,11 @@ class $$ExerciseHistoriesTableFilterComposer
 
   ColumnFilters<String> get photoRelativePath => $composableBuilder(
     column: $table.photoRelativePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get healthWorkoutId => $composableBuilder(
+    column: $table.healthWorkoutId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -896,6 +961,11 @@ class $$ExerciseHistoriesTableOrderingComposer
     column: $table.photoRelativePath,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get healthWorkoutId => $composableBuilder(
+    column: $table.healthWorkoutId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ExerciseHistoriesTableAnnotationComposer
@@ -957,6 +1027,11 @@ class $$ExerciseHistoriesTableAnnotationComposer
     column: $table.photoRelativePath,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get healthWorkoutId => $composableBuilder(
+    column: $table.healthWorkoutId,
+    builder: (column) => column,
+  );
 }
 
 class $$ExerciseHistoriesTableTableManager
@@ -1010,6 +1085,7 @@ class $$ExerciseHistoriesTableTableManager
                 Value<double> caloriesKcal = const Value.absent(),
                 Value<double> averageSpeedKmh = const Value.absent(),
                 Value<String> photoRelativePath = const Value.absent(),
+                Value<String?> healthWorkoutId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExerciseHistoriesCompanion(
                 id: id,
@@ -1023,6 +1099,7 @@ class $$ExerciseHistoriesTableTableManager
                 caloriesKcal: caloriesKcal,
                 averageSpeedKmh: averageSpeedKmh,
                 photoRelativePath: photoRelativePath,
+                healthWorkoutId: healthWorkoutId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1038,6 +1115,7 @@ class $$ExerciseHistoriesTableTableManager
                 required double caloriesKcal,
                 required double averageSpeedKmh,
                 required String photoRelativePath,
+                Value<String?> healthWorkoutId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExerciseHistoriesCompanion.insert(
                 id: id,
@@ -1051,6 +1129,7 @@ class $$ExerciseHistoriesTableTableManager
                 caloriesKcal: caloriesKcal,
                 averageSpeedKmh: averageSpeedKmh,
                 photoRelativePath: photoRelativePath,
+                healthWorkoutId: healthWorkoutId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

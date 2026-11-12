@@ -26,6 +26,7 @@ ExerciseHistory _history({required String id, bool edited = false}) {
     caloriesKcal: 12.34,
     averageSpeedKmh: 2.5,
     photoRelativePath: 'exercise_histories/$id/meter.jpg',
+    healthWorkoutId: null,
   );
 }
 

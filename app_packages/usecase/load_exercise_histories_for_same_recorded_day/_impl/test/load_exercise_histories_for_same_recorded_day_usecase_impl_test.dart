@@ -27,6 +27,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
     final newer = await repo.create(
@@ -38,6 +39,7 @@ void main() {
       duration: const Duration(minutes: 2),
       caloriesKcal: 2,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([2]),
     );
     await repo.create(
@@ -49,6 +51,7 @@ void main() {
       duration: const Duration(minutes: 3),
       caloriesKcal: 3,
       averageSpeedKmh: 3,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([3]),
     );
 

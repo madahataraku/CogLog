@@ -1,5 +1,6 @@
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:domain_achievement/domain_achievement.dart';
+import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
 import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
@@ -93,7 +94,7 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     }
 
     try {
-      final history = await histories.create(
+      var history = await histories.create(
         creationStartedAt: request.creationStartedAt,
         capturedAt: request.capturedAt,
         recordedAt: request.recordedAt,
@@ -102,10 +103,15 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
         duration: request.duration,
         caloriesKcal: request.caloriesKcal,
         averageSpeedKmh: request.averageSpeedKmh,
+        healthWorkoutId: null,
         photoBytes: request.photoBytes,
       );
 
-      final healthWriteSucceeded = await _writeHealth(request);
+      final externalId = await _writeHealth(request);
+      if (externalId != null) {
+        history = await _attachHealthWorkoutId(history, externalId);
+      }
+      final healthWriteSucceeded = externalId != null;
       final now = DateTime.now();
       final autoUpdate = await evaluateAutoUpdate.execute(
         EvaluateDailyGoalAutoUpdateRequest(now: now),
@@ -159,13 +165,13 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     return true;
   }
 
-  /// ヘルスへ書き、失敗や例外は false にする。
+  /// ヘルスへ書き、失敗や例外は null にする。
   ///
   /// Example:
   /// ```dart
   /// await _writeHealth(request);
   /// ```
-  Future<bool> _writeHealth(SaveMeterCaptureRequest request) async {
+  Future<String?> _writeHealth(SaveMeterCaptureRequest request) async {
     try {
       final start = request.recordedAt;
       final end = request.recordedAt.add(request.duration);
@@ -177,7 +183,31 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
         caloriesKcal: request.caloriesKcal,
       );
     } on Object {
-      return false;
+      return null;
     }
+  }
+
+  /// [history] に [externalId] を付けて更新する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _attachHealthWorkoutId(history, 'fake-health-1');
+  /// ```
+  Future<ExerciseHistory> _attachHealthWorkoutId(
+    ExerciseHistory history,
+    String externalId,
+  ) {
+    return histories.update(
+      id: history.id,
+      creationStartedAt: history.creationStartedAt,
+      capturedAt: history.capturedAt,
+      recordedAt: history.recordedAt,
+      recordedAtManuallySet: history.recordedAtManuallySet,
+      distanceKm: history.distanceKm,
+      duration: history.duration,
+      caloriesKcal: history.caloriesKcal,
+      averageSpeedKmh: history.averageSpeedKmh,
+      healthWorkoutId: externalId,
+    );
   }
 }

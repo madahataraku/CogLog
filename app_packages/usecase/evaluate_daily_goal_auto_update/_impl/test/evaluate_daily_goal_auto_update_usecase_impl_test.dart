@@ -47,6 +47,7 @@ void main() {
         duration: const Duration(minutes: 30),
         caloriesKcal: 100,
         averageSpeedKmh: 1,
+        healthWorkoutId: null,
         photoBytes: photo,
       );
     }

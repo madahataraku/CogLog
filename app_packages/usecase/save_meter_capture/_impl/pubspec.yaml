@@ -10,6 +10,7 @@ environment:
 dependencies:
   data_repository_exercise_history: any
   domain_achievement: any
+  domain_exercise_history: any
   infra_health_workout: any
   usecase_evaluate_achievements: any
   usecase_evaluate_daily_goal_auto_update: any
@@ -18,7 +19,6 @@ dependencies:
 
 dev_dependencies:
   data_repository_exercise_history_testing: any
-  domain_exercise_history: any
   flutter_lints: any
   infra_health_workout_testing: any
   test: any

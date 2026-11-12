@@ -123,6 +123,7 @@ final class FixedExerciseHistoryRepository
   ///   duration: Duration(minutes: 1),
   ///   caloriesKcal: 1,
   ///   averageSpeedKmh: 1,
+  ///   healthWorkoutId: null,
   ///   photoBytes: Uint8List(0),
   /// );
   /// ```
@@ -136,6 +137,7 @@ final class FixedExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   }) async => throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
 
@@ -151,6 +153,7 @@ final class FixedExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     Uint8List? photoBytes,
   }) async => throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
 

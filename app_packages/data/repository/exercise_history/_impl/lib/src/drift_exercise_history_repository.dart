@@ -146,6 +146,7 @@ final class DriftExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -175,6 +176,7 @@ final class DriftExerciseHistoryRepository
               caloriesKcal: caloriesKcal,
               averageSpeedKmh: averageSpeedKmh,
               photoRelativePath: relative,
+              healthWorkoutId: Value(healthWorkoutId),
             ),
           );
     } catch (error, stack) {
@@ -204,6 +206,7 @@ final class DriftExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     Uint8List? photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -233,6 +236,7 @@ final class DriftExerciseHistoryRepository
                 caloriesKcal: Value(caloriesKcal),
                 averageSpeedKmh: Value(averageSpeedKmh),
                 photoRelativePath: Value(existing.photoRelativePath),
+                healthWorkoutId: Value(healthWorkoutId),
               ),
             );
         if (updated == 0) {
@@ -287,5 +291,6 @@ final class DriftExerciseHistoryRepository
     caloriesKcal: row.caloriesKcal,
     averageSpeedKmh: row.averageSpeedKmh,
     photoRelativePath: row.photoRelativePath,
+    healthWorkoutId: row.healthWorkoutId,
   );
 }

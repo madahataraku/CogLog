@@ -79,6 +79,7 @@ abstract interface class ExerciseHistoryRepository {
   ///   duration: Duration(minutes: 1),
   ///   caloriesKcal: 1,
   ///   averageSpeedKmh: 1,
+  ///   healthWorkoutId: null,
   ///   photoBytes: Uint8List.fromList([1]),
   /// );
   /// ```
@@ -91,6 +92,7 @@ abstract interface class ExerciseHistoryRepository {
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   });
 
@@ -110,6 +112,7 @@ abstract interface class ExerciseHistoryRepository {
   ///   duration: Duration(minutes: 2),
   ///   caloriesKcal: 2,
   ///   averageSpeedKmh: 2,
+  ///   healthWorkoutId: null,
   /// );
   /// ```
   Future<ExerciseHistory> update({
@@ -122,6 +125,7 @@ abstract interface class ExerciseHistoryRepository {
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     Uint8List? photoBytes,
   });
 

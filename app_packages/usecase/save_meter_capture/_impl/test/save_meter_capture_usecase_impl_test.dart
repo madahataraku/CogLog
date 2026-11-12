@@ -104,6 +104,7 @@ void main() {
     expect(result.newlyUnlockedAchievements, isEmpty);
     expect(result.history, isNotNull);
     expect(result.history!.distanceKm, 12);
+    expect(result.history!.healthWorkoutId, isNull);
     expect(health.writeCallCount, 1);
     expect(evaluate.callCount, 1);
     expect(achievements.callCount, 1);
@@ -182,35 +183,42 @@ void main() {
     expect(sync.callCount, 0);
   });
 
-  test('health 成功時は healthWriteSucceeded true', () async {
-    final histories = MemoryExerciseHistoryRepository();
-    final health = FakeHealthWorkoutWriter(succeed: true);
-    final evaluate = _FakeEvaluate(applied: true);
-    final achievements = _FakeEvaluateAchievements(
-      newlyUnlocked: [
-        AchievementUnlock(
-          id: 'first_record',
-          unlockedAt: DateTime.utc(2026, 11, 8),
-        ),
-      ],
-    );
-    final sync = _FakeSync();
+  test(
+    'health 成功時は healthWriteSucceeded true かつ healthWorkoutId を保存',
+    () async {
+      final histories = MemoryExerciseHistoryRepository();
+      final health = FakeHealthWorkoutWriter(succeed: true);
+      final evaluate = _FakeEvaluate(applied: true);
+      final achievements = _FakeEvaluateAchievements(
+        newlyUnlocked: [
+          AchievementUnlock(
+            id: 'first_record',
+            unlockedAt: DateTime.utc(2026, 11, 8),
+          ),
+        ],
+      );
+      final sync = _FakeSync();
 
-    final result = await SaveMeterCaptureUsecaseImpl(
-      histories: histories,
-      health: health,
-      evaluateAutoUpdate: evaluate,
-      evaluateAchievements: achievements,
-      syncReminder: sync,
-    ).execute(validRequest());
+      final result = await SaveMeterCaptureUsecaseImpl(
+        histories: histories,
+        health: health,
+        evaluateAutoUpdate: evaluate,
+        evaluateAchievements: achievements,
+        syncReminder: sync,
+      ).execute(validRequest());
 
-    expect(result.outcome, SaveMeterCaptureOutcome.success);
-    expect(result.healthWriteSucceeded, isTrue);
-    expect(result.goalAutoUpdated, isTrue);
-    expect(result.newlyUnlockedAchievements, hasLength(1));
-    expect(result.newlyUnlockedAchievements.single.id, 'first_record');
-    expect(sync.callCount, 1);
-  });
+      expect(result.outcome, SaveMeterCaptureOutcome.success);
+      expect(result.healthWriteSucceeded, isTrue);
+      expect(result.history!.healthWorkoutId, 'fake-health-1');
+      expect(result.goalAutoUpdated, isTrue);
+      expect(result.newlyUnlockedAchievements, hasLength(1));
+      expect(result.newlyUnlockedAchievements.single.id, 'first_record');
+      expect(sync.callCount, 1);
+
+      final listed = await histories.list();
+      expect(listed.single.healthWorkoutId, 'fake-health-1');
+    },
+  );
 
   test('同期例外でも保存済みなら success', () async {
     final histories = MemoryExerciseHistoryRepository();
