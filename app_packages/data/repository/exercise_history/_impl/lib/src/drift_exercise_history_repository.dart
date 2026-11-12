@@ -281,9 +281,7 @@ final class DriftExerciseHistoryRepository
           await (_db.update(
             _db.exerciseHistories,
           )..where((t) => t.id.equals(id))).write(
-            ExerciseHistoriesCompanion(
-              healthWorkoutId: Value(healthWorkoutId),
-            ),
+            ExerciseHistoriesCompanion(healthWorkoutId: Value(healthWorkoutId)),
           );
       if (updated == 0) {
         throw StateError('運動履歴が無い: $id');
