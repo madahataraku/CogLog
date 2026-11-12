@@ -18,6 +18,15 @@ bool isCompleteMeterReadingCore(MeterReadingValues values) =>
     values.caloriesKcal != null &&
     values.duration! > Duration.zero;
 
+/// 手打ち案内を出すべき読み取り結果か。
+///
+/// Example:
+/// ```dart
+/// needsMeterHandEntryGuidance(const MeterReadingValues());
+/// ```
+bool needsMeterHandEntryGuidance(MeterReadingValues values) =>
+    !isCompleteMeterReadingCore(values);
+
 /// 平均速度 (km/h) を距離と時間から求める。
 ///
 /// [duration] が 0 以下なら null。

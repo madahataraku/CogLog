@@ -41,6 +41,7 @@ final class MeterCaptureStateToEntityDelegate {
       caloriesText: _optionalNumber(state.caloriesKcal),
       recordedAtText: state.recordedAt?.toLocal().toIso8601String() ?? '',
       pendingModelDownloadGuidance: state.pendingModelDownloadGuidance,
+      showHandEntryGuidance: state.showHandEntryGuidance,
     );
   }
 

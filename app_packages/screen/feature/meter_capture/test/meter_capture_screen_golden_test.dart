@@ -299,6 +299,48 @@ void main() {
     }
   });
 
+  testWidgets('メーター記録 step2 手打ち案内 / ja / Android / light', (tester) async {
+    await _prepareSurface(tester);
+    final container = ProviderContainer(overrides: _baseOverrides());
+    addTearDown(container.dispose);
+    final at = DateTime(2026, 11, 8, 12);
+
+    try {
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: _wrap(const MeterCaptureScreenBody()),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final viewModel = container.read(MeterCaptureScreenViewModel.provider);
+      await viewModel.state.updateWithLock((_, emitter) async {
+        await emitter.emit(
+          MeterCaptureScreenState(
+            step: MeterCaptureStep.edit,
+            photoBytes: _pngBytes,
+            creationStartedAt: at,
+            capturedAt: at,
+            distanceKm: 1.5,
+            recordedAt: at,
+            showHandEntryGuidance: true,
+          ),
+        );
+      });
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await expectLater(
+        find.byType(MeterCaptureScreenBody),
+        matchesGoldenFile('goldens/meter_capture_step2_hand_entry.png'),
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('メーター記録 permission / ja / Android / light', (tester) async {
     await _prepareSurface(tester);
     final container = ProviderContainer(overrides: _baseOverrides());

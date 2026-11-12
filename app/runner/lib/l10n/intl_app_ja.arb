@@ -881,6 +881,10 @@
   "@screen_feature_meter_capture_goal_auto_updated": {
     "description": "目標自動更新の通知"
   },
+  "screen_feature_meter_capture_hand_entry_guidance": "読み取れなかった項目は手入力してください。",
+  "@screen_feature_meter_capture_hand_entry_guidance": {
+    "description": "読み取り不完全時の手打ち案内"
+  },
   "screen_feature_meter_capture_open_settings": "設定を開く",
   "@screen_feature_meter_capture_open_settings": {
     "description": "設定アプリ導線"

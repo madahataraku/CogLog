@@ -41,6 +41,7 @@ final class MeterCaptureScreenState {
     this.captureError = false,
     this.cameraSessionGeneration = 0,
     this.pendingModelDownloadGuidance = false,
+    this.showHandEntryGuidance = false,
   });
 
   /// 初期状態（1 ステップ目）。
@@ -112,6 +113,9 @@ final class MeterCaptureScreenState {
   /// モデル未ダウンロード誘導を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
 
+  /// 手打ち案内を編集画面に出すとき true。同一回でモデル未ダウンロード誘導を出すときは false。
+  final bool showHandEntryGuidance;
+
   /// 一部だけ差し替えた新しい状態を返す。
   ///
   /// Example:
@@ -150,6 +154,7 @@ final class MeterCaptureScreenState {
     bool? captureError,
     int? cameraSessionGeneration,
     bool? pendingModelDownloadGuidance,
+    bool? showHandEntryGuidance,
   }) => MeterCaptureScreenState(
     step: step ?? this.step,
     photoBytes: clearPhotoBytes ? null : (photoBytes ?? this.photoBytes),
@@ -184,5 +189,6 @@ final class MeterCaptureScreenState {
         cameraSessionGeneration ?? this.cameraSessionGeneration,
     pendingModelDownloadGuidance:
         pendingModelDownloadGuidance ?? this.pendingModelDownloadGuidance,
+    showHandEntryGuidance: showHandEntryGuidance ?? this.showHandEntryGuidance,
   );
 }

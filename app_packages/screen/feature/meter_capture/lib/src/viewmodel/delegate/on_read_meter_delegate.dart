@@ -100,6 +100,7 @@ final class OnReadMeterDelegate {
       if (current.cameraSessionGeneration != generation) {
         return;
       }
+      final needsGuidance = needsMeterHandEntryGuidance(values);
       await emitter.emit(
         current.copyWith(
           step: MeterCaptureStep.edit,
@@ -115,6 +116,8 @@ final class OnReadMeterDelegate {
           averageSpeedFromPanel: result.averageSpeedFromPanel,
           averageSpeedUserEdited: false,
           saveError: false,
+          showHandEntryGuidance:
+              needsGuidance && !current.pendingModelDownloadGuidance,
         ),
       );
     });

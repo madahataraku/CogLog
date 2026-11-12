@@ -25,6 +25,8 @@ import '../viewmodel/state/meter_capture_screen_state.dart';
 ///     averageSpeedText: '',
 ///     caloriesText: '',
 ///     recordedAtText: '',
+///     pendingModelDownloadGuidance: false,
+///     showHandEntryGuidance: false,
 ///   ),
 /// );
 /// ```
@@ -44,6 +46,8 @@ class MeterCaptureStep2View extends HookConsumerWidget {
   ///     averageSpeedText: '',
   ///     caloriesText: '',
   ///     recordedAtText: '',
+  ///     pendingModelDownloadGuidance: false,
+  ///     showHandEntryGuidance: false,
   ///   ),
   /// );
   /// ```
@@ -73,6 +77,8 @@ class MeterCaptureStep2View extends HookConsumerWidget {
   ///     averageSpeedText: '',
   ///     caloriesText: '',
   ///     recordedAtText: '',
+  ///     pendingModelDownloadGuidance: false,
+  ///     showHandEntryGuidance: false,
   ///   ),
   /// );
   /// ```
@@ -154,6 +160,11 @@ class MeterCaptureStep2View extends HookConsumerWidget {
             textAlign: TextAlign.center,
           ),
         ],
+        if (entity.showHandEntryGuidance)
+          Text(
+            strings.screen_feature_meter_capture_hand_entry_guidance,
+            textAlign: TextAlign.center,
+          ),
         FTextField(
           control: .managed(
             controller: distanceController,

@@ -78,6 +78,12 @@ mixin class L10nStringsMixin {
         'screen_feature_meter_capture_goal_auto_updated',
       );
 
+  /// 読み取り不完全時の手打ち案内
+  String get screen_feature_meter_capture_hand_entry_guidance =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_hand_entry_guidance',
+      );
+
   /// 設定アプリ導線
   String get screen_feature_meter_capture_open_settings =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_open_settings');

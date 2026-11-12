@@ -499,6 +499,7 @@ void main() {
     expect(state.state.distanceKm, 3);
     expect(state.state.averageSpeedFromPanel, isTrue);
     expect(state.state.reading, isFalse);
+    expect(state.state.showHandEntryGuidance, isFalse);
     expect(state.state.creationStartedAt, isNotNull);
     expect(state.state.capturedAt, isNotNull);
     expect(state.state.recordedAt, state.state.capturedAt);
@@ -520,7 +521,9 @@ void main() {
     ).execute(photoBytes: Uint8List(0));
 
     expect(evaluate.calls, 1);
+    await Future<void>.delayed(Duration.zero);
     expect(state.state.pendingModelDownloadGuidance, isTrue);
+    expect(state.state.showHandEntryGuidance, isFalse);
     expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.reading, isFalse);
   });
@@ -542,6 +545,7 @@ void main() {
 
     expect(evaluate.calls, 0);
     expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.showHandEntryGuidance, isTrue);
     expect(state.state.step, MeterCaptureStep.edit);
   });
 
@@ -574,8 +578,10 @@ void main() {
 
     await future;
     expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.showHandEntryGuidance, isTrue);
     await Future<void>.delayed(const Duration(milliseconds: 50));
     expect(state.state.pendingModelDownloadGuidance, isTrue);
+    expect(state.state.showHandEntryGuidance, isFalse);
   });
 
   test('acknowledge 後は pending false かつ hasPresented', () async {
@@ -651,6 +657,7 @@ void main() {
     expect(empty.hoursText, '');
     expect(empty.recordedAtText, '');
     expect(empty.pendingModelDownloadGuidance, isFalse);
+    expect(empty.showHandEntryGuidance, isFalse);
 
     final filled = delegate.execute(
       MeterCaptureScreenState(
@@ -661,6 +668,7 @@ void main() {
         caloriesKcal: 100,
         recordedAt: DateTime(2026, 11, 8, 12),
         pendingModelDownloadGuidance: true,
+        showHandEntryGuidance: true,
       ),
     );
     expect(filled.distanceText, '1.5');
@@ -671,6 +679,7 @@ void main() {
     expect(filled.caloriesText, '100.0');
     expect(filled.recordedAtText, DateTime(2026, 11, 8, 12).toIso8601String());
     expect(filled.pendingModelDownloadGuidance, isTrue);
+    expect(filled.showHandEntryGuidance, isTrue);
   });
 
   test('StateToEntity は UTC の記録日時をローカル時刻に変換する', () {

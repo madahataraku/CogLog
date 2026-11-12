@@ -5,6 +5,7 @@ permission_camera,カメラの許可が必要です,Camera permission is require
 permission_library,写真へのアクセス許可が必要です,Photo library permission is required,ライブラリ権限拒否
 open_settings,設定を開く,Open settings,設定アプリ導線
 reading,読み取り中…,Reading…,読み取り待機
+hand_entry_guidance,読み取れなかった項目は手入力してください。,Enter any values that could not be read by hand.,読み取り不完全時の手打ち案内
 camera_preview_failed,カメラを開始できませんでした。ライブラリから選ぶか、しばらくしてから撮り直してください。,Couldn't start the camera. Pick from your library or try again.,プレビュー初期化失敗
 capture_failed,撮影に失敗しました。もう一度シャッターを押すか、ライブラリから選んでください。,Couldn't take the photo. Try the shutter again or pick from your library.,シャッター失敗
 shutter,シャッター,Shutter,シャッターボタンの代替テキスト

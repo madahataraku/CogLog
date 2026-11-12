@@ -694,6 +694,10 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_goal_auto_updated => '目標が自動更新されました';
 
   @override
+  String get screen_feature_meter_capture_hand_entry_guidance =>
+      '読み取れなかった項目は手入力してください。';
+
+  @override
   String get screen_feature_meter_capture_open_settings => '設定を開く';
 
   @override

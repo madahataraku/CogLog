@@ -1344,6 +1344,12 @@ abstract class L10n {
   /// **'目標が自動更新されました'**
   String get screen_feature_meter_capture_goal_auto_updated;
 
+  /// 読み取り不完全時の手打ち案内
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取れなかった項目は手入力してください。'**
+  String get screen_feature_meter_capture_hand_entry_guidance;
+
   /// 設定アプリ導線
   ///
   /// In ja, this message translates to:
