@@ -151,7 +151,7 @@ class MeterCaptureStep2View extends HookConsumerWidget {
     );
 
     Future<void> pickExercisedAt() async {
-      final initial = entity.recordedAt ?? DateTime.now();
+      final initial = (entity.recordedAt ?? DateTime.now()).toLocal();
       final date = await showDatePicker(
         context: context,
         initialDate: initial,
@@ -168,8 +168,17 @@ class MeterCaptureStep2View extends HookConsumerWidget {
       if (time == null || !context.mounted) {
         return;
       }
+      final keepSecond =
+          time.hour == initial.hour && time.minute == initial.minute;
       await viewModel.onExercisedAtChanged(
-        DateTime(date.year, date.month, date.day, time.hour, time.minute),
+        DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour,
+          time.minute,
+          keepSecond ? initial.second : 0,
+        ),
       );
     }
 
@@ -281,9 +290,15 @@ class MeterCaptureStep2View extends HookConsumerWidget {
           spacing: 8,
           children: [
             Text(strings.screen_feature_meter_capture_recorded_at),
-            GestureDetector(
-              onTap: busy ? null : pickExercisedAt,
-              child: Text(recordedAtLabel),
+            TextButton(
+              onPressed: busy ? null : pickExercisedAt,
+              style: TextButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(recordedAtLabel, textAlign: TextAlign.start),
             ),
           ],
         ),
