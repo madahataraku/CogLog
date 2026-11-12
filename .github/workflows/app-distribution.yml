@@ -353,6 +353,11 @@ jobs:
         run: |
           set -euo pipefail
           flutter analyze
+          # Golden 期待画像は Linux 描画を正とする。macOS では *_golden_test.dart を外す。
+          skip_goldens=0
+          if [ "$(uname -s)" = Darwin ]; then
+            skip_goldens=1
+          fi
           while IFS= read -r pubspec; do
             dir="$(dirname "$pubspec")"
             if [ ! -d "${dir}/test" ]; then
@@ -360,7 +365,25 @@ jobs:
             fi
             echo "test ${dir}"
             if grep -q 'sdk: flutter' "$pubspec"; then
-              (cd "$dir" && flutter test)
+              (
+                cd "$dir"
+                if [ "${skip_goldens}" -eq 1 ]; then
+                  tests=()
+                  while IFS= read -r test_file; do
+                    tests+=("${test_file}")
+                  done < <(
+                    find test -type f -name '*_test.dart' \
+                      ! -name '*_golden_test.dart' | sort
+                  )
+                  if [ "${#tests[@]}" -eq 0 ]; then
+                    echo "skip ${dir}: golden-only on macOS"
+                    exit 0
+                  fi
+                  flutter test "${tests[@]}"
+                else
+                  flutter test
+                fi
+              )
             else
               (cd "$dir" && dart test)
             fi

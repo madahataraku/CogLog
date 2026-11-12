@@ -177,6 +177,8 @@ principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workl
 
 配布の前に、各 matrix レッグでリポジトリルートの `flutter analyze` と、`test/` がある各パッケージのテストを実行する。`sdk: flutter` を持つパッケージは `flutter test`、それ以外は `dart test` である。
 
+Golden Test（`*_golden_test.dart`）の期待画像は Linux（PR Checks と android レッグの `ubuntu-latest`）で担保する。ios レッグの `macos-15` では、ホスト OS のフォント描画差でピクセルがずれるため、`*_golden_test.dart` を実行しない。ユニットテストとその他の `*_test.dart` は macOS でも実行する。
+
 versionName は `pubspec.yaml` のままにする。versionCode / CFBundleVersion は GitHub Actions の run number にする。Android の release 署名は同じ upload keystore を使い、配布済みの APK を上書き更新できるようにする。debug 署名は release に使わない。
 
 keystore とパスワードは、アイテム `CogLog_develop` に置く。Actions は次の参照を読み、標準出力へパスワードを出さずに `app/android/key.properties` を書く。
