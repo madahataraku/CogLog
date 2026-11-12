@@ -94,6 +94,7 @@ int? _parseNonNegativeIntOrZeroWhenEmpty(String trimmed, {required int max}) {
 /// ```dart
 /// OnFieldChangedDelegate(state: state).updateDistance('1.5');
 /// ```
+@internal
 final class OnFieldChangedDelegate {
   /// [state] を受け取る。
   ///
@@ -118,7 +119,9 @@ final class OnFieldChangedDelegate {
       distanceKm = parseNonNegativeDoubleOrNull(raw);
     } on FormatException {
       await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(inputsInvalid: true, dirty: true));
+        await emitter.emit(
+          current.copyWith(distanceInvalid: true, dirty: true),
+        );
       });
       return;
     }
@@ -130,7 +133,7 @@ final class OnFieldChangedDelegate {
           clearDistanceKm: distanceKm == null,
           averageSpeedKmh: speed,
           clearAverageSpeedKmh: speed == null,
-          inputsInvalid: false,
+          distanceInvalid: false,
           dirty: true,
         ),
       );
@@ -157,7 +160,9 @@ final class OnFieldChangedDelegate {
       );
     } on FormatException {
       await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(inputsInvalid: true, dirty: true));
+        await emitter.emit(
+          current.copyWith(durationInvalid: true, dirty: true),
+        );
       });
       return;
     }
@@ -169,7 +174,7 @@ final class OnFieldChangedDelegate {
           clearDuration: duration == null,
           averageSpeedKmh: speed,
           clearAverageSpeedKmh: speed == null,
-          inputsInvalid: false,
+          durationInvalid: false,
           dirty: true,
         ),
       );
@@ -188,7 +193,9 @@ final class OnFieldChangedDelegate {
       caloriesKcal = parseNonNegativeDoubleOrNull(raw);
     } on FormatException {
       await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(inputsInvalid: true, dirty: true));
+        await emitter.emit(
+          current.copyWith(caloriesInvalid: true, dirty: true),
+        );
       });
       return;
     }
@@ -197,7 +204,7 @@ final class OnFieldChangedDelegate {
         current.copyWith(
           caloriesKcal: caloriesKcal,
           clearCaloriesKcal: caloriesKcal == null,
-          inputsInvalid: false,
+          caloriesInvalid: false,
           dirty: true,
         ),
       );
@@ -214,20 +221,28 @@ final class OnFieldChangedDelegate {
     final trimmed = raw.trim();
     if (trimmed.isEmpty) {
       await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(inputsInvalid: true, dirty: true));
+        await emitter.emit(
+          current.copyWith(recordedAtInvalid: true, dirty: true),
+        );
       });
       return;
     }
     final parsed = DateTime.tryParse(trimmed);
     if (parsed == null) {
       await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(inputsInvalid: true, dirty: true));
+        await emitter.emit(
+          current.copyWith(recordedAtInvalid: true, dirty: true),
+        );
       });
       return;
     }
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
-        current.copyWith(recordedAt: parsed, inputsInvalid: false, dirty: true),
+        current.copyWith(
+          recordedAt: parsed,
+          recordedAtInvalid: false,
+          dirty: true,
+        ),
       );
     });
   }

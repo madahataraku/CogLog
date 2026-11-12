@@ -255,4 +255,12 @@ final class _ThrowingExerciseHistoryRepository
   }) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  }) {
+    throw UnimplementedError();
+  }
 }

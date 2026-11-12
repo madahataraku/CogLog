@@ -86,6 +86,9 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
     );
 
     Future<void> handleBack() async {
+      if (entity.busy) {
+        return;
+      }
       if (entity.isDirty) {
         final ok = await showConfirmDialog(
           context,
@@ -105,7 +108,7 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
     final maxPhotoHeight = MediaQuery.sizeOf(context).height * 0.3;
 
     return PopScope(
-      canPop: !entity.isDirty,
+      canPop: !entity.isDirty && !entity.busy,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
           return;

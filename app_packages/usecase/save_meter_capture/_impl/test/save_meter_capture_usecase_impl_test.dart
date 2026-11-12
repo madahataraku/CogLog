@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:domain_achievement/domain_achievement.dart';
+import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_health_workout_testing/infra_health_workout_testing.dart';
 import 'package:test/test.dart';
 import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
@@ -9,6 +11,103 @@ import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_g
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 import 'package:usecase_save_meter_capture_impl/usecase_save_meter_capture_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
+
+/// create は通すが attach だけ失敗する。
+final class _AttachFailingHistories implements ExerciseHistoryRepository {
+  _AttachFailingHistories(this._inner);
+
+  final MemoryExerciseHistoryRepository _inner;
+
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  }) async {
+    throw StateError('attach failed');
+  }
+
+  @override
+  Future<ExerciseHistory> create({
+    required DateTime creationStartedAt,
+    required DateTime capturedAt,
+    required DateTime recordedAt,
+    required bool recordedAtManuallySet,
+    required double distanceKm,
+    required Duration duration,
+    required double caloriesKcal,
+    required double averageSpeedKmh,
+    required String? healthWorkoutId,
+    required Uint8List photoBytes,
+  }) {
+    return _inner.create(
+      creationStartedAt: creationStartedAt,
+      capturedAt: capturedAt,
+      recordedAt: recordedAt,
+      recordedAtManuallySet: recordedAtManuallySet,
+      distanceKm: distanceKm,
+      duration: duration,
+      caloriesKcal: caloriesKcal,
+      averageSpeedKmh: averageSpeedKmh,
+      healthWorkoutId: healthWorkoutId,
+      photoBytes: photoBytes,
+    );
+  }
+
+  @override
+  Future<void> delete(String id) => _inner.delete(id);
+
+  @override
+  Future<ExerciseHistory?> findById(String id) => _inner.findById(id);
+
+  @override
+  Future<List<ExerciseHistory>> list() => _inner.list();
+
+  @override
+  Future<List<ExerciseHistory>> listByMonth({
+    required int year,
+    required int month,
+  }) => _inner.listByMonth(year: year, month: month);
+
+  @override
+  Future<List<ExerciseHistory>> listPage({
+    required int year,
+    required int month,
+    required int offset,
+    required int limit,
+  }) => _inner.listPage(year: year, month: month, offset: offset, limit: limit);
+
+  @override
+  Future<String?> photoAbsolutePath(String id) => _inner.photoAbsolutePath(id);
+
+  @override
+  Future<ExerciseHistory> update({
+    required String id,
+    required DateTime creationStartedAt,
+    required DateTime capturedAt,
+    required DateTime recordedAt,
+    required bool recordedAtManuallySet,
+    required double distanceKm,
+    required Duration duration,
+    required double caloriesKcal,
+    required double averageSpeedKmh,
+    required String? healthWorkoutId,
+    Uint8List? photoBytes,
+  }) {
+    return _inner.update(
+      id: id,
+      creationStartedAt: creationStartedAt,
+      capturedAt: capturedAt,
+      recordedAt: recordedAt,
+      recordedAtManuallySet: recordedAtManuallySet,
+      distanceKm: distanceKm,
+      duration: duration,
+      caloriesKcal: caloriesKcal,
+      averageSpeedKmh: averageSpeedKmh,
+      healthWorkoutId: healthWorkoutId,
+      photoBytes: photoBytes,
+    );
+  }
+}
 
 final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
   _FakeEvaluate({this.applied = false});
@@ -261,5 +360,28 @@ void main() {
     expect(result.newlyUnlockedAchievements, isEmpty);
     expect(achievements.callCount, 1);
     expect(await histories.list(), hasLength(1));
+  });
+
+  test('healthWorkoutId 付与失敗でも create success', () async {
+    final inner = MemoryExerciseHistoryRepository();
+    final histories = _AttachFailingHistories(inner);
+    final health = FakeHealthWorkoutWriter(succeed: true);
+    final evaluate = _FakeEvaluate();
+    final achievements = _FakeEvaluateAchievements();
+    final sync = _FakeSync();
+
+    final result = await SaveMeterCaptureUsecaseImpl(
+      histories: histories,
+      health: health,
+      evaluateAutoUpdate: evaluate,
+      evaluateAchievements: achievements,
+      syncReminder: sync,
+    ).execute(validRequest());
+
+    expect(result.outcome, SaveMeterCaptureOutcome.success);
+    expect(result.healthWriteSucceeded, isTrue);
+    expect(result.history!.healthWorkoutId, isNull);
+    expect(await inner.list(), hasLength(1));
+    expect((await inner.list()).single.healthWorkoutId, isNull);
   });
 }

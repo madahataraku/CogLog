@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 
 import '../../strings.dart';
@@ -13,6 +14,7 @@ import '../state/exercise_history_edit_screen_state.dart';
 ///   ExerciseHistoryEditScreenState.initial(id: 'id'),
 /// );
 /// ```
+@internal
 final class ExerciseHistoryEditStateToEntityDelegate {
   /// 変換を作る。
   ///

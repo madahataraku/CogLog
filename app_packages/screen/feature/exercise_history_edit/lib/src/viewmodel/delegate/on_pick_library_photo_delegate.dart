@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
@@ -15,6 +16,7 @@ import 'obtain_and_read_edit_photo.dart';
 ///   readMeterPanelUsecase: read,
 /// ).execute();
 /// ```
+@internal
 final class OnPickLibraryPhotoDelegate {
   /// 写真取得と読み取りの依存を受け取る。
   ///

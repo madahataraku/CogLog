@@ -11,9 +11,10 @@ import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_g
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 
 final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
-  _FakeEvaluate({this.applied = false});
+  _FakeEvaluate({this.applied = false, this.throwOnExecute = false});
 
   final bool applied;
+  final bool throwOnExecute;
   int callCount = 0;
 
   @override
@@ -21,6 +22,9 @@ final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
     EvaluateDailyGoalAutoUpdateRequest request,
   ) async {
     callCount += 1;
+    if (throwOnExecute) {
+      throw StateError('evaluate failed');
+    }
     return EvaluateDailyGoalAutoUpdateResult(applied: applied);
   }
 }
@@ -178,6 +182,30 @@ void main() {
     expect(await histories.list(), isEmpty);
     expect(health.deleteCallCount, 1);
     expect(evaluate.callCount, 1);
+  });
+
+  test('事後評価例外でも削除済みなら success', () async {
+    final histories = MemoryExerciseHistoryRepository();
+    final id = await seed(histories);
+    final health = FakeHealthWorkoutWriter();
+    final evaluate = _FakeEvaluate(throwOnExecute: true);
+    final achievements = _FakeEvaluateAchievements();
+    final sync = _FakeSync();
+
+    final result = await DeleteExerciseHistoryUsecaseImpl(
+      histories: histories,
+      health: health,
+      evaluateAutoUpdate: evaluate,
+      evaluateAchievements: achievements,
+      syncReminder: sync,
+    ).execute(DeleteExerciseHistoryRequest(id: id, healthWorkoutId: null));
+
+    expect(result.outcome, DeleteExerciseHistoryOutcome.success);
+    expect(result.goalAutoUpdated, isFalse);
+    expect(await histories.list(), isEmpty);
+    expect(evaluate.callCount, 1);
+    expect(achievements.callCount, 1);
+    expect(sync.callCount, 1);
   });
 
   test('未知 id は notFoundOrFailed で hooks なし', () async {

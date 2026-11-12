@@ -159,6 +159,13 @@ final class FixedExerciseHistoryRepository
 
   /// 読み取り専用のため常に失敗する。
   @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  }) async => throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
+
+  /// 読み取り専用のため常に失敗する。
+  @override
   Future<void> delete(String id) async =>
       throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
 }

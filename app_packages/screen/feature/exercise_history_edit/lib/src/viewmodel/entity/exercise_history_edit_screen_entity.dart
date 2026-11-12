@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 /// 運動履歴編集の表示用状態。
 ///
 /// Example:
@@ -28,6 +30,7 @@
 ///   showPhotoError: false,
 /// );
 /// ```
+@internal
 final class ExerciseHistoryEditScreenEntity {
   /// 入力欄の文字列と表示フラグを持つ。
   ///

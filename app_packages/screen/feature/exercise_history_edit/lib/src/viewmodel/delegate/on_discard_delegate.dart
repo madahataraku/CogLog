@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 
 /// 未保存変更を捨てて編集画面を閉じる。
@@ -6,6 +7,7 @@ import 'package:screen_navigation/screen_navigation.dart';
 /// ```dart
 /// OnDiscardDelegate(navigation: navigation).execute();
 /// ```
+@internal
 final class OnDiscardDelegate {
   /// [navigation] を受け取る。
   ///

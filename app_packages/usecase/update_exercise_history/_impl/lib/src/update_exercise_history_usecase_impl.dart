@@ -108,19 +108,21 @@ final class UpdateExerciseHistoryUsecaseImpl
 
       final updated = await histories.update(
         id: request.id,
-        creationStartedAt: request.creationStartedAt,
-        capturedAt: request.capturedAt,
+        creationStartedAt: existing.creationStartedAt,
+        capturedAt: request.photoBytes == null
+            ? existing.capturedAt
+            : request.capturedAt,
         recordedAt: request.recordedAt,
         recordedAtManuallySet: true,
         distanceKm: request.distanceKm,
         duration: request.duration,
         caloriesKcal: request.caloriesKcal,
         averageSpeedKmh: averageSpeedKmh!,
-        healthWorkoutId: request.previousHealthWorkoutId,
+        healthWorkoutId: existing.healthWorkoutId,
         photoBytes: request.photoBytes,
       );
 
-      final healthId = request.previousHealthWorkoutId;
+      final healthId = existing.healthWorkoutId;
       if (healthId != null) {
         await _updateHealth(request: request, externalId: healthId);
       }
@@ -176,7 +178,9 @@ final class UpdateExerciseHistoryUsecaseImpl
     if (request.duration <= Duration.zero) {
       return false;
     }
-    if (averageSpeedKmh == null || averageSpeedKmh < 0) {
+    if (averageSpeedKmh == null ||
+        !averageSpeedKmh.isFinite ||
+        averageSpeedKmh < 0) {
       return false;
     }
     if (request.distanceKm < 0 || request.caloriesKcal < 0) {

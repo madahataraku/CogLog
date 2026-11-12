@@ -187,7 +187,7 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     }
   }
 
-  /// [history] に [externalId] を付けて更新する。
+  /// [history] に [externalId] だけを付ける。失敗時は元の [history] を返す。
   ///
   /// Example:
   /// ```dart
@@ -196,18 +196,15 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
   Future<ExerciseHistory> _attachHealthWorkoutId(
     ExerciseHistory history,
     String externalId,
-  ) {
-    return histories.update(
-      id: history.id,
-      creationStartedAt: history.creationStartedAt,
-      capturedAt: history.capturedAt,
-      recordedAt: history.recordedAt,
-      recordedAtManuallySet: history.recordedAtManuallySet,
-      distanceKm: history.distanceKm,
-      duration: history.duration,
-      caloriesKcal: history.caloriesKcal,
-      averageSpeedKmh: history.averageSpeedKmh,
-      healthWorkoutId: externalId,
-    );
+  ) async {
+    try {
+      return await histories.attachHealthWorkoutId(
+        id: history.id,
+        healthWorkoutId: externalId,
+      );
+    } on Object {
+      // 付与失敗で create 済みの履歴を saveFailed にしない。
+      return history;
+    }
   }
 }

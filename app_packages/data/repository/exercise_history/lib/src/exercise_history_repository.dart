@@ -129,6 +129,20 @@ abstract interface class ExerciseHistoryRepository {
     Uint8List? photoBytes,
   });
 
+  /// [healthWorkoutId] だけを付け替える。他フィールドは触らない。未知 ID は [StateError]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.attachHealthWorkoutId(
+  ///   id: id,
+  ///   healthWorkoutId: 'health-1',
+  /// );
+  /// ```
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  });
+
   /// 行と写真ディレクトリを削除する。未知 ID は [StateError]。
   ///
   /// Example:

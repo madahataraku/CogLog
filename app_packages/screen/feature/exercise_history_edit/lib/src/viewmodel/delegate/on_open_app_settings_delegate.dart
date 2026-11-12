@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 
 /// OS のアプリ設定を開く。
@@ -8,6 +9,7 @@ import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 ///   openAppSettingsUsecase: openAppSettingsUsecase,
 /// ).execute();
 /// ```
+@internal
 final class OnOpenAppSettingsDelegate {
   /// 設定を開く Usecase を受け取る。
   ///

@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream_riverpod/state_stream_riverpod.dart';
 
 import '../viewmodel/exercise_history_edit_screen_view_model.dart';
@@ -8,6 +9,7 @@ import '../viewmodel/exercise_history_edit_screen_view_model.dart';
 /// ```dart
 /// ref.watch(ExerciseHistoryEditScreenProviders.entity);
 /// ```
+@internal
 final class ExerciseHistoryEditScreenProviders {
   /// ViewModel の entity を監視する。
   static final entity = StateStreamProvider.autoDispose.stateBy(

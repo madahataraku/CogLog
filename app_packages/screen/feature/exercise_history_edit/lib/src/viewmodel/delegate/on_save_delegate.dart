@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_update_exercise_history/usecase_update_exercise_history.dart';
@@ -15,6 +16,7 @@ import '../state/exercise_history_edit_screen_state.dart';
 ///   navigation: navigation,
 /// ).execute();
 /// ```
+@internal
 final class OnSaveDelegate {
   /// 保存と遷移の依存を受け取る。
   ///

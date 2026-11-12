@@ -84,9 +84,15 @@ final class DeleteExerciseHistoryUsecaseImpl
       }
 
       final now = DateTime.now();
-      final autoUpdate = await evaluateAutoUpdate.execute(
-        EvaluateDailyGoalAutoUpdateRequest(now: now),
-      );
+      var goalAutoUpdated = false;
+      try {
+        final autoUpdate = await evaluateAutoUpdate.execute(
+          EvaluateDailyGoalAutoUpdateRequest(now: now),
+        );
+        goalAutoUpdated = autoUpdate.applied;
+      } on Object {
+        // 目標評価失敗で、削除済みを notFoundOrFailed にしない。
+      }
       try {
         await syncReminder.execute(SyncExerciseReminderRequest(now: now));
       } on Object {
@@ -100,12 +106,13 @@ final class DeleteExerciseHistoryUsecaseImpl
         );
         newlyUnlocked = evaluated.newlyUnlocked;
       } on Object {
+        // アチーブメント評価失敗でも削除 success を維持するため newly を空にする。
         newlyUnlocked = const [];
       }
 
       return DeleteExerciseHistoryResult(
         outcome: DeleteExerciseHistoryOutcome.success,
-        goalAutoUpdated: autoUpdate.applied,
+        goalAutoUpdated: goalAutoUpdated,
         newlyUnlockedAchievements: newlyUnlocked,
       );
     } on Object {

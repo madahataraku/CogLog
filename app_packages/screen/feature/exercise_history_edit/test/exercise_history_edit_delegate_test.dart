@@ -165,6 +165,32 @@ void main() {
     expect(state.state.dirty, isTrue);
   });
 
+  test('不正な記録日時のあと距離を直しても inputsInvalid が残る', () async {
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          distanceKm: 1,
+          duration: const Duration(hours: 1),
+          averageSpeedKmh: 1,
+          caloriesKcal: 1,
+          recordedAt: DateTime(2026, 11, 5),
+          creationStartedAt: DateTime(2026, 11, 5),
+          capturedAt: DateTime(2026, 11, 5),
+        ),
+      );
+    });
+    final fields = OnFieldChangedDelegate(state: state);
+    await fields.updateRecordedAt('not-a-date');
+    expect(state.state.inputsInvalid, isTrue);
+    expect(state.state.recordedAtInvalid, isTrue);
+
+    await fields.updateDistance('2');
+    expect(state.state.distanceKm, 2);
+    expect(state.state.distanceInvalid, isFalse);
+    expect(state.state.recordedAtInvalid, isTrue);
+    expect(state.state.inputsInvalid, isTrue);
+  });
+
   test('保存成功で PopResult を返す', () async {
     final nav = _Nav();
     final update = _Update();

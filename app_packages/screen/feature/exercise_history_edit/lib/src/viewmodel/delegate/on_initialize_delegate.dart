@@ -1,4 +1,5 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 
@@ -13,6 +14,7 @@ import '../state/exercise_history_edit_screen_state.dart';
 ///   loadDetailUsecase: loadDetailUsecase,
 /// ).execute(id: 'id');
 /// ```
+@internal
 final class OnInitializeDelegate {
   /// [state] と詳細 Usecase を受け取る。
   ///
@@ -120,7 +122,7 @@ ExerciseHistoryEditScreenState _fromHistory({
     loadError: false,
     dirty: false,
     saveError: false,
-    inputsInvalid: false,
+    clearInputInvalidFlags: true,
     showHandEntryGuidance: false,
     photoPath: photoAbsolutePath,
     clearPhotoPath: photoAbsolutePath == null,

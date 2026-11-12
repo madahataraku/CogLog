@@ -1,4 +1,5 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
@@ -18,6 +19,7 @@ import '../state/exercise_history_edit_screen_state.dart';
 ///   source: ObtainMeterPhotoSource.library,
 /// );
 /// ```
+@internal
 Future<void> obtainAndReadEditPhoto({
   required MutableStateStream<ExerciseHistoryEditScreenState> state,
   required ObtainMeterPhotoUsecase obtainMeterPhotoUsecase,
@@ -124,7 +126,7 @@ Future<void> obtainAndReadEditPhoto({
             averageSpeedKmh: speed,
             clearAverageSpeedKmh: speed == null,
             showHandEntryGuidance: needsMeterHandEntryGuidance(values),
-            inputsInvalid: false,
+            clearInputInvalidFlags: true,
             dirty: true,
           ),
         );

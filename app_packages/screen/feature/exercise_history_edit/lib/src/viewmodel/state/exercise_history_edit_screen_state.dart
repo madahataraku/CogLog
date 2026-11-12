@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 
 /// 運動履歴編集画面の作業中状態。
@@ -8,6 +9,7 @@ import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 /// ```dart
 /// ExerciseHistoryEditScreenState.initial(id: 'id');
 /// ```
+@internal
 final class ExerciseHistoryEditScreenState {
   /// 編集中の値と読込／保存フラグを持つ。
   ///
@@ -24,7 +26,10 @@ final class ExerciseHistoryEditScreenState {
     required this.reading,
     required this.dirty,
     required this.saveError,
-    required this.inputsInvalid,
+    required this.distanceInvalid,
+    required this.durationInvalid,
+    required this.caloriesInvalid,
+    required this.recordedAtInvalid,
     required this.showHandEntryGuidance,
     required this.photoPath,
     required this.photoBytes,
@@ -56,7 +61,10 @@ final class ExerciseHistoryEditScreenState {
         reading: false,
         dirty: false,
         saveError: false,
-        inputsInvalid: false,
+        distanceInvalid: false,
+        durationInvalid: false,
+        caloriesInvalid: false,
+        recordedAtInvalid: false,
         showHandEntryGuidance: false,
         photoPath: null,
         photoBytes: null,
@@ -96,8 +104,24 @@ final class ExerciseHistoryEditScreenState {
   /// 保存失敗を示すか。
   final bool saveError;
 
-  /// 入力が不正で保存できないか。
-  final bool inputsInvalid;
+  /// 走行距離入力が不正か。
+  final bool distanceInvalid;
+
+  /// 運動時間入力が不正か。
+  final bool durationInvalid;
+
+  /// 消費カロリー入力が不正か。
+  final bool caloriesInvalid;
+
+  /// 記録日時入力が不正か。
+  final bool recordedAtInvalid;
+
+  /// いずれかの入力が不正で保存できないか。
+  bool get inputsInvalid =>
+      distanceInvalid ||
+      durationInvalid ||
+      caloriesInvalid ||
+      recordedAtInvalid;
 
   /// 手打ち案内を出すか。
   final bool showHandEntryGuidance;
@@ -153,7 +177,11 @@ final class ExerciseHistoryEditScreenState {
     bool? reading,
     bool? dirty,
     bool? saveError,
-    bool? inputsInvalid,
+    bool? distanceInvalid,
+    bool? durationInvalid,
+    bool? caloriesInvalid,
+    bool? recordedAtInvalid,
+    bool clearInputInvalidFlags = false,
     bool? showHandEntryGuidance,
     String? photoPath,
     bool clearPhotoPath = false,
@@ -187,7 +215,18 @@ final class ExerciseHistoryEditScreenState {
     reading: reading ?? this.reading,
     dirty: dirty ?? this.dirty,
     saveError: saveError ?? this.saveError,
-    inputsInvalid: inputsInvalid ?? this.inputsInvalid,
+    distanceInvalid: clearInputInvalidFlags
+        ? false
+        : (distanceInvalid ?? this.distanceInvalid),
+    durationInvalid: clearInputInvalidFlags
+        ? false
+        : (durationInvalid ?? this.durationInvalid),
+    caloriesInvalid: clearInputInvalidFlags
+        ? false
+        : (caloriesInvalid ?? this.caloriesInvalid),
+    recordedAtInvalid: clearInputInvalidFlags
+        ? false
+        : (recordedAtInvalid ?? this.recordedAtInvalid),
     showHandEntryGuidance: showHandEntryGuidance ?? this.showHandEntryGuidance,
     photoPath: clearPhotoPath ? null : (photoPath ?? this.photoPath),
     photoBytes: clearPhotoBytes ? null : (photoBytes ?? this.photoBytes),

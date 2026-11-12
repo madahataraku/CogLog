@@ -259,6 +259,28 @@ final class DriftExerciseHistoryRepository
     return (await _byId(id))!;
   }
 
+  /// [healthWorkoutId] だけを付け替える。未知 ID は [StateError]。
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  }) async {
+    final existing = await _byId(id);
+    if (existing == null) {
+      throw StateError('運動履歴が無い: $id');
+    }
+    final updated =
+        await (_db.update(
+          _db.exerciseHistories,
+        )..where((t) => t.id.equals(id))).write(
+          ExerciseHistoriesCompanion(healthWorkoutId: Value(healthWorkoutId)),
+        );
+    if (updated == 0) {
+      throw StateError('運動履歴が無い: $id');
+    }
+    return (await _byId(id))!;
+  }
+
   /// 写真を消してから行を削除する。未知 ID は [StateError]。
   @override
   Future<void> delete(String id) async {

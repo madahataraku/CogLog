@@ -11,10 +11,20 @@ import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.da
 import 'package:usecase_update_exercise_history/usecase_update_exercise_history.dart';
 import 'package:usecase_update_exercise_history_impl/usecase_update_exercise_history_impl.dart';
 
+/// 目標自動更新の呼び出し回数と適用結果を記録する。
 final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
+  /// [applied] を返す偽実装を作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _FakeEvaluate(applied: true);
+  /// ```
   _FakeEvaluate({this.applied = false});
 
+  /// [execute] が返す適用結果。
   final bool applied;
+
+  /// [execute] の呼び出し回数。
   int callCount = 0;
 
   @override
@@ -26,7 +36,17 @@ final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
   }
 }
 
+/// アチーブメント評価の呼び出し回数を記録する。
 final class _FakeEvaluateAchievements implements EvaluateAchievementsUsecase {
+  /// 呼び出し回数を数える偽実装を作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _FakeEvaluateAchievements();
+  /// ```
+  _FakeEvaluateAchievements();
+
+  /// [execute] の呼び出し回数。
   int callCount = 0;
 
   @override
@@ -38,7 +58,17 @@ final class _FakeEvaluateAchievements implements EvaluateAchievementsUsecase {
   }
 }
 
+/// リマインド同期の呼び出し回数を記録する。
 final class _FakeSync implements SyncExerciseReminderUsecase {
+  /// 呼び出し回数を数える偽実装を作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _FakeSync();
+  /// ```
+  _FakeSync();
+
+  /// [execute] の呼び出し回数。
   int callCount = 0;
 
   @override
@@ -85,6 +115,12 @@ void main() {
   final recordedAt = DateTime.utc(2026, 11, 8, 10, 1);
   final photo = Uint8List.fromList([1, 2, 3]);
 
+  /// 既定の計測値で履歴を 1 件作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// await seed(histories, healthWorkoutId: 'health-1');
+  /// ```
   Future<ExerciseHistory> seed(
     MemoryExerciseHistoryRepository histories, {
     String? healthWorkoutId,
@@ -107,6 +143,12 @@ void main() {
     );
   }
 
+  /// [existing] を基に更新リクエストを組み立てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// requestFor(existing, distanceKm: 12);
+  /// ```
   UpdateExerciseHistoryRequest requestFor(
     ExerciseHistory existing, {
     DateTime? recorded,
@@ -115,16 +157,21 @@ void main() {
     double caloriesKcal = 200,
     Uint8List? photoBytes,
     DateTime? captured,
+    DateTime? creationStarted,
+    String? previousHealthWorkoutId,
+    bool overridePreviousHealthWorkoutId = false,
   }) {
     return UpdateExerciseHistoryRequest(
       id: existing.id,
-      creationStartedAt: existing.creationStartedAt,
+      creationStartedAt: creationStarted ?? existing.creationStartedAt,
       capturedAt: captured ?? existing.capturedAt,
       recordedAt: recorded ?? existing.recordedAt,
       distanceKm: distanceKm,
       duration: duration,
       caloriesKcal: caloriesKcal,
-      previousHealthWorkoutId: existing.healthWorkoutId,
+      previousHealthWorkoutId: overridePreviousHealthWorkoutId
+          ? previousHealthWorkoutId
+          : existing.healthWorkoutId,
       photoBytes: photoBytes,
     );
   }
@@ -322,6 +369,100 @@ void main() {
     expect(health.updateCallCount, 0);
     expect(evaluate.callCount, 0);
   });
+
+  test('平均速度が Infinity なら invalidInput', () async {
+    final histories = MemoryExerciseHistoryRepository();
+    final existing = await seed(histories);
+    final health = FakeHealthWorkoutWriter();
+    final evaluate = _FakeEvaluate();
+    final achievements = _FakeEvaluateAchievements();
+    final sync = _FakeSync();
+
+    final result =
+        await UpdateExerciseHistoryUsecaseImpl(
+          histories: histories,
+          health: health,
+          evaluateAutoUpdate: evaluate,
+          evaluateAchievements: achievements,
+          syncReminder: sync,
+        ).execute(
+          requestFor(
+            existing,
+            distanceKm: 1e308,
+            duration: const Duration(seconds: 1),
+          ),
+        );
+
+    expect(result.outcome, UpdateExerciseHistoryOutcome.invalidInput);
+    expect(health.updateCallCount, 0);
+    expect(evaluate.callCount, 0);
+  });
+
+  test('更新時は existing の healthWorkoutId を使い request の古い値で消さない', () async {
+    final histories = MemoryExerciseHistoryRepository();
+    final existing = await seed(histories, healthWorkoutId: null);
+    await histories.attachHealthWorkoutId(
+      id: existing.id,
+      healthWorkoutId: 'health-late',
+    );
+    final health = FakeHealthWorkoutWriter();
+    final evaluate = _FakeEvaluate();
+    final achievements = _FakeEvaluateAchievements();
+    final sync = _FakeSync();
+
+    final result =
+        await UpdateExerciseHistoryUsecaseImpl(
+          histories: histories,
+          health: health,
+          evaluateAutoUpdate: evaluate,
+          evaluateAchievements: achievements,
+          syncReminder: sync,
+        ).execute(
+          requestFor(
+            existing,
+            overridePreviousHealthWorkoutId: true,
+            previousHealthWorkoutId: null,
+          ),
+        );
+
+    expect(result.outcome, UpdateExerciseHistoryOutcome.success);
+    expect(result.history!.healthWorkoutId, 'health-late');
+    expect(health.updateCallCount, 1);
+    expect(health.lastExternalId, 'health-late');
+  });
+
+  test(
+    'photoBytes null なら capturedAt と creationStartedAt を existing のまま保つ',
+    () async {
+      final histories = MemoryExerciseHistoryRepository();
+      final existing = await seed(histories);
+      final health = FakeHealthWorkoutWriter();
+      final evaluate = _FakeEvaluate();
+      final achievements = _FakeEvaluateAchievements();
+      final sync = _FakeSync();
+      final staleCreation = DateTime.utc(2020, 1, 1);
+      final staleCaptured = DateTime.utc(2020, 1, 2);
+
+      final result =
+          await UpdateExerciseHistoryUsecaseImpl(
+            histories: histories,
+            health: health,
+            evaluateAutoUpdate: evaluate,
+            evaluateAchievements: achievements,
+            syncReminder: sync,
+          ).execute(
+            requestFor(
+              existing,
+              creationStarted: staleCreation,
+              captured: staleCaptured,
+            ),
+          );
+
+      expect(result.outcome, UpdateExerciseHistoryOutcome.success);
+      expect(result.history!.creationStartedAt, existing.creationStartedAt);
+      expect(result.history!.capturedAt, existing.capturedAt);
+    },
+  );
 
   test('未知 id は saveFailed', () async {
     final histories = MemoryExerciseHistoryRepository();

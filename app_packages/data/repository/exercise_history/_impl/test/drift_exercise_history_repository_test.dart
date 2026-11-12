@@ -156,6 +156,34 @@ void main() {
     expect(await repo.findById(created.id), isNull);
   });
 
+  test('attachHealthWorkoutId は他フィールドを変えずに ID だけ付ける', () async {
+    final created = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 5),
+      capturedAt: DateTime.utc(2026, 11, 5),
+      recordedAt: DateTime.utc(2026, 11, 5),
+      recordedAtManuallySet: false,
+      distanceKm: 3,
+      duration: const Duration(minutes: 6),
+      caloriesKcal: 30,
+      averageSpeedKmh: 30,
+      healthWorkoutId: null,
+      photoBytes: Uint8List.fromList([1]),
+    );
+
+    final attached = await repo.attachHealthWorkoutId(
+      id: created.id,
+      healthWorkoutId: 'health-attach',
+    );
+    expect(attached.healthWorkoutId, 'health-attach');
+    expect(attached.distanceKm, created.distanceKm);
+    expect(attached.duration, created.duration);
+    expect(attached.caloriesKcal, created.caloriesKcal);
+    expect(attached.savedAt, created.savedAt);
+    expect(attached.capturedAt, created.capturedAt);
+
+    await repo.delete(created.id);
+  });
+
   test('update で写真置換するとファイル内容が新 bytes', () async {
     final created = await repo.create(
       creationStartedAt: DateTime.utc(2026, 11, 5),
