@@ -595,6 +595,14 @@ final class L10nHelper {
         index++;
         return l10n.screen_feature_exercise_history_count_badge(count);
       },
+      'screen_feature_exercise_history_detail_action_delete': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_action_delete;
+      },
+      'screen_feature_exercise_history_detail_action_edit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_action_edit;
+      },
       'screen_feature_exercise_history_detail_average_speed': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_average_speed;
@@ -622,6 +630,27 @@ final class L10nHelper {
       'screen_feature_exercise_history_detail_created_at': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_created_at;
+      },
+      'screen_feature_exercise_history_detail_delete_confirm_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_delete_confirm_body;
+      },
+      'screen_feature_exercise_history_detail_delete_confirm_cancel': (source) {
+        // No Placeholders
+        return l10n
+            .screen_feature_exercise_history_detail_delete_confirm_cancel;
+      },
+      'screen_feature_exercise_history_detail_delete_confirm_ok': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_delete_confirm_ok;
+      },
+      'screen_feature_exercise_history_detail_delete_confirm_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_delete_confirm_title;
+      },
+      'screen_feature_exercise_history_detail_delete_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_detail_delete_failed;
       },
       'screen_feature_exercise_history_detail_distance': (source) {
         // No Placeholders
@@ -682,6 +711,114 @@ final class L10nHelper {
       'screen_feature_exercise_history_detail_title': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_detail_title;
+      },
+      'screen_feature_exercise_history_edit_average_speed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_average_speed;
+      },
+      'screen_feature_exercise_history_edit_back': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_back;
+      },
+      'screen_feature_exercise_history_edit_calories': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_calories;
+      },
+      'screen_feature_exercise_history_edit_discard_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_discard_body;
+      },
+      'screen_feature_exercise_history_edit_discard_cancel': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_discard_cancel;
+      },
+      'screen_feature_exercise_history_edit_discard_ok': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_discard_ok;
+      },
+      'screen_feature_exercise_history_edit_discard_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_discard_title;
+      },
+      'screen_feature_exercise_history_edit_distance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_distance;
+      },
+      'screen_feature_exercise_history_edit_duration_hours': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_duration_hours;
+      },
+      'screen_feature_exercise_history_edit_duration_minutes': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_duration_minutes;
+      },
+      'screen_feature_exercise_history_edit_duration_seconds': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_duration_seconds;
+      },
+      'screen_feature_exercise_history_edit_hand_entry_guidance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_hand_entry_guidance;
+      },
+      'screen_feature_exercise_history_edit_load_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_load_failed;
+      },
+      'screen_feature_exercise_history_edit_missing': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_missing;
+      },
+      'screen_feature_exercise_history_edit_open_settings': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_open_settings;
+      },
+      'screen_feature_exercise_history_edit_permission_camera': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_permission_camera;
+      },
+      'screen_feature_exercise_history_edit_permission_library': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_permission_library;
+      },
+      'screen_feature_exercise_history_edit_photo': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_photo;
+      },
+      'screen_feature_exercise_history_edit_photo_error': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_photo_error;
+      },
+      'screen_feature_exercise_history_edit_pick_library': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_pick_library;
+      },
+      'screen_feature_exercise_history_edit_reading': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_reading;
+      },
+      'screen_feature_exercise_history_edit_recorded_at': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_recorded_at;
+      },
+      'screen_feature_exercise_history_edit_retake': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_retake;
+      },
+      'screen_feature_exercise_history_edit_retry': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_retry;
+      },
+      'screen_feature_exercise_history_edit_save': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_save;
+      },
+      'screen_feature_exercise_history_edit_save_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_save_failed;
+      },
+      'screen_feature_exercise_history_edit_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_title;
       },
       'screen_feature_exercise_history_error': (source) {
         // No Placeholders

@@ -10,6 +10,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_exercise_history_detail/screen_feature_exercise_history_detail.dart';
 import 'package:screen_navigation/screen_navigation.dart';
+import 'package:usecase_delete_exercise_history/usecase_delete_exercise_history.dart';
 import 'package:usecase_load_exercise_histories_for_same_recorded_day/usecase_load_exercise_histories_for_same_recorded_day.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 import 'package:usecase_load_exercise_history_detail_impl/usecase_load_exercise_history_detail_impl.dart';
@@ -17,6 +18,11 @@ import 'package:usecase_load_exercise_history_detail_impl/usecase_load_exercise_
 final class _Nav implements ScreenNavigation {
   @override
   void openExerciseHistoryDetail({required String id}) {}
+
+  @override
+  Future<ExerciseHistoryEditPopResult?> openExerciseHistoryEditAndWait({
+    required String id,
+  }) async => null;
 
   @override
   void openAppSettings() {}
@@ -38,6 +44,9 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void pop() {}
+
+  @override
+  void popWithResult<T extends Object?>(T result) {}
 
   @override
   void goToHomeTab() {}
@@ -109,6 +118,15 @@ Widget _wrap(Widget child) => MaterialApp(
   ),
 );
 
+final class _NoopDelete implements DeleteExerciseHistoryUsecase {
+  @override
+  Future<DeleteExerciseHistoryResult> execute(
+    DeleteExerciseHistoryRequest request,
+  ) async => const DeleteExerciseHistoryResult(
+    outcome: DeleteExerciseHistoryOutcome.success,
+  );
+}
+
 List<Override> _detailOverrides({
   required LoadExerciseHistoryDetailUsecase detail,
   required LoadExerciseHistoriesForSameRecordedDayUsecase sameDay,
@@ -117,6 +135,7 @@ List<Override> _detailOverrides({
   LoadExerciseHistoriesForSameRecordedDayUsecase.provider.overrideWith(
     (ref) => sameDay,
   ),
+  DeleteExerciseHistoryUsecase.provider.overrideWith((ref) => _NoopDelete()),
   screenNavigationProvider.overrideWithValue(_Nav()),
 ];
 

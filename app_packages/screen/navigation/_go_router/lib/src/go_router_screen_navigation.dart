@@ -4,6 +4,7 @@ import 'package:screen_feature_app_settings/screen_feature_app_settings.dart';
 import 'package:screen_feature_debug/screen_feature_debug.dart';
 import 'package:screen_feature_exercise_history/screen_feature_exercise_history.dart';
 import 'package:screen_feature_exercise_history_detail/screen_feature_exercise_history_detail.dart';
+import 'package:screen_feature_exercise_history_edit/screen_feature_exercise_history_edit.dart';
 import 'package:screen_feature_goal_settings/screen_feature_goal_settings.dart';
 import 'package:screen_feature_main/screen_feature_main.dart';
 import 'package:screen_feature_meter_capture/screen_feature_meter_capture.dart';
@@ -118,6 +119,15 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                       builder: (context, state) => ExerciseHistoryDetailScreen(
                         id: state.pathParameters['id']!,
                       ),
+                      routes: [
+                        GoRoute(
+                          path: 'edit',
+                          builder: (context, state) =>
+                              ExerciseHistoryEditScreen(
+                                id: state.pathParameters['id']!,
+                              ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -152,6 +162,21 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   @override
   void openExerciseHistoryDetail({required String id}) {
     router.push('/exercise-history/detail/$id');
+  }
+
+  /// 運動履歴編集画面を積み、閉じるまで待つ。
+  ///
+  /// Example:
+  /// ```dart
+  /// await navigation.openExerciseHistoryEditAndWait(id: 'id');
+  /// ```
+  @override
+  Future<ExerciseHistoryEditPopResult?> openExerciseHistoryEditAndWait({
+    required String id,
+  }) {
+    return router.push<ExerciseHistoryEditPopResult>(
+      '/exercise-history/detail/$id/edit',
+    );
   }
 
   /// アプリ設定をホームタブのスタックへ積む。
@@ -234,6 +259,22 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   @override
   void pop() {
     router.pop();
+  }
+
+  /// 現在のスタックを [result] 付きで 1 つ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.popWithResult(
+  ///   const ExerciseHistoryEditPopResult(
+  ///     saved: true,
+  ///     recordedLocalDayChanged: false,
+  ///   ),
+  /// );
+  /// ```
+  @override
+  void popWithResult<T extends Object?>(T result) {
+    router.pop(result);
   }
 
   /// ホームタブの初期位置へ切り替える。

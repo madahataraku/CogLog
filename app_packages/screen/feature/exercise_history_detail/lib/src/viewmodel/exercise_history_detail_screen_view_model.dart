@@ -4,11 +4,14 @@ import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
+import 'package:usecase_delete_exercise_history/usecase_delete_exercise_history.dart';
 import 'package:usecase_load_exercise_histories_for_same_recorded_day/usecase_load_exercise_histories_for_same_recorded_day.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 
 import 'delegate/exercise_history_detail_state_to_entity_delegate.dart';
 import 'delegate/on_back_delegate.dart';
+import 'delegate/on_delete_delegate.dart';
+import 'delegate/on_edit_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_page_changed_delegate.dart';
 import 'delegate/on_retry_delegate.dart';
@@ -44,6 +47,7 @@ final class ExerciseHistoryDetailScreenViewModel {
             loadSameDayUsecase: ref.watch(
               LoadExerciseHistoriesForSameRecordedDayUsecase.provider,
             ),
+            deleteUsecase: ref.watch(DeleteExerciseHistoryUsecase.provider),
             navigation: ref.watch(screenNavigationProvider),
             stateToEntity: const ExerciseHistoryDetailStateToEntityDelegate(),
           );
@@ -55,6 +59,7 @@ final class ExerciseHistoryDetailScreenViewModel {
         dependencies: [
           LoadExerciseHistoryDetailUsecase.provider,
           LoadExerciseHistoriesForSameRecordedDayUsecase.provider,
+          DeleteExerciseHistoryUsecase.provider,
           screenNavigationProvider,
         ],
       );
@@ -71,7 +76,11 @@ final class ExerciseHistoryDetailScreenViewModel {
   @visibleForTesting
   final LoadExerciseHistoriesForSameRecordedDayUsecase loadSameDayUsecase;
 
-  /// 戻る遷移。
+  /// 運動履歴の削除。
+  @visibleForTesting
+  final DeleteExerciseHistoryUsecase deleteUsecase;
+
+  /// 戻る・編集遷移。
   @visibleForTesting
   final ScreenNavigation navigation;
 
@@ -89,6 +98,7 @@ final class ExerciseHistoryDetailScreenViewModel {
     required this.state,
     required this.loadDetailUsecase,
     required this.loadSameDayUsecase,
+    required this.deleteUsecase,
     required this.navigation,
     required this.stateToEntity,
   });

@@ -1,0 +1,36 @@
+name: screen_feature_exercise_history_edit
+description: CogLog Exercise history edit screen.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  domain_exercise_history: any
+  flutter:
+    sdk: flutter
+  flutter_hooks: any
+  forui: any
+  hooks_riverpod: any
+  material_ui: any
+  meta: any
+  monolith_localization_runtime: any
+  riverpod: any
+  screen_navigation: any
+  state_stream: any
+  state_stream_riverpod: any
+  usecase_load_exercise_history_detail: any
+  usecase_obtain_meter_photo: any
+  usecase_open_app_settings: any
+  usecase_read_meter_panel: any
+  usecase_update_exercise_history: any
+  view_confirm_dialog: any
+
+dev_dependencies:
+  foundation_resources: any
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

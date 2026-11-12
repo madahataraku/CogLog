@@ -22,8 +22,10 @@ dependencies:
   screen_navigation: any
   state_stream: any
   state_stream_riverpod: any
+  usecase_delete_exercise_history: any
   usecase_load_exercise_histories_for_same_recorded_day: any
   usecase_load_exercise_history_detail: any
+  view_confirm_dialog: any
 
 dev_dependencies:
   data_repository_exercise_history_testing: any

@@ -6,6 +6,7 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:view_confirm_dialog/view_confirm_dialog.dart';
 
 import '../strings.dart';
 import '../viewmodel/entity/exercise_history_detail_screen_entity.dart';
@@ -44,10 +45,47 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
       keys: [entity.pageTotal, entity.showPagePosition],
     );
 
+    Future<void> confirmDelete() async {
+      final ok = await showConfirmDialog(
+        context,
+        title:
+            strings.screen_feature_exercise_history_detail_delete_confirm_title,
+        body:
+            strings.screen_feature_exercise_history_detail_delete_confirm_body,
+        confirmLabel:
+            strings.screen_feature_exercise_history_detail_delete_confirm_ok,
+        cancelLabel: strings
+            .screen_feature_exercise_history_detail_delete_confirm_cancel,
+      );
+      if (ok) {
+        await viewModel.onDelete();
+      }
+    }
+
     return FScaffold(
       header: FHeader.nested(
         title: Text(strings.screen_feature_exercise_history_detail_title),
         prefixes: [FHeaderAction.back(onPress: viewModel.onBack)],
+        suffixes: [
+          if (entity.showHeaderActions) ...[
+            FHeaderAction(
+              icon: const Icon(FLucideIcons.pencil),
+              onPress: entity.headerActionsEnabled ? viewModel.onEdit : null,
+              semanticsLabel:
+                  strings.screen_feature_exercise_history_detail_action_edit,
+            ),
+            FHeaderAction(
+              icon: const Icon(FLucideIcons.trash2),
+              onPress: entity.headerActionsEnabled
+                  ? () {
+                      unawaited(confirmDelete());
+                    }
+                  : null,
+              semanticsLabel:
+                  strings.screen_feature_exercise_history_detail_action_delete,
+            ),
+          ],
+        ],
       ),
       child: entity.showLoading
           ? const Center(child: FCircularProgress())
@@ -170,84 +208,89 @@ final class _DetailFields extends StatelessWidget {
   final ExerciseHistoryDetailScreenEntity entity;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    spacing: 12,
-    children: [
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_calories,
-        value: entity.caloriesText,
-      ),
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_duration,
-        value: entity.durationText,
-      ),
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_distance,
-        value: entity.distanceText,
-      ),
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_created_at,
-        value: entity.createdAtText,
-      ),
-      Text(
-        strings.screen_feature_exercise_history_detail_photo,
-        style: context.theme.typography.body.sm.copyWith(
-          color: context.theme.colors.mutedForeground,
+  Widget build(BuildContext context) {
+    final maxPhotoHeight = MediaQuery.sizeOf(context).height * 0.3;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (entity.actionErrorText != null) ...[
+          FAlert(variant: .destructive, title: Text(entity.actionErrorText!)),
+          const SizedBox(height: 16),
+        ],
+        if (entity.showPhoto)
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxPhotoHeight),
+            child: Image.file(
+              File(entity.photoPath!),
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => Text(
+                strings.screen_feature_exercise_history_detail_photo_error,
+              ),
+            ),
+          )
+        else if (entity.showPhotoError)
+          Text(strings.screen_feature_exercise_history_detail_photo_error),
+        const SizedBox(height: 16),
+        FTileGroup(
+          children: [
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_calories,
+              ),
+              subtitle: Text(entity.caloriesText),
+            ),
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_duration,
+              ),
+              subtitle: Text(entity.durationText),
+            ),
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_distance,
+              ),
+              subtitle: Text(entity.distanceText),
+            ),
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_average_speed,
+              ),
+              subtitle: Text(entity.averageSpeedText),
+            ),
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_recorded_at,
+              ),
+              subtitle: Text(
+                '${entity.recordedAtText}${entity.recordedAtEditedSuffix}',
+              ),
+            ),
+          ],
         ),
-      ),
-      if (entity.showPhoto)
-        Image.file(
-          File(entity.photoPath!),
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) =>
-              Text(strings.screen_feature_exercise_history_detail_photo_error),
-        )
-      else if (entity.showPhotoError)
-        Text(strings.screen_feature_exercise_history_detail_photo_error),
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_captured_at,
-        value: entity.capturedAtText,
-      ),
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_average_speed,
-        value: entity.averageSpeedText,
-      ),
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_recorded_at,
-        value: '${entity.recordedAtText}${entity.recordedAtEditedSuffix}',
-      ),
-      _Field(
-        label: strings.screen_feature_exercise_history_detail_saved_at,
-        value: entity.savedAtText,
-      ),
-    ],
-  );
-}
-
-/// ラベルと値の 1 行。
-final class _Field extends StatelessWidget {
-  /// [label] と [value] を縦に積む。
-  const _Field({required this.label, required this.value});
-
-  /// 項目名。
-  final String label;
-
-  /// 表示値。
-  final String value;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    spacing: 4,
-    children: [
-      Text(
-        label,
-        style: context.theme.typography.body.sm.copyWith(
-          color: context.theme.colors.mutedForeground,
+        const SizedBox(height: 24),
+        FTileGroup(
+          children: [
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_captured_at,
+              ),
+              subtitle: Text(entity.capturedAtText),
+            ),
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_saved_at,
+              ),
+              subtitle: Text(entity.savedAtText),
+            ),
+            FTile(
+              title: Text(
+                strings.screen_feature_exercise_history_detail_created_at,
+              ),
+              subtitle: Text(entity.createdAtText),
+            ),
+          ],
         ),
-      ),
-      Text(value, style: context.theme.typography.body.md),
-    ],
-  );
+      ],
+    );
+  }
 }

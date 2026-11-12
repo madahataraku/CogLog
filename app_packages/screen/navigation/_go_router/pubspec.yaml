@@ -18,6 +18,7 @@ dependencies:
   screen_feature_debug: any
   screen_feature_exercise_history: any
   screen_feature_exercise_history_detail: any
+  screen_feature_exercise_history_edit: any
   screen_feature_goal_settings: any
   screen_feature_main: any
   screen_feature_meter_capture: any

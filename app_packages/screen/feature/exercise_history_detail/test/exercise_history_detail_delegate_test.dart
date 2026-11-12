@@ -290,6 +290,9 @@ void main() {
         photoAbsolutePath: null,
         missing: false,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       ),
     );
     expect(multi.showPagePosition, isTrue);
@@ -313,6 +316,9 @@ void main() {
         photoAbsolutePath: null,
         missing: false,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       ),
     );
     expect(single.showPagePosition, isFalse);
@@ -334,6 +340,9 @@ void main() {
         photoAbsolutePath: null,
         missing: true,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       ),
     );
     expect(entity.showMissing, isTrue);

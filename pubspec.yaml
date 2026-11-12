@@ -137,6 +137,7 @@ workspace:
   - app_packages/usecase/save_notification_settings
   - app_packages/usecase/save_notification_settings/_impl
   - app_packages/screen/feature/exercise_history_detail
+  - app_packages/screen/feature/exercise_history_edit
 
 
 # 実効バージョンはここで揃える。子パッケージの依存は any。

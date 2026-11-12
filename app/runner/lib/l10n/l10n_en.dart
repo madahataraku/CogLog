@@ -493,6 +493,12 @@ class L10nEn extends L10n {
   }
 
   @override
+  String get screen_feature_exercise_history_detail_action_delete => 'Delete';
+
+  @override
+  String get screen_feature_exercise_history_detail_action_edit => 'Edit';
+
+  @override
   String get screen_feature_exercise_history_detail_average_speed =>
       'Average speed';
 
@@ -515,6 +521,26 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_exercise_history_detail_created_at => 'Created at';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_body =>
+      'The meter panel photo will also be deleted. This cannot be undone.';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_cancel =>
+      'Cancel';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_ok =>
+      'Delete';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_title =>
+      'Delete this exercise history?';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_failed =>
+      'Could not delete';
 
   @override
   String get screen_feature_exercise_history_detail_distance => 'Distance';
@@ -565,6 +591,101 @@ class L10nEn extends L10n {
   @override
   String get screen_feature_exercise_history_detail_title =>
       'Exercise history detail';
+
+  @override
+  String get screen_feature_exercise_history_edit_average_speed =>
+      'Average speed (km/h)';
+
+  @override
+  String get screen_feature_exercise_history_edit_back => 'Back';
+
+  @override
+  String get screen_feature_exercise_history_edit_calories => 'Calories (kcal)';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_body =>
+      'Unsaved changes will be lost.';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_cancel => 'Cancel';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_ok => 'Discard';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_title =>
+      'Discard changes?';
+
+  @override
+  String get screen_feature_exercise_history_edit_distance => 'Distance (km)';
+
+  @override
+  String get screen_feature_exercise_history_edit_duration_hours => 'Hours';
+
+  @override
+  String get screen_feature_exercise_history_edit_duration_minutes => 'Minutes';
+
+  @override
+  String get screen_feature_exercise_history_edit_duration_seconds => 'Seconds';
+
+  @override
+  String get screen_feature_exercise_history_edit_hand_entry_guidance =>
+      'Enter any values that could not be read by hand.';
+
+  @override
+  String get screen_feature_exercise_history_edit_load_failed =>
+      'Could not load for editing';
+
+  @override
+  String get screen_feature_exercise_history_edit_missing =>
+      'This exercise history was not found';
+
+  @override
+  String get screen_feature_exercise_history_edit_open_settings =>
+      'Open settings';
+
+  @override
+  String get screen_feature_exercise_history_edit_permission_camera =>
+      'Camera permission is required';
+
+  @override
+  String get screen_feature_exercise_history_edit_permission_library =>
+      'Photo library permission is required';
+
+  @override
+  String get screen_feature_exercise_history_edit_photo => 'Meter panel photo';
+
+  @override
+  String get screen_feature_exercise_history_edit_photo_error =>
+      'Could not show photo';
+
+  @override
+  String get screen_feature_exercise_history_edit_pick_library =>
+      'Choose from library';
+
+  @override
+  String get screen_feature_exercise_history_edit_reading => 'Reading…';
+
+  @override
+  String get screen_feature_exercise_history_edit_recorded_at => 'Recorded at';
+
+  @override
+  String get screen_feature_exercise_history_edit_retake =>
+      'Retake with camera';
+
+  @override
+  String get screen_feature_exercise_history_edit_retry => 'Retry';
+
+  @override
+  String get screen_feature_exercise_history_edit_save => 'Save';
+
+  @override
+  String get screen_feature_exercise_history_edit_save_failed =>
+      'Failed to save';
+
+  @override
+  String get screen_feature_exercise_history_edit_title =>
+      'Edit exercise history';
 
   @override
   String get screen_feature_exercise_history_error =>

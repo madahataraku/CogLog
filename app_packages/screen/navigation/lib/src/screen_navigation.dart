@@ -1,5 +1,7 @@
 import 'package:riverpod/riverpod.dart';
 
+import 'exercise_history_edit_pop_result.dart';
+
 /// 画面遷移の窓口。
 ///
 /// タブ切替は go_router の StatefulShellRoute が担う。
@@ -19,6 +21,20 @@ abstract interface class ScreenNavigation {
   /// );
   /// ```
   void openExerciseHistoryDetail({required String id});
+
+  /// 運動履歴編集画面を積み、閉じるまで待つ。
+  ///
+  /// 破棄・システム戻りのときは null。保存成功時は [ExerciseHistoryEditPopResult]。
+  ///
+  /// Example:
+  /// ```dart
+  /// final result = await navigation.openExerciseHistoryEditAndWait(
+  ///   id: '11111111-1111-4111-8111-111111111111',
+  /// );
+  /// ```
+  Future<ExerciseHistoryEditPopResult?> openExerciseHistoryEditAndWait({
+    required String id,
+  });
 
   /// アプリ設定をホームタブのスタックへ積む。
   ///
@@ -75,6 +91,19 @@ abstract interface class ScreenNavigation {
   /// navigation.pop();
   /// ```
   void pop();
+
+  /// 現在のスタックを [result] 付きで 1 つ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.popWithResult(
+  ///   const ExerciseHistoryEditPopResult(
+  ///     saved: true,
+  ///     recordedLocalDayChanged: false,
+  ///   ),
+  /// );
+  /// ```
+  void popWithResult<T extends Object?>(T result);
 
   /// ホームタブの初期位置へ切り替える。
   ///

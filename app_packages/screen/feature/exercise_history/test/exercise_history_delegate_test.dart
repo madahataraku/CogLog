@@ -65,6 +65,11 @@ final class _Nav implements ScreenNavigation {
   }
 
   @override
+  Future<ExerciseHistoryEditPopResult?> openExerciseHistoryEditAndWait({
+    required String id,
+  }) async => null;
+
+  @override
   void openAppSettings() {}
 
   @override
@@ -84,6 +89,9 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void pop() {}
+
+  @override
+  void popWithResult<T extends Object?>(T result) {}
 
   @override
   void goToHomeTab() {}
