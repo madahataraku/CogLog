@@ -751,6 +751,10 @@ class L10nEn extends L10n {
       'Daily goals were auto-updated';
 
   @override
+  String get screen_feature_meter_capture_hand_entry_guidance =>
+      'Enter any values that could not be read by hand.';
+
+  @override
   String get screen_feature_meter_capture_open_settings => 'Open settings';
 
   @override

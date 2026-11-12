@@ -11,6 +11,7 @@
 ///   caloriesText: '100',
 ///   recordedAtText: '2026-11-08T12:00:00.000',
 ///   pendingModelDownloadGuidance: false,
+///   showHandEntryGuidance: false,
 /// );
 /// ```
 final class MeterCaptureScreenEntity {
@@ -27,6 +28,7 @@ final class MeterCaptureScreenEntity {
   ///   caloriesText: '100',
   ///   recordedAtText: '2026-11-08T12:00:00.000',
   ///   pendingModelDownloadGuidance: false,
+  ///   showHandEntryGuidance: false,
   /// );
   /// ```
   const MeterCaptureScreenEntity({
@@ -38,6 +40,7 @@ final class MeterCaptureScreenEntity {
     required this.caloriesText,
     required this.recordedAtText,
     required this.pendingModelDownloadGuidance,
+    required this.showHandEntryGuidance,
   });
 
   /// 走行距離の表示文字列。
@@ -63,4 +66,7 @@ final class MeterCaptureScreenEntity {
 
   /// モデル未ダウンロード誘導を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
+
+  /// 手打ち案内を編集画面に出すとき true。
+  final bool showHandEntryGuidance;
 }

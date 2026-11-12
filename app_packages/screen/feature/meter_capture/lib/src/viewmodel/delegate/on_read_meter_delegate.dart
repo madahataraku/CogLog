@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
@@ -55,7 +54,8 @@ final class OnReadMeterDelegate {
 
   /// [photoBytes] を読み、結果を State に載せて edit へ移る。
   ///
-  /// `reading: true` の直後に誘導判定を開始するが、読み取り Future は待たない。
+  /// 誘導判定は読み取りと並行して開始し、読み取り完了後の手打ち案内表示だけ
+  /// 判定確定を待つ。読み取り自体は誘導を待たない。
   /// 例外時も空に近い値で 2 ステップ目へ進む。
   ///
   /// Example:
@@ -72,16 +72,21 @@ final class OnReadMeterDelegate {
       if (current.cameraSessionGeneration != generation) {
         return;
       }
-      await emitter.emit(current.copyWith(reading: true, saveError: false));
+      await emitter.emit(
+        current.copyWith(
+          reading: true,
+          saveError: false,
+          showHandEntryGuidance: false,
+        ),
+      );
     });
 
-    unawaited(
-      OnEvaluateModelDownloadGuidanceDelegate(
-        state: state,
-        evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
-        guidanceSession: guidanceSession,
-      ).execute(),
-    );
+    final presentedBeforeGuidance = guidanceSession.hasPresented;
+    final guidanceFuture = OnEvaluateModelDownloadGuidanceDelegate(
+      state: state,
+      evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+      guidanceSession: guidanceSession,
+    ).execute();
 
     ReadMeterPanelResult result;
     try {
@@ -96,6 +101,7 @@ final class OnReadMeterDelegate {
     }
 
     final values = result.values;
+    final needsGuidance = needsMeterHandEntryGuidance(values);
     await state.updateWithLock((current, emitter) async {
       if (current.cameraSessionGeneration != generation) {
         return;
@@ -115,8 +121,28 @@ final class OnReadMeterDelegate {
           averageSpeedFromPanel: result.averageSpeedFromPanel,
           averageSpeedUserEdited: false,
           saveError: false,
+          showHandEntryGuidance: false,
         ),
       );
+    });
+
+    await guidanceFuture;
+    if (!needsGuidance) {
+      return;
+    }
+    await state.updateWithLock((current, emitter) async {
+      if (current.cameraSessionGeneration != generation) {
+        return;
+      }
+      final presentedInThisRead =
+          !presentedBeforeGuidance && guidanceSession.hasPresented;
+      if (current.pendingModelDownloadGuidance || presentedInThisRead) {
+        return;
+      }
+      if (current.showHandEntryGuidance) {
+        return;
+      }
+      await emitter.emit(current.copyWith(showHandEntryGuidance: true));
     });
   }
 }

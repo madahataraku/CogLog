@@ -919,6 +919,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_meter_capture_goal_auto_updated;
       },
+      'screen_feature_meter_capture_hand_entry_guidance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_hand_entry_guidance;
+      },
       'screen_feature_meter_capture_open_settings': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_open_settings;

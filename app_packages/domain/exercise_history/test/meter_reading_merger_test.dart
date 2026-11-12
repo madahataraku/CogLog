@@ -35,4 +35,28 @@ void main() {
       isFalse,
     );
   });
+
+  test('手打ち案内はコア未完了のとき true', () {
+    expect(needsMeterHandEntryGuidance(const MeterReadingValues()), isTrue);
+    expect(
+      needsMeterHandEntryGuidance(
+        const MeterReadingValues(
+          distanceKm: 1,
+          duration: Duration.zero,
+          caloriesKcal: 1,
+        ),
+      ),
+      isTrue,
+    );
+    expect(
+      needsMeterHandEntryGuidance(
+        const MeterReadingValues(
+          distanceKm: 1,
+          duration: Duration(minutes: 1),
+          caloriesKcal: 1,
+        ),
+      ),
+      isFalse,
+    );
+  });
 }

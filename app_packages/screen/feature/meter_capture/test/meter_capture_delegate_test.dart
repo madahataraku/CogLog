@@ -54,10 +54,11 @@ final class _DeferredObtain implements ObtainMeterPhotoUsecase {
 }
 
 final class _Read implements ReadMeterPanelUsecase {
-  _Read(this.result, {this.delay = Duration.zero});
+  _Read(this.result, {this.delay = Duration.zero, this.gate});
 
   final ReadMeterPanelResult result;
   final Duration delay;
+  final Completer<void>? gate;
   var calls = 0;
 
   @override
@@ -65,6 +66,10 @@ final class _Read implements ReadMeterPanelUsecase {
     calls += 1;
     if (delay > Duration.zero) {
       await Future<void>.delayed(delay);
+    }
+    final pending = gate;
+    if (pending != null) {
+      await pending.future;
     }
     return result;
   }
@@ -499,6 +504,7 @@ void main() {
     expect(state.state.distanceKm, 3);
     expect(state.state.averageSpeedFromPanel, isTrue);
     expect(state.state.reading, isFalse);
+    expect(state.state.showHandEntryGuidance, isFalse);
     expect(state.state.creationStartedAt, isNotNull);
     expect(state.state.capturedAt, isNotNull);
     expect(state.state.recordedAt, state.state.capturedAt);
@@ -521,6 +527,7 @@ void main() {
 
     expect(evaluate.calls, 1);
     expect(state.state.pendingModelDownloadGuidance, isTrue);
+    expect(state.state.showHandEntryGuidance, isFalse);
     expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.reading, isFalse);
   });
@@ -542,10 +549,11 @@ void main() {
 
     expect(evaluate.calls, 0);
     expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.showHandEntryGuidance, isTrue);
     expect(state.state.step, MeterCaptureStep.edit);
   });
 
-  test('誘導判定は読み取りをブロックしない', () async {
+  test('誘導判定は読み取りをブロックせず、確定後は手打ち案内を出さない', () async {
     final evaluate = _Evaluate(
       shouldShow: true,
       delay: const Duration(milliseconds: 50),
@@ -568,14 +576,49 @@ void main() {
     expect(state.state.reading, isFalse);
     expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.distanceKm, 1);
-    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.showHandEntryGuidance, isFalse);
     expect(evaluate.calls, 1);
     expect(read.calls, 1);
 
     await future;
-    expect(state.state.pendingModelDownloadGuidance, isFalse);
-    await Future<void>.delayed(const Duration(milliseconds: 50));
     expect(state.state.pendingModelDownloadGuidance, isTrue);
+    expect(state.state.showHandEntryGuidance, isFalse);
+  });
+
+  test('同一回でモデル案内を確認したら手打ち案内を出さない', () async {
+    final session = OnDeviceLlmGuidanceSession();
+    final readGate = Completer<void>();
+    final evaluate = _Evaluate(shouldShow: true);
+    final read = _Read(
+      const ReadMeterPanelResult(
+        values: MeterReadingValues(),
+        averageSpeedFromPanel: false,
+      ),
+      gate: readGate,
+    );
+    final future = OnReadMeterDelegate(
+      state: state,
+      readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: evaluate,
+      guidanceSession: session,
+    ).execute(photoBytes: Uint8List(0));
+
+    await Future<void>.delayed(Duration.zero);
+    expect(read.calls, 1);
+    expect(evaluate.calls, 1);
+    expect(state.state.pendingModelDownloadGuidance, isTrue);
+    expect(state.state.step, MeterCaptureStep.photo);
+    await OnAcknowledgeModelDownloadGuidanceDelegate(
+      state: state,
+      session: session,
+    ).execute();
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(session.hasPresented, isTrue);
+
+    readGate.complete();
+    await future;
+    expect(state.state.step, MeterCaptureStep.edit);
+    expect(state.state.showHandEntryGuidance, isFalse);
   });
 
   test('acknowledge 後は pending false かつ hasPresented', () async {
@@ -651,6 +694,7 @@ void main() {
     expect(empty.hoursText, '');
     expect(empty.recordedAtText, '');
     expect(empty.pendingModelDownloadGuidance, isFalse);
+    expect(empty.showHandEntryGuidance, isFalse);
 
     final filled = delegate.execute(
       MeterCaptureScreenState(
@@ -661,6 +705,7 @@ void main() {
         caloriesKcal: 100,
         recordedAt: DateTime(2026, 11, 8, 12),
         pendingModelDownloadGuidance: true,
+        showHandEntryGuidance: true,
       ),
     );
     expect(filled.distanceText, '1.5');
@@ -671,6 +716,7 @@ void main() {
     expect(filled.caloriesText, '100.0');
     expect(filled.recordedAtText, DateTime(2026, 11, 8, 12).toIso8601String());
     expect(filled.pendingModelDownloadGuidance, isTrue);
+    expect(filled.showHandEntryGuidance, isTrue);
   });
 
   test('StateToEntity は UTC の記録日時をローカル時刻に変換する', () {
