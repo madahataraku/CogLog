@@ -60,6 +60,10 @@ import 'package:usecase_load_notification_settings/usecase_load_notification_set
 import 'package:usecase_load_notification_settings_impl/usecase_load_notification_settings_impl.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 import 'package:usecase_save_meter_capture_impl/usecase_save_meter_capture_impl.dart';
+import 'package:usecase_update_exercise_history/usecase_update_exercise_history.dart';
+import 'package:usecase_update_exercise_history_impl/usecase_update_exercise_history_impl.dart';
+import 'package:usecase_delete_exercise_history/usecase_delete_exercise_history.dart';
+import 'package:usecase_delete_exercise_history_impl/usecase_delete_exercise_history_impl.dart';
 import 'package:usecase_save_notification_settings/usecase_save_notification_settings.dart';
 import 'package:usecase_save_notification_settings_impl/usecase_save_notification_settings_impl.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
@@ -68,7 +72,7 @@ import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.da
 import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
 
 /// トップ・推移の読み込み、指標保存、一日あたり目標の読み書き、アドバイス生成、
-/// 端末上 LLM 誘導、運動履歴の一覧・詳細読み込み、メーター記録の写真取得・読み取り・保存・設定起動、
+/// 端末上 LLM 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
 /// ヘルス身体許可リクエストを上書きする。
 ///
 /// [adviceTemplatePicker] を渡すと定型選択を差し替える（Golden 用）。
@@ -235,6 +239,28 @@ List<Override> usecaseOverrides({
   ),
   SaveMeterCaptureUsecase.provider.overrideWith(
     (ref) => SaveMeterCaptureUsecaseImpl(
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+      health: ref.watch(healthWorkoutWriterProvider),
+      evaluateAutoUpdate: ref.watch(
+        EvaluateDailyGoalAutoUpdateUsecase.provider,
+      ),
+      evaluateAchievements: ref.watch(EvaluateAchievementsUsecase.provider),
+      syncReminder: ref.watch(SyncExerciseReminderUsecase.provider),
+    ),
+  ),
+  UpdateExerciseHistoryUsecase.provider.overrideWith(
+    (ref) => UpdateExerciseHistoryUsecaseImpl(
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+      health: ref.watch(healthWorkoutWriterProvider),
+      evaluateAutoUpdate: ref.watch(
+        EvaluateDailyGoalAutoUpdateUsecase.provider,
+      ),
+      evaluateAchievements: ref.watch(EvaluateAchievementsUsecase.provider),
+      syncReminder: ref.watch(SyncExerciseReminderUsecase.provider),
+    ),
+  ),
+  DeleteExerciseHistoryUsecase.provider.overrideWith(
+    (ref) => DeleteExerciseHistoryUsecaseImpl(
       histories: ref.watch(exerciseHistoryRepositoryProvider),
       health: ref.watch(healthWorkoutWriterProvider),
       evaluateAutoUpdate: ref.watch(

@@ -68,6 +68,10 @@ dependencies:
   usecase_save_daily_goal_impl: any
   usecase_save_meter_capture: any
   usecase_save_meter_capture_impl: any
+  usecase_update_exercise_history: any
+  usecase_update_exercise_history_impl: any
+  usecase_delete_exercise_history: any
+  usecase_delete_exercise_history_impl: any
   usecase_save_notification_settings: any
   usecase_save_notification_settings_impl: any
   usecase_save_top_screen_metric: any

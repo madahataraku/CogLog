@@ -1,0 +1,16 @@
+name: usecase_update_exercise_history
+description: Update a persisted exercise history entry.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  domain_achievement: any
+  domain_exercise_history: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

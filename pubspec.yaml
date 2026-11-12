@@ -74,6 +74,7 @@ workspace:
   - app_packages/screen/feature/meter_capture
   - app_packages/screen/feature/oss_licenses
   - app_packages/screen/feature/top
+  - app_packages/view/confirm_dialog
   - app_packages/view/model_download_guidance
   - app_packages/screen/injection
   - app_packages/screen/navigation
@@ -123,6 +124,10 @@ workspace:
   - app_packages/usecase/save_daily_goal/_impl
   - app_packages/usecase/save_meter_capture
   - app_packages/usecase/save_meter_capture/_impl
+  - app_packages/usecase/update_exercise_history
+  - app_packages/usecase/update_exercise_history/_impl
+  - app_packages/usecase/delete_exercise_history
+  - app_packages/usecase/delete_exercise_history/_impl
   - app_packages/usecase/save_top_screen_metric
   - app_packages/usecase/save_top_screen_metric/_impl
   - app_packages/usecase/sync_exercise_reminder
