@@ -128,9 +128,15 @@ final class UpdateExerciseHistoryUsecaseImpl
       }
 
       final now = DateTime.now();
-      final autoUpdate = await evaluateAutoUpdate.execute(
-        EvaluateDailyGoalAutoUpdateRequest(now: now),
-      );
+      var goalAutoUpdated = false;
+      try {
+        final autoUpdate = await evaluateAutoUpdate.execute(
+          EvaluateDailyGoalAutoUpdateRequest(now: now),
+        );
+        goalAutoUpdated = autoUpdate.applied;
+      } on Object {
+        // 目標自動更新の失敗で、更新済みの履歴を saveFailed にしない。
+      }
       try {
         await syncReminder.execute(SyncExerciseReminderRequest(now: now));
       } on Object {
@@ -155,7 +161,7 @@ final class UpdateExerciseHistoryUsecaseImpl
           existing.recordedAt,
           request.recordedAt,
         ),
-        goalAutoUpdated: autoUpdate.applied,
+        goalAutoUpdated: goalAutoUpdated,
         newlyUnlockedAchievements: newlyUnlocked,
       );
     } on Object {
