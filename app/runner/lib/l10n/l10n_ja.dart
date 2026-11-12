@@ -770,18 +770,19 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_advice_no_exercise =>
-      '今日はまだ運動の記録がありません。無理のないペースで始めましょう。';
+      '今日はまだ運動の記録がありません。記録があると、目標との差も見えやすくなります。';
 
   @override
   String get screen_feature_top_advice_template_1 =>
-      '水分をこまめに取って、無理のないペースを保ちましょう。';
+      '今日の記録を見ながら、自分のペースで続けましょう。';
 
   @override
   String get screen_feature_top_advice_template_2 =>
-      'よく動けました。回復のためにも休息を大切にしましょう。';
+      'よく動けました。今日の記録は、次の運動の目安になります。';
 
   @override
-  String get screen_feature_top_advice_template_3 => '小さな積み重ねが続きます。今日も自分のペースで。';
+  String get screen_feature_top_advice_template_3 =>
+      '小さな積み重ねが続きます。今日も自分のペースで進めましょう。';
 
   @override
   String get screen_feature_top_advisor_semantics => 'アドバイザー';

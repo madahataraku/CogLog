@@ -17,8 +17,8 @@ final class DefaultTopAdvicePromptBuilder implements TopAdvicePromptBuilder {
   /// ```
   const DefaultTopAdvicePromptBuilder();
 
-  /// 言語・本日の合計・設定済み目標・連続日数を要約し、LLM に `TONE=` /
-  /// `ADVICE=` の 2 行で返すよう指示したプロンプト文字列を返す。
+  /// 言語・本日の合計・設定済み目標・連続日数を要約し、声と優先の指示のうえ LLM に
+  /// `TONE=` / `ADVICE=` の 2 行で返すよう指示したプロンプト文字列を返す。
   ///
   /// Example:
   /// ```dart
@@ -65,12 +65,26 @@ final class DefaultTopAdvicePromptBuilder implements TopAdvicePromptBuilder {
         'durationMinutes=${duration.inMinutes}; '
         '$goalSummary; '
         'consecutiveExerciseDays=$consecutiveExerciseDays. '
-        'Compare today totals with any set goals when advising. '
-        'Praise the consecutive exercise-day streak when it is greater than 0. '
+        'Speak as a calm guide. '
+        'Avoid doctor-like tone, condescension, and hype. '
+        'When locale=ja, write ADVICE in polite です・ます Japanese; '
+        'for other locales, use calm polite wording in that language. '
+        'Priority when advising: (1) relation to any set goals, '
+        '(2) consecutive exercise-day streak, '
+        '(3) gentle continuity at one\'s own pace, '
+        '(4) brief paraphrase of today\'s totals. '
+        'If behind a set goal, state the gap factually only; '
+        'do not lecture or add extra encouragement. '
+        'Weight-loss mentions are allowed only occasionally and modestly. '
+        'Choose TONE: happy when a set goal is met, or when the streak is '
+        'greater than 0 and the user is not largely behind set goals; '
+        'fun when the user has exercised and progress is ordinary; '
+        'confused when largely behind set goals (situation clear, not blame); '
+        'realized when a clear next step can be stated. '
         'Reply with exactly two lines:\n'
         'TONE=<one of: fun, confused, happy, realized>\n'
         'ADVICE=<short one-point exercise advice in the language of locale=$locale, '
-        'at most about 150 characters>\n'
+        'aim for at most about 150 characters>\n'
         'Use only those four TONE values. Do not add other lines or markdown.';
   }
 }
