@@ -271,20 +271,25 @@ final class DriftExerciseHistoryRepository
     required String id,
     required String healthWorkoutId,
   }) async {
-    final existing = await _byId(id);
-    if (existing == null) {
-      throw StateError('運動履歴が無い: $id');
-    }
-    final updated =
-        await (_db.update(
-          _db.exerciseHistories,
-        )..where((t) => t.id.equals(id))).write(
-          ExerciseHistoriesCompanion(healthWorkoutId: Value(healthWorkoutId)),
-        );
-    if (updated == 0) {
-      throw StateError('運動履歴が無い: $id');
-    }
-    return (await _byId(id))!;
+    // UPDATE と結果取得を同一トランザクションにし、途中失敗時は ID 付与を残さない。
+    return _db.transaction(() async {
+      final existing = await _byId(id);
+      if (existing == null) {
+        throw StateError('運動履歴が無い: $id');
+      }
+      final updated =
+          await (_db.update(
+            _db.exerciseHistories,
+          )..where((t) => t.id.equals(id))).write(
+            ExerciseHistoriesCompanion(
+              healthWorkoutId: Value(healthWorkoutId),
+            ),
+          );
+      if (updated == 0) {
+        throw StateError('運動履歴が無い: $id');
+      }
+      return (await _byId(id))!;
+    });
   }
 
   /// 写真を消してから行を削除する。未知 ID は [StateError]。
