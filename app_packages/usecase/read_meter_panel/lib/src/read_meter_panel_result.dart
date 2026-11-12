@@ -27,6 +27,6 @@ final class ReadMeterPanelResult {
   /// マージ後の計測値。
   final MeterReadingValues values;
 
-  /// 平均速度がエンジン／パネル由来のとき true。計算補完なら false。
+  /// 平均速度がパネル由来か。常に距離÷時間のため常に false。
   final bool averageSpeedFromPanel;
 }
