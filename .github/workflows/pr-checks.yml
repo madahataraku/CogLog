@@ -1,5 +1,6 @@
 # main 向け PR で format / analyze / 全パッケージテストを実行する。
 # 必須ステータスチェック名はジョブの name（Format / Analyze / Test）。
+# Test はマトリクスシャードを集約するジョブで、実際のテストは Test packages が担う。
 # Ruleset「mainブランチ」へ登録する手順は docs/constraints.md を参照。
 name: PR Checks
 
@@ -62,10 +63,16 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-  test:
-    name: Test
+  # 必須ステータスチェック名は集約ジョブ「Test」のままにする。
+  # パッケージ一覧をソートし、index % shard_count で分散する（重い screen が偏らないようにする）。
+  test_packages:
+    name: Test packages (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # actions/checkout@v7.0.1
@@ -85,18 +92,50 @@ jobs:
           flutter pub get
           dart run monolith_runner:define
 
-      - name: Run package tests
+      - name: Run package tests (shard ${{ matrix.shard }})
+        env:
+          SHARD: ${{ matrix.shard }}
+          SHARD_COUNT: ${{ strategy.job-total }}
         run: |
           set -euo pipefail
+          index=0
+          ran=0
           while IFS= read -r pubspec; do
             dir="$(dirname "$pubspec")"
             if [ ! -d "${dir}/test" ]; then
               continue
             fi
-            echo "test ${dir}"
+            if [ "$((index % SHARD_COUNT))" -ne "${SHARD}" ]; then
+              index=$((index + 1))
+              continue
+            fi
+            index=$((index + 1))
+            ran=$((ran + 1))
+            echo "test ${dir} (shard ${SHARD}/${SHARD_COUNT})"
             if grep -q 'sdk: flutter' "$pubspec"; then
               (cd "$dir" && flutter test)
             else
               (cd "$dir" && dart test)
             fi
           done < <(find . -name pubspec.yaml -not -path '*/.dart_tool/*' -not -path '*/build/*' | sort)
+          echo "ran ${ran} package(s) on shard ${SHARD}/${SHARD_COUNT}"
+          if [ "${ran}" -eq 0 ]; then
+            echo "no packages assigned to this shard" >&2
+            exit 1
+          fi
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: test_packages
+    if: ${{ always() }}
+    steps:
+      - name: Confirm all test shards passed
+        run: |
+          set -euo pipefail
+          result="${{ needs.test_packages.result }}"
+          echo "test_packages result: ${result}"
+          if [ "${result}" != "success" ]; then
+            exit 1
+          fi
