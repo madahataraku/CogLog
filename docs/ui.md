@@ -62,11 +62,20 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - 読込中は月ヘッダを出し、カレンダー領域に進捗表示する。失敗時はエラーと再試行を出し、空のカレンダーと誤認させない。
 - 運動履歴詳細で同一日に複数件あるときは、件数位置（何件中の何件目か）を出し PageView でめくる。1 件のときは件数表示とめくりを出さない。
 
+## 運動履歴詳細・編集
+
+- 詳細ヘッダ右上（suffixes）に編集（pencil）と削除（trash）。処理中は無効。
+- 写真は本文最上部。高さは画面高の最大約 30%（ConstrainedBox）。
+- 計測／記録は `FTileGroup`（カロリー・運動時間・距離・平均速度・記録日時）。メタは別 `FTileGroup`（撮影・保存・作成開始）。グループ間 24。
+- 削除・編集の破棄は `view_confirm_dialog`（`showFDialog`、`barrierDismissible: false`）。
+- 編集は詳細の子ルート。遷移は `ScreenNavigation` のみ（`openExerciseHistoryEditAndWait`）。
+
 ## 置き場所
 
 - 1 画面だけの Widget は、その screen パッケージに置く。
 - 2 画面以上で使う Widget とデザインシステムは `view_*` に置く。
 - モデル未ダウンロード誘導ダイアログは、ホームとメーター記録（後続）で共用するため `view_model_download_guidance` に置く。
+- 削除確認と編集破棄確認は共用のため `view_confirm_dialog` に置く。
 - 起動時のテーマ接続だけを `app` に残す。画面の中身を `app/lib/main.dart` に増やさない。
 
 ## モデル未ダウンロード誘導
