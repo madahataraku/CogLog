@@ -36,6 +36,7 @@ final class ExerciseHistoryEditScreenState {
     required this.creationStartedAt,
     required this.capturedAt,
     required this.recordedAt,
+    required this.recordedAtManuallySet,
     required this.distanceKm,
     required this.duration,
     required this.caloriesKcal,
@@ -43,6 +44,7 @@ final class ExerciseHistoryEditScreenState {
     required this.previousHealthWorkoutId,
     required this.permissionDeniedKind,
     required this.photoSessionGeneration,
+    required this.fieldsSyncGeneration,
   });
 
   /// まだ読んでいない状態。
@@ -71,6 +73,7 @@ final class ExerciseHistoryEditScreenState {
         creationStartedAt: null,
         capturedAt: null,
         recordedAt: null,
+        recordedAtManuallySet: false,
         distanceKm: null,
         duration: null,
         caloriesKcal: null,
@@ -78,6 +81,7 @@ final class ExerciseHistoryEditScreenState {
         previousHealthWorkoutId: null,
         permissionDeniedKind: null,
         photoSessionGeneration: 0,
+        fieldsSyncGeneration: 0,
       );
 
   /// 対象の運動履歴 ID。
@@ -141,6 +145,9 @@ final class ExerciseHistoryEditScreenState {
   /// 運動した日時。
   final DateTime? recordedAt;
 
+  /// 読込時点またはこの編集中に運動した日時を手で変えたか。
+  final bool recordedAtManuallySet;
+
   /// 走行距離 km。
   final double? distanceKm;
 
@@ -161,6 +168,9 @@ final class ExerciseHistoryEditScreenState {
 
   /// 写真取得セッション世代。古い非同期結果を捨てる。
   final int photoSessionGeneration;
+
+  /// 入力欄を Entity の値へ明示同期する世代。初期読込と写真再読取完了で増やす。
+  final int fieldsSyncGeneration;
 
   /// 一部だけ差し替えた新しい状態を返す。
   ///
@@ -193,6 +203,7 @@ final class ExerciseHistoryEditScreenState {
     bool clearCapturedAt = false,
     DateTime? recordedAt,
     bool clearRecordedAt = false,
+    bool? recordedAtManuallySet,
     double? distanceKm,
     bool clearDistanceKm = false,
     Duration? duration,
@@ -206,6 +217,7 @@ final class ExerciseHistoryEditScreenState {
     MeterPhotoPermissionKind? permissionDeniedKind,
     bool clearPermissionDeniedKind = false,
     int? photoSessionGeneration,
+    int? fieldsSyncGeneration,
   }) => ExerciseHistoryEditScreenState(
     id: id ?? this.id,
     loading: loading ?? this.loading,
@@ -235,6 +247,7 @@ final class ExerciseHistoryEditScreenState {
         : (creationStartedAt ?? this.creationStartedAt),
     capturedAt: clearCapturedAt ? null : (capturedAt ?? this.capturedAt),
     recordedAt: clearRecordedAt ? null : (recordedAt ?? this.recordedAt),
+    recordedAtManuallySet: recordedAtManuallySet ?? this.recordedAtManuallySet,
     distanceKm: clearDistanceKm ? null : (distanceKm ?? this.distanceKm),
     duration: clearDuration ? null : (duration ?? this.duration),
     caloriesKcal: clearCaloriesKcal
@@ -251,5 +264,6 @@ final class ExerciseHistoryEditScreenState {
         : (permissionDeniedKind ?? this.permissionDeniedKind),
     photoSessionGeneration:
         photoSessionGeneration ?? this.photoSessionGeneration,
+    fieldsSyncGeneration: fieldsSyncGeneration ?? this.fieldsSyncGeneration,
   );
 }

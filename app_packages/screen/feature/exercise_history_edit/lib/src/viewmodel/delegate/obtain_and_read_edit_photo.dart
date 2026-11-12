@@ -75,6 +75,9 @@ Future<void> obtainAndReadEditPhoto({
           current.copyWith(
             photoBytes: bytes,
             capturedAt: resolvedCapturedAt,
+            recordedAt: current.recordedAtManuallySet
+                ? current.recordedAt
+                : resolvedCapturedAt,
             dirty: true,
             reading: true,
             showHandEntryGuidance: false,
@@ -130,6 +133,7 @@ Future<void> obtainAndReadEditPhoto({
             durationInvalid: false,
             caloriesInvalid: false,
             dirty: true,
+            fieldsSyncGeneration: current.fieldsSyncGeneration + 1,
           ),
         );
       });

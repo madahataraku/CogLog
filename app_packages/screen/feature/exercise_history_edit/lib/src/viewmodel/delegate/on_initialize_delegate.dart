@@ -130,6 +130,7 @@ ExerciseHistoryEditScreenState _fromHistory({
     creationStartedAt: history.creationStartedAt,
     capturedAt: history.capturedAt,
     recordedAt: history.recordedAt,
+    recordedAtManuallySet: history.recordedAtManuallySet,
     distanceKm: history.distanceKm,
     duration: history.duration,
     caloriesKcal: history.caloriesKcal,
@@ -137,5 +138,6 @@ ExerciseHistoryEditScreenState _fromHistory({
     previousHealthWorkoutId: history.healthWorkoutId,
     clearPreviousHealthWorkoutId: history.healthWorkoutId == null,
     clearPermissionDeniedKind: true,
+    fieldsSyncGeneration: current.fieldsSyncGeneration + 1,
   );
 }

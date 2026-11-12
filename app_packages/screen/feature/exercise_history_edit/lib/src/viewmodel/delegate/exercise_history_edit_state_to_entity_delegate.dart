@@ -121,6 +121,7 @@ final class ExerciseHistoryEditStateToEntityDelegate {
     final busy = state.reading || state.saving;
     final canSave =
         !busy &&
+        state.dirty &&
         !state.inputsInvalid &&
         canSubmitExerciseHistoryEdit(
           distanceKm: state.distanceKm,

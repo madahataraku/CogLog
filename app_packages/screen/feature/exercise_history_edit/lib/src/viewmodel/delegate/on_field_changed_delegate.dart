@@ -222,6 +222,7 @@ final class OnFieldChangedDelegate {
       await emitter.emit(
         current.copyWith(
           recordedAt: value,
+          recordedAtManuallySet: true,
           recordedAtInvalid: false,
           dirty: true,
         ),

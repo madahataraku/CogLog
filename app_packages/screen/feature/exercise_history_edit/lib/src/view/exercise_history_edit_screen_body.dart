@@ -52,34 +52,15 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
         ? ''
         : formatFullLocalDateTime(recordedAt, languageCode: languageCode);
 
-    useEffect(
-      () {
-        void sync(
-          TextEditingController controller,
-          String text,
-          Object? Function(String) parse,
-        ) {
-          if (parse(controller.text.trim()) != parse(text)) {
-            controller.text = text;
-          }
-        }
-
-        Object? parseNum(String s) => num.tryParse(s);
-        sync(distanceController, entity.distanceText, parseNum);
-        sync(hoursController, entity.hoursText, parseNum);
-        sync(minutesController, entity.minutesText, parseNum);
-        sync(secondsController, entity.secondsText, parseNum);
-        sync(caloriesController, entity.caloriesText, parseNum);
-        return null;
-      },
-      [
-        entity.distanceText,
-        entity.hoursText,
-        entity.minutesText,
-        entity.secondsText,
-        entity.caloriesText,
-      ],
-    );
+    useEffect(() {
+      // 初期読込・写真再読取完了時だけ欄を置換する。別フィールド入力で不正文字列を消さない。
+      distanceController.text = entity.distanceText;
+      hoursController.text = entity.hoursText;
+      minutesController.text = entity.minutesText;
+      secondsController.text = entity.secondsText;
+      caloriesController.text = entity.caloriesText;
+      return null;
+    }, [state.fieldsSyncGeneration]);
 
     Future<void> syncDuration() => viewModel.onDurationChanged(
       hours: hoursController.text,

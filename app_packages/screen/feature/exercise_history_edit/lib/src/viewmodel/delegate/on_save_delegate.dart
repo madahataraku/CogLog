@@ -54,6 +54,7 @@ final class OnSaveDelegate {
     await state.updateWithLock((current, emitter) async {
       if (current.saving ||
           current.reading ||
+          !current.dirty ||
           current.inputsInvalid ||
           !canSubmitExerciseHistoryEdit(
             distanceKm: current.distanceKm,

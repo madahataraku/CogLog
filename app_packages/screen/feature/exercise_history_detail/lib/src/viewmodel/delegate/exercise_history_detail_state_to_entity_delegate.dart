@@ -128,7 +128,11 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
       pageTotal: pageTotal,
       pageLoading: pageLoading,
       showHeaderActions: true,
-      headerActionsEnabled: !state.deleting && !state.editing,
+      headerActionsEnabled:
+          !state.deleting &&
+          !state.editing &&
+          !state.pageLoading &&
+          history.id == state.id,
       actionErrorText: actionErrorText,
       caloriesText:
           '${PeriodTotalText.oneDecimal(history.caloriesKcal)} '
