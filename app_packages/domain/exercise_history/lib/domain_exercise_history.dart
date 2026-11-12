@@ -13,6 +13,7 @@ export 'src/consecutive_exercise_days.dart';
 export 'src/exercise_history.dart';
 export 'src/meter_panel_text_parser.dart';
 export 'src/meter_reading_merger.dart';
+export 'src/meter_reading_message_kind.dart';
 export 'src/meter_reading_values.dart';
 export 'src/period_aggregate.dart';
 export 'src/period_total_metric.dart';
