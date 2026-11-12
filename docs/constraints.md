@@ -109,17 +109,19 @@ XcodeGen へ移すときは、署名条件が揃ってから行う。そのと�
 | --- | --- |
 | Format | リポジトリルートで `flutter pub get` のあと `dart format --output=none --set-exit-if-changed .` |
 | Analyze | リポジトリルートで `flutter pub get` のあと `flutter analyze` |
-| Test | リポジトリルートで `flutter pub get` と `dart run monolith_runner:define` のあと、`test/` がある各パッケージのテストをすべて実行する。`sdk: flutter` を持つパッケージは `flutter test`、それ以外は `dart test`。ユニットテストと Golden Test の両方を含む |
+| Test | マトリクスシャード（`Test packages`）の結果を集約するジョブ。シャードがすべて成功したときだけ成功する |
+
+`Test packages` は必須ステータスチェックには入れない。`strategy.matrix.shard`（現状は `0` / `1` / `2` の 3 本）で並列実行し、`fail-fast: false` とする。各シャードはリポジトリルートで `flutter pub get` と `dart run monolith_runner:define` のあと、ソートした `test/` 付きパッケージ一覧のうち `index % shard数 == shard` に当たるものだけを実行する。`sdk: flutter` を持つパッケージは `flutter test`、それ以外は `dart test`。ユニットテストと Golden Test の両方を含む。
 
 Flutter の版は App Distribution と同じく `3.47.9`（stable）に固定する。外部 Action はコミット SHA にピン留めする。
 
-これらのチェックをマージ条件にするため、Ruleset `mainブランチ` の required status checks に、上表のジョブ名 `Format`・`Analyze`・`Test` を入れる。設定場所は **Settings → Rules → mainブランチ** である。ワークフローを一度 `main` へマージして実行実績が出てから、チェック名を選べる。
+これらのチェックをマージ条件にするため、Ruleset `mainブランチ` の required status checks に、上表のジョブ名 `Format`・`Analyze`・`Test` を入れる（シャード名は入れない）。設定場所は **Settings → Rules → mainブランチ** である。ワークフローを一度 `main` へマージして実行実績が出てから、チェック名を選べる。
 
 ## App Distribution
 
 `.github/workflows/app-distribution.yml` は、`main` への push と、`main` を選んだ手動の `workflow_dispatch` で、Android の release APK と iOS の Ad Hoc IPA を Firebase App Distribution へ出す。ジョブは `github.ref == refs/heads/main` のときだけ動き、Environment `app-distribution` を使う。
 
-単一ジョブ `distribute` を `strategy.matrix.platform`（`android` / `ios`）で回す。`fail-fast: false` とし、Android と iOS は並列で、片方の失敗がもう片方をキャンセルしない。runner は Android が `ubuntu-latest`、iOS が `macos-15` である。
+単一ジョブ `distribute` を `strategy.matrix.platform`（`android` / `ios`）で回す。`fail-fast: false` とし、Android と iOS は並列で、片方の失敗がもう片方をキャンセルしない。runner は Android が `ubuntu-latest`、iOS が `macos-26` である。`infra_on_device_llm_mobile` が `FoundationModels` をリンクするため、Xcode 26 SDK を含む `macos-26` を使う（`macos-15` では Framework not found になる）。
 
 push のフレーバーは `development`。手動起動では `development` または `production` を選ぶ。`test` は配布しない。dart-define は、リポジトリルートの `dart run monolith_runner:define` が書く `secrets/dart-define/<flavor>.json` を使う。`secrets/monolith.yaml` が無い include は読み飛ばす。
 
@@ -184,7 +186,7 @@ principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workl
 
 配布の前に、各 matrix レッグでリポジトリルートの `flutter analyze` と、`test/` がある各パッケージのテストを実行する。`sdk: flutter` を持つパッケージは `flutter test`、それ以外は `dart test` である。
 
-Golden Test（`*_golden_test.dart`）の期待画像は Linux（PR Checks と android レッグの `ubuntu-latest`）で担保する。ios レッグの `macos-15` では、ホスト OS のフォント描画差でピクセルがずれるため、`*_golden_test.dart` を実行しない。ユニットテストとその他の `*_test.dart` は macOS でも実行する。
+Golden Test（`*_golden_test.dart`）の期待画像は Linux（PR Checks と android レッグの `ubuntu-latest`）で担保する。ios レッグの `macos-26` では、ホスト OS のフォント描画差でピクセルがずれるため、`*_golden_test.dart` を実行しない。ユニットテストとその他の `*_test.dart` は macOS でも実行する。
 
 versionName は `pubspec.yaml` のままにする。versionCode / CFBundleVersion は GitHub Actions の run number にする。Android の release 署名は同じ upload keystore を使い、配布済みの APK を上書き更新できるようにする。debug 署名は release に使わない。
 
