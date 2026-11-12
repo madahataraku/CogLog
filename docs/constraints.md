@@ -73,6 +73,13 @@ Monolith が書く次のファイルは手で編集しない。
 
 ## iOS
 
+`IPHONEOS_DEPLOYMENT_TARGET` と `app/ios/Podfile` の `platform :ios` は次に固定する。プラグイン（`infra_meter_reading_mobile` / `infra_on_device_llm_mobile`）が 16.4 を要求するため、これ未満にしない。
+
+| 項目 | 値 |
+| --- | --- |
+| `IPHONEOS_DEPLOYMENT_TARGET` | `16.4` |
+| Podfile `platform :ios` | `16.4` |
+
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 
 ## Firebase
