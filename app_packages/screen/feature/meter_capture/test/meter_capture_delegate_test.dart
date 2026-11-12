@@ -580,6 +580,41 @@ void main() {
     expect(state.state.showHandEntryGuidance, isFalse);
   });
 
+  test('同一回でモデル案内を確認したら手打ち案内を出さない', () async {
+    final session = OnDeviceLlmGuidanceSession();
+    final evaluate = _Evaluate(
+      shouldShow: true,
+      delay: const Duration(milliseconds: 40),
+    );
+    final read = _Read(
+      const ReadMeterPanelResult(
+        values: MeterReadingValues(),
+        averageSpeedFromPanel: false,
+      ),
+      delay: const Duration(milliseconds: 5),
+    );
+    final future = OnReadMeterDelegate(
+      state: state,
+      readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: evaluate,
+      guidanceSession: session,
+    ).execute(photoBytes: Uint8List(0));
+
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    expect(state.state.step, MeterCaptureStep.edit);
+    await Future<void>.delayed(const Duration(milliseconds: 40));
+    expect(state.state.pendingModelDownloadGuidance, isTrue);
+    await OnAcknowledgeModelDownloadGuidanceDelegate(
+      state: state,
+      session: session,
+    ).execute();
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(session.hasPresented, isTrue);
+
+    await future;
+    expect(state.state.showHandEntryGuidance, isFalse);
+  });
+
   test('acknowledge 後は pending false かつ hasPresented', () async {
     state = MutableStateStream(
       const MeterCaptureScreenState(

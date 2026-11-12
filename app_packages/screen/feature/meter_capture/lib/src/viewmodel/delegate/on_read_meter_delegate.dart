@@ -81,6 +81,7 @@ final class OnReadMeterDelegate {
       );
     });
 
+    final presentedBeforeGuidance = guidanceSession.hasPresented;
     final guidanceFuture = OnEvaluateModelDownloadGuidanceDelegate(
       state: state,
       evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
@@ -133,7 +134,9 @@ final class OnReadMeterDelegate {
       if (current.cameraSessionGeneration != generation) {
         return;
       }
-      if (current.pendingModelDownloadGuidance) {
+      final presentedInThisRead =
+          !presentedBeforeGuidance && guidanceSession.hasPresented;
+      if (current.pendingModelDownloadGuidance || presentedInThisRead) {
         return;
       }
       if (current.showHandEntryGuidance) {
