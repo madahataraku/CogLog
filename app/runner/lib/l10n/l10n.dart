@@ -1012,10 +1012,10 @@ abstract class L10n {
   /// **'写真を表示できません'**
   String get screen_feature_exercise_history_detail_photo_error;
 
-  /// 記録日時のラベル
+  /// 運動した日時（旧・記録日時）
   ///
   /// In ja, this message translates to:
-  /// **'記録日時'**
+  /// **'運動した日時'**
   String get screen_feature_exercise_history_detail_recorded_at;
 
   /// 再試行ボタン

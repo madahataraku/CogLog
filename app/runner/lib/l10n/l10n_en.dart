@@ -554,7 +554,7 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_exercise_history_detail_recorded_at =>
-      'Recorded at';
+      'Exercise date and time';
 
   @override
   String get screen_feature_exercise_history_detail_retry => 'Retry';

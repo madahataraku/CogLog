@@ -626,9 +626,9 @@
   "@screen_feature_exercise_history_detail_photo_error": {
     "description": "写真の失敗表示"
   },
-  "screen_feature_exercise_history_detail_recorded_at": "Recorded at",
+  "screen_feature_exercise_history_detail_recorded_at": "Exercise date and time",
   "@screen_feature_exercise_history_detail_recorded_at": {
-    "description": "記録日時のラベル"
+    "description": "運動した日時（旧・記録日時）"
   },
   "screen_feature_exercise_history_detail_retry": "Retry",
   "@screen_feature_exercise_history_detail_retry": {

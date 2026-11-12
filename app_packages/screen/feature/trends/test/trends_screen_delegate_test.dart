@@ -73,13 +73,13 @@ void main() {
     await state.close();
   });
 
-  test('初期値は過去30日・カロリー×体重除脂肪・読込中', () {
+  test('初期値は過去30日・カロリー×体脂肪率・読込中', () {
     expect(state.state.period, TrendsPeriod.days30);
-    expect(state.state.comparison, TrendsComparison.caloriesBodyKg);
+    expect(state.state.comparison, TrendsComparison.caloriesBodyFat);
     expect(state.state.loading, isTrue);
     final entity = const TrendsStateToEntityDelegate().execute(state.state);
     expect(entity.period, TrendsPeriod.days30);
-    expect(entity.comparison, TrendsComparison.caloriesBodyKg);
+    expect(entity.comparison, TrendsComparison.caloriesBodyFat);
     expect(entity.loading, isTrue);
   });
 
@@ -90,7 +90,7 @@ void main() {
       now: now,
     ).execute(TrendsPeriod.days90);
     expect(state.state.period, TrendsPeriod.days90);
-    expect(state.state.comparison, TrendsComparison.caloriesBodyKg);
+    expect(state.state.comparison, TrendsComparison.caloriesBodyFat);
     expect(load.calls, 1);
     expect(load.lastRequest?.period, TrendsPeriodKind.days90);
     expect(state.state.loading, isFalse);
@@ -151,9 +151,9 @@ void main() {
 
   test('同じ比較では State も reload もしない', () async {
     await OnSelectComparisonDelegate(state: state)
-        .execute(TrendsComparison.caloriesBodyKg);
+        .execute(TrendsComparison.caloriesBodyFat);
     expect(load.calls, 0);
-    expect(state.state.comparison, TrendsComparison.caloriesBodyKg);
+    expect(state.state.comparison, TrendsComparison.caloriesBodyFat);
   });
 
   test('身体を含む比較で拒否なら許可ボタン、永久拒否なら設定ボタン', () {

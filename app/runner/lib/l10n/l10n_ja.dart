@@ -505,7 +505,7 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_detail_photo_error => '写真を表示できません';
 
   @override
-  String get screen_feature_exercise_history_detail_recorded_at => '記録日時';
+  String get screen_feature_exercise_history_detail_recorded_at => '運動した日時';
 
   @override
   String get screen_feature_exercise_history_detail_retry => '再試行';

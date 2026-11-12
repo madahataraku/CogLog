@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   flutter_hooks: any
   forui: any
+  foundation_datetime: any
   hooks_riverpod: any
   material_ui: any
   meta: any

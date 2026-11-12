@@ -12,7 +12,7 @@ distance,走行距離,Distance,走行距離のラベル
 created_at,作成開始日時,Created at,作成開始日時のラベル
 captured_at,撮影日時,Captured at,撮影日時のラベル
 average_speed,平均速度,Average speed,平均速度のラベル
-recorded_at,記録日時,Recorded at,記録日時のラベル
+recorded_at,運動した日時,Exercise date and time,運動した日時（旧・記録日時）
 saved_at,保存日時,Saved at,保存日時のラベル
 photo,メーターパネル写真,Meter panel photo,写真のラベル
 calories_unit,kcal,kcal,消費カロリーの単位

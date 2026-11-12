@@ -290,6 +290,7 @@ void main() {
         missing: false,
         error: null,
       ),
+      languageCode: 'ja',
     );
     expect(multi.showPagePosition, isTrue);
     expect(multi.pageCurrent, 2);
@@ -299,6 +300,7 @@ void main() {
     expect(multi.showPhotoError, isTrue);
     expect(multi.caloriesText, contains('12.3'));
     expect(multi.averageSpeedText, contains('2.5'));
+    expect(multi.recordedAtText, '2026年11月05日 12:30:00');
 
     final single = delegate.execute(
       ExerciseHistoryDetailScreenState(
@@ -313,6 +315,7 @@ void main() {
         missing: false,
         error: null,
       ),
+      languageCode: 'ja',
     );
     expect(single.showPagePosition, isFalse);
     expect(single.pageCurrent, 1);
@@ -334,8 +337,29 @@ void main() {
         missing: true,
         error: null,
       ),
+      languageCode: 'ja',
     );
     expect(entity.showMissing, isTrue);
+  });
+
+  test('en の日時はアメリカ形式', () {
+    const delegate = ExerciseHistoryDetailStateToEntityDelegate();
+    final entity = delegate.execute(
+      ExerciseHistoryDetailScreenState(
+        id: 'a',
+        sameDayIds: const ['a'],
+        pageIndex: 0,
+        pageLoading: false,
+        detailLoadGeneration: 0,
+        loading: false,
+        history: _history(id: 'a'),
+        photoAbsolutePath: null,
+        missing: false,
+        error: null,
+      ),
+      languageCode: 'en',
+    );
+    expect(entity.recordedAtText, 'Nov 5, 2026, 12:30:00');
   });
 
   test('page_position 文言が StringsTestHelper から取れる', () {
