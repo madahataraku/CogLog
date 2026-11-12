@@ -835,11 +835,11 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_advice_template_1 =>
-      'Keep going at your own pace while looking at your set goals and today\'s log.';
+      'Keep going at your own pace while looking at today\'s log.';
 
   @override
   String get screen_feature_top_advice_template_2 =>
-      'Nice work. A consecutive streak remains as a fact that continues.';
+      'Nice work. Today\'s log can guide your next session.';
 
   @override
   String get screen_feature_top_advice_template_3 =>

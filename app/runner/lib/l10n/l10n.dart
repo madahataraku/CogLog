@@ -1497,13 +1497,13 @@ abstract class L10n {
   /// LLM不可時の定型1
   ///
   /// In ja, this message translates to:
-  /// **'設定した目標と今日の記録を見ながら、自分のペースで続けましょう。'**
+  /// **'今日の記録を見ながら、自分のペースで続けましょう。'**
   String get screen_feature_top_advice_template_1;
 
   /// LLM不可時の定型2
   ///
   /// In ja, this message translates to:
-  /// **'よく動けました。連続の記録は、続いている事実として残っていきます。'**
+  /// **'よく動けました。今日の記録は、次の運動の目安になります。'**
   String get screen_feature_top_advice_template_2;
 
   /// LLM不可時の定型3

@@ -774,11 +774,11 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_advice_template_1 =>
-      '設定した目標と今日の記録を見ながら、自分のペースで続けましょう。';
+      '今日の記録を見ながら、自分のペースで続けましょう。';
 
   @override
   String get screen_feature_top_advice_template_2 =>
-      'よく動けました。連続の記録は、続いている事実として残っていきます。';
+      'よく動けました。今日の記録は、次の運動の目安になります。';
 
   @override
   String get screen_feature_top_advice_template_3 =>

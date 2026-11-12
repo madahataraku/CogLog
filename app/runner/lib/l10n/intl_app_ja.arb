@@ -981,11 +981,11 @@
   "@screen_feature_top_advice_no_exercise": {
     "description": "履歴0件のワンポイント"
   },
-  "screen_feature_top_advice_template_1": "設定した目標と今日の記録を見ながら、自分のペースで続けましょう。",
+  "screen_feature_top_advice_template_1": "今日の記録を見ながら、自分のペースで続けましょう。",
   "@screen_feature_top_advice_template_1": {
     "description": "LLM不可時の定型1"
   },
-  "screen_feature_top_advice_template_2": "よく動けました。連続の記録は、続いている事実として残っていきます。",
+  "screen_feature_top_advice_template_2": "よく動けました。今日の記録は、次の運動の目安になります。",
   "@screen_feature_top_advice_template_2": {
     "description": "LLM不可時の定型2"
   },

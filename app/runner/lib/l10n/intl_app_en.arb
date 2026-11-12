@@ -981,11 +981,11 @@
   "@screen_feature_top_advice_no_exercise": {
     "description": "履歴0件のワンポイント"
   },
-  "screen_feature_top_advice_template_1": "Keep going at your own pace while looking at your set goals and today's log.",
+  "screen_feature_top_advice_template_1": "Keep going at your own pace while looking at today's log.",
   "@screen_feature_top_advice_template_1": {
     "description": "LLM不可時の定型1"
   },
-  "screen_feature_top_advice_template_2": "Nice work. A consecutive streak remains as a fact that continues.",
+  "screen_feature_top_advice_template_2": "Nice work. Today's log can guide your next session.",
   "@screen_feature_top_advice_template_2": {
     "description": "LLM不可時の定型2"
   },
