@@ -1045,25 +1045,25 @@
   "@screen_feature_trends_chart_placeholder": {
     "description": "グラフ領域のロード中表示"
   },
-  "screen_feature_trends_group_body": "Body",
-  "@screen_feature_trends_group_body": {
-    "description": "指標グループ"
+  "screen_feature_trends_comparison_calories_body_fat": "Calories vs body fat",
+  "@screen_feature_trends_comparison_calories_body_fat": {
+    "description": "比較2"
   },
-  "screen_feature_trends_group_exercise": "Exercise",
-  "@screen_feature_trends_group_exercise": {
-    "description": "指標グループ"
+  "screen_feature_trends_comparison_calories_body_kg": "Calories vs weight & lean mass",
+  "@screen_feature_trends_comparison_calories_body_kg": {
+    "description": "比較1"
   },
-  "screen_feature_trends_group_label": "Group",
-  "@screen_feature_trends_group_label": {
-    "description": "指標グループ選択のラベル"
+  "screen_feature_trends_comparison_duration_distance": "Duration vs distance",
+  "@screen_feature_trends_comparison_duration_distance": {
+    "description": "比較3"
+  },
+  "screen_feature_trends_comparison_label": "Comparison",
+  "@screen_feature_trends_comparison_label": {
+    "description": "比較プリセット選択のラベル"
   },
   "screen_feature_trends_metric_body_fat": "Body fat",
   "@screen_feature_trends_metric_body_fat": {
     "description": "身体％"
-  },
-  "screen_feature_trends_metric_body_kg": "Weight & lean mass",
-  "@screen_feature_trends_metric_body_kg": {
-    "description": "身体 kg 組"
   },
   "screen_feature_trends_metric_body_lean_mass": "Lean mass",
   "@screen_feature_trends_metric_body_lean_mass": {
@@ -1084,10 +1084,6 @@
   "screen_feature_trends_metric_duration": "Duration",
   "@screen_feature_trends_metric_duration": {
     "description": "運動指標"
-  },
-  "screen_feature_trends_metric_label": "Metric",
-  "@screen_feature_trends_metric_label": {
-    "description": "グループ内の指標選択ラベル"
   },
   "screen_feature_trends_open_os_settings": "Open Settings",
   "@screen_feature_trends_open_os_settings": {
@@ -1119,15 +1115,35 @@
   },
   "screen_feature_trends_request_health_permission": "Allow Health access",
   "@screen_feature_trends_request_health_permission": {
-    "description": "身体グループの許可リクエスト"
+    "description": "身体を含む比較の許可リクエスト"
   },
   "screen_feature_trends_retry_load": "Retry",
   "@screen_feature_trends_retry_load": {
-    "description": "身体指標の再読取"
+    "description": "系列の再読取"
   },
   "screen_feature_trends_title": "Trends",
   "@screen_feature_trends_title": {
     "description": "画面タイトル"
+  },
+  "screen_feature_trends_unit_kcal": "kcal",
+  "@screen_feature_trends_unit_kcal": {
+    "description": "単位"
+  },
+  "screen_feature_trends_unit_kg": "kg",
+  "@screen_feature_trends_unit_kg": {
+    "description": "単位"
+  },
+  "screen_feature_trends_unit_km": "km",
+  "@screen_feature_trends_unit_km": {
+    "description": "単位"
+  },
+  "screen_feature_trends_unit_minutes": "min",
+  "@screen_feature_trends_unit_minutes": {
+    "description": "単位"
+  },
+  "screen_feature_trends_unit_percent": "%",
+  "@screen_feature_trends_unit_percent": {
+    "description": "単位"
   },
   "view_model_download_guidance_body": "The on-device model for tips is not on this device yet. You can start preparing it. You can keep using the app meanwhile.",
   "@view_model_download_guidance_body": {

@@ -5,13 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:screen_feature_trends/src/viewmodel/delegate/on_reload_delegate.dart';
 import 'package:screen_feature_trends/src/viewmodel/delegate/on_request_health_permission_delegate.dart';
-import 'package:screen_feature_trends/src/viewmodel/delegate/on_select_group_delegate.dart';
-import 'package:screen_feature_trends/src/viewmodel/delegate/on_select_metric_set_delegate.dart';
+import 'package:screen_feature_trends/src/viewmodel/delegate/on_select_comparison_delegate.dart';
 import 'package:screen_feature_trends/src/viewmodel/delegate/on_select_period_delegate.dart';
 import 'package:screen_feature_trends/src/viewmodel/delegate/trends_state_to_entity_delegate.dart';
 import 'package:screen_feature_trends/src/viewmodel/entity/trends_visible_series.dart';
+import 'package:screen_feature_trends/src/viewmodel/state/trends_comparison.dart';
 import 'package:screen_feature_trends/src/viewmodel/state/trends_health_permission_ui.dart';
-import 'package:screen_feature_trends/src/viewmodel/state/trends_metric_set.dart';
 import 'package:screen_feature_trends/src/viewmodel/state/trends_screen_state.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_trends/usecase_load_trends.dart';
@@ -74,15 +73,13 @@ void main() {
     await state.close();
   });
 
-  test('初期値は過去30日・運動・消費カロリー・読込中', () {
+  test('初期値は過去30日・カロリー×体重除脂肪・読込中', () {
     expect(state.state.period, TrendsPeriod.days30);
-    expect(state.state.group, TrendsMetricGroup.exercise);
-    expect(state.state.metricSet, TrendsMetricSet.exerciseCalories);
+    expect(state.state.comparison, TrendsComparison.caloriesBodyKg);
     expect(state.state.loading, isTrue);
     final entity = const TrendsStateToEntityDelegate().execute(state.state);
     expect(entity.period, TrendsPeriod.days30);
-    expect(entity.group, TrendsMetricGroup.exercise);
-    expect(entity.metricSet, TrendsMetricSet.exerciseCalories);
+    expect(entity.comparison, TrendsComparison.caloriesBodyKg);
     expect(entity.loading, isTrue);
   });
 
@@ -93,7 +90,7 @@ void main() {
       now: now,
     ).execute(TrendsPeriod.days90);
     expect(state.state.period, TrendsPeriod.days90);
-    expect(state.state.group, TrendsMetricGroup.exercise);
+    expect(state.state.comparison, TrendsComparison.caloriesBodyKg);
     expect(load.calls, 1);
     expect(load.lastRequest?.period, TrendsPeriodKind.days90);
     expect(state.state.loading, isFalse);
@@ -113,38 +110,7 @@ void main() {
     expect(load.calls, 1);
   });
 
-  test('グループを変えると metricSet を初期へ戻して reload する', () async {
-    await state.updateWithLock((current, emitter) async {
-      await emitter.emit(
-        current.copyWith(metricSet: TrendsMetricSet.exerciseDuration),
-      );
-    });
-    await OnSelectGroupDelegate(
-      state: state,
-      loadTrendsUsecase: load,
-      now: now,
-    ).execute(TrendsMetricGroup.body);
-    expect(state.state.group, TrendsMetricGroup.body);
-    expect(state.state.metricSet, TrendsMetricSet.bodyKgPair);
-    expect(load.calls, 1);
-    expect(load.lastRequest?.groupIsBody, isTrue);
-  });
-
-  test('同じグループでは State も reload もしない', () async {
-    await OnSelectGroupDelegate(
-      state: state,
-      loadTrendsUsecase: load,
-      now: now,
-    ).execute(TrendsMetricGroup.body);
-    await OnSelectGroupDelegate(
-      state: state,
-      loadTrendsUsecase: load,
-      now: now,
-    ).execute(TrendsMetricGroup.body);
-    expect(load.calls, 1);
-  });
-
-  test('指標組切替は reload せず visible だけ変わる', () async {
+  test('比較切替は reload せず visible だけ変わる', () async {
     const calories = TrendsVisibleSeries(
       metric: TrendsMetricKind.exerciseCaloriesKcal,
       points: [],
@@ -155,6 +121,11 @@ void main() {
       points: [],
       segments: [],
     );
+    const distance = TrendsVisibleSeries(
+      metric: TrendsMetricKind.exerciseDistanceKm,
+      points: [],
+      segments: [],
+    );
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
         current.copyWith(
@@ -162,26 +133,32 @@ void main() {
           exerciseSeries: {
             TrendsMetricKind.exerciseCaloriesKcal: calories,
             TrendsMetricKind.exerciseDurationMinutes: duration,
+            TrendsMetricKind.exerciseDistanceKm: distance,
           },
         ),
       );
     });
-    await OnSelectMetricSetDelegate(state: state)
-        .execute(TrendsMetricSet.exerciseDuration);
-    expect(state.state.metricSet, TrendsMetricSet.exerciseDuration);
+    await OnSelectComparisonDelegate(state: state)
+        .execute(TrendsComparison.durationDistance);
+    expect(state.state.comparison, TrendsComparison.durationDistance);
     expect(load.calls, 0);
     final entity = const TrendsStateToEntityDelegate().execute(state.state);
-    expect(
-      entity.visibleSeries.single.metric,
+    expect(entity.visibleSeries.map((s) => s.metric), [
       TrendsMetricKind.exerciseDurationMinutes,
-    );
+      TrendsMetricKind.exerciseDistanceKm,
+    ]);
   });
 
-  test('身体グループで拒否なら許可ボタン、永久拒否なら設定ボタン', () {
+  test('同じ比較では State も reload もしない', () async {
+    await OnSelectComparisonDelegate(state: state)
+        .execute(TrendsComparison.caloriesBodyKg);
+    expect(load.calls, 0);
+    expect(state.state.comparison, TrendsComparison.caloriesBodyKg);
+  });
+
+  test('身体を含む比較で拒否なら許可ボタン、永久拒否なら設定ボタン', () {
     final denied = const TrendsStateToEntityDelegate().execute(
       TrendsScreenState.initial.copyWith(
-        group: TrendsMetricGroup.body,
-        metricSet: TrendsMetricSet.bodyKgPair,
         loading: false,
         healthPermissionUi: TrendsHealthPermissionUi.denied,
       ),
@@ -191,8 +168,6 @@ void main() {
 
     final permanent = const TrendsStateToEntityDelegate().execute(
       TrendsScreenState.initial.copyWith(
-        group: TrendsMetricGroup.body,
-        metricSet: TrendsMetricSet.bodyKgPair,
         loading: false,
         healthPermissionUi: TrendsHealthPermissionUi.permanentlyDenied,
       ),
@@ -201,22 +176,29 @@ void main() {
     expect(permanent.showOpenSettingsButton, isTrue);
   });
 
-  test('読取失敗なら再試行ボタン', () {
-    final body = const TrendsStateToEntityDelegate().execute(
+  test('運動時間×距離では許可導線を出さない', () {
+    final entity = const TrendsStateToEntityDelegate().execute(
       TrendsScreenState.initial.copyWith(
-        group: TrendsMetricGroup.body,
-        metricSet: TrendsMetricSet.bodyKgPair,
+        comparison: TrendsComparison.durationDistance,
+        loading: false,
+        healthPermissionUi: TrendsHealthPermissionUi.denied,
+        bodyHistoryLimited: true,
+      ),
+    );
+    expect(entity.showRequestPermissionButton, isFalse);
+    expect(entity.showRequestHistoryButton, isFalse);
+    expect(entity.showOpenSettingsButton, isFalse);
+  });
+
+  test('読取失敗なら再試行ボタン', () {
+    final failed = const TrendsStateToEntityDelegate().execute(
+      TrendsScreenState.initial.copyWith(
         loading: false,
         bodyReadFailed: true,
         healthPermissionUi: TrendsHealthPermissionUi.granted,
       ),
     );
-    expect(body.showRetryButton, isTrue);
-
-    final exercise = const TrendsStateToEntityDelegate().execute(
-      TrendsScreenState.initial.copyWith(loading: false, bodyReadFailed: true),
-    );
-    expect(exercise.showRetryButton, isTrue);
+    expect(failed.showRetryButton, isTrue);
   });
 
   test('許可リクエスト後に reload する', () async {
@@ -252,8 +234,6 @@ void main() {
   test('履歴制限かつ許可済みなら履歴許可ボタン', () {
     final entity = const TrendsStateToEntityDelegate().execute(
       TrendsScreenState.initial.copyWith(
-        group: TrendsMetricGroup.body,
-        metricSet: TrendsMetricSet.bodyKgPair,
         loading: false,
         bodyHistoryLimited: true,
         healthPermissionUi: TrendsHealthPermissionUi.granted,
@@ -266,8 +246,6 @@ void main() {
   test('リクエスト後に unknown なら設定ボタンだけ', () {
     final entity = const TrendsStateToEntityDelegate().execute(
       TrendsScreenState.initial.copyWith(
-        group: TrendsMetricGroup.body,
-        metricSet: TrendsMetricSet.bodyKgPair,
         loading: false,
         healthPermissionRequested: true,
         healthPermissionUi: TrendsHealthPermissionUi.unknown,
@@ -280,8 +258,6 @@ void main() {
   test('部分許可なら許可ボタンを残す', () {
     final entity = const TrendsStateToEntityDelegate().execute(
       TrendsScreenState.initial.copyWith(
-        group: TrendsMetricGroup.body,
-        metricSet: TrendsMetricSet.bodyKgPair,
         loading: false,
         healthPermissionRequested: true,
         bodyPermissionIncomplete: true,

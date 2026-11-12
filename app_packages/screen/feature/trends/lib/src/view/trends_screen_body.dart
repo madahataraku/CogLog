@@ -7,10 +7,10 @@ import '../strings.dart';
 import '../viewmodel/state/trends_screen_state.dart';
 import '../viewmodel/trends_screen_view_model.dart';
 import 'trends_chart.dart';
-import 'trends_metric_select.dart';
+import 'trends_comparison_select.dart';
 import 'trends_screen_providers.dart';
 
-/// 期間・グループ・指標の選択と許可ボタン・グラフ。
+/// 期間・比較の選択と許可ボタン・グラフ。
 ///
 /// Example:
 /// ```dart
@@ -78,35 +78,9 @@ class TrendsScreenBody extends ConsumerWidget {
                 },
               ),
             ),
-            FSelectMenuTile<TrendsMetricGroup>.fromMap(
-              {
-                strings.screen_feature_trends_group_exercise:
-                    TrendsMetricGroup.exercise,
-                strings.screen_feature_trends_group_body:
-                    TrendsMetricGroup.body,
-              },
-              title: Text(strings.screen_feature_trends_group_label),
-              details: Text(switch (entity.group) {
-                TrendsMetricGroup.exercise =>
-                  strings.screen_feature_trends_group_exercise,
-                TrendsMetricGroup.body =>
-                  strings.screen_feature_trends_group_body,
-              }),
-              selectControl: .lifted(
-                value: {entity.group},
-                onChange: (values) async {
-                  final group = values.difference({entity.group}).firstOrNull;
-                  if (group == null || group == entity.group) {
-                    return;
-                  }
-                  await viewModel.onSelectGroup(group);
-                },
-              ),
-            ),
-            TrendsMetricSelect(
-              group: entity.group,
-              metricSet: entity.metricSet,
-              onChanged: viewModel.onSelectMetricSet,
+            TrendsComparisonSelect(
+              comparison: entity.comparison,
+              onChanged: viewModel.onSelectComparison,
             ),
             if (entity.showRequestPermissionButton)
               FButton(

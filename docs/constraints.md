@@ -12,9 +12,8 @@
 
 ## Syncfusion Charts
 
-- 推移グラフは `syncfusion_flutter_charts` を用いる。Community License を利用する。
-- ライセンスキーは dart-define の `SYNCFUSION_LICENSE_KEY` で注入する。`monolith.yaml` の各 flavor にキーを置き、実値はコミットしない `secrets/monolith.yaml` で上書きする。
-- アプリ起動時にキーが空でなければ `SyncfusionLicense.registerLicense` を呼ぶ。空のままでも起動は継続する（テスト・未設定時）。
+- 推移グラフは `syncfusion_flutter_charts` を用いる。Community License（または Commercial）を利用する。
+- Flutter 向けパッケージ（v18.3 以降）はアプリ内のライセンスキー登録を必要としない。キーの dart-define 注入や `SyncfusionLicense.registerLicense` は行わない。
 - 実効バージョンはルート `pubspec.yaml` の `dependency_overrides` で固定する。
 - 依存は OSS ライセンス一覧の再生成対象に含める。
 

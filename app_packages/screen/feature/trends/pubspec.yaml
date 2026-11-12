@@ -22,6 +22,7 @@ dependencies:
   screen_navigation: any
   state_stream: any
   state_stream_riverpod: any
+  syncfusion_flutter_charts: any
   usecase_load_trends: any
   usecase_open_app_settings: any
   usecase_request_health_body_permission: any

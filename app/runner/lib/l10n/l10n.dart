@@ -1590,35 +1590,35 @@ abstract class L10n {
   /// **'読み込み中'**
   String get screen_feature_trends_chart_placeholder;
 
-  /// 指標グループ
+  /// 比較2
   ///
   /// In ja, this message translates to:
-  /// **'身体'**
-  String get screen_feature_trends_group_body;
+  /// **'カロリーと体脂肪率'**
+  String get screen_feature_trends_comparison_calories_body_fat;
 
-  /// 指標グループ
+  /// 比較1
   ///
   /// In ja, this message translates to:
-  /// **'運動'**
-  String get screen_feature_trends_group_exercise;
+  /// **'カロリーと体重・除脂肪'**
+  String get screen_feature_trends_comparison_calories_body_kg;
 
-  /// 指標グループ選択のラベル
+  /// 比較3
   ///
   /// In ja, this message translates to:
-  /// **'グループ'**
-  String get screen_feature_trends_group_label;
+  /// **'運動時間と走行距離'**
+  String get screen_feature_trends_comparison_duration_distance;
+
+  /// 比較プリセット選択のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'比較'**
+  String get screen_feature_trends_comparison_label;
 
   /// 身体％
   ///
   /// In ja, this message translates to:
   /// **'体脂肪率'**
   String get screen_feature_trends_metric_body_fat;
-
-  /// 身体 kg 組
-  ///
-  /// In ja, this message translates to:
-  /// **'体重と除脂肪体重'**
-  String get screen_feature_trends_metric_body_kg;
 
   /// 凡例用の除脂肪体重
   ///
@@ -1649,12 +1649,6 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'運動時間'**
   String get screen_feature_trends_metric_duration;
-
-  /// グループ内の指標選択ラベル
-  ///
-  /// In ja, this message translates to:
-  /// **'指標'**
-  String get screen_feature_trends_metric_label;
 
   /// 永久拒否時に OS 設定を開く
   ///
@@ -1698,13 +1692,13 @@ abstract class L10n {
   /// **'ヘルスの履歴データを許可'**
   String get screen_feature_trends_request_health_history;
 
-  /// 身体グループの許可リクエスト
+  /// 身体を含む比較の許可リクエスト
   ///
   /// In ja, this message translates to:
   /// **'ヘルスケアを許可'**
   String get screen_feature_trends_request_health_permission;
 
-  /// 身体指標の再読取
+  /// 系列の再読取
   ///
   /// In ja, this message translates to:
   /// **'再試行'**
@@ -1715,6 +1709,36 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'推移'**
   String get screen_feature_trends_title;
+
+  /// 単位
+  ///
+  /// In ja, this message translates to:
+  /// **'kcal'**
+  String get screen_feature_trends_unit_kcal;
+
+  /// 単位
+  ///
+  /// In ja, this message translates to:
+  /// **'kg'**
+  String get screen_feature_trends_unit_kg;
+
+  /// 単位
+  ///
+  /// In ja, this message translates to:
+  /// **'km'**
+  String get screen_feature_trends_unit_km;
+
+  /// 単位
+  ///
+  /// In ja, this message translates to:
+  /// **'分'**
+  String get screen_feature_trends_unit_minutes;
+
+  /// 単位
+  ///
+  /// In ja, this message translates to:
+  /// **'%'**
+  String get screen_feature_trends_unit_percent;
 
   /// 誘導本文
   ///

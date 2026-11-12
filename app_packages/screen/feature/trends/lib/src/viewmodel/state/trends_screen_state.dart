@@ -1,8 +1,8 @@
 import 'package:domain_trends/domain_trends.dart';
 
 import '../entity/trends_visible_series.dart';
+import 'trends_comparison.dart';
 import 'trends_health_permission_ui.dart';
-import 'trends_metric_set.dart';
 
 /// 推移の集計期間。
 enum TrendsPeriod {
@@ -17,15 +17,6 @@ enum TrendsPeriod {
 
   /// 過去 365 日。
   days365,
-}
-
-/// 推移の指標グループ。
-enum TrendsMetricGroup {
-  /// 運動時間・走行距離・消費カロリー。
-  exercise,
-
-  /// 体重・体脂肪率・除脂肪体重。
-  body,
 }
 
 /// 推移画面が持つ選択・読込・系列状態。
@@ -43,8 +34,7 @@ final class TrendsScreenState {
   /// ```
   const TrendsScreenState({
     required this.period,
-    required this.group,
-    required this.metricSet,
+    required this.comparison,
     required this.loading,
     required this.bodyReadFailed,
     this.bodyHistoryLimited = false,
@@ -57,11 +47,10 @@ final class TrendsScreenState {
     this.reloadGeneration = 0,
   });
 
-  /// 初期は過去 30 日・運動・消費カロリー・読込中。
+  /// 初期は過去 30 日・カロリー×体重除脂肪・読込中。
   static const initial = TrendsScreenState(
     period: TrendsPeriod.days30,
-    group: TrendsMetricGroup.exercise,
-    metricSet: TrendsMetricSet.exerciseCalories,
+    comparison: TrendsComparison.caloriesBodyKg,
     loading: true,
     bodyReadFailed: false,
     healthPermissionUi: TrendsHealthPermissionUi.unknown,
@@ -73,11 +62,8 @@ final class TrendsScreenState {
   /// 選んでいる期間。
   final TrendsPeriod period;
 
-  /// 選んでいる指標グループ。
-  final TrendsMetricGroup group;
-
-  /// グループ内の指標組。
-  final TrendsMetricSet metricSet;
+  /// 選んでいる比較プリセット。
+  final TrendsComparison comparison;
 
   /// 系列の読込中か。
   final bool loading;
@@ -117,8 +103,7 @@ final class TrendsScreenState {
   /// ```
   TrendsScreenState copyWith({
     TrendsPeriod? period,
-    TrendsMetricGroup? group,
-    TrendsMetricSet? metricSet,
+    TrendsComparison? comparison,
     bool? loading,
     bool? bodyReadFailed,
     bool? bodyHistoryLimited,
@@ -131,8 +116,7 @@ final class TrendsScreenState {
     int? reloadGeneration,
   }) => TrendsScreenState(
     period: period ?? this.period,
-    group: group ?? this.group,
-    metricSet: metricSet ?? this.metricSet,
+    comparison: comparison ?? this.comparison,
     loading: loading ?? this.loading,
     bodyReadFailed: bodyReadFailed ?? this.bodyReadFailed,
     bodyHistoryLimited: bodyHistoryLimited ?? this.bodyHistoryLimited,

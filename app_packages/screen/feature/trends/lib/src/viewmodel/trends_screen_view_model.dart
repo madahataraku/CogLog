@@ -11,12 +11,11 @@ import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
 import 'delegate/on_reload_delegate.dart';
 import 'delegate/on_request_health_permission_delegate.dart';
-import 'delegate/on_select_group_delegate.dart';
-import 'delegate/on_select_metric_set_delegate.dart';
+import 'delegate/on_select_comparison_delegate.dart';
 import 'delegate/on_select_period_delegate.dart';
 import 'delegate/trends_state_to_entity_delegate.dart';
 import 'entity/trends_screen_entity.dart';
-import 'state/trends_metric_set.dart';
+import 'state/trends_comparison.dart';
 import 'state/trends_screen_state.dart';
 
 part 'trends_screen_view_model.action.dart';

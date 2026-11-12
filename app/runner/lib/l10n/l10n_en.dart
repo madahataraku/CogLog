@@ -885,19 +885,22 @@ class L10nEn extends L10n {
   String get screen_feature_trends_chart_placeholder => 'Loading';
 
   @override
-  String get screen_feature_trends_group_body => 'Body';
+  String get screen_feature_trends_comparison_calories_body_fat =>
+      'Calories vs body fat';
 
   @override
-  String get screen_feature_trends_group_exercise => 'Exercise';
+  String get screen_feature_trends_comparison_calories_body_kg =>
+      'Calories vs weight & lean mass';
 
   @override
-  String get screen_feature_trends_group_label => 'Group';
+  String get screen_feature_trends_comparison_duration_distance =>
+      'Duration vs distance';
+
+  @override
+  String get screen_feature_trends_comparison_label => 'Comparison';
 
   @override
   String get screen_feature_trends_metric_body_fat => 'Body fat';
-
-  @override
-  String get screen_feature_trends_metric_body_kg => 'Weight & lean mass';
 
   @override
   String get screen_feature_trends_metric_body_lean_mass => 'Lean mass';
@@ -913,9 +916,6 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_metric_duration => 'Duration';
-
-  @override
-  String get screen_feature_trends_metric_label => 'Metric';
 
   @override
   String get screen_feature_trends_open_os_settings => 'Open Settings';
@@ -948,6 +948,21 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_title => 'Trends';
+
+  @override
+  String get screen_feature_trends_unit_kcal => 'kcal';
+
+  @override
+  String get screen_feature_trends_unit_kg => 'kg';
+
+  @override
+  String get screen_feature_trends_unit_km => 'km';
+
+  @override
+  String get screen_feature_trends_unit_minutes => 'min';
+
+  @override
+  String get screen_feature_trends_unit_percent => '%';
 
   @override
   String get view_model_download_guidance_body =>

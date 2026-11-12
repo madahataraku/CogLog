@@ -1,9 +1,7 @@
-import 'package:domain_trends/domain_trends.dart';
-
 import '../entity/trends_screen_entity.dart';
 import '../entity/trends_visible_series.dart';
+import '../state/trends_comparison.dart';
 import '../state/trends_health_permission_ui.dart';
-import '../state/trends_metric_set.dart';
 import '../state/trends_screen_state.dart';
 
 /// State を表示用 Entity へ写す。
@@ -29,42 +27,13 @@ final class TrendsStateToEntityDelegate {
   /// ```
   TrendsScreenEntity execute(TrendsScreenState state) {
     final visible = <TrendsVisibleSeries>[];
-    switch (state.metricSet) {
-      case TrendsMetricSet.exerciseCalories:
-        final series =
-            state.exerciseSeries[TrendsMetricKind.exerciseCaloriesKcal];
-        if (series != null) {
-          visible.add(series);
-        }
-      case TrendsMetricSet.exerciseDuration:
-        final series =
-            state.exerciseSeries[TrendsMetricKind.exerciseDurationMinutes];
-        if (series != null) {
-          visible.add(series);
-        }
-      case TrendsMetricSet.exerciseDistance:
-        final series =
-            state.exerciseSeries[TrendsMetricKind.exerciseDistanceKm];
-        if (series != null) {
-          visible.add(series);
-        }
-      case TrendsMetricSet.bodyKgPair:
-        for (final kind in [
-          TrendsMetricKind.bodyWeightKg,
-          TrendsMetricKind.bodyLeanMassKg,
-        ]) {
-          final series = state.bodySeries[kind];
-          if (series != null) {
-            visible.add(series);
-          }
-        }
-      case TrendsMetricSet.bodyFat:
-        final series = state.bodySeries[TrendsMetricKind.bodyFatPercent];
-        if (series != null) {
-          visible.add(series);
-        }
+    for (final kind in state.comparison.metrics) {
+      final series = state.exerciseSeries[kind] ?? state.bodySeries[kind];
+      if (series != null) {
+        visible.add(series);
+      }
     }
-    final isBody = state.group == TrendsMetricGroup.body;
+    final includesBody = state.comparison.includesBody;
     final permanentlyDenied =
         state.healthPermissionUi == TrendsHealthPermissionUi.permanentlyDenied;
     final granted =
@@ -72,23 +41,23 @@ final class TrendsStateToEntityDelegate {
     // リクエスト後も granted でない（iOS unknown / Android 全拒否）ときは
     // 許可ボタンを隠し、OS 設定へ誘導する。部分許可は再リクエストを残す。
     final showRequestPermissionButton =
-        isBody &&
+        includesBody &&
         !permanentlyDenied &&
         (state.bodyPermissionIncomplete ||
             (!granted && !state.healthPermissionRequested));
     final showOpenSettingsButton =
-        isBody &&
+        includesBody &&
         (permanentlyDenied ||
             (state.healthPermissionRequested &&
                 !granted &&
                 !state.bodyPermissionIncomplete));
     return TrendsScreenEntity(
       period: state.period,
-      group: state.group,
-      metricSet: state.metricSet,
+      comparison: state.comparison,
       loading: state.loading,
       showRequestPermissionButton: showRequestPermissionButton,
-      showRequestHistoryButton: isBody && state.bodyHistoryLimited && granted,
+      showRequestHistoryButton:
+          includesBody && state.bodyHistoryLimited && granted,
       showOpenSettingsButton: showOpenSettingsButton,
       showRetryButton: state.bodyReadFailed,
       visibleSeries: visible,

@@ -31,26 +31,19 @@ void main() {
   final now = DateTime(2026, 11, 10, 15);
 
   test('運動カロリーは days30 で 2 点になる', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: FixedExerciseHistoryRepository([
-            ride(recordedAt: DateTime(2026, 11, 9, 12), caloriesKcal: 100),
-            ride(
-              recordedAt: DateTime(2026, 11, 10, 12),
-              caloriesKcal: 200,
-              id: '22222222-2222-4222-8222-222222222222',
-            ),
-          ]),
-          health: FakeHealthBodyMetricsSource(
-            status: HealthBodyPermissionStatus.denied,
-          ),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: false,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: FixedExerciseHistoryRepository([
+        ride(recordedAt: DateTime(2026, 11, 9, 12), caloriesKcal: 100),
+        ride(
+          recordedAt: DateTime(2026, 11, 10, 12),
+          caloriesKcal: 200,
+          id: '22222222-2222-4222-8222-222222222222',
+        ),
+      ]),
+      health: FakeHealthBodyMetricsSource(
+        status: HealthBodyPermissionStatus.denied,
+      ),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     final calories =
         result.exerciseSeries[TrendsMetricKind.exerciseCaloriesKcal]!;
@@ -66,26 +59,19 @@ void main() {
   });
 
   test('denied では身体点は空で bodyReadFailed は false', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: FakeHealthBodyMetricsSource(
-            status: HealthBodyPermissionStatus.denied,
-            samples: [
-              HealthBodySample(
-                kind: HealthBodyMetricKind.weightKg,
-                at: DateTime(2026, 11, 10, 8),
-                value: 70,
-              ),
-            ],
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: FakeHealthBodyMetricsSource(
+        status: HealthBodyPermissionStatus.denied,
+        samples: [
+          HealthBodySample(
+            kind: HealthBodyMetricKind.weightKg,
+            at: DateTime(2026, 11, 10, 8),
+            value: 70,
           ),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: true,
-          ),
-        );
+        ],
+      ),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     expect(result.healthPermission, LoadTrendsHealthPermission.denied);
     expect(result.bodyReadFailed, isFalse);
@@ -95,20 +81,13 @@ void main() {
   });
 
   test('throwOnRead で bodyReadFailed が true', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: FakeHealthBodyMetricsSource(
-            status: HealthBodyPermissionStatus.granted,
-            throwOnRead: true,
-          ),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: true,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: FakeHealthBodyMetricsSource(
+        status: HealthBodyPermissionStatus.granted,
+        throwOnRead: true,
+      ),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     expect(result.healthPermission, LoadTrendsHealthPermission.granted);
     expect(result.bodyReadFailed, isTrue);
@@ -116,19 +95,12 @@ void main() {
   });
 
   test('permissionStatus 失敗でも運動系列を返し bodyReadFailed が true', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: FixedExerciseHistoryRepository([
-            ride(recordedAt: DateTime(2026, 11, 10, 12), caloriesKcal: 150),
-          ]),
-          health: FakeHealthBodyMetricsSource(throwOnPermissionStatus: true),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: true,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: FixedExerciseHistoryRepository([
+        ride(recordedAt: DateTime(2026, 11, 10, 12), caloriesKcal: 150),
+      ]),
+      health: FakeHealthBodyMetricsSource(throwOnPermissionStatus: true),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     expect(result.healthPermission, LoadTrendsHealthPermission.unknown);
     expect(result.bodyReadFailed, isTrue);
@@ -139,7 +111,7 @@ void main() {
     expect(result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points, isEmpty);
   });
 
-  test('運動グループかつ granted でも health.read を呼ばない', () async {
+  test('granted なら常に health.read を試す', () async {
     final health = FakeHealthBodyMetricsSource(
       status: HealthBodyPermissionStatus.granted,
       samples: [
@@ -150,24 +122,20 @@ void main() {
         ),
       ],
     );
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: health,
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: false,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: health,
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
-    expect(health.readCallCount, 0);
+    expect(health.readCallCount, 1);
     expect(result.healthPermission, LoadTrendsHealthPermission.granted);
-    expect(result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points, isEmpty);
+    expect(
+      result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points.single.value,
+      70,
+    );
   });
 
-  test('unknown でも身体グループなら読取を試す', () async {
+  test('unknown でも身体読取を試す', () async {
     final health = FakeHealthBodyMetricsSource(
       status: HealthBodyPermissionStatus.unknown,
       samples: [
@@ -178,17 +146,10 @@ void main() {
         ),
       ],
     );
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: health,
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: true,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: health,
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     expect(health.readCallCount, 1);
     expect(
@@ -198,36 +159,29 @@ void main() {
   });
 
   test('granted なら身体の最終値を点にする', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: FakeHealthBodyMetricsSource(
-            status: HealthBodyPermissionStatus.granted,
-            samples: [
-              HealthBodySample(
-                kind: HealthBodyMetricKind.weightKg,
-                at: DateTime(2026, 11, 10, 8),
-                value: 70,
-              ),
-              HealthBodySample(
-                kind: HealthBodyMetricKind.weightKg,
-                at: DateTime(2026, 11, 10, 20),
-                value: 69.5,
-              ),
-              HealthBodySample(
-                kind: HealthBodyMetricKind.leanMassKg,
-                at: DateTime(2026, 11, 10, 9),
-                value: 50,
-              ),
-            ],
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: FakeHealthBodyMetricsSource(
+        status: HealthBodyPermissionStatus.granted,
+        samples: [
+          HealthBodySample(
+            kind: HealthBodyMetricKind.weightKg,
+            at: DateTime(2026, 11, 10, 8),
+            value: 70,
           ),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: true,
+          HealthBodySample(
+            kind: HealthBodyMetricKind.weightKg,
+            at: DateTime(2026, 11, 10, 20),
+            value: 69.5,
           ),
-        );
+          HealthBodySample(
+            kind: HealthBodyMetricKind.leanMassKg,
+            at: DateTime(2026, 11, 10, 9),
+            value: 50,
+          ),
+        ],
+      ),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     expect(
       result.bodySeries[TrendsMetricKind.bodyWeightKg]!.points.single.value,
@@ -242,59 +196,38 @@ void main() {
   });
 
   test('履歴未許可かつ 90 日なら bodyHistoryLimited', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: FakeHealthBodyMetricsSource(
-            status: HealthBodyPermissionStatus.granted,
-            historyAuthorized: false,
-          ),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days90,
-            groupIsBody: true,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: FakeHealthBodyMetricsSource(
+        status: HealthBodyPermissionStatus.granted,
+        historyAuthorized: false,
+      ),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days90));
 
     expect(result.bodyHistoryLimited, isTrue);
     expect(result.healthPermission, LoadTrendsHealthPermission.granted);
   });
 
   test('履歴未許可でも days30 なら bodyHistoryLimited は false', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: FakeHealthBodyMetricsSource(
-            status: HealthBodyPermissionStatus.granted,
-            historyAuthorized: false,
-          ),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: true,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: FakeHealthBodyMetricsSource(
+        status: HealthBodyPermissionStatus.granted,
+        historyAuthorized: false,
+      ),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     expect(result.bodyHistoryLimited, isFalse);
   });
 
   test('granted でも全指標未許可なら bodyPermissionIncomplete', () async {
-    final result =
-        await LoadTrendsUsecaseImpl(
-          histories: const FixedExerciseHistoryRepository([]),
-          health: FakeHealthBodyMetricsSource(
-            status: HealthBodyPermissionStatus.granted,
-            allMetricsAuthorized: false,
-          ),
-        ).execute(
-          LoadTrendsRequest(
-            now: now,
-            period: TrendsPeriodKind.days30,
-            groupIsBody: true,
-          ),
-        );
+    final result = await LoadTrendsUsecaseImpl(
+      histories: const FixedExerciseHistoryRepository([]),
+      health: FakeHealthBodyMetricsSource(
+        status: HealthBodyPermissionStatus.granted,
+        allMetricsAuthorized: false,
+      ),
+    ).execute(LoadTrendsRequest(now: now, period: TrendsPeriodKind.days30));
 
     expect(result.bodyPermissionIncomplete, isTrue);
   });

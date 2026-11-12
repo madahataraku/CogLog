@@ -13,13 +13,10 @@ define:
   flavors:
     development:
       FLAVOR: development
-      SYNCFUSION_LICENSE_KEY: ""
     production:
       FLAVOR: production
-      SYNCFUSION_LICENSE_KEY: ""
     test:
       FLAVOR: development
-      SYNCFUSION_LICENSE_KEY: ""
 
 localization:
   languages:

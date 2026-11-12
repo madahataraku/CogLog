@@ -31,28 +31,14 @@ extension TrendsScreenViewModelActions on TrendsScreenViewModel {
     ).execute(period);
   }
 
-  /// 指標グループを選び、系列を読み直す。
+  /// 比較プリセットを選ぶ（再取得しない）。
   ///
   /// Example:
   /// ```dart
-  /// viewModel.onSelectGroup(TrendsMetricGroup.body);
+  /// viewModel.onSelectComparison(TrendsComparison.durationDistance);
   /// ```
-  Future<void> onSelectGroup(TrendsMetricGroup group, {DateTime? now}) {
-    return OnSelectGroupDelegate(
-      state: state,
-      loadTrendsUsecase: loadTrendsUsecase,
-      now: now ?? DateTime.now(),
-    ).execute(group);
-  }
-
-  /// グループ内の指標組を選ぶ（再取得しない）。
-  ///
-  /// Example:
-  /// ```dart
-  /// viewModel.onSelectMetricSet(TrendsMetricSet.exerciseDuration);
-  /// ```
-  Future<void> onSelectMetricSet(TrendsMetricSet metricSet) {
-    return OnSelectMetricSetDelegate(state: state).execute(metricSet);
+  Future<void> onSelectComparison(TrendsComparison comparison) {
+    return OnSelectComparisonDelegate(state: state).execute(comparison);
   }
 
   /// ヘルス許可をリクエストし、系列を読み直す。
@@ -82,7 +68,7 @@ extension TrendsScreenViewModelActions on TrendsScreenViewModel {
     ).execute();
   }
 
-  /// 身体指標の読取を再試行する。
+  /// 系列の読取を再試行する。
   ///
   /// Example:
   /// ```dart

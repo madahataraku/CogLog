@@ -9,8 +9,6 @@ import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_trends/screen_feature_trends.dart';
-import 'package:screen_feature_trends/src/viewmodel/state/trends_screen_state.dart';
-import 'package:screen_feature_trends/src/viewmodel/trends_screen_view_model.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_trends/usecase_load_trends.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
@@ -179,26 +177,16 @@ void main() {
     }
   });
 
-  testWidgets('推移 身体・許可ボタン / ja / Android / light', (tester) async {
+  testWidgets('推移 比較1・許可ボタン / ja / Android / light', (tester) async {
     await _prepareSurface(tester);
-    final container = ProviderContainer(
-      overrides: _overrides(
-        _emptyExerciseResult(permission: LoadTrendsHealthPermission.denied),
-      ),
-    );
-    addTearDown(container.dispose);
     try {
       await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
+        ProviderScope(
+          overrides: _overrides(
+            _emptyExerciseResult(permission: LoadTrendsHealthPermission.denied),
+          ),
           child: _wrap(const TrendsScreen()),
         ),
-      );
-      await tester.pumpAndSettle();
-      final viewModel = container.read(TrendsScreenViewModel.provider);
-      await viewModel.onSelectGroup(
-        TrendsMetricGroup.body,
-        now: DateTime(2026, 11, 10),
       );
       await tester.pumpAndSettle();
       await expectLater(

@@ -15,7 +15,6 @@ import 'package:usecase_load_trends/usecase_load_trends.dart';
 ///   LoadTrendsRequest(
 ///     now: DateTime(2026, 11, 10),
 ///     period: TrendsPeriodKind.days30,
-///     groupIsBody: false,
 ///   ),
 /// );
 /// ```
@@ -54,7 +53,6 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
   ///   LoadTrendsRequest(
   ///     now: DateTime(2026, 11, 10),
   ///     period: TrendsPeriodKind.days30,
-  ///     groupIsBody: false,
   ///   ),
   /// );
   /// ```
@@ -88,17 +86,14 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
       );
     }
     final bodyHistoryLimited = await _bodyHistoryLimited(
-      groupIsBody: request.groupIsBody,
       period: request.period,
     );
     final bodyPermissionIncomplete = await _bodyPermissionIncomplete(
-      groupIsBody: request.groupIsBody,
       healthPermission: healthPermission,
     );
-    // 運動グループでは身体を読まない。iOS は READ が unknown のままなので、
-    // 身体グループでは granted / unknown のとき読取を試す。
+    // 比較グラフは運動と身体を一括読込する。iOS は READ が unknown のままなので
+    // granted / unknown のとき読取を試す。
     final canAttemptBodyRead =
-        request.groupIsBody &&
         buckets.isNotEmpty &&
         (healthPermission == LoadTrendsHealthPermission.granted ||
             healthPermission == LoadTrendsHealthPermission.unknown);
@@ -141,12 +136,9 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
     }
   }
 
-  /// 身体グループかつ 30 日超の期間で履歴許可が無いとき true。
-  Future<bool> _bodyHistoryLimited({
-    required bool groupIsBody,
-    required TrendsPeriodKind period,
-  }) async {
-    if (!groupIsBody || period == TrendsPeriodKind.days30) {
+  /// 30 日超の期間で履歴許可が無いとき true。
+  Future<bool> _bodyHistoryLimited({required TrendsPeriodKind period}) async {
+    if (period == TrendsPeriodKind.days30) {
       return false;
     }
     try {
@@ -158,11 +150,9 @@ final class LoadTrendsUsecaseImpl implements LoadTrendsUsecase {
 
   /// 身体が granted なのに 3 指標すべてが揃っていないとき true。
   Future<bool> _bodyPermissionIncomplete({
-    required bool groupIsBody,
     required LoadTrendsHealthPermission healthPermission,
   }) async {
-    if (!groupIsBody ||
-        healthPermission != LoadTrendsHealthPermission.granted) {
+    if (healthPermission != LoadTrendsHealthPermission.granted) {
       return false;
     }
     try {

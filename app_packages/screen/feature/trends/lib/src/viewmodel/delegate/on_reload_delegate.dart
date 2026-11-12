@@ -6,7 +6,7 @@ import 'map_trends_health_ui.dart';
 import 'map_trends_period.dart';
 import 'map_trends_series.dart';
 
-/// 現在の期間・グループで系列を読み直す。
+/// 現在の期間で系列を読み直す。
 ///
 /// Example:
 /// ```dart
@@ -45,7 +45,7 @@ final class OnReloadDelegate {
   /// 読込中にしてから系列を取り、結果を State へ書く。
   ///
   /// 開始時に [TrendsScreenState.reloadGeneration] を進め、成功・失敗のどちらでも
-  /// 自世代以外の結果は捨てる（同一 period/group の重なり読込対策）。
+  /// 自世代以外の結果は捨てる（同一 period の重なり読込対策）。
   ///
   /// Example:
   /// ```dart
@@ -64,7 +64,6 @@ final class OnReloadDelegate {
         LoadTrendsRequest(
           now: now,
           period: mapTrendsPeriod(started.snapshot.period),
-          groupIsBody: started.snapshot.group == TrendsMetricGroup.body,
         ),
       );
       await state.updateWithLock((current, emitter) async {
@@ -104,7 +103,7 @@ final class OnReloadDelegate {
     }
   }
 
-  /// 自世代かつ開始時と同じ期間・グループなら最新の読込結果とみなす。
+  /// 自世代かつ開始時と同じ期間なら最新の読込結果とみなす。
   ///
   /// Example:
   /// ```dart
@@ -115,6 +114,5 @@ final class OnReloadDelegate {
     ({TrendsScreenState snapshot, int generation}) started,
   ) =>
       current.reloadGeneration == started.generation &&
-      current.period == started.snapshot.period &&
-      current.group == started.snapshot.group;
+      current.period == started.snapshot.period;
 }
