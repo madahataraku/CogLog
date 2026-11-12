@@ -57,7 +57,7 @@ jobs:
           - platform: android
             runner: ubuntu-latest
           - platform: ios
-            runner: macos-15
+            runner: macos-26
     env:
       FLAVOR: ${{ github.event_name == 'workflow_dispatch' && inputs.flavor || 'development' }}
       DISTRIBUTION_GROUPS: ${{ github.event_name == 'workflow_dispatch' && inputs.groups || vars.FIREBASE_APP_DISTRIBUTION_GROUPS }}

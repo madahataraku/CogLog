@@ -64,4 +64,4 @@ flutter test --update-goldens
 
 失敗時の差分を期待画像としてコミットしない。
 
-期待画像は Linux CI（PR Checks / App Distribution の android レッグ）の描画を正とする。macOS 上のホスト描画差でピクセルがずれるため、App Distribution の ios レッグ（`macos-15`）では `*_golden_test.dart` を実行しない。詳細は `docs/constraints.md` の App Distribution を参照する。
+期待画像は Linux CI（PR Checks / App Distribution の android レッグ）の描画を正とする。macOS 上のホスト描画差でピクセルがずれるため、App Distribution の ios レッグ（`macos-26`）では `*_golden_test.dart` を実行しない。詳細は `docs/constraints.md` の App Distribution を参照する。
