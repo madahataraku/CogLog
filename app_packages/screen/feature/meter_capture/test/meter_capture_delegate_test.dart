@@ -54,10 +54,11 @@ final class _DeferredObtain implements ObtainMeterPhotoUsecase {
 }
 
 final class _Read implements ReadMeterPanelUsecase {
-  _Read(this.result, {this.delay = Duration.zero});
+  _Read(this.result, {this.delay = Duration.zero, this.gate});
 
   final ReadMeterPanelResult result;
   final Duration delay;
+  final Completer<void>? gate;
   var calls = 0;
 
   @override
@@ -65,6 +66,10 @@ final class _Read implements ReadMeterPanelUsecase {
     calls += 1;
     if (delay > Duration.zero) {
       await Future<void>.delayed(delay);
+    }
+    final pending = gate;
+    if (pending != null) {
+      await pending.future;
     }
     return result;
   }
@@ -582,16 +587,14 @@ void main() {
 
   test('同一回でモデル案内を確認したら手打ち案内を出さない', () async {
     final session = OnDeviceLlmGuidanceSession();
-    final evaluate = _Evaluate(
-      shouldShow: true,
-      delay: const Duration(milliseconds: 40),
-    );
+    final readGate = Completer<void>();
+    final evaluate = _Evaluate(shouldShow: true);
     final read = _Read(
       const ReadMeterPanelResult(
         values: MeterReadingValues(),
         averageSpeedFromPanel: false,
       ),
-      delay: const Duration(milliseconds: 5),
+      gate: readGate,
     );
     final future = OnReadMeterDelegate(
       state: state,
@@ -600,10 +603,11 @@ void main() {
       guidanceSession: session,
     ).execute(photoBytes: Uint8List(0));
 
-    await Future<void>.delayed(const Duration(milliseconds: 20));
-    expect(state.state.step, MeterCaptureStep.edit);
-    await Future<void>.delayed(const Duration(milliseconds: 40));
+    await Future<void>.delayed(Duration.zero);
+    expect(read.calls, 1);
+    expect(evaluate.calls, 1);
     expect(state.state.pendingModelDownloadGuidance, isTrue);
+    expect(state.state.step, MeterCaptureStep.photo);
     await OnAcknowledgeModelDownloadGuidanceDelegate(
       state: state,
       session: session,
@@ -611,7 +615,9 @@ void main() {
     expect(state.state.pendingModelDownloadGuidance, isFalse);
     expect(session.hasPresented, isTrue);
 
+    readGate.complete();
     await future;
+    expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.showHandEntryGuidance, isFalse);
   });
 
