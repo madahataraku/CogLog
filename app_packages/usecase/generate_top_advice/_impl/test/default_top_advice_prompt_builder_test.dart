@@ -23,7 +23,7 @@ ExerciseHistory ride({required DateTime recordedAt}) {
 void main() {
   const builder = DefaultTopAdvicePromptBuilder();
 
-  test('設定済み目標と連続日数・150文字指示を含む', () {
+  test('設定済み目標と連続日数・声と優先・150文字指示を含む', () {
     final prompt = builder.build(
       histories: [ride(recordedAt: DateTime(2026, 11, 5, 12))],
       locale: 'ja',
@@ -35,9 +35,15 @@ void main() {
     expect(prompt, contains('goalCaloriesKcal=200.0'));
     expect(prompt, isNot(contains('goalDistanceKm=')));
     expect(prompt, contains('consecutiveExerciseDays=4'));
-    expect(prompt, contains('Compare today totals with any set goals'));
-    expect(prompt, contains('Praise the consecutive exercise-day streak'));
-    expect(prompt, contains('at most about 150 characters'));
+    expect(prompt, contains('Speak as a calm guide'));
+    expect(prompt, contains('Avoid doctor-like tone'));
+    expect(
+      prompt,
+      contains('When locale=ja, write ADVICE in polite です・ます Japanese'),
+    );
+    expect(prompt, contains('relation to any set goals'));
+    expect(prompt, contains('state the gap factually only'));
+    expect(prompt, contains('aim for at most about 150 characters'));
     expect(prompt, contains('TONE='));
     expect(prompt, contains('ADVICE='));
   });

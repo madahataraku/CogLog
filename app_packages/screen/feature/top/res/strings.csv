@@ -7,10 +7,10 @@ calories,消費カロリー,Calories,指標
 duration,運動時間,Exercise time,指標
 distance_unit,km,km,走行距離の単位
 calories_unit,kcal,kcal,消費カロリーの単位
-advice_no_exercise,今日はまだ運動の記録がありません。無理のないペースで始めましょう。,No exercise logged today. Start at a comfortable pace.,履歴0件のワンポイント
-advice_template_1,水分をこまめに取って、無理のないペースを保ちましょう。,Stay hydrated and keep a comfortable pace.,LLM不可時の定型1
-advice_template_2,よく動けました。回復のためにも休息を大切にしましょう。,Nice work. Rest matters as much as the workout.,LLM不可時の定型2
-advice_template_3,小さな積み重ねが続きます。今日も自分のペースで。,Small steps add up. Keep your own pace today.,LLM不可時の定型3
+advice_no_exercise,今日はまだ運動の記録がありません。記録があると、目標との差も見えやすくなります。,No exercise logged today. Logging makes the gap to your goals easier to see.,履歴0件のワンポイント
+advice_template_1,今日の記録を見ながら、自分のペースで続けましょう。,Keep going at your own pace while looking at today's log.,LLM不可時の定型1
+advice_template_2,よく動けました。今日の記録は、次の運動の目安になります。,Nice work. Today's log can guide your next session.,LLM不可時の定型2
+advice_template_3,小さな積み重ねが続きます。今日も自分のペースで進めましょう。,Small steps add up. Keep going at your own pace today.,LLM不可時の定型3
 achievement_title,目標達成率,Goal progress,目標達成率セクションの見出し
 unset_prompt,目標設定で一日あたりの目標を設定しましょう,Set a daily goal in Goals,目標未設定時の設定促進
 actual_label,実績,Actual,実績のラベル

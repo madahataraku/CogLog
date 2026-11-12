@@ -977,19 +977,19 @@
   "@screen_feature_top_actual_label": {
     "description": "実績のラベル"
   },
-  "screen_feature_top_advice_no_exercise": "今日はまだ運動の記録がありません。無理のないペースで始めましょう。",
+  "screen_feature_top_advice_no_exercise": "今日はまだ運動の記録がありません。記録があると、目標との差も見えやすくなります。",
   "@screen_feature_top_advice_no_exercise": {
     "description": "履歴0件のワンポイント"
   },
-  "screen_feature_top_advice_template_1": "水分をこまめに取って、無理のないペースを保ちましょう。",
+  "screen_feature_top_advice_template_1": "今日の記録を見ながら、自分のペースで続けましょう。",
   "@screen_feature_top_advice_template_1": {
     "description": "LLM不可時の定型1"
   },
-  "screen_feature_top_advice_template_2": "よく動けました。回復のためにも休息を大切にしましょう。",
+  "screen_feature_top_advice_template_2": "よく動けました。今日の記録は、次の運動の目安になります。",
   "@screen_feature_top_advice_template_2": {
     "description": "LLM不可時の定型2"
   },
-  "screen_feature_top_advice_template_3": "小さな積み重ねが続きます。今日も自分のペースで。",
+  "screen_feature_top_advice_template_3": "小さな積み重ねが続きます。今日も自分のペースで進めましょう。",
   "@screen_feature_top_advice_template_3": {
     "description": "LLM不可時の定型3"
   },
