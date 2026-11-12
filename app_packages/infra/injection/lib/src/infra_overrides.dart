@@ -96,7 +96,7 @@ List<Override> infraOverrides({
   ),
 ];
 
-/// OS ごとの読み取りエンジン列。iOS は Vision→Foundation、Android は ML Kit→Gemini Nano。
+/// OS ごとの読み取りエンジン列。iOS は FoundationModel、Android は Gemini Nano のみ。
 ///
 /// Example:
 /// ```dart
@@ -106,26 +106,14 @@ List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
   final llm = ref.watch(onDeviceLlmProvider);
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
-      final vision = VisionMeterTextRecognizer();
-      ref.onDispose(vision.close);
       return [
-        OcrMeterReadingEngine(
-          kind: MeterReadingEngineKind.visionOcr,
-          recognizer: vision,
-        ),
         LlmMeterReadingEngine(
           kind: MeterReadingEngineKind.foundationModel,
           llm: llm,
         ),
       ];
     case TargetPlatform.android:
-      final mlKit = MlKitMeterTextRecognizer();
-      ref.onDispose(mlKit.close);
       return [
-        OcrMeterReadingEngine(
-          kind: MeterReadingEngineKind.mlKit,
-          recognizer: mlKit,
-        ),
         LlmMeterReadingEngine(
           kind: MeterReadingEngineKind.geminiNano,
           llm: llm,
@@ -136,7 +124,6 @@ List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
     case TargetPlatform.macOS:
     case TargetPlatform.windows:
       return const [
-        UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit),
         UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano),
       ];
   }
