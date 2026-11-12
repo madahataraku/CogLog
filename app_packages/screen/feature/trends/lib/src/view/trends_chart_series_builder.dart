@@ -166,6 +166,8 @@ List<CartesianSeries<TrendsSeriesPoint, DateTime>> buildTrendsCartesianSeries({
         color: color,
         yAxisName: axis.axisName,
         isVisibleInLegend: true,
+        // Widget テスト終了時に Syncfusion の Timer が残らないよう 0 にする。
+        animationDuration: 0,
         dataSource: visible.points,
         xValueMapper: (p, _) => p.representativeDate,
         yValueMapper: (p, _) => p.value,
@@ -184,6 +186,7 @@ List<CartesianSeries<TrendsSeriesPoint, DateTime>> buildTrendsCartesianSeries({
           yAxisName: axis.axisName,
           isVisibleInLegend: false,
           enableTooltip: false,
+          animationDuration: 0,
           dataSource: [seg.from, seg.to],
           xValueMapper: (p, _) => p.representativeDate,
           yValueMapper: (p, _) => p.value,

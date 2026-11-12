@@ -85,8 +85,12 @@ Future<void> _pumpTabGolden(
     await pumpTopScreen(tester);
     await tester.tap(find.text(tab).last);
     // メーター記録のカメラ初期化中は progress が回り続けるため settle しない。
+    // 推移タブは Syncfusion チャートがあるので、残 Timer を捨てるまで待つ。
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
+    if (tab == '推移') {
+      await tester.pumpAndSettle();
+    }
     await expectLater(find.byType(MainShellScreen), matchesGoldenFile(golden));
   } finally {
     debugDefaultTargetPlatformOverride = null;
