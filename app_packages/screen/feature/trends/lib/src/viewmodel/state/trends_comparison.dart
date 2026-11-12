@@ -9,10 +9,10 @@ import 'package:meta/meta.dart';
 /// ```
 @internal
 enum TrendsComparison {
-  /// 消費カロリー × 体重・除脂肪体重（初期）。
+  /// 消費カロリー × 体重・除脂肪体重。
   caloriesBodyKg,
 
-  /// 消費カロリー × 体脂肪率。
+  /// 消費カロリー × 体脂肪率（初期）。
   caloriesBodyFat,
 
   /// 運動時間 × 走行距離。

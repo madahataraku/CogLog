@@ -54,8 +54,8 @@ final class OnReadMeterDelegate {
 
   /// [photoBytes] を読み、結果を State に載せて edit へ移る。
   ///
-  /// 誘導判定は読み取りと並行して開始し、読み取り完了後の手打ち案内表示だけ
-  /// 判定確定を待つ。読み取り自体は誘導を待たない。
+  /// 読み取り完了と同一 emit で成功／注意／手打ちの三段を確定する。
+  /// 誘導判定は並行して進めるが、メッセージフラグは触らない。
   /// 例外時も空に近い値で 2 ステップ目へ進む。
   ///
   /// Example:
@@ -76,12 +76,13 @@ final class OnReadMeterDelegate {
         current.copyWith(
           reading: true,
           saveError: false,
+          showReadSuccessMessage: false,
+          showReadCautionMessage: false,
           showHandEntryGuidance: false,
         ),
       );
     });
 
-    final presentedBeforeGuidance = guidanceSession.hasPresented;
     final guidanceFuture = OnEvaluateModelDownloadGuidanceDelegate(
       state: state,
       evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
@@ -101,7 +102,8 @@ final class OnReadMeterDelegate {
     }
 
     final values = result.values;
-    final needsGuidance = needsMeterHandEntryGuidance(values);
+    final kind = classifyMeterReadingMessages(values);
+    final resolved = resolveInitialAverageSpeed(merged: values);
     await state.updateWithLock((current, emitter) async {
       if (current.cameraSessionGeneration != generation) {
         return;
@@ -116,33 +118,20 @@ final class OnReadMeterDelegate {
           clearDuration: values.duration == null,
           caloriesKcal: values.caloriesKcal,
           clearCaloriesKcal: values.caloriesKcal == null,
-          averageSpeedKmh: values.averageSpeedKmh,
-          clearAverageSpeedKmh: values.averageSpeedKmh == null,
-          averageSpeedFromPanel: result.averageSpeedFromPanel,
+          averageSpeedKmh: resolved.speed,
+          clearAverageSpeedKmh: resolved.speed == null,
+          averageSpeedFromPanel: false,
           averageSpeedUserEdited: false,
+          showReadSuccessMessage: kind == MeterReadingMessageKind.complete,
+          showReadCautionMessage:
+              kind == MeterReadingMessageKind.complete ||
+              kind == MeterReadingMessageKind.incomplete,
+          showHandEntryGuidance: kind != MeterReadingMessageKind.complete,
           saveError: false,
-          showHandEntryGuidance: false,
         ),
       );
     });
 
     await guidanceFuture;
-    if (!needsGuidance) {
-      return;
-    }
-    await state.updateWithLock((current, emitter) async {
-      if (current.cameraSessionGeneration != generation) {
-        return;
-      }
-      final presentedInThisRead =
-          !presentedBeforeGuidance && guidanceSession.hasPresented;
-      if (current.pendingModelDownloadGuidance || presentedInThisRead) {
-        return;
-      }
-      if (current.showHandEntryGuidance) {
-        return;
-      }
-      await emitter.emit(current.copyWith(showHandEntryGuidance: true));
-    });
   }
 }

@@ -41,6 +41,8 @@ final class MeterCaptureScreenState {
     this.captureError = false,
     this.cameraSessionGeneration = 0,
     this.pendingModelDownloadGuidance = false,
+    this.showReadSuccessMessage = false,
+    this.showReadCautionMessage = false,
     this.showHandEntryGuidance = false,
   });
 
@@ -80,16 +82,16 @@ final class MeterCaptureScreenState {
   /// 平均速度。
   final double? averageSpeedKmh;
 
-  /// 平均速度がパネル由来か。
+  /// 平均速度がパネル由来か（常に false。互換のため残す）。
   final bool averageSpeedFromPanel;
 
-  /// 平均速度を利用者が明示編集したか。
+  /// 平均速度を利用者が明示編集したか（手編集 UI 廃止後は常に false）。
   final bool averageSpeedUserEdited;
 
-  /// 記録日時。
+  /// 運動した日時（識別子は [recordedAt] のまま）。
   final DateTime? recordedAt;
 
-  /// 記録日時の手変更。
+  /// 運動した日時を利用者が手変更したか。
   final bool recordedAtManuallySet;
 
   /// 保存失敗表示。
@@ -113,7 +115,13 @@ final class MeterCaptureScreenState {
   /// モデル未ダウンロード誘導を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
 
-  /// 手打ち案内を編集画面に出すとき true。同一回でモデル未ダウンロード誘導を出すときは false。
+  /// 自動読み取り完全時の成功メッセージを出すとき true。
+  final bool showReadSuccessMessage;
+
+  /// 読み取り値の注意メッセージを出すとき true。
+  final bool showReadCautionMessage;
+
+  /// 手打ち案内を編集画面に出すとき true。誘導とは独立。
   final bool showHandEntryGuidance;
 
   /// 一部だけ差し替えた新しい状態を返す。
@@ -154,6 +162,8 @@ final class MeterCaptureScreenState {
     bool? captureError,
     int? cameraSessionGeneration,
     bool? pendingModelDownloadGuidance,
+    bool? showReadSuccessMessage,
+    bool? showReadCautionMessage,
     bool? showHandEntryGuidance,
   }) => MeterCaptureScreenState(
     step: step ?? this.step,
@@ -189,6 +199,10 @@ final class MeterCaptureScreenState {
         cameraSessionGeneration ?? this.cameraSessionGeneration,
     pendingModelDownloadGuidance:
         pendingModelDownloadGuidance ?? this.pendingModelDownloadGuidance,
+    showReadSuccessMessage:
+        showReadSuccessMessage ?? this.showReadSuccessMessage,
+    showReadCautionMessage:
+        showReadCautionMessage ?? this.showReadCautionMessage,
     showHandEntryGuidance: showHandEntryGuidance ?? this.showHandEntryGuidance,
   );
 }

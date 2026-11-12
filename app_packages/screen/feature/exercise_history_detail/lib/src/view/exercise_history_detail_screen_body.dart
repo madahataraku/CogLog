@@ -36,8 +36,10 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
   /// ```
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entity = ref.watch(ExerciseHistoryDetailScreenProviders.entity);
+    final screenState = ref.watch(ExerciseHistoryDetailScreenProviders.state);
     final viewModel = ref.watch(ExerciseHistoryDetailScreenViewModel.provider);
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final entity = viewModel.toEntity(screenState, languageCode: languageCode);
     final pageIndex = entity.pageCurrent - 1;
     final pageController = usePageController(
       initialPage: pageIndex < 0 ? 0 : pageIndex,

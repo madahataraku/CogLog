@@ -1,0 +1,12 @@
+name: foundation_datetime
+description: Local full date-time formatting for CogLog UI.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

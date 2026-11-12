@@ -626,9 +626,9 @@
   "@screen_feature_exercise_history_detail_photo_error": {
     "description": "写真の失敗表示"
   },
-  "screen_feature_exercise_history_detail_recorded_at": "Recorded at",
+  "screen_feature_exercise_history_detail_recorded_at": "Exercise date and time",
   "@screen_feature_exercise_history_detail_recorded_at": {
-    "description": "記録日時のラベル"
+    "description": "運動した日時（旧・記録日時）"
   },
   "screen_feature_exercise_history_detail_retry": "Retry",
   "@screen_feature_exercise_history_detail_retry": {
@@ -901,13 +901,21 @@
   "@screen_feature_meter_capture_pick_library": {
     "description": "写真ライブラリ"
   },
+  "screen_feature_meter_capture_read_caution": "Automatic readings can be wrong. Correct them manually if needed.",
+  "@screen_feature_meter_capture_read_caution": {
+    "description": "読み取り値の注意（完全・不完全）"
+  },
+  "screen_feature_meter_capture_read_success": "Read the exercise bike meter.",
+  "@screen_feature_meter_capture_read_success": {
+    "description": "自動読み取り完全時の成功"
+  },
   "screen_feature_meter_capture_reading": "Reading…",
   "@screen_feature_meter_capture_reading": {
     "description": "読み取り待機"
   },
-  "screen_feature_meter_capture_recorded_at": "Recorded at",
+  "screen_feature_meter_capture_recorded_at": "Exercise date and time",
   "@screen_feature_meter_capture_recorded_at": {
-    "description": "記録日時"
+    "description": "運動した日時（旧・記録日時）"
   },
   "screen_feature_meter_capture_retake": "Retake",
   "@screen_feature_meter_capture_retake": {

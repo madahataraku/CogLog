@@ -19,7 +19,7 @@ void main() {
     );
   });
 
-  test('A3: パネル由来の平均速度があるとき fromPanel は true', () {
+  test('A3: パネル平均速度があっても距離÷時間を使い fromPanel は false', () {
     final resolved = resolveInitialAverageSpeed(
       merged: const MeterReadingValues(
         distanceKm: 1,
@@ -27,8 +27,8 @@ void main() {
         averageSpeedKmh: 9,
       ),
     );
-    expect(resolved.speed, 9);
-    expect(resolved.fromPanel, isTrue);
+    expect(resolved.speed, 1);
+    expect(resolved.fromPanel, isFalse);
   });
 
   test('A4: 平均速度が無く距離と時間があれば計算し fromPanel は false', () {
@@ -42,42 +42,80 @@ void main() {
     expect(resolved.fromPanel, isFalse);
   });
 
-  test('A5: fromPanel のとき距離変更でも速度を維持する', () {
-    final updated = recalculateAverageSpeedIfNeeded(
-      distanceKm: 5,
-      duration: const Duration(hours: 1),
-      currentSpeed: 9,
-      averageSpeedFromPanel: true,
-      averageSpeedUserEdited: false,
-      averageSpeedClearedByUser: false,
+  test('A5: 距離と時間があれば再計算する', () {
+    expect(
+      recalculateAverageSpeedIfNeeded(
+        distanceKm: 5,
+        duration: const Duration(hours: 1),
+      ),
+      5,
     );
-    expect(updated.speed, 9);
-    expect(updated.userEdited, isFalse);
-    expect(updated.fromPanel, isTrue);
   });
 
-  test('A6: 運動時間 0 でもパネル平均速度は残る', () {
+  test('A6: 運動時間 0 ならパネル平均速度があっても null', () {
     final resolved = resolveInitialAverageSpeed(
       merged: const MeterReadingValues(
         duration: Duration.zero,
         averageSpeedKmh: 10,
       ),
     );
-    expect(resolved.speed, 10);
-    expect(resolved.fromPanel, isTrue);
+    expect(resolved.speed, isNull);
+    expect(resolved.fromPanel, isFalse);
   });
 
-  test('A7: クリア後は再計算し userEdited / fromPanel は false', () {
-    final updated = recalculateAverageSpeedIfNeeded(
-      distanceKm: 1,
-      duration: const Duration(hours: 1),
-      currentSpeed: 9,
-      averageSpeedFromPanel: true,
-      averageSpeedUserEdited: false,
-      averageSpeedClearedByUser: true,
+  test('A7: 距離または時間が無いとき再計算は null', () {
+    expect(
+      recalculateAverageSpeedIfNeeded(distanceKm: 1, duration: null),
+      isNull,
     );
-    expect(updated.speed, 1);
-    expect(updated.userEdited, isFalse);
-    expect(updated.fromPanel, isFalse);
+    expect(
+      recalculateAverageSpeedIfNeeded(
+        distanceKm: null,
+        duration: const Duration(hours: 1),
+      ),
+      isNull,
+    );
+  });
+
+  group('classifyMeterReadingMessages', () {
+    test('コアが揃えば complete', () {
+      expect(
+        classifyMeterReadingMessages(
+          const MeterReadingValues(
+            distanceKm: 1,
+            duration: Duration(minutes: 1),
+            caloriesKcal: 1,
+          ),
+        ),
+        MeterReadingMessageKind.complete,
+      );
+    });
+
+    test('運動時間 0 は incomplete', () {
+      expect(
+        classifyMeterReadingMessages(
+          const MeterReadingValues(
+            distanceKm: 1,
+            duration: Duration.zero,
+            caloriesKcal: 1,
+          ),
+        ),
+        MeterReadingMessageKind.incomplete,
+      );
+    });
+
+    test('コアの一部だけなら incomplete', () {
+      expect(
+        classifyMeterReadingMessages(const MeterReadingValues(distanceKm: 1)),
+        MeterReadingMessageKind.incomplete,
+      );
+    });
+
+    test('コアが皆無なら empty', () {
+      expect(
+        classifyMeterReadingMessages(const MeterReadingValues()),
+        MeterReadingMessageKind.empty,
+      );
+    });
   });
 }

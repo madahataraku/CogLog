@@ -75,7 +75,8 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
         caloriesKcal: merged.caloriesKcal,
         averageSpeedKmh: resolved.speed,
       ),
-      averageSpeedFromPanel: resolved.fromPanel,
+      // 平均速度は常に距離÷時間。パネル由来フラグは載せない。
+      averageSpeedFromPanel: false,
     );
   }
 }

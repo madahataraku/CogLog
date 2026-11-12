@@ -505,7 +505,7 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_detail_photo_error => '写真を表示できません';
 
   @override
-  String get screen_feature_exercise_history_detail_recorded_at => '記録日時';
+  String get screen_feature_exercise_history_detail_recorded_at => '運動した日時';
 
   @override
   String get screen_feature_exercise_history_detail_retry => '再試行';
@@ -711,10 +711,18 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_pick_library => 'ライブラリから選ぶ';
 
   @override
+  String get screen_feature_meter_capture_read_caution =>
+      '自動読み取りした値は誤っている場合があるため、その場合手動で修正してください。';
+
+  @override
+  String get screen_feature_meter_capture_read_success =>
+      'エアロバイクのメーター内容を読み取りました。';
+
+  @override
   String get screen_feature_meter_capture_reading => '読み取り中…';
 
   @override
-  String get screen_feature_meter_capture_recorded_at => '記録日時';
+  String get screen_feature_meter_capture_recorded_at => '運動した日時';
 
   @override
   String get screen_feature_meter_capture_retake => '撮り直す';
