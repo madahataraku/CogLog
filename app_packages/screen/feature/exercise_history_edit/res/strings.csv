@@ -1,0 +1,28 @@
+id,ja,en,description
+title,運動履歴を編集,Edit exercise history,画面タイトル
+save,保存,Save,保存ボタン
+retake,カメラで撮り直す,Retake with camera,カメラ再撮影
+pick_library,ライブラリから選ぶ,Choose from library,ライブラリ再選択
+hand_entry_guidance,読み取れなかった項目は手入力してください。,Enter any values that could not be read by hand.,読み取り不完全時の手打ち案内
+reading,読み取り中…,Reading…,読み取り待機
+discard_title,変更を破棄しますか？,Discard changes?,破棄確認タイトル
+discard_body,保存していない変更は失われます。,Unsaved changes will be lost.,破棄確認本文
+discard_ok,破棄,Discard,破棄確認の確定
+discard_cancel,キャンセル,Cancel,破棄確認のキャンセル
+save_failed,保存に失敗しました,Failed to save,保存失敗
+load_failed,編集内容を読み込めませんでした,Could not load for editing,読込失敗
+missing,この運動履歴はありません,This exercise history was not found,不在
+retry,再試行,Retry,再試行ボタン
+back,戻る,Back,戻る
+calories,消費カロリー (kcal),Calories (kcal),入力ラベル
+duration_hours,時間,Hours,運動時間・時
+duration_minutes,分,Minutes,運動時間・分
+duration_seconds,秒,Seconds,運動時間・秒
+distance,走行距離 (km),Distance (km),入力ラベル
+average_speed,平均速度 (km/h),Average speed (km/h),表示のみの平均速度
+recorded_at,運動した日時,Exercise date and time,運動した日時
+photo,メーターパネル写真,Meter panel photo,写真のラベル
+photo_error,写真を表示できません,Could not show photo,写真の失敗表示
+permission_camera,カメラの許可が必要です,Camera permission is required,カメラ権限拒否
+permission_library,写真へのアクセス許可が必要です,Photo library permission is required,ライブラリ権限拒否
+open_settings,設定を開く,Open settings,設定アプリ導線

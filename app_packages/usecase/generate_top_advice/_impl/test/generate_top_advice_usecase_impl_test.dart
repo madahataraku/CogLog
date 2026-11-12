@@ -19,6 +19,7 @@ ExerciseHistory ride({required DateTime recordedAt}) {
     caloriesKcal: 80,
     averageSpeedKmh: 6,
     photoRelativePath: 'exercise_histories/$id/meter.jpg',
+    healthWorkoutId: null,
   );
 }
 

@@ -123,6 +123,7 @@ final class FixedExerciseHistoryRepository
   ///   duration: Duration(minutes: 1),
   ///   caloriesKcal: 1,
   ///   averageSpeedKmh: 1,
+  ///   healthWorkoutId: null,
   ///   photoBytes: Uint8List(0),
   /// );
   /// ```
@@ -136,6 +137,7 @@ final class FixedExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   }) async => throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
 
@@ -152,6 +154,21 @@ final class FixedExerciseHistoryRepository
     required double caloriesKcal,
     required double averageSpeedKmh,
     Uint8List? photoBytes,
+  }) async => throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
+
+  /// 読み取り専用のため常に [UnsupportedError] を投げる。
+  ///
+  /// Example:
+  /// ```dart
+  /// FixedExerciseHistoryRepository(const []).attachHealthWorkoutId(
+  ///   id: 'id',
+  ///   healthWorkoutId: 'health-1',
+  /// ); // throws UnsupportedError
+  /// ```
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
   }) async => throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
 
   /// 読み取り専用のため常に失敗する。

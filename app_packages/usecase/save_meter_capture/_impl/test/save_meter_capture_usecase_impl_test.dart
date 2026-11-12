@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:domain_achievement/domain_achievement.dart';
+import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_health_workout_testing/infra_health_workout_testing.dart';
 import 'package:test/test.dart';
 import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
@@ -9,6 +11,195 @@ import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_g
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 import 'package:usecase_save_meter_capture_impl/usecase_save_meter_capture_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
+
+/// create は通すが [attachHealthWorkoutId] だけ失敗するテスト用 Repository。
+///
+/// Example:
+/// ```dart
+/// _AttachFailingHistories(MemoryExerciseHistoryRepository());
+/// ```
+final class _AttachFailingHistories implements ExerciseHistoryRepository {
+  /// [_inner] へ委譲し、付与だけ失敗させる口を作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _AttachFailingHistories(MemoryExerciseHistoryRepository());
+  /// ```
+  _AttachFailingHistories(this._inner);
+
+  /// 実データを持つメモリ実装。
+  final MemoryExerciseHistoryRepository _inner;
+
+  /// [attachHealthWorkoutId] が呼ばれた回数。
+  int attachCallCount = 0;
+
+  /// 常に失敗し、呼び出し回数を数える。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.attachHealthWorkoutId(
+  ///   id: id,
+  ///   healthWorkoutId: 'health-1',
+  /// );
+  /// ```
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  }) async {
+    attachCallCount += 1;
+    throw StateError('attach failed');
+  }
+
+  /// [_inner] へ作成を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.create(
+  ///   creationStartedAt: DateTime.timestamp(),
+  ///   capturedAt: DateTime.timestamp(),
+  ///   recordedAt: DateTime.timestamp(),
+  ///   recordedAtManuallySet: false,
+  ///   distanceKm: 1,
+  ///   duration: Duration(minutes: 1),
+  ///   caloriesKcal: 1,
+  ///   averageSpeedKmh: 1,
+  ///   healthWorkoutId: null,
+  ///   photoBytes: Uint8List(0),
+  /// );
+  /// ```
+  @override
+  Future<ExerciseHistory> create({
+    required DateTime creationStartedAt,
+    required DateTime capturedAt,
+    required DateTime recordedAt,
+    required bool recordedAtManuallySet,
+    required double distanceKm,
+    required Duration duration,
+    required double caloriesKcal,
+    required double averageSpeedKmh,
+    required String? healthWorkoutId,
+    required Uint8List photoBytes,
+  }) {
+    return _inner.create(
+      creationStartedAt: creationStartedAt,
+      capturedAt: capturedAt,
+      recordedAt: recordedAt,
+      recordedAtManuallySet: recordedAtManuallySet,
+      distanceKm: distanceKm,
+      duration: duration,
+      caloriesKcal: caloriesKcal,
+      averageSpeedKmh: averageSpeedKmh,
+      healthWorkoutId: healthWorkoutId,
+      photoBytes: photoBytes,
+    );
+  }
+
+  /// [_inner] へ削除を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.delete(id);
+  /// ```
+  @override
+  Future<void> delete(String id) => _inner.delete(id);
+
+  /// [_inner] へ ID 検索を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.findById(id);
+  /// ```
+  @override
+  Future<ExerciseHistory?> findById(String id) => _inner.findById(id);
+
+  /// [_inner] へ一覧取得を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.list();
+  /// ```
+  @override
+  Future<List<ExerciseHistory>> list() => _inner.list();
+
+  /// [_inner] へ月次一覧を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.listByMonth(year: 2026, month: 11);
+  /// ```
+  @override
+  Future<List<ExerciseHistory>> listByMonth({
+    required int year,
+    required int month,
+  }) => _inner.listByMonth(year: year, month: month);
+
+  /// [_inner] へ頁取得を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.listPage(year: 2026, month: 11, offset: 0, limit: 30);
+  /// ```
+  @override
+  Future<List<ExerciseHistory>> listPage({
+    required int year,
+    required int month,
+    required int offset,
+    required int limit,
+  }) => _inner.listPage(year: year, month: month, offset: offset, limit: limit);
+
+  /// [_inner] へ写真パス取得を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.photoAbsolutePath(id);
+  /// ```
+  @override
+  Future<String?> photoAbsolutePath(String id) => _inner.photoAbsolutePath(id);
+
+  /// [_inner] へ更新を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.update(
+  ///   id: id,
+  ///   creationStartedAt: DateTime.timestamp(),
+  ///   capturedAt: DateTime.timestamp(),
+  ///   recordedAt: DateTime.timestamp(),
+  ///   recordedAtManuallySet: true,
+  ///   distanceKm: 2,
+  ///   duration: Duration(minutes: 2),
+  ///   caloriesKcal: 2,
+  ///   averageSpeedKmh: 2,
+  /// );
+  /// ```
+  @override
+  Future<ExerciseHistory> update({
+    required String id,
+    required DateTime creationStartedAt,
+    required DateTime capturedAt,
+    required DateTime recordedAt,
+    required bool recordedAtManuallySet,
+    required double distanceKm,
+    required Duration duration,
+    required double caloriesKcal,
+    required double averageSpeedKmh,
+    Uint8List? photoBytes,
+  }) {
+    return _inner.update(
+      id: id,
+      creationStartedAt: creationStartedAt,
+      capturedAt: capturedAt,
+      recordedAt: recordedAt,
+      recordedAtManuallySet: recordedAtManuallySet,
+      distanceKm: distanceKm,
+      duration: duration,
+      caloriesKcal: caloriesKcal,
+      averageSpeedKmh: averageSpeedKmh,
+      photoBytes: photoBytes,
+    );
+  }
+}
 
 final class _FakeEvaluate implements EvaluateDailyGoalAutoUpdateUsecase {
   _FakeEvaluate({this.applied = false});
@@ -104,6 +295,7 @@ void main() {
     expect(result.newlyUnlockedAchievements, isEmpty);
     expect(result.history, isNotNull);
     expect(result.history!.distanceKm, 12);
+    expect(result.history!.healthWorkoutId, isNull);
     expect(health.writeCallCount, 1);
     expect(evaluate.callCount, 1);
     expect(achievements.callCount, 1);
@@ -182,35 +374,42 @@ void main() {
     expect(sync.callCount, 0);
   });
 
-  test('health 成功時は healthWriteSucceeded true', () async {
-    final histories = MemoryExerciseHistoryRepository();
-    final health = FakeHealthWorkoutWriter(succeed: true);
-    final evaluate = _FakeEvaluate(applied: true);
-    final achievements = _FakeEvaluateAchievements(
-      newlyUnlocked: [
-        AchievementUnlock(
-          id: 'first_record',
-          unlockedAt: DateTime.utc(2026, 11, 8),
-        ),
-      ],
-    );
-    final sync = _FakeSync();
+  test(
+    'health 成功時は healthWriteSucceeded true かつ healthWorkoutId を保存',
+    () async {
+      final histories = MemoryExerciseHistoryRepository();
+      final health = FakeHealthWorkoutWriter(succeed: true);
+      final evaluate = _FakeEvaluate(applied: true);
+      final achievements = _FakeEvaluateAchievements(
+        newlyUnlocked: [
+          AchievementUnlock(
+            id: 'first_record',
+            unlockedAt: DateTime.utc(2026, 11, 8),
+          ),
+        ],
+      );
+      final sync = _FakeSync();
 
-    final result = await SaveMeterCaptureUsecaseImpl(
-      histories: histories,
-      health: health,
-      evaluateAutoUpdate: evaluate,
-      evaluateAchievements: achievements,
-      syncReminder: sync,
-    ).execute(validRequest());
+      final result = await SaveMeterCaptureUsecaseImpl(
+        histories: histories,
+        health: health,
+        evaluateAutoUpdate: evaluate,
+        evaluateAchievements: achievements,
+        syncReminder: sync,
+      ).execute(validRequest());
 
-    expect(result.outcome, SaveMeterCaptureOutcome.success);
-    expect(result.healthWriteSucceeded, isTrue);
-    expect(result.goalAutoUpdated, isTrue);
-    expect(result.newlyUnlockedAchievements, hasLength(1));
-    expect(result.newlyUnlockedAchievements.single.id, 'first_record');
-    expect(sync.callCount, 1);
-  });
+      expect(result.outcome, SaveMeterCaptureOutcome.success);
+      expect(result.healthWriteSucceeded, isTrue);
+      expect(result.history!.healthWorkoutId, 'fake-health-1');
+      expect(result.goalAutoUpdated, isTrue);
+      expect(result.newlyUnlockedAchievements, hasLength(1));
+      expect(result.newlyUnlockedAchievements.single.id, 'first_record');
+      expect(sync.callCount, 1);
+
+      final listed = await histories.list();
+      expect(listed.single.healthWorkoutId, 'fake-health-1');
+    },
+  );
 
   test('同期例外でも保存済みなら success', () async {
     final histories = MemoryExerciseHistoryRepository();
@@ -253,5 +452,31 @@ void main() {
     expect(result.newlyUnlockedAchievements, isEmpty);
     expect(achievements.callCount, 1);
     expect(await histories.list(), hasLength(1));
+  });
+
+  test('healthWorkoutId 付与失敗でも create success', () async {
+    final inner = MemoryExerciseHistoryRepository();
+    final histories = _AttachFailingHistories(inner);
+    final health = FakeHealthWorkoutWriter(succeed: true);
+    final evaluate = _FakeEvaluate();
+    final achievements = _FakeEvaluateAchievements();
+    final sync = _FakeSync();
+
+    final result = await SaveMeterCaptureUsecaseImpl(
+      histories: histories,
+      health: health,
+      evaluateAutoUpdate: evaluate,
+      evaluateAchievements: achievements,
+      syncReminder: sync,
+    ).execute(validRequest());
+
+    expect(result.outcome, SaveMeterCaptureOutcome.success);
+    expect(result.healthWriteSucceeded, isFalse);
+    expect(result.history!.healthWorkoutId, isNull);
+    expect(histories.attachCallCount, 3);
+    expect(health.deleteCallCount, 1);
+    expect(health.lastExternalId, 'fake-health-1');
+    expect(await inner.list(), hasLength(1));
+    expect((await inner.list()).single.healthWorkoutId, isNull);
   });
 }

@@ -1,5 +1,6 @@
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:domain_achievement/domain_achievement.dart';
+import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
 import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_goal_auto_update.dart';
@@ -93,7 +94,7 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     }
 
     try {
-      final history = await histories.create(
+      var history = await histories.create(
         creationStartedAt: request.creationStartedAt,
         capturedAt: request.capturedAt,
         recordedAt: request.recordedAt,
@@ -102,10 +103,16 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
         duration: request.duration,
         caloriesKcal: request.caloriesKcal,
         averageSpeedKmh: request.averageSpeedKmh,
+        healthWorkoutId: null,
         photoBytes: request.photoBytes,
       );
 
-      final healthWriteSucceeded = await _writeHealth(request);
+      final externalId = await _writeHealth(request);
+      var healthWriteSucceeded = false;
+      if (externalId != null) {
+        history = await _attachHealthWorkoutId(history, externalId);
+        healthWriteSucceeded = history.healthWorkoutId != null;
+      }
       final now = DateTime.now();
       final autoUpdate = await evaluateAutoUpdate.execute(
         EvaluateDailyGoalAutoUpdateRequest(now: now),
@@ -159,13 +166,13 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     return true;
   }
 
-  /// ヘルスへ書き、失敗や例外は false にする。
+  /// ヘルスへ書き、失敗や例外は null にする。
   ///
   /// Example:
   /// ```dart
   /// await _writeHealth(request);
   /// ```
-  Future<bool> _writeHealth(SaveMeterCaptureRequest request) async {
+  Future<String?> _writeHealth(SaveMeterCaptureRequest request) async {
     try {
       final start = request.recordedAt;
       final end = request.recordedAt.add(request.duration);
@@ -177,7 +184,39 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
         caloriesKcal: request.caloriesKcal,
       );
     } on Object {
-      return false;
+      return null;
     }
+  }
+
+  /// [history] に [externalId] だけを付ける。失敗時は再試行し、なお失敗ならヘルスを消す。
+  ///
+  /// 付与に成功するまで最大 3 回試す。すべて失敗したら [health.deleteCycling] を
+  /// best-effort で呼び、ID 無しの元の [history] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _attachHealthWorkoutId(history, 'fake-health-1');
+  /// ```
+  Future<ExerciseHistory> _attachHealthWorkoutId(
+    ExerciseHistory history,
+    String externalId,
+  ) async {
+    const maxAttempts = 3;
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        return await histories.attachHealthWorkoutId(
+          id: history.id,
+          healthWorkoutId: externalId,
+        );
+      } on Object {
+        // 付与失敗で create 済みの履歴を saveFailed にしない。再試行する。
+      }
+    }
+    try {
+      await health.deleteCycling(externalId: externalId);
+    } on Object {
+      // 孤児削除の失敗でもローカル保存 success を維持する。
+    }
+    return history;
   }
 }

@@ -5,7 +5,7 @@ retry,再試行,Retry,再試行ボタン
 missing,この運動履歴はありません,This exercise history was not found,不在
 back,戻る,Back,不在時の戻るボタン
 photo_error,写真を表示できません,Could not show photo,写真の失敗表示
-edited,（編集済み）,(edited),記録日時の手変更サフィックス
+edited,（編集済み）,(edited),運動した日時の手変更サフィックス
 calories,消費カロリー,Calories,消費カロリーのラベル
 duration,運動時間,Duration,運動時間のラベル
 distance,走行距離,Distance,走行距離のラベル
@@ -19,3 +19,10 @@ calories_unit,kcal,kcal,消費カロリーの単位
 distance_unit,km,km,走行距離の単位
 average_speed_unit,km/h,km/h,平均速度の単位
 page_position,{current} / {total},{current} / {total},同一日複数件の何件中何件目
+action_edit,編集,Edit,ヘッダ編集の代替テキスト
+action_delete,削除,Delete,ヘッダ削除の代替テキスト
+delete_confirm_title,この運動履歴を削除しますか？,Delete this exercise history?,削除確認タイトル
+delete_confirm_body,メーターパネル写真も一緒に削除されます。この操作は取り消せません。,The meter panel photo will also be deleted. This cannot be undone.,削除確認本文
+delete_confirm_ok,削除,Delete,削除確認の確定
+delete_confirm_cancel,キャンセル,Cancel,削除確認のキャンセル
+delete_failed,削除に失敗しました,Could not delete,削除失敗

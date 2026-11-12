@@ -1,0 +1,23 @@
+name: usecase_delete_exercise_history_impl
+description: Deletes exercise history through repository and health writer.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_exercise_history: any
+  domain_achievement: any
+  infra_health_workout: any
+  usecase_delete_exercise_history: any
+  usecase_evaluate_achievements: any
+  usecase_evaluate_daily_goal_auto_update: any
+  usecase_sync_exercise_reminder: any
+
+dev_dependencies:
+  data_repository_exercise_history_testing: any
+  flutter_lints: any
+  infra_health_workout_testing: any
+  test: any

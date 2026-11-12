@@ -104,5 +104,6 @@ ExerciseHistory rideNow({double distanceKm = 1, double caloriesKcal = 1.25}) {
     caloriesKcal: caloriesKcal,
     averageSpeedKmh: 1,
     photoRelativePath: 'exercise_histories/$id/meter.jpg',
+    healthWorkoutId: null,
   );
 }

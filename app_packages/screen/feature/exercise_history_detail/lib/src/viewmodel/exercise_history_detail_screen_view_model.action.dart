@@ -47,6 +47,37 @@ extension ExerciseHistoryDetailScreenViewModelActions
     return delegate.execute();
   }
 
+  /// 編集画面を開き、結果に応じて再読込またはカレンダーへ戻る。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onEdit();
+  /// ```
+  Future<void> onEdit() {
+    return OnEditDelegate(
+      state: state,
+      loadDetailUsecase: loadDetailUsecase,
+      loadSameDayUsecase: loadSameDayUsecase,
+      navigation: navigation,
+    ).execute();
+  }
+
+  /// 確認済みの削除を実行する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onDelete();
+  /// ```
+  Future<void> onDelete() {
+    return OnDeleteDelegate(
+      state: state,
+      deleteUsecase: deleteUsecase,
+      loadDetailUsecase: loadDetailUsecase,
+      loadSameDayUsecase: loadSameDayUsecase,
+      navigation: navigation,
+    ).execute();
+  }
+
   /// 1 つ戻る。
   ///
   /// Example:

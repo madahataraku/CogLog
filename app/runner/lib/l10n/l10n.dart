@@ -913,6 +913,18 @@ abstract class L10n {
   /// **'{count}'**
   String screen_feature_exercise_history_count_badge(String count);
 
+  /// ヘッダ削除の代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'削除'**
+  String get screen_feature_exercise_history_detail_action_delete;
+
+  /// ヘッダ編集の代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'編集'**
+  String get screen_feature_exercise_history_detail_action_edit;
+
   /// 平均速度のラベル
   ///
   /// In ja, this message translates to:
@@ -955,6 +967,36 @@ abstract class L10n {
   /// **'作成開始日時'**
   String get screen_feature_exercise_history_detail_created_at;
 
+  /// 削除確認本文
+  ///
+  /// In ja, this message translates to:
+  /// **'メーターパネル写真も一緒に削除されます。この操作は取り消せません。'**
+  String get screen_feature_exercise_history_detail_delete_confirm_body;
+
+  /// 削除確認のキャンセル
+  ///
+  /// In ja, this message translates to:
+  /// **'キャンセル'**
+  String get screen_feature_exercise_history_detail_delete_confirm_cancel;
+
+  /// 削除確認の確定
+  ///
+  /// In ja, this message translates to:
+  /// **'削除'**
+  String get screen_feature_exercise_history_detail_delete_confirm_ok;
+
+  /// 削除確認タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'この運動履歴を削除しますか？'**
+  String get screen_feature_exercise_history_detail_delete_confirm_title;
+
+  /// 削除失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'削除に失敗しました'**
+  String get screen_feature_exercise_history_detail_delete_failed;
+
   /// 走行距離のラベル
   ///
   /// In ja, this message translates to:
@@ -973,7 +1015,7 @@ abstract class L10n {
   /// **'運動時間'**
   String get screen_feature_exercise_history_detail_duration;
 
-  /// 記録日時の手変更サフィックス
+  /// 運動した日時の手変更サフィックス
   ///
   /// In ja, this message translates to:
   /// **'（編集済み）'**
@@ -1035,6 +1077,168 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'運動履歴詳細'**
   String get screen_feature_exercise_history_detail_title;
+
+  /// 表示のみの平均速度
+  ///
+  /// In ja, this message translates to:
+  /// **'平均速度 (km/h)'**
+  String get screen_feature_exercise_history_edit_average_speed;
+
+  /// 戻る
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_exercise_history_edit_back;
+
+  /// 入力ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'消費カロリー (kcal)'**
+  String get screen_feature_exercise_history_edit_calories;
+
+  /// 破棄確認本文
+  ///
+  /// In ja, this message translates to:
+  /// **'保存していない変更は失われます。'**
+  String get screen_feature_exercise_history_edit_discard_body;
+
+  /// 破棄確認のキャンセル
+  ///
+  /// In ja, this message translates to:
+  /// **'キャンセル'**
+  String get screen_feature_exercise_history_edit_discard_cancel;
+
+  /// 破棄確認の確定
+  ///
+  /// In ja, this message translates to:
+  /// **'破棄'**
+  String get screen_feature_exercise_history_edit_discard_ok;
+
+  /// 破棄確認タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'変更を破棄しますか？'**
+  String get screen_feature_exercise_history_edit_discard_title;
+
+  /// 入力ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'走行距離 (km)'**
+  String get screen_feature_exercise_history_edit_distance;
+
+  /// 運動時間・時
+  ///
+  /// In ja, this message translates to:
+  /// **'時間'**
+  String get screen_feature_exercise_history_edit_duration_hours;
+
+  /// 運動時間・分
+  ///
+  /// In ja, this message translates to:
+  /// **'分'**
+  String get screen_feature_exercise_history_edit_duration_minutes;
+
+  /// 運動時間・秒
+  ///
+  /// In ja, this message translates to:
+  /// **'秒'**
+  String get screen_feature_exercise_history_edit_duration_seconds;
+
+  /// 読み取り不完全時の手打ち案内
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取れなかった項目は手入力してください。'**
+  String get screen_feature_exercise_history_edit_hand_entry_guidance;
+
+  /// 読込失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'編集内容を読み込めませんでした'**
+  String get screen_feature_exercise_history_edit_load_failed;
+
+  /// 不在
+  ///
+  /// In ja, this message translates to:
+  /// **'この運動履歴はありません'**
+  String get screen_feature_exercise_history_edit_missing;
+
+  /// 設定アプリ導線
+  ///
+  /// In ja, this message translates to:
+  /// **'設定を開く'**
+  String get screen_feature_exercise_history_edit_open_settings;
+
+  /// カメラ権限拒否
+  ///
+  /// In ja, this message translates to:
+  /// **'カメラの許可が必要です'**
+  String get screen_feature_exercise_history_edit_permission_camera;
+
+  /// ライブラリ権限拒否
+  ///
+  /// In ja, this message translates to:
+  /// **'写真へのアクセス許可が必要です'**
+  String get screen_feature_exercise_history_edit_permission_library;
+
+  /// 写真のラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'メーターパネル写真'**
+  String get screen_feature_exercise_history_edit_photo;
+
+  /// 写真の失敗表示
+  ///
+  /// In ja, this message translates to:
+  /// **'写真を表示できません'**
+  String get screen_feature_exercise_history_edit_photo_error;
+
+  /// ライブラリ再選択
+  ///
+  /// In ja, this message translates to:
+  /// **'ライブラリから選ぶ'**
+  String get screen_feature_exercise_history_edit_pick_library;
+
+  /// 読み取り待機
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取り中…'**
+  String get screen_feature_exercise_history_edit_reading;
+
+  /// 運動した日時
+  ///
+  /// In ja, this message translates to:
+  /// **'運動した日時'**
+  String get screen_feature_exercise_history_edit_recorded_at;
+
+  /// カメラ再撮影
+  ///
+  /// In ja, this message translates to:
+  /// **'カメラで撮り直す'**
+  String get screen_feature_exercise_history_edit_retake;
+
+  /// 再試行ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'再試行'**
+  String get screen_feature_exercise_history_edit_retry;
+
+  /// 保存ボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'保存'**
+  String get screen_feature_exercise_history_edit_save;
+
+  /// 保存失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'保存に失敗しました'**
+  String get screen_feature_exercise_history_edit_save_failed;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'運動履歴を編集'**
+  String get screen_feature_exercise_history_edit_title;
 
   /// 一覧の読込失敗
   ///

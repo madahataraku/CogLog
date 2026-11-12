@@ -47,6 +47,7 @@ void main() {
       duration: const Duration(minutes: 30),
       caloriesKcal: 100,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: photo,
     );
 
@@ -77,6 +78,7 @@ void main() {
       duration: const Duration(minutes: 30),
       caloriesKcal: 100,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: photo,
     );
 
@@ -113,6 +115,7 @@ void main() {
       duration: const Duration(minutes: 30),
       caloriesKcal: 100,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: photo,
     );
 
@@ -192,6 +195,7 @@ final class _ThrowingExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   }) {
     throw UnimplementedError();
@@ -247,6 +251,14 @@ final class _ThrowingExerciseHistoryRepository
     required double caloriesKcal,
     required double averageSpeedKmh,
     Uint8List? photoBytes,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
   }) {
     throw UnimplementedError();
   }

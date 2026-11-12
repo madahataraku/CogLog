@@ -28,6 +28,7 @@ ExerciseHistory history({
     caloriesKcal: 1,
     averageSpeedKmh: 1,
     photoRelativePath: 'p/$id.jpg',
+    healthWorkoutId: null,
   );
 }
 

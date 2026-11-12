@@ -8,5 +8,6 @@
 /// ```
 library;
 
+export 'src/exercise_history_edit_pop_result.dart';
 export 'src/screen_navigation.dart';
 export 'src/shell_tab_index_scope.dart';

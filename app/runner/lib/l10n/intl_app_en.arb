@@ -554,6 +554,14 @@
     },
     "description": "同一日複数件のカレンダー上件数"
   },
+  "screen_feature_exercise_history_detail_action_delete": "Delete",
+  "@screen_feature_exercise_history_detail_action_delete": {
+    "description": "ヘッダ削除の代替テキスト"
+  },
+  "screen_feature_exercise_history_detail_action_edit": "Edit",
+  "@screen_feature_exercise_history_detail_action_edit": {
+    "description": "ヘッダ編集の代替テキスト"
+  },
   "screen_feature_exercise_history_detail_average_speed": "Average speed",
   "@screen_feature_exercise_history_detail_average_speed": {
     "description": "平均速度のラベル"
@@ -582,6 +590,26 @@
   "@screen_feature_exercise_history_detail_created_at": {
     "description": "作成開始日時のラベル"
   },
+  "screen_feature_exercise_history_detail_delete_confirm_body": "The meter panel photo will also be deleted. This cannot be undone.",
+  "@screen_feature_exercise_history_detail_delete_confirm_body": {
+    "description": "削除確認本文"
+  },
+  "screen_feature_exercise_history_detail_delete_confirm_cancel": "Cancel",
+  "@screen_feature_exercise_history_detail_delete_confirm_cancel": {
+    "description": "削除確認のキャンセル"
+  },
+  "screen_feature_exercise_history_detail_delete_confirm_ok": "Delete",
+  "@screen_feature_exercise_history_detail_delete_confirm_ok": {
+    "description": "削除確認の確定"
+  },
+  "screen_feature_exercise_history_detail_delete_confirm_title": "Delete this exercise history?",
+  "@screen_feature_exercise_history_detail_delete_confirm_title": {
+    "description": "削除確認タイトル"
+  },
+  "screen_feature_exercise_history_detail_delete_failed": "Could not delete",
+  "@screen_feature_exercise_history_detail_delete_failed": {
+    "description": "削除失敗"
+  },
   "screen_feature_exercise_history_detail_distance": "Distance",
   "@screen_feature_exercise_history_detail_distance": {
     "description": "走行距離のラベル"
@@ -596,7 +624,7 @@
   },
   "screen_feature_exercise_history_detail_edited": "(edited)",
   "@screen_feature_exercise_history_detail_edited": {
-    "description": "記録日時の手変更サフィックス"
+    "description": "運動した日時の手変更サフィックス"
   },
   "screen_feature_exercise_history_detail_error": "Could not load detail",
   "@screen_feature_exercise_history_detail_error": {
@@ -640,6 +668,114 @@
   },
   "screen_feature_exercise_history_detail_title": "Exercise history detail",
   "@screen_feature_exercise_history_detail_title": {
+    "description": "画面タイトル"
+  },
+  "screen_feature_exercise_history_edit_average_speed": "Average speed (km/h)",
+  "@screen_feature_exercise_history_edit_average_speed": {
+    "description": "表示のみの平均速度"
+  },
+  "screen_feature_exercise_history_edit_back": "Back",
+  "@screen_feature_exercise_history_edit_back": {
+    "description": "戻る"
+  },
+  "screen_feature_exercise_history_edit_calories": "Calories (kcal)",
+  "@screen_feature_exercise_history_edit_calories": {
+    "description": "入力ラベル"
+  },
+  "screen_feature_exercise_history_edit_discard_body": "Unsaved changes will be lost.",
+  "@screen_feature_exercise_history_edit_discard_body": {
+    "description": "破棄確認本文"
+  },
+  "screen_feature_exercise_history_edit_discard_cancel": "Cancel",
+  "@screen_feature_exercise_history_edit_discard_cancel": {
+    "description": "破棄確認のキャンセル"
+  },
+  "screen_feature_exercise_history_edit_discard_ok": "Discard",
+  "@screen_feature_exercise_history_edit_discard_ok": {
+    "description": "破棄確認の確定"
+  },
+  "screen_feature_exercise_history_edit_discard_title": "Discard changes?",
+  "@screen_feature_exercise_history_edit_discard_title": {
+    "description": "破棄確認タイトル"
+  },
+  "screen_feature_exercise_history_edit_distance": "Distance (km)",
+  "@screen_feature_exercise_history_edit_distance": {
+    "description": "入力ラベル"
+  },
+  "screen_feature_exercise_history_edit_duration_hours": "Hours",
+  "@screen_feature_exercise_history_edit_duration_hours": {
+    "description": "運動時間・時"
+  },
+  "screen_feature_exercise_history_edit_duration_minutes": "Minutes",
+  "@screen_feature_exercise_history_edit_duration_minutes": {
+    "description": "運動時間・分"
+  },
+  "screen_feature_exercise_history_edit_duration_seconds": "Seconds",
+  "@screen_feature_exercise_history_edit_duration_seconds": {
+    "description": "運動時間・秒"
+  },
+  "screen_feature_exercise_history_edit_hand_entry_guidance": "Enter any values that could not be read by hand.",
+  "@screen_feature_exercise_history_edit_hand_entry_guidance": {
+    "description": "読み取り不完全時の手打ち案内"
+  },
+  "screen_feature_exercise_history_edit_load_failed": "Could not load for editing",
+  "@screen_feature_exercise_history_edit_load_failed": {
+    "description": "読込失敗"
+  },
+  "screen_feature_exercise_history_edit_missing": "This exercise history was not found",
+  "@screen_feature_exercise_history_edit_missing": {
+    "description": "不在"
+  },
+  "screen_feature_exercise_history_edit_open_settings": "Open settings",
+  "@screen_feature_exercise_history_edit_open_settings": {
+    "description": "設定アプリ導線"
+  },
+  "screen_feature_exercise_history_edit_permission_camera": "Camera permission is required",
+  "@screen_feature_exercise_history_edit_permission_camera": {
+    "description": "カメラ権限拒否"
+  },
+  "screen_feature_exercise_history_edit_permission_library": "Photo library permission is required",
+  "@screen_feature_exercise_history_edit_permission_library": {
+    "description": "ライブラリ権限拒否"
+  },
+  "screen_feature_exercise_history_edit_photo": "Meter panel photo",
+  "@screen_feature_exercise_history_edit_photo": {
+    "description": "写真のラベル"
+  },
+  "screen_feature_exercise_history_edit_photo_error": "Could not show photo",
+  "@screen_feature_exercise_history_edit_photo_error": {
+    "description": "写真の失敗表示"
+  },
+  "screen_feature_exercise_history_edit_pick_library": "Choose from library",
+  "@screen_feature_exercise_history_edit_pick_library": {
+    "description": "ライブラリ再選択"
+  },
+  "screen_feature_exercise_history_edit_reading": "Reading…",
+  "@screen_feature_exercise_history_edit_reading": {
+    "description": "読み取り待機"
+  },
+  "screen_feature_exercise_history_edit_recorded_at": "Exercise date and time",
+  "@screen_feature_exercise_history_edit_recorded_at": {
+    "description": "運動した日時"
+  },
+  "screen_feature_exercise_history_edit_retake": "Retake with camera",
+  "@screen_feature_exercise_history_edit_retake": {
+    "description": "カメラ再撮影"
+  },
+  "screen_feature_exercise_history_edit_retry": "Retry",
+  "@screen_feature_exercise_history_edit_retry": {
+    "description": "再試行ボタン"
+  },
+  "screen_feature_exercise_history_edit_save": "Save",
+  "@screen_feature_exercise_history_edit_save": {
+    "description": "保存ボタン"
+  },
+  "screen_feature_exercise_history_edit_save_failed": "Failed to save",
+  "@screen_feature_exercise_history_edit_save_failed": {
+    "description": "保存失敗"
+  },
+  "screen_feature_exercise_history_edit_title": "Edit exercise history",
+  "@screen_feature_exercise_history_edit_title": {
     "description": "画面タイトル"
   },
   "screen_feature_exercise_history_error": "Could not load exercise history",

@@ -26,6 +26,7 @@ ExerciseHistory _history({required String id, bool edited = false}) {
     caloriesKcal: 12.34,
     averageSpeedKmh: 2.5,
     photoRelativePath: 'exercise_histories/$id/meter.jpg',
+    healthWorkoutId: null,
   );
 }
 
@@ -289,6 +290,9 @@ void main() {
         photoAbsolutePath: null,
         missing: false,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       ),
       languageCode: 'ja',
     );
@@ -301,6 +305,27 @@ void main() {
     expect(multi.caloriesText, contains('12.3'));
     expect(multi.averageSpeedText, contains('2.5'));
     expect(multi.recordedAtText, '2026年11月05日 12:30:00');
+    expect(multi.headerActionsEnabled, isTrue);
+
+    final pageLoading = delegate.execute(
+      ExerciseHistoryDetailScreenState(
+        id: 'b',
+        sameDayIds: const ['b', 'a', 'c'],
+        pageIndex: 0,
+        pageLoading: true,
+        detailLoadGeneration: 0,
+        loading: false,
+        history: _history(id: 'a'),
+        photoAbsolutePath: null,
+        missing: false,
+        error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
+      ),
+      languageCode: 'ja',
+    );
+    expect(pageLoading.headerActionsEnabled, isFalse);
 
     final single = delegate.execute(
       ExerciseHistoryDetailScreenState(
@@ -314,6 +339,9 @@ void main() {
         photoAbsolutePath: null,
         missing: false,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       ),
       languageCode: 'ja',
     );
@@ -336,6 +364,9 @@ void main() {
         photoAbsolutePath: null,
         missing: true,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       ),
       languageCode: 'ja',
     );
@@ -356,6 +387,9 @@ void main() {
         photoAbsolutePath: null,
         missing: false,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       ),
       languageCode: 'en',
     );

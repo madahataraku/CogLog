@@ -9,6 +9,18 @@ import 'package:monolith_localization_runtime/src/localize_string_delegate.dart'
 mixin class L10nStringsMixin {
   const L10nStringsMixin();
 
+  /// ヘッダ削除の代替テキスト
+  String get screen_feature_exercise_history_detail_action_delete =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_detail_action_delete',
+      );
+
+  /// ヘッダ編集の代替テキスト
+  String get screen_feature_exercise_history_detail_action_edit =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_detail_action_edit',
+      );
+
   /// 平均速度のラベル
   String get screen_feature_exercise_history_detail_average_speed =>
       LocalizeStringDelegate.get(
@@ -49,6 +61,36 @@ mixin class L10nStringsMixin {
         'screen_feature_exercise_history_detail_created_at',
       );
 
+  /// 削除確認本文
+  String get screen_feature_exercise_history_detail_delete_confirm_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_detail_delete_confirm_body',
+      );
+
+  /// 削除確認のキャンセル
+  String get screen_feature_exercise_history_detail_delete_confirm_cancel =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_detail_delete_confirm_cancel',
+      );
+
+  /// 削除確認の確定
+  String get screen_feature_exercise_history_detail_delete_confirm_ok =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_detail_delete_confirm_ok',
+      );
+
+  /// 削除確認タイトル
+  String get screen_feature_exercise_history_detail_delete_confirm_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_detail_delete_confirm_title',
+      );
+
+  /// 削除失敗
+  String get screen_feature_exercise_history_detail_delete_failed =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_detail_delete_failed',
+      );
+
   /// 走行距離のラベル
   String get screen_feature_exercise_history_detail_distance =>
       LocalizeStringDelegate.get(
@@ -67,7 +109,7 @@ mixin class L10nStringsMixin {
         'screen_feature_exercise_history_detail_duration',
       );
 
-  /// 記録日時の手変更サフィックス
+  /// 運動した日時の手変更サフィックス
   String get screen_feature_exercise_history_detail_edited =>
       LocalizeStringDelegate.get(
         'screen_feature_exercise_history_detail_edited',

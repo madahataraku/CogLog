@@ -40,6 +40,7 @@ void main() {
       duration: const Duration(minutes: 20),
       caloriesKcal: 80,
       averageSpeedKmh: 4.5,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1, 2, 3]),
     );
 
@@ -64,6 +65,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
     await repo.create(
@@ -75,6 +77,7 @@ void main() {
       duration: const Duration(minutes: 2),
       caloriesKcal: 2,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([2]),
     );
 
@@ -94,6 +97,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
 
@@ -114,6 +118,71 @@ void main() {
     expect(updated.recordedAtManuallySet, isTrue);
   });
 
+  test('create で healthWorkoutId を保存し update では上書きしない', () async {
+    final created = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 5),
+      capturedAt: DateTime.utc(2026, 11, 5),
+      recordedAt: DateTime.utc(2026, 11, 5),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 1),
+      caloriesKcal: 1,
+      averageSpeedKmh: 1,
+      healthWorkoutId: 'health-abc',
+      photoBytes: Uint8List.fromList([1]),
+    );
+    expect(created.healthWorkoutId, 'health-abc');
+
+    final updated = await repo.update(
+      id: created.id,
+      creationStartedAt: created.creationStartedAt,
+      capturedAt: created.capturedAt,
+      recordedAt: created.recordedAt,
+      recordedAtManuallySet: created.recordedAtManuallySet,
+      distanceKm: 2,
+      duration: created.duration,
+      caloriesKcal: created.caloriesKcal,
+      averageSpeedKmh: created.averageSpeedKmh,
+    );
+    expect(updated.healthWorkoutId, 'health-abc');
+    expect(updated.distanceKm, 2);
+    expect(updated.savedAt, created.savedAt);
+
+    final found = await repo.findById(created.id);
+    expect(found!.healthWorkoutId, 'health-abc');
+
+    await repo.delete(created.id);
+    expect(await repo.findById(created.id), isNull);
+  });
+
+  test('attachHealthWorkoutId は他フィールドを変えずに ID だけ付ける', () async {
+    final created = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 5),
+      capturedAt: DateTime.utc(2026, 11, 5),
+      recordedAt: DateTime.utc(2026, 11, 5),
+      recordedAtManuallySet: false,
+      distanceKm: 3,
+      duration: const Duration(minutes: 6),
+      caloriesKcal: 30,
+      averageSpeedKmh: 30,
+      healthWorkoutId: null,
+      photoBytes: Uint8List.fromList([1]),
+    );
+
+    final attached = await repo.attachHealthWorkoutId(
+      id: created.id,
+      healthWorkoutId: 'health-attach',
+    );
+    expect(attached.healthWorkoutId, 'health-attach');
+    expect(attached.distanceKm, created.distanceKm);
+    expect(attached.duration, created.duration);
+    expect(attached.caloriesKcal, created.caloriesKcal);
+    expect(attached.savedAt, created.savedAt);
+    expect(attached.capturedAt, created.capturedAt);
+
+    await repo.delete(created.id);
+  });
+
   test('update で写真置換するとファイル内容が新 bytes', () async {
     final created = await repo.create(
       creationStartedAt: DateTime.utc(2026, 11, 5),
@@ -124,6 +193,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1, 1, 1]),
     );
 
@@ -155,6 +225,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
 
@@ -178,6 +249,7 @@ void main() {
         duration: Duration.zero,
         caloriesKcal: 1,
         averageSpeedKmh: 1,
+        healthWorkoutId: null,
         photoBytes: Uint8List.fromList([1]),
       ),
       throwsA(isA<ArgumentError>()),
@@ -234,6 +306,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1, 1, 1]),
     );
 
@@ -247,6 +320,7 @@ void main() {
         duration: const Duration(minutes: 2),
         caloriesKcal: 2,
         averageSpeedKmh: 2,
+        healthWorkoutId: null,
         photoBytes: Uint8List.fromList([2]),
       ),
       throwsA(isA<StateError>()),
@@ -267,6 +341,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([4, 5, 6]),
     );
 
@@ -298,6 +373,7 @@ void main() {
         duration: const Duration(milliseconds: 500),
         caloriesKcal: 1,
         averageSpeedKmh: 1,
+        healthWorkoutId: null,
         photoBytes: Uint8List.fromList([1]),
       ),
       throwsA(isA<ArgumentError>()),
@@ -314,6 +390,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
 
@@ -350,6 +427,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1, 2, 3]),
     );
 
@@ -403,6 +481,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
     final newer = await repo.create(
@@ -414,6 +493,7 @@ void main() {
       duration: const Duration(minutes: 2),
       caloriesKcal: 2,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([2]),
     );
     await repo.create(
@@ -425,6 +505,7 @@ void main() {
       duration: const Duration(minutes: 3),
       caloriesKcal: 3,
       averageSpeedKmh: 3,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([3]),
     );
 
@@ -449,6 +530,7 @@ void main() {
         duration: const Duration(minutes: 1),
         caloriesKcal: 1,
         averageSpeedKmh: 1,
+        healthWorkoutId: null,
         photoBytes: Uint8List.fromList([i]),
       );
       if (i == 2) {
@@ -489,6 +571,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
     final inMonthNewer = await repo.create(
@@ -500,6 +583,7 @@ void main() {
       duration: const Duration(minutes: 2),
       caloriesKcal: 2,
       averageSpeedKmh: 2,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([2]),
     );
     await repo.create(
@@ -511,6 +595,7 @@ void main() {
       duration: const Duration(minutes: 3),
       caloriesKcal: 3,
       averageSpeedKmh: 3,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([3]),
     );
 

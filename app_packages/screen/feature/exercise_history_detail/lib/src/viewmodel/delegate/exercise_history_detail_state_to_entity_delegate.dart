@@ -42,106 +42,78 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
     final pageCurrent = state.pageIndex + 1;
     final pageTotal = state.sameDayIds.length;
     final pageLoading = state.pageLoading;
+    final actionErrorText = state.actionError
+        ? strings.screen_feature_exercise_history_detail_delete_failed
+        : null;
+
+    ExerciseHistoryDetailScreenEntity empty({
+      required bool showLoading,
+      required bool showMissing,
+      required bool showError,
+      required bool canRetry,
+      required String? errorText,
+    }) => ExerciseHistoryDetailScreenEntity(
+      showLoading: showLoading,
+      showMissing: showMissing,
+      showError: showError,
+      canRetry: canRetry,
+      errorText: errorText,
+      showPagePosition: showPagePosition,
+      pageCurrent: pageCurrent,
+      pageTotal: pageTotal,
+      pageLoading: pageLoading,
+      showHeaderActions: false,
+      headerActionsEnabled: false,
+      actionErrorText: actionErrorText,
+      caloriesText: '',
+      durationText: '',
+      distanceText: '',
+      createdAtText: '',
+      capturedAtText: '',
+      averageSpeedText: '',
+      recordedAtText: '',
+      recordedAtEditedSuffix: '',
+      savedAtText: '',
+      photoPath: null,
+      showPhoto: false,
+      showPhotoError: false,
+    );
 
     final history = state.history;
     if (state.loading && history == null && state.error == null) {
-      return ExerciseHistoryDetailScreenEntity(
+      return empty(
         showLoading: true,
         showMissing: false,
         showError: false,
         canRetry: false,
         errorText: null,
-        showPagePosition: showPagePosition,
-        pageCurrent: pageCurrent,
-        pageTotal: pageTotal,
-        pageLoading: pageLoading,
-        caloriesText: '',
-        durationText: '',
-        distanceText: '',
-        createdAtText: '',
-        capturedAtText: '',
-        averageSpeedText: '',
-        recordedAtText: '',
-        recordedAtEditedSuffix: '',
-        savedAtText: '',
-        photoPath: null,
-        showPhoto: false,
-        showPhotoError: false,
       );
     }
     if (state.missing) {
-      return ExerciseHistoryDetailScreenEntity(
+      return empty(
         showLoading: false,
         showMissing: true,
         showError: false,
         canRetry: false,
         errorText: null,
-        showPagePosition: showPagePosition,
-        pageCurrent: pageCurrent,
-        pageTotal: pageTotal,
-        pageLoading: pageLoading,
-        caloriesText: '',
-        durationText: '',
-        distanceText: '',
-        createdAtText: '',
-        capturedAtText: '',
-        averageSpeedText: '',
-        recordedAtText: '',
-        recordedAtEditedSuffix: '',
-        savedAtText: '',
-        photoPath: null,
-        showPhoto: false,
-        showPhotoError: false,
       );
     }
     if (state.error != null && history == null) {
-      return ExerciseHistoryDetailScreenEntity(
+      return empty(
         showLoading: false,
         showMissing: false,
         showError: true,
         canRetry: true,
         errorText: strings.screen_feature_exercise_history_detail_error,
-        showPagePosition: showPagePosition,
-        pageCurrent: pageCurrent,
-        pageTotal: pageTotal,
-        pageLoading: pageLoading,
-        caloriesText: '',
-        durationText: '',
-        distanceText: '',
-        createdAtText: '',
-        capturedAtText: '',
-        averageSpeedText: '',
-        recordedAtText: '',
-        recordedAtEditedSuffix: '',
-        savedAtText: '',
-        photoPath: null,
-        showPhoto: false,
-        showPhotoError: false,
       );
     }
     if (history == null) {
-      return ExerciseHistoryDetailScreenEntity(
+      return empty(
         showLoading: false,
         showMissing: false,
         showError: false,
         canRetry: false,
         errorText: null,
-        showPagePosition: showPagePosition,
-        pageCurrent: pageCurrent,
-        pageTotal: pageTotal,
-        pageLoading: pageLoading,
-        caloriesText: '',
-        durationText: '',
-        distanceText: '',
-        createdAtText: '',
-        capturedAtText: '',
-        averageSpeedText: '',
-        recordedAtText: '',
-        recordedAtEditedSuffix: '',
-        savedAtText: '',
-        photoPath: null,
-        showPhoto: false,
-        showPhotoError: false,
       );
     }
     final path = state.photoAbsolutePath;
@@ -155,6 +127,13 @@ final class ExerciseHistoryDetailStateToEntityDelegate {
       pageCurrent: pageCurrent,
       pageTotal: pageTotal,
       pageLoading: pageLoading,
+      showHeaderActions: true,
+      headerActionsEnabled:
+          !state.deleting &&
+          !state.editing &&
+          !state.pageLoading &&
+          history.id == state.id,
+      actionErrorText: actionErrorText,
       caloriesText:
           '${PeriodTotalText.oneDecimal(history.caloriesKcal)} '
           '${strings.screen_feature_exercise_history_detail_calories_unit}',

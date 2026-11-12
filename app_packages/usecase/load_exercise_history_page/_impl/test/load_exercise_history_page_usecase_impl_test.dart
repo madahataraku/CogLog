@@ -17,6 +17,7 @@ void main() {
       duration: const Duration(minutes: 1),
       caloriesKcal: 1,
       averageSpeedKmh: 1,
+      healthWorkoutId: null,
       photoBytes: Uint8List.fromList([1]),
     );
     final usecase = LoadExerciseHistoryPageUsecaseImpl(histories: repo);
@@ -39,6 +40,7 @@ void main() {
         duration: const Duration(minutes: 1),
         caloriesKcal: 1,
         averageSpeedKmh: 1,
+        healthWorkoutId: null,
         photoBytes: Uint8List.fromList([i]),
       );
     }

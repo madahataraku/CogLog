@@ -146,6 +146,7 @@ final class DriftExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -175,6 +176,7 @@ final class DriftExerciseHistoryRepository
               caloriesKcal: caloriesKcal,
               averageSpeedKmh: averageSpeedKmh,
               photoRelativePath: relative,
+              healthWorkoutId: Value(healthWorkoutId),
             ),
           );
     } catch (error, stack) {
@@ -190,7 +192,7 @@ final class DriftExerciseHistoryRepository
     return (await _byId(id))!;
   }
 
-  /// [savedAt] は変えず更新する。未知 ID は [StateError]。
+  /// [savedAt] と [healthWorkoutId] は変えず更新する。未知 ID は [StateError]。
   ///
   /// 写真があるときはステージングへ書き、行更新と確定を同一トランザクションで行う。
   @override
@@ -255,6 +257,39 @@ final class DriftExerciseHistoryRepository
     return (await _byId(id))!;
   }
 
+  /// [healthWorkoutId] だけを付け替える。未知 ID は [StateError]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.attachHealthWorkoutId(
+  ///   id: id,
+  ///   healthWorkoutId: 'health-1',
+  /// );
+  /// ```
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  }) async {
+    // UPDATE と結果取得を同一トランザクションにし、途中失敗時は ID 付与を残さない。
+    return _db.transaction(() async {
+      final existing = await _byId(id);
+      if (existing == null) {
+        throw StateError('運動履歴が無い: $id');
+      }
+      final updated =
+          await (_db.update(
+            _db.exerciseHistories,
+          )..where((t) => t.id.equals(id))).write(
+            ExerciseHistoriesCompanion(healthWorkoutId: Value(healthWorkoutId)),
+          );
+      if (updated == 0) {
+        throw StateError('運動履歴が無い: $id');
+      }
+      return (await _byId(id))!;
+    });
+  }
+
   /// 写真を消してから行を削除する。未知 ID は [StateError]。
   @override
   Future<void> delete(String id) async {
@@ -287,5 +322,6 @@ final class DriftExerciseHistoryRepository
     caloriesKcal: row.caloriesKcal,
     averageSpeedKmh: row.averageSpeedKmh,
     photoRelativePath: row.photoRelativePath,
+    healthWorkoutId: row.healthWorkoutId,
   );
 }

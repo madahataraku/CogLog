@@ -131,6 +131,7 @@ final class MemoryExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
+    required String? healthWorkoutId,
     required Uint8List photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -152,12 +153,13 @@ final class MemoryExerciseHistoryRepository
       caloriesKcal: caloriesKcal,
       averageSpeedKmh: averageSpeedKmh,
       photoRelativePath: path,
+      healthWorkoutId: healthWorkoutId,
     );
     _items.add(item);
     return item;
   }
 
-  /// 更新する。未知 ID は [StateError]。
+  /// 更新する。未知 ID は [StateError]。[healthWorkoutId] は維持する。
   @override
   Future<ExerciseHistory> update({
     required String id,
@@ -194,6 +196,44 @@ final class MemoryExerciseHistoryRepository
       caloriesKcal: caloriesKcal,
       averageSpeedKmh: averageSpeedKmh,
       photoRelativePath: previous.photoRelativePath,
+      healthWorkoutId: previous.healthWorkoutId,
+    );
+    _items[index] = next;
+    return next;
+  }
+
+  /// [healthWorkoutId] だけを付け替える。未知 ID は [StateError]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.attachHealthWorkoutId(
+  ///   id: id,
+  ///   healthWorkoutId: 'health-1',
+  /// );
+  /// ```
+  @override
+  Future<ExerciseHistory> attachHealthWorkoutId({
+    required String id,
+    required String healthWorkoutId,
+  }) async {
+    final index = _items.indexWhere((e) => e.id == id);
+    if (index < 0) {
+      throw StateError('運動履歴が無い: $id');
+    }
+    final previous = _items[index];
+    final next = ExerciseHistory(
+      id: id,
+      savedAt: previous.savedAt,
+      creationStartedAt: previous.creationStartedAt,
+      capturedAt: previous.capturedAt,
+      recordedAt: previous.recordedAt,
+      recordedAtManuallySet: previous.recordedAtManuallySet,
+      distanceKm: previous.distanceKm,
+      duration: previous.duration,
+      caloriesKcal: previous.caloriesKcal,
+      averageSpeedKmh: previous.averageSpeedKmh,
+      photoRelativePath: previous.photoRelativePath,
+      healthWorkoutId: healthWorkoutId,
     );
     _items[index] = next;
     return next;

@@ -12,6 +12,9 @@
 ///   pageCurrent: 1,
 ///   pageTotal: 1,
 ///   pageLoading: false,
+///   showHeaderActions: false,
+///   headerActionsEnabled: false,
+///   actionErrorText: null,
 ///   caloriesText: '',
 ///   durationText: '',
 ///   distanceText: '',
@@ -41,6 +44,9 @@ final class ExerciseHistoryDetailScreenEntity {
   ///   pageCurrent: 1,
   ///   pageTotal: 0,
   ///   pageLoading: false,
+  ///   showHeaderActions: false,
+  ///   headerActionsEnabled: false,
+  ///   actionErrorText: null,
   ///   caloriesText: '',
   ///   durationText: '',
   ///   distanceText: '',
@@ -65,6 +71,9 @@ final class ExerciseHistoryDetailScreenEntity {
     required this.pageCurrent,
     required this.pageTotal,
     required this.pageLoading,
+    required this.showHeaderActions,
+    required this.headerActionsEnabled,
+    required this.actionErrorText,
     required this.caloriesText,
     required this.durationText,
     required this.distanceText,
@@ -106,6 +115,15 @@ final class ExerciseHistoryDetailScreenEntity {
   /// ページめくり後の詳細読込中か。
   final bool pageLoading;
 
+  /// ヘッダに編集・削除を出すか。
+  final bool showHeaderActions;
+
+  /// 編集・削除を押せるか（処理中は false）。
+  final bool headerActionsEnabled;
+
+  /// 削除失敗など操作エラー文言。無ければ null。
+  final String? actionErrorText;
+
   /// 消費カロリー。
   final String caloriesText;
 
@@ -124,7 +142,7 @@ final class ExerciseHistoryDetailScreenEntity {
   /// 平均速度。
   final String averageSpeedText;
 
-  /// 記録日時（サフィックス無し）。
+  /// 運動した日時（サフィックス無し）。
   final String recordedAtText;
 
   /// 手変更時だけ付く「（編集済み）」。

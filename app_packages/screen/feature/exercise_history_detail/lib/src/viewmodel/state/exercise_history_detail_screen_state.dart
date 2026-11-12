@@ -24,6 +24,9 @@ final class ExerciseHistoryDetailScreenState {
     required this.photoAbsolutePath,
     required this.missing,
     required this.error,
+    required this.deleting,
+    required this.editing,
+    required this.actionError,
   });
 
   /// まだ読んでいない状態。
@@ -44,6 +47,9 @@ final class ExerciseHistoryDetailScreenState {
         photoAbsolutePath: null,
         missing: false,
         error: null,
+        deleting: false,
+        editing: false,
+        actionError: false,
       );
 
   /// 対象の運動履歴 ID。
@@ -76,6 +82,15 @@ final class ExerciseHistoryDetailScreenState {
   /// 読込失敗。
   final Object? error;
 
+  /// 削除処理中か。
+  final bool deleting;
+
+  /// 編集画面を開いて待っているか。
+  final bool editing;
+
+  /// 削除などの操作失敗を利用者へ示すか。
+  final bool actionError;
+
   /// 一部だけ差し替えた新しい状態を返す。
   ///
   /// Example:
@@ -96,6 +111,10 @@ final class ExerciseHistoryDetailScreenState {
     bool? missing,
     Object? error,
     bool clearError = false,
+    bool? deleting,
+    bool? editing,
+    bool? actionError,
+    bool clearActionError = false,
   }) => ExerciseHistoryDetailScreenState(
     id: id ?? this.id,
     sameDayIds: sameDayIds ?? this.sameDayIds,
@@ -109,5 +128,8 @@ final class ExerciseHistoryDetailScreenState {
         : (photoAbsolutePath ?? this.photoAbsolutePath),
     missing: missing ?? this.missing,
     error: clearError ? null : (error ?? this.error),
+    deleting: deleting ?? this.deleting,
+    editing: editing ?? this.editing,
+    actionError: clearActionError ? false : (actionError ?? this.actionError),
   );
 }

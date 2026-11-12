@@ -451,6 +451,12 @@ class L10nJa extends L10n {
   }
 
   @override
+  String get screen_feature_exercise_history_detail_action_delete => '削除';
+
+  @override
+  String get screen_feature_exercise_history_detail_action_edit => '編集';
+
+  @override
   String get screen_feature_exercise_history_detail_average_speed => '平均速度';
 
   @override
@@ -471,6 +477,25 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_exercise_history_detail_created_at => '作成開始日時';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_body =>
+      'メーターパネル写真も一緒に削除されます。この操作は取り消せません。';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_cancel =>
+      'キャンセル';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_ok => '削除';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_confirm_title =>
+      'この運動履歴を削除しますか？';
+
+  @override
+  String get screen_feature_exercise_history_detail_delete_failed =>
+      '削除に失敗しました';
 
   @override
   String get screen_feature_exercise_history_detail_distance => '走行距離';
@@ -515,6 +540,93 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_exercise_history_detail_title => '運動履歴詳細';
+
+  @override
+  String get screen_feature_exercise_history_edit_average_speed =>
+      '平均速度 (km/h)';
+
+  @override
+  String get screen_feature_exercise_history_edit_back => '戻る';
+
+  @override
+  String get screen_feature_exercise_history_edit_calories => '消費カロリー (kcal)';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_body =>
+      '保存していない変更は失われます。';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_cancel => 'キャンセル';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_ok => '破棄';
+
+  @override
+  String get screen_feature_exercise_history_edit_discard_title => '変更を破棄しますか？';
+
+  @override
+  String get screen_feature_exercise_history_edit_distance => '走行距離 (km)';
+
+  @override
+  String get screen_feature_exercise_history_edit_duration_hours => '時間';
+
+  @override
+  String get screen_feature_exercise_history_edit_duration_minutes => '分';
+
+  @override
+  String get screen_feature_exercise_history_edit_duration_seconds => '秒';
+
+  @override
+  String get screen_feature_exercise_history_edit_hand_entry_guidance =>
+      '読み取れなかった項目は手入力してください。';
+
+  @override
+  String get screen_feature_exercise_history_edit_load_failed =>
+      '編集内容を読み込めませんでした';
+
+  @override
+  String get screen_feature_exercise_history_edit_missing => 'この運動履歴はありません';
+
+  @override
+  String get screen_feature_exercise_history_edit_open_settings => '設定を開く';
+
+  @override
+  String get screen_feature_exercise_history_edit_permission_camera =>
+      'カメラの許可が必要です';
+
+  @override
+  String get screen_feature_exercise_history_edit_permission_library =>
+      '写真へのアクセス許可が必要です';
+
+  @override
+  String get screen_feature_exercise_history_edit_photo => 'メーターパネル写真';
+
+  @override
+  String get screen_feature_exercise_history_edit_photo_error => '写真を表示できません';
+
+  @override
+  String get screen_feature_exercise_history_edit_pick_library => 'ライブラリから選ぶ';
+
+  @override
+  String get screen_feature_exercise_history_edit_reading => '読み取り中…';
+
+  @override
+  String get screen_feature_exercise_history_edit_recorded_at => '運動した日時';
+
+  @override
+  String get screen_feature_exercise_history_edit_retake => 'カメラで撮り直す';
+
+  @override
+  String get screen_feature_exercise_history_edit_retry => '再試行';
+
+  @override
+  String get screen_feature_exercise_history_edit_save => '保存';
+
+  @override
+  String get screen_feature_exercise_history_edit_save_failed => '保存に失敗しました';
+
+  @override
+  String get screen_feature_exercise_history_edit_title => '運動履歴を編集';
 
   @override
   String get screen_feature_exercise_history_error => '運動履歴を読み込めませんでした';

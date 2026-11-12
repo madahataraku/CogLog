@@ -36,6 +36,9 @@ class ExerciseHistories extends Table {
   /// Documents からの写真相対パス。
   TextColumn get photoRelativePath => text()();
 
+  /// ヘルスサービス上のサイクリング外部 ID。未対応・失敗時は null。
+  TextColumn get healthWorkoutId => text().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 }
