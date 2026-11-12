@@ -195,26 +195,15 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
     return delegate.updateCalories(raw);
   }
 
-  /// 平均速度を更新する。
+  /// 運動した日時を更新する。
   ///
   /// Example:
   /// ```dart
-  /// viewModel.onAverageSpeedChanged('12.5');
+  /// viewModel.onExercisedAtChanged(DateTime(2026, 5, 18, 12, 33));
   /// ```
-  Future<void> onAverageSpeedChanged(String raw) {
+  Future<void> onExercisedAtChanged(DateTime value) {
     final delegate = OnFieldChangedDelegate(state: state);
-    return delegate.updateAverageSpeed(raw);
-  }
-
-  /// 記録日時を更新する。
-  ///
-  /// Example:
-  /// ```dart
-  /// viewModel.onRecordedAtChanged('2026-11-08T12:00:00.000');
-  /// ```
-  Future<void> onRecordedAtChanged(String raw) {
-    final delegate = OnFieldChangedDelegate(state: state);
-    return delegate.updateRecordedAt(raw);
+    return delegate.updateExercisedAt(value);
   }
 
   /// 登録可能なら保存し、成功時は [OnSaveMeterCaptureSuccess] を返す。

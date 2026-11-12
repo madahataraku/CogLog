@@ -60,12 +60,7 @@ final class OnEvaluateModelDownloadGuidanceDelegate {
       if (!guidanceSession.shouldShow) {
         return;
       }
-      await emitter.emit(
-        current.copyWith(
-          pendingModelDownloadGuidance: true,
-          showHandEntryGuidance: false,
-        ),
-      );
+      await emitter.emit(current.copyWith(pendingModelDownloadGuidance: true));
     });
   }
 }

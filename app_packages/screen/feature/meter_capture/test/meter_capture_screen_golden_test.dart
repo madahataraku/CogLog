@@ -255,7 +255,7 @@ void main() {
     }
   });
 
-  testWidgets('メーター記録 step2 / ja / Android / light', (tester) async {
+  testWidgets('メーター記録 step2 完全 / ja / Android / light', (tester) async {
     await _prepareSurface(tester);
     final container = ProviderContainer(overrides: _baseOverrides());
     addTearDown(container.dispose);
@@ -284,6 +284,8 @@ void main() {
             caloriesKcal: 100,
             averageSpeedKmh: 3,
             recordedAt: at,
+            showReadSuccessMessage: true,
+            showReadCautionMessage: true,
           ),
         );
       });
@@ -299,7 +301,7 @@ void main() {
     }
   });
 
-  testWidgets('メーター記録 step2 手打ち案内 / ja / Android / light', (tester) async {
+  testWidgets('メーター記録 step2 不完全 / ja / Android / light', (tester) async {
     await _prepareSurface(tester);
     final container = ProviderContainer(overrides: _baseOverrides());
     addTearDown(container.dispose);
@@ -325,6 +327,7 @@ void main() {
             capturedAt: at,
             distanceKm: 1.5,
             recordedAt: at,
+            showReadCautionMessage: true,
             showHandEntryGuidance: true,
           ),
         );
@@ -335,6 +338,47 @@ void main() {
       await expectLater(
         find.byType(MeterCaptureScreenBody),
         matchesGoldenFile('goldens/meter_capture_step2_hand_entry.png'),
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('メーター記録 step2 皆無 / ja / Android / light', (tester) async {
+    await _prepareSurface(tester);
+    final container = ProviderContainer(overrides: _baseOverrides());
+    addTearDown(container.dispose);
+    final at = DateTime(2026, 11, 8, 12);
+
+    try {
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: _wrap(const MeterCaptureScreenBody()),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final viewModel = container.read(MeterCaptureScreenViewModel.provider);
+      await viewModel.state.updateWithLock((_, emitter) async {
+        await emitter.emit(
+          MeterCaptureScreenState(
+            step: MeterCaptureStep.edit,
+            photoBytes: _pngBytes,
+            creationStartedAt: at,
+            capturedAt: at,
+            recordedAt: at,
+            showHandEntryGuidance: true,
+          ),
+        );
+      });
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await expectLater(
+        find.byType(MeterCaptureScreenBody),
+        matchesGoldenFile('goldens/meter_capture_step2_empty.png'),
       );
     } finally {
       debugDefaultTargetPlatformOverride = null;

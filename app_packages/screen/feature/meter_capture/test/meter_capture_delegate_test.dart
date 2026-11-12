@@ -485,7 +485,7 @@ void main() {
           distanceKm: 3,
           duration: Duration(hours: 1),
           caloriesKcal: 200,
-          averageSpeedKmh: 3,
+          averageSpeedKmh: 9,
         ),
         averageSpeedFromPanel: true,
       ),
@@ -502,8 +502,11 @@ void main() {
     expect(read.calls, 1);
     expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.distanceKm, 3);
-    expect(state.state.averageSpeedFromPanel, isTrue);
+    expect(state.state.averageSpeedKmh, 3);
+    expect(state.state.averageSpeedFromPanel, isFalse);
     expect(state.state.reading, isFalse);
+    expect(state.state.showReadSuccessMessage, isTrue);
+    expect(state.state.showReadCautionMessage, isTrue);
     expect(state.state.showHandEntryGuidance, isFalse);
     expect(state.state.creationStartedAt, isNotNull);
     expect(state.state.capturedAt, isNotNull);
@@ -511,7 +514,7 @@ void main() {
     expect(state.state.recordedAtManuallySet, isFalse);
   });
 
-  test('未ダウンロードかつ未提示なら pending true', () async {
+  test('未ダウンロードかつ未提示なら pending true でも empty の手打ち案内を出す', () async {
     final evaluate = _Evaluate(shouldShow: true);
     await OnReadMeterDelegate(
       state: state,
@@ -527,12 +530,14 @@ void main() {
 
     expect(evaluate.calls, 1);
     expect(state.state.pendingModelDownloadGuidance, isTrue);
-    expect(state.state.showHandEntryGuidance, isFalse);
+    expect(state.state.showReadSuccessMessage, isFalse);
+    expect(state.state.showReadCautionMessage, isFalse);
+    expect(state.state.showHandEntryGuidance, isTrue);
     expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.reading, isFalse);
   });
 
-  test('markPresented 済みなら pending false かつ評価しない', () async {
+  test('markPresented 済みなら pending false かつ評価せず empty の手打ち案内を出す', () async {
     final session = OnDeviceLlmGuidanceSession()..markPresented();
     final evaluate = _Evaluate(shouldShow: true);
     await OnReadMeterDelegate(
@@ -549,11 +554,13 @@ void main() {
 
     expect(evaluate.calls, 0);
     expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.showReadSuccessMessage, isFalse);
+    expect(state.state.showReadCautionMessage, isFalse);
     expect(state.state.showHandEntryGuidance, isTrue);
     expect(state.state.step, MeterCaptureStep.edit);
   });
 
-  test('誘導判定は読み取りをブロックせず、確定後は手打ち案内を出さない', () async {
+  test('誘導があっても incomplete の注意と手打ち案内を同時に出す', () async {
     final evaluate = _Evaluate(
       shouldShow: true,
       delay: const Duration(milliseconds: 50),
@@ -576,16 +583,19 @@ void main() {
     expect(state.state.reading, isFalse);
     expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.distanceKm, 1);
-    expect(state.state.showHandEntryGuidance, isFalse);
+    expect(state.state.showReadSuccessMessage, isFalse);
+    expect(state.state.showReadCautionMessage, isTrue);
+    expect(state.state.showHandEntryGuidance, isTrue);
     expect(evaluate.calls, 1);
     expect(read.calls, 1);
 
     await future;
     expect(state.state.pendingModelDownloadGuidance, isTrue);
-    expect(state.state.showHandEntryGuidance, isFalse);
+    expect(state.state.showReadCautionMessage, isTrue);
+    expect(state.state.showHandEntryGuidance, isTrue);
   });
 
-  test('同一回でモデル案内を確認したら手打ち案内を出さない', () async {
+  test('同一回でモデル案内を確認しても empty の手打ち案内を出す', () async {
     final session = OnDeviceLlmGuidanceSession();
     final readGate = Completer<void>();
     final evaluate = _Evaluate(shouldShow: true);
@@ -618,7 +628,73 @@ void main() {
     readGate.complete();
     await future;
     expect(state.state.step, MeterCaptureStep.edit);
+    expect(state.state.showReadSuccessMessage, isFalse);
+    expect(state.state.showReadCautionMessage, isFalse);
+    expect(state.state.showHandEntryGuidance, isTrue);
+  });
+
+  test('complete / incomplete（時間0）/ empty のメッセージフラグ', () async {
+    Future<void> readWith(MeterReadingValues values) async {
+      await state.close();
+      state = MutableStateStream(MeterCaptureScreenState.initial);
+      await OnReadMeterDelegate(
+        state: state,
+        readMeterPanelUsecase: _Read(
+          ReadMeterPanelResult(values: values, averageSpeedFromPanel: false),
+        ),
+        evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+        guidanceSession: OnDeviceLlmGuidanceSession(),
+      ).execute(photoBytes: Uint8List(0));
+    }
+
+    await readWith(
+      const MeterReadingValues(
+        distanceKm: 1,
+        duration: Duration(minutes: 30),
+        caloriesKcal: 100,
+      ),
+    );
+    expect(state.state.showReadSuccessMessage, isTrue);
+    expect(state.state.showReadCautionMessage, isTrue);
     expect(state.state.showHandEntryGuidance, isFalse);
+
+    await readWith(
+      const MeterReadingValues(
+        distanceKm: 1,
+        duration: Duration.zero,
+        caloriesKcal: 100,
+      ),
+    );
+    expect(state.state.showReadSuccessMessage, isFalse);
+    expect(state.state.showReadCautionMessage, isTrue);
+    expect(state.state.showHandEntryGuidance, isTrue);
+
+    await readWith(const MeterReadingValues());
+    expect(state.state.showReadSuccessMessage, isFalse);
+    expect(state.state.showReadCautionMessage, isFalse);
+    expect(state.state.showHandEntryGuidance, isTrue);
+  });
+
+  test('パネル速度と計算値が違っても計算値を載せ fromPanel は false', () async {
+    await OnReadMeterDelegate(
+      state: state,
+      readMeterPanelUsecase: _Read(
+        const ReadMeterPanelResult(
+          values: MeterReadingValues(
+            distanceKm: 30,
+            duration: Duration(hours: 1),
+            caloriesKcal: 200,
+            averageSpeedKmh: 9,
+          ),
+          averageSpeedFromPanel: true,
+        ),
+      ),
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+    ).execute(photoBytes: Uint8List(0));
+
+    expect(state.state.averageSpeedKmh, 30);
+    expect(state.state.averageSpeedFromPanel, isFalse);
   });
 
   test('acknowledge 後は pending false かつ hasPresented', () async {
@@ -637,24 +713,30 @@ void main() {
     expect(session.hasPresented, isTrue);
   });
 
-  test('平均速度クリアは fromPanel を落として再計算する', () async {
+  test('距離変更で平均速度を再計算する', () async {
     await state.updateWithLock((_, emitter) async {
       await emitter.emit(
         const MeterCaptureScreenState(
           step: MeterCaptureStep.edit,
-          distanceKm: 30,
+          distanceKm: 10,
           duration: Duration(hours: 1),
-          averageSpeedKmh: 9,
-          averageSpeedFromPanel: true,
+          averageSpeedKmh: 10,
         ),
       );
     });
 
-    await OnFieldChangedDelegate(state: state).updateAverageSpeed('');
+    await OnFieldChangedDelegate(state: state).updateDistance('30');
 
     expect(state.state.averageSpeedKmh, 30);
     expect(state.state.averageSpeedFromPanel, isFalse);
     expect(state.state.averageSpeedUserEdited, isFalse);
+  });
+
+  test('onExercisedAtChanged で recordedAtManuallySet が true', () async {
+    final at = DateTime(2026, 5, 18, 12, 33);
+    await OnFieldChangedDelegate(state: state).updateExercisedAt(at);
+    expect(state.state.recordedAt, at);
+    expect(state.state.recordedAtManuallySet, isTrue);
   });
 
   test('canSubmitMeterCapture は必須と非負を見る', () {
@@ -687,15 +769,18 @@ void main() {
     );
   });
 
-  test('StateToEntity は未設定を空文字にする', () {
+  test('StateToEntity は未設定を空文字にし DateTime を載せる', () {
     const delegate = MeterCaptureStateToEntityDelegate();
     final empty = delegate.execute(MeterCaptureScreenState.initial);
     expect(empty.distanceText, '');
     expect(empty.hoursText, '');
-    expect(empty.recordedAtText, '');
+    expect(empty.recordedAt, isNull);
     expect(empty.pendingModelDownloadGuidance, isFalse);
+    expect(empty.showReadSuccessMessage, isFalse);
+    expect(empty.showReadCautionMessage, isFalse);
     expect(empty.showHandEntryGuidance, isFalse);
 
+    final at = DateTime(2026, 11, 8, 12);
     final filled = delegate.execute(
       MeterCaptureScreenState(
         step: MeterCaptureStep.edit,
@@ -703,9 +788,11 @@ void main() {
         duration: const Duration(hours: 1, minutes: 2, seconds: 3),
         averageSpeedKmh: 2,
         caloriesKcal: 100,
-        recordedAt: DateTime(2026, 11, 8, 12),
+        recordedAt: at,
         pendingModelDownloadGuidance: true,
-        showHandEntryGuidance: true,
+        showReadSuccessMessage: true,
+        showReadCautionMessage: true,
+        showHandEntryGuidance: false,
       ),
     );
     expect(filled.distanceText, '1.5');
@@ -714,19 +801,10 @@ void main() {
     expect(filled.secondsText, '3');
     expect(filled.averageSpeedText, '2.0');
     expect(filled.caloriesText, '100.0');
-    expect(filled.recordedAtText, DateTime(2026, 11, 8, 12).toIso8601String());
+    expect(filled.recordedAt, at);
     expect(filled.pendingModelDownloadGuidance, isTrue);
-    expect(filled.showHandEntryGuidance, isTrue);
-  });
-
-  test('StateToEntity は UTC の記録日時をローカル時刻に変換する', () {
-    final recordedAt = DateTime.utc(2026, 11, 8, 3);
-    final entity = const MeterCaptureStateToEntityDelegate().execute(
-      MeterCaptureScreenState(
-        step: MeterCaptureStep.edit,
-        recordedAt: recordedAt,
-      ),
-    );
-    expect(entity.recordedAtText, recordedAt.toLocal().toIso8601String());
+    expect(filled.showReadSuccessMessage, isTrue);
+    expect(filled.showReadCautionMessage, isTrue);
+    expect(filled.showHandEntryGuidance, isFalse);
   });
 }

@@ -126,19 +126,15 @@ final class OnFieldChangedDelegate {
       final recalculated = recalculateAverageSpeedIfNeeded(
         distanceKm: distanceKm,
         duration: current.duration,
-        currentSpeed: current.averageSpeedKmh,
-        averageSpeedFromPanel: current.averageSpeedFromPanel,
-        averageSpeedUserEdited: current.averageSpeedUserEdited,
-        averageSpeedClearedByUser: false,
       );
       await emitter.emit(
         current.copyWith(
           distanceKm: distanceKm,
           clearDistanceKm: distanceKm == null,
-          averageSpeedKmh: recalculated.speed,
-          clearAverageSpeedKmh: recalculated.speed == null,
-          averageSpeedUserEdited: recalculated.userEdited,
-          averageSpeedFromPanel: recalculated.fromPanel,
+          averageSpeedKmh: recalculated,
+          clearAverageSpeedKmh: recalculated == null,
+          averageSpeedUserEdited: false,
+          averageSpeedFromPanel: false,
           inputsInvalid: false,
         ),
       );
@@ -173,19 +169,15 @@ final class OnFieldChangedDelegate {
       final recalculated = recalculateAverageSpeedIfNeeded(
         distanceKm: current.distanceKm,
         duration: duration,
-        currentSpeed: current.averageSpeedKmh,
-        averageSpeedFromPanel: current.averageSpeedFromPanel,
-        averageSpeedUserEdited: current.averageSpeedUserEdited,
-        averageSpeedClearedByUser: false,
       );
       await emitter.emit(
         current.copyWith(
           duration: duration,
           clearDuration: duration == null,
-          averageSpeedKmh: recalculated.speed,
-          clearAverageSpeedKmh: recalculated.speed == null,
-          averageSpeedUserEdited: recalculated.userEdited,
-          averageSpeedFromPanel: recalculated.fromPanel,
+          averageSpeedKmh: recalculated,
+          clearAverageSpeedKmh: recalculated == null,
+          averageSpeedUserEdited: false,
+          averageSpeedFromPanel: false,
           inputsInvalid: false,
         ),
       );
@@ -219,74 +211,17 @@ final class OnFieldChangedDelegate {
     });
   }
 
-  /// 平均速度を更新する。空はクリア扱いで再計算する。
+  /// 運動した日時を更新する。
   ///
   /// Example:
   /// ```dart
-  /// delegate.updateAverageSpeed('12.5');
+  /// delegate.updateExercisedAt(DateTime(2026, 5, 18, 12, 33));
   /// ```
-  Future<void> updateAverageSpeed(String raw) async {
-    final trimmed = raw.trim();
-    final cleared = trimmed.isEmpty;
-    late final double? speed;
-    if (cleared) {
-      speed = null;
-    } else {
-      try {
-        speed = parseNonNegativeDoubleOrNull(raw);
-      } on FormatException {
-        await state.updateWithLock((current, emitter) async {
-          await emitter.emit(current.copyWith(inputsInvalid: true));
-        });
-        return;
-      }
-    }
-    await state.updateWithLock((current, emitter) async {
-      final recalculated = recalculateAverageSpeedIfNeeded(
-        distanceKm: current.distanceKm,
-        duration: current.duration,
-        currentSpeed: speed,
-        averageSpeedFromPanel: current.averageSpeedFromPanel,
-        averageSpeedUserEdited: !cleared,
-        averageSpeedClearedByUser: cleared,
-      );
-      await emitter.emit(
-        current.copyWith(
-          averageSpeedKmh: recalculated.speed,
-          clearAverageSpeedKmh: recalculated.speed == null,
-          averageSpeedUserEdited: recalculated.userEdited,
-          averageSpeedFromPanel: recalculated.fromPanel,
-          inputsInvalid: false,
-        ),
-      );
-    });
-  }
-
-  /// 記録日時を更新する。不正入力は無視する。
-  ///
-  /// Example:
-  /// ```dart
-  /// delegate.updateRecordedAt('2026-11-08T12:00:00.000');
-  /// ```
-  Future<void> updateRecordedAt(String raw) async {
-    final trimmed = raw.trim();
-    if (trimmed.isEmpty) {
-      await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(inputsInvalid: true));
-      });
-      return;
-    }
-    final parsed = DateTime.tryParse(trimmed);
-    if (parsed == null) {
-      await state.updateWithLock((current, emitter) async {
-        await emitter.emit(current.copyWith(inputsInvalid: true));
-      });
-      return;
-    }
+  Future<void> updateExercisedAt(DateTime value) async {
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
         current.copyWith(
-          recordedAt: parsed,
+          recordedAt: value,
           recordedAtManuallySet: true,
           inputsInvalid: false,
         ),

@@ -15,7 +15,9 @@ duration_minutes,分,Minutes,運動時間・分
 duration_seconds,秒,Seconds,運動時間・秒
 average_speed,平均速度 (km/h),Average speed (km/h),入力ラベル
 calories,消費カロリー (kcal),Calories (kcal),入力ラベル
-recorded_at,記録日時,Recorded at,記録日時
+recorded_at,運動した日時,Exercise date and time,運動した日時（旧・記録日時）
+read_success,エアロバイクのメーター内容を読み取りました。,Read the exercise bike meter.,自動読み取り完全時の成功
+read_caution,自動読み取りした値は誤っている場合があるため、その場合手動で修正してください。,Automatic readings can be wrong. Correct them manually if needed.,読み取り値の注意（完全・不完全）
 retake,撮り直す,Retake,編集からカメラへ戻る
 save,登録,Save,登録ボタン
 save_failed,保存に失敗しました,Failed to save,保存失敗
