@@ -118,7 +118,6 @@ final class UpdateExerciseHistoryUsecaseImpl
         duration: request.duration,
         caloriesKcal: request.caloriesKcal,
         averageSpeedKmh: averageSpeedKmh!,
-        healthWorkoutId: existing.healthWorkoutId,
         photoBytes: request.photoBytes,
       );
 

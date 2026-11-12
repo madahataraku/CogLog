@@ -250,7 +250,6 @@ final class _ThrowingExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
-    required String? healthWorkoutId,
     Uint8List? photoBytes,
   }) {
     throw UnimplementedError();

@@ -12,20 +12,62 @@ import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
 import 'package:usecase_save_meter_capture_impl/usecase_save_meter_capture_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 
-/// create は通すが attach だけ失敗する。
+/// create は通すが [attachHealthWorkoutId] だけ失敗するテスト用 Repository。
+///
+/// Example:
+/// ```dart
+/// _AttachFailingHistories(MemoryExerciseHistoryRepository());
+/// ```
 final class _AttachFailingHistories implements ExerciseHistoryRepository {
+  /// [_inner] へ委譲し、付与だけ失敗させる口を作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _AttachFailingHistories(MemoryExerciseHistoryRepository());
+  /// ```
   _AttachFailingHistories(this._inner);
 
+  /// 実データを持つメモリ実装。
   final MemoryExerciseHistoryRepository _inner;
 
+  /// [attachHealthWorkoutId] が呼ばれた回数。
+  int attachCallCount = 0;
+
+  /// 常に失敗し、呼び出し回数を数える。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.attachHealthWorkoutId(
+  ///   id: id,
+  ///   healthWorkoutId: 'health-1',
+  /// );
+  /// ```
   @override
   Future<ExerciseHistory> attachHealthWorkoutId({
     required String id,
     required String healthWorkoutId,
   }) async {
+    attachCallCount += 1;
     throw StateError('attach failed');
   }
 
+  /// [_inner] へ作成を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.create(
+  ///   creationStartedAt: DateTime.timestamp(),
+  ///   capturedAt: DateTime.timestamp(),
+  ///   recordedAt: DateTime.timestamp(),
+  ///   recordedAtManuallySet: false,
+  ///   distanceKm: 1,
+  ///   duration: Duration(minutes: 1),
+  ///   caloriesKcal: 1,
+  ///   averageSpeedKmh: 1,
+  ///   healthWorkoutId: null,
+  ///   photoBytes: Uint8List(0),
+  /// );
+  /// ```
   @override
   Future<ExerciseHistory> create({
     required DateTime creationStartedAt,
@@ -53,21 +95,51 @@ final class _AttachFailingHistories implements ExerciseHistoryRepository {
     );
   }
 
+  /// [_inner] へ削除を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.delete(id);
+  /// ```
   @override
   Future<void> delete(String id) => _inner.delete(id);
 
+  /// [_inner] へ ID 検索を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.findById(id);
+  /// ```
   @override
   Future<ExerciseHistory?> findById(String id) => _inner.findById(id);
 
+  /// [_inner] へ一覧取得を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.list();
+  /// ```
   @override
   Future<List<ExerciseHistory>> list() => _inner.list();
 
+  /// [_inner] へ月次一覧を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.listByMonth(year: 2026, month: 11);
+  /// ```
   @override
   Future<List<ExerciseHistory>> listByMonth({
     required int year,
     required int month,
   }) => _inner.listByMonth(year: year, month: month);
 
+  /// [_inner] へ頁取得を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.listPage(year: 2026, month: 11, offset: 0, limit: 30);
+  /// ```
   @override
   Future<List<ExerciseHistory>> listPage({
     required int year,
@@ -76,9 +148,31 @@ final class _AttachFailingHistories implements ExerciseHistoryRepository {
     required int limit,
   }) => _inner.listPage(year: year, month: month, offset: offset, limit: limit);
 
+  /// [_inner] へ写真パス取得を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.photoAbsolutePath(id);
+  /// ```
   @override
   Future<String?> photoAbsolutePath(String id) => _inner.photoAbsolutePath(id);
 
+  /// [_inner] へ更新を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.update(
+  ///   id: id,
+  ///   creationStartedAt: DateTime.timestamp(),
+  ///   capturedAt: DateTime.timestamp(),
+  ///   recordedAt: DateTime.timestamp(),
+  ///   recordedAtManuallySet: true,
+  ///   distanceKm: 2,
+  ///   duration: Duration(minutes: 2),
+  ///   caloriesKcal: 2,
+  ///   averageSpeedKmh: 2,
+  /// );
+  /// ```
   @override
   Future<ExerciseHistory> update({
     required String id,
@@ -90,7 +184,6 @@ final class _AttachFailingHistories implements ExerciseHistoryRepository {
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
-    required String? healthWorkoutId,
     Uint8List? photoBytes,
   }) {
     return _inner.update(
@@ -103,7 +196,6 @@ final class _AttachFailingHistories implements ExerciseHistoryRepository {
       duration: duration,
       caloriesKcal: caloriesKcal,
       averageSpeedKmh: averageSpeedKmh,
-      healthWorkoutId: healthWorkoutId,
       photoBytes: photoBytes,
     );
   }
@@ -379,8 +471,11 @@ void main() {
     ).execute(validRequest());
 
     expect(result.outcome, SaveMeterCaptureOutcome.success);
-    expect(result.healthWriteSucceeded, isTrue);
+    expect(result.healthWriteSucceeded, isFalse);
     expect(result.history!.healthWorkoutId, isNull);
+    expect(histories.attachCallCount, 3);
+    expect(health.deleteCallCount, 1);
+    expect(health.lastExternalId, 'fake-health-1');
     expect(await inner.list(), hasLength(1));
     expect((await inner.list()).single.healthWorkoutId, isNull);
   });

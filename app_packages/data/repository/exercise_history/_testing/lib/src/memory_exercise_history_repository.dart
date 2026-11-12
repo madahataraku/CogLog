@@ -159,7 +159,7 @@ final class MemoryExerciseHistoryRepository
     return item;
   }
 
-  /// 更新する。未知 ID は [StateError]。
+  /// 更新する。未知 ID は [StateError]。[healthWorkoutId] は維持する。
   @override
   Future<ExerciseHistory> update({
     required String id,
@@ -171,7 +171,6 @@ final class MemoryExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
-    required String? healthWorkoutId,
     Uint8List? photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -197,13 +196,21 @@ final class MemoryExerciseHistoryRepository
       caloriesKcal: caloriesKcal,
       averageSpeedKmh: averageSpeedKmh,
       photoRelativePath: previous.photoRelativePath,
-      healthWorkoutId: healthWorkoutId,
+      healthWorkoutId: previous.healthWorkoutId,
     );
     _items[index] = next;
     return next;
   }
 
   /// [healthWorkoutId] だけを付け替える。未知 ID は [StateError]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.attachHealthWorkoutId(
+  ///   id: id,
+  ///   healthWorkoutId: 'health-1',
+  /// );
+  /// ```
   @override
   Future<ExerciseHistory> attachHealthWorkoutId({
     required String id,

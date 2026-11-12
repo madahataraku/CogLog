@@ -108,10 +108,11 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
       );
 
       final externalId = await _writeHealth(request);
+      var healthWriteSucceeded = false;
       if (externalId != null) {
         history = await _attachHealthWorkoutId(history, externalId);
+        healthWriteSucceeded = history.healthWorkoutId != null;
       }
-      final healthWriteSucceeded = externalId != null;
       final now = DateTime.now();
       final autoUpdate = await evaluateAutoUpdate.execute(
         EvaluateDailyGoalAutoUpdateRequest(now: now),
@@ -187,7 +188,10 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     }
   }
 
-  /// [history] に [externalId] だけを付ける。失敗時は元の [history] を返す。
+  /// [history] に [externalId] だけを付ける。失敗時は再試行し、なお失敗ならヘルスを消す。
+  ///
+  /// 付与に成功するまで最大 3 回試す。すべて失敗したら [health.deleteCycling] を
+  /// best-effort で呼び、ID 無しの元の [history] を返す。
   ///
   /// Example:
   /// ```dart
@@ -197,14 +201,22 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
     ExerciseHistory history,
     String externalId,
   ) async {
-    try {
-      return await histories.attachHealthWorkoutId(
-        id: history.id,
-        healthWorkoutId: externalId,
-      );
-    } on Object {
-      // 付与失敗で create 済みの履歴を saveFailed にしない。
-      return history;
+    const maxAttempts = 3;
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        return await histories.attachHealthWorkoutId(
+          id: history.id,
+          healthWorkoutId: externalId,
+        );
+      } on Object {
+        // 付与失敗で create 済みの履歴を saveFailed にしない。再試行する。
+      }
     }
+    try {
+      await health.deleteCycling(externalId: externalId);
+    } on Object {
+      // 孤児削除の失敗でもローカル保存 success を維持する。
+    }
+    return history;
   }
 }

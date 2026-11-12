@@ -96,9 +96,10 @@ abstract interface class ExerciseHistoryRepository {
     required Uint8List photoBytes,
   });
 
-  /// 更新する。[ExerciseHistory.savedAt] は変えない。未知 ID は [StateError]。
+  /// 更新する。[ExerciseHistory.savedAt] と [ExerciseHistory.healthWorkoutId] は変えない。
   ///
-  /// [photoBytes] が非 null のときだけ写真を置換する。
+  /// 未知 ID は [StateError]。[photoBytes] が非 null のときだけ写真を置換する。
+  /// ヘルス ID の付与は [attachHealthWorkoutId] だけが行う。
   ///
   /// Example:
   /// ```dart
@@ -112,7 +113,6 @@ abstract interface class ExerciseHistoryRepository {
   ///   duration: Duration(minutes: 2),
   ///   caloriesKcal: 2,
   ///   averageSpeedKmh: 2,
-  ///   healthWorkoutId: null,
   /// );
   /// ```
   Future<ExerciseHistory> update({
@@ -125,7 +125,6 @@ abstract interface class ExerciseHistoryRepository {
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
-    required String? healthWorkoutId,
     Uint8List? photoBytes,
   });
 

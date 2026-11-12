@@ -192,7 +192,7 @@ final class DriftExerciseHistoryRepository
     return (await _byId(id))!;
   }
 
-  /// [savedAt] は変えず更新する。未知 ID は [StateError]。
+  /// [savedAt] と [healthWorkoutId] は変えず更新する。未知 ID は [StateError]。
   ///
   /// 写真があるときはステージングへ書き、行更新と確定を同一トランザクションで行う。
   @override
@@ -206,7 +206,6 @@ final class DriftExerciseHistoryRepository
     required Duration duration,
     required double caloriesKcal,
     required double averageSpeedKmh,
-    required String? healthWorkoutId,
     Uint8List? photoBytes,
   }) async {
     if (duration.inSeconds == 0) {
@@ -236,7 +235,6 @@ final class DriftExerciseHistoryRepository
                 caloriesKcal: Value(caloriesKcal),
                 averageSpeedKmh: Value(averageSpeedKmh),
                 photoRelativePath: Value(existing.photoRelativePath),
-                healthWorkoutId: Value(healthWorkoutId),
               ),
             );
         if (updated == 0) {
@@ -260,6 +258,14 @@ final class DriftExerciseHistoryRepository
   }
 
   /// [healthWorkoutId] だけを付け替える。未知 ID は [StateError]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.attachHealthWorkoutId(
+  ///   id: id,
+  ///   healthWorkoutId: 'health-1',
+  /// );
+  /// ```
   @override
   Future<ExerciseHistory> attachHealthWorkoutId({
     required String id,

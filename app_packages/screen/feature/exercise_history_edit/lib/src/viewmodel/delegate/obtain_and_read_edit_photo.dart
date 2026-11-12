@@ -126,7 +126,9 @@ Future<void> obtainAndReadEditPhoto({
             averageSpeedKmh: speed,
             clearAverageSpeedKmh: speed == null,
             showHandEntryGuidance: needsMeterHandEntryGuidance(values),
-            clearInputInvalidFlags: true,
+            distanceInvalid: false,
+            durationInvalid: false,
+            caloriesInvalid: false,
             dirty: true,
           ),
         );
