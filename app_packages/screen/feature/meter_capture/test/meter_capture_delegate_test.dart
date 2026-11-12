@@ -521,7 +521,6 @@ void main() {
     ).execute(photoBytes: Uint8List(0));
 
     expect(evaluate.calls, 1);
-    await Future<void>.delayed(Duration.zero);
     expect(state.state.pendingModelDownloadGuidance, isTrue);
     expect(state.state.showHandEntryGuidance, isFalse);
     expect(state.state.step, MeterCaptureStep.edit);
@@ -549,7 +548,7 @@ void main() {
     expect(state.state.step, MeterCaptureStep.edit);
   });
 
-  test('誘導判定は読み取りをブロックしない', () async {
+  test('誘導判定は読み取りをブロックせず、確定後は手打ち案内を出さない', () async {
     final evaluate = _Evaluate(
       shouldShow: true,
       delay: const Duration(milliseconds: 50),
@@ -572,14 +571,11 @@ void main() {
     expect(state.state.reading, isFalse);
     expect(state.state.step, MeterCaptureStep.edit);
     expect(state.state.distanceKm, 1);
-    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.showHandEntryGuidance, isFalse);
     expect(evaluate.calls, 1);
     expect(read.calls, 1);
 
     await future;
-    expect(state.state.pendingModelDownloadGuidance, isFalse);
-    expect(state.state.showHandEntryGuidance, isTrue);
-    await Future<void>.delayed(const Duration(milliseconds: 50));
     expect(state.state.pendingModelDownloadGuidance, isTrue);
     expect(state.state.showHandEntryGuidance, isFalse);
   });
