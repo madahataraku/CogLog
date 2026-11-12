@@ -128,5 +128,10 @@ final class ExerciseHistoryEditScreenViewModel {
   StateStream<ExerciseHistoryEditScreenState> get screenState => state;
 
   /// 状態の Stream を閉じる。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.provider;
+  /// ```
   Future<void> _close() => state.close();
 }

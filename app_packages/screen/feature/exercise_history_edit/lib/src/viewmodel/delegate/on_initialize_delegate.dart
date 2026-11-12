@@ -99,6 +99,16 @@ final class OnInitializeDelegate {
   }
 }
 
+/// 読込成功の [history] を編集 State の初期値へ写す。写真パスも載せ、差し替え用バイトは消す。
+///
+/// Example:
+/// ```dart
+/// _fromHistory(
+///   current: ExerciseHistoryEditScreenState.initial(id: 'id'),
+///   history: history,
+///   photoAbsolutePath: '/tmp/photo.jpg',
+/// );
+/// ```
 ExerciseHistoryEditScreenState _fromHistory({
   required ExerciseHistoryEditScreenState current,
   required ExerciseHistory history,

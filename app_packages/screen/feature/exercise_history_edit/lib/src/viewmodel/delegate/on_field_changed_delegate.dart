@@ -71,6 +71,12 @@ Duration? parseDurationOrNull({
   );
 }
 
+/// 空は 0、それ以外は 0 以上 [max] 以下の整数だけ通す。不正なら null。
+///
+/// Example:
+/// ```dart
+/// _parseNonNegativeIntOrZeroWhenEmpty('30', max: 59);
+/// ```
 int? _parseNonNegativeIntOrZeroWhenEmpty(String trimmed, {required int max}) {
   if (trimmed.isEmpty) {
     return 0;
@@ -227,6 +233,12 @@ final class OnFieldChangedDelegate {
   }
 }
 
+/// 距離と時間が揃っているときだけ平均速度を再計算する。欠けていれば null。
+///
+/// Example:
+/// ```dart
+/// _speed(distanceKm: 1, duration: const Duration(minutes: 1));
+/// ```
 double? _speed({required double? distanceKm, required Duration? duration}) {
   if (distanceKm == null || duration == null) {
     return null;

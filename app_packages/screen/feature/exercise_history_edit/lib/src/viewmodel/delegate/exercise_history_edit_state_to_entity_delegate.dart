@@ -172,5 +172,10 @@ final class ExerciseHistoryEditStateToEntityDelegate {
   }
 
   /// 未設定は空、設定済みは [toString] の結果。
+  ///
+  /// Example:
+  /// ```dart
+  /// _optionalNumber(1.5);
+  /// ```
   String _optionalNumber(double? value) => value == null ? '' : '$value';
 }
