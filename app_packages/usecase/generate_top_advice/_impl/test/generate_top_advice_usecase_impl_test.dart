@@ -31,15 +31,27 @@ GenerateTopAdviceRequest request({
   List<ExerciseHistory> histories = const [],
   DailyGoal goal = DailyGoal.unset,
   int consecutiveExerciseDays = 0,
+  DateTime? now,
+  int consecutiveGoalAchievementDays = 0,
+  int? daysSincePreviousExerciseDay,
 }) => GenerateTopAdviceRequest(
   histories: histories,
   locale: 'ja',
+  now: now ?? DateTime(2026, 11, 5, 12),
   goal: goal,
   consecutiveExerciseDays: consecutiveExerciseDays,
+  consecutiveGoalAchievementDays: consecutiveGoalAchievementDays,
+  daysSincePreviousExerciseDay: daysSincePreviousExerciseDay,
   noExercise: const AdviceTemplate(
     text: '今日はまだ運動していません',
     tone: AdviceTone.realized,
   ),
+  conditionalCatalog: ConditionalAdviceCatalog(),
+  metricLabels: const {
+    ConditionalAdviceMetric.distance: '距離',
+    ConditionalAdviceMetric.calories: 'カロリー',
+    ConditionalAdviceMetric.duration: '時間',
+  },
   fallbackTemplates: const [_templateA, _templateB, _templateC],
 );
 
