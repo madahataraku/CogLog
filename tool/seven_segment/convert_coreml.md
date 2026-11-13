@@ -11,9 +11,10 @@
 
 ## 依存（ピン留め例）
 
-- macOS + **Python 3.10 または 3.11 必須**（`coremltools==7.2` に 3.12+ 用 wheel が無いため、3.12 以降は使わない）
+- macOS + **Python 3.10 推奨**（`scikit-learn==1.1.2` に 3.11 向け wheel が無い。`coremltools==7.2` は 3.12+ 不可）
 - `torch==2.2.0`（coremltools 7.2 の検証済み上限。2.2.2 は警告が出る）
 - `coremltools==7.2`（`numpy<2` と併用。**macOS 用 binary wheel** であること）
+- `scikit-learn==1.1.2`（coremltools の上限。3.10 向け wheel を使う）
 - `mmengine` / `pycocotools`（ModelAssistant の import に必要）
 - [Seeed-Studio/ModelAssistant](https://github.com/Seeed-Studio/ModelAssistant)（Swift-YOLO 定義。Colab と同系なら `2.0.0`、main でも可）
 
@@ -40,11 +41,11 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
    # deepen_factor を確認（無い場合は make_round(num_blocks, self.deepen_factor) に直す）
    ```
 
-2. **Python 3.11** で venv を作り、依存を入れる。
+2. **Python 3.10** で venv を作り、依存を入れる（`scikit-learn==1.1.2` の binary wheel がある版）。
 
    ```bash
    cd /path/to/CogLog
-   python3.11 -m venv .venv-coreml
+   python3.10 -m venv .venv-coreml
    source .venv-coreml/bin/activate
    python -m pip install -U pip wheel
    # torch は必ず 2.2.0（新しい torch が入ると coremltools が警告／失敗しやすい）
@@ -58,6 +59,7 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
      'mmengine>=0.8.2' \
      'pycocotools' \
      'six' \
+     'numpy<2,>=1.26' \
      'opencv-python-headless' \
      'Pillow' \
      'PyYAML' \
@@ -75,7 +77,7 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
 
    まだ `No module named '…'` が出たら、その名前だけ `pip install` する（例: `albumentations`）。`pyarrow` だけは入れない。
 
-   `python3 --version` が 3.10 / 3.11 以外なら、この手順は使わない（3.12 以降は不可）。
+   `python3 --version` が 3.10 以外なら、この手順は使わない（3.11 は `scikit-learn==1.1.2` wheel 無し、3.12 以降は `coremltools==7.2` 不可）。
 
 3. native 拡張が入ったか確認する（ここで失敗したら変換しない）。
 
@@ -92,7 +94,7 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
    ```
 
    - `7.2` と出たあと `BlobWriter: False` だけなら、古い確認スクリプトの誤判定のことが多い。上の `_BlobStorageWriter` import が通れば続行してよい
-   - `No module named 'coremltools.libmilstoragepython'` → **macOS 用 wheel が入っていない**。venv を消し、`python3.11` で作り直してから `pip install --only-binary=:all: 'coremltools==7.2'` を試す
+   - `No module named 'coremltools.libmilstoragepython'` → **macOS 用 wheel が入っていない**。venv を消し、`python3.10` で作り直してから `pip install --only-binary=:all: 'coremltools==7.2'` を試す
    - Linux / コンテナ上ではこの確認は必ず失敗する（仕様）
 
 4. 重みを取得し SHA-1 `b26cffe14038a7155315c40b49f851679a547dec` を確認する。
@@ -126,11 +128,12 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
 
 | メッセージ | 対処 |
 | --- | --- |
-| `No module named distutils` | Python 3.12+ を使っている。`python3.11 -m venv` で作り直す（setuptools では wheel 不足は解消しない） |
+| `No module named distutils` | Python 3.12+ を使っている。`python3.10 -m venv` で作り直す（setuptools では wheel 不足は解消しない） |
 | `Torch version 2.2.2 has not been tested` | `pip install 'torch==2.2.0'` |
-| `No module named 'coremltools.libcoremlpython'` / `libmilstoragepython` | macOS 用 binary wheel が無い。3.11 venv を作り直し `pip install --only-binary=:all: 'coremltools==7.2'`。Linux では不可 |
+| `No module named 'coremltools.libcoremlpython'` / `libmilstoragepython` | macOS 用 binary wheel が無い。3.10 venv を作り直し `pip install --only-binary=:all: 'coremltools==7.2'`。Linux では不可 |
 | `No module named 'pycocotools'` | `pip install pycocotools` |
 | `No module named 'six'` / `terminaltables` / `albumentations` 等 | `pip install <その名前>`（ModelAssistant の間接依存。`pyarrow` 以外） |
+| `Could not find a version that satisfies … scikit-learn==1.1.2`（3.11） | 推奨どおり Python 3.10 の venv を使う |
 | `scikit-learn version … is not supported` | coremltools は ≤1.1.2。`pip install 'scikit-learn==1.1.2'`（変換自体は警告のみで進むこともある） |
 | `state_dict mismatch (missing=140…)` | deepen_factor 未適用。最新 `convert_coreml.py` で再実行（自動パッチ）。または `csp_darknet.py` を上記 NOTE どおり手動修正 |
 | `Torch version … has not been tested` / `2.15.0` 等 | `pip install --force-reinstall 'torch==2.2.0' 'torchvision==0.17.0' 'numpy<2,>=1.26'` |
