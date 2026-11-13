@@ -1,3 +1,4 @@
+import 'meter_duration_parser.dart';
 import 'meter_reading_values.dart';
 
 /// OCR／LLM の生テキストからメーター計測値を取り出す。
@@ -183,7 +184,7 @@ abstract final class MeterPanelTextParser {
       );
       for (final match in pattern.allMatches(text)) {
         final segment = _segmentUntilNextLabel(text, match.end);
-        final duration = _parseDurationToken(segment);
+        final duration = MeterDurationParser.parse(segment);
         if (duration != null) {
           return duration;
         }
@@ -210,44 +211,4 @@ abstract final class MeterPanelTextParser {
   static bool _isPlausibleMetric(double value) =>
       value >= 0 && value <= 1000000;
 
-  /// `H:MM:SS` / `M:SS` / `HhMmSs` / 日本語表記を Duration にする。
-  static Duration? _parseDurationToken(String token) {
-    final jp = RegExp(r'(?:(\d+)\s*時間)?\s*(?:(\d+)\s*分)?\s*(?:(\d+)\s*秒)?')
-        .firstMatch(token);
-    if (jp != null &&
-        (jp.group(1) != null || jp.group(2) != null || jp.group(3) != null)) {
-      final hours = int.tryParse(jp.group(1) ?? '') ?? 0;
-      final minutes = int.tryParse(jp.group(2) ?? '') ?? 0;
-      final seconds = int.tryParse(jp.group(3) ?? '') ?? 0;
-      if (hours < 0 || minutes < 0 || seconds < 0) {
-        return null;
-      }
-      return Duration(hours: hours, minutes: minutes, seconds: seconds);
-    }
-
-    final hms = RegExp(r'(\d+)h\s*(\d+)m\s*(\d+)s').firstMatch(token);
-    if (hms != null) {
-      return Duration(
-        hours: int.parse(hms.group(1)!),
-        minutes: int.parse(hms.group(2)!),
-        seconds: int.parse(hms.group(3)!),
-      );
-    }
-
-    final colon = RegExp(r'(\d+):(\d{1,2})(?::(\d{1,2}))?').firstMatch(token);
-    if (colon != null) {
-      final first = int.parse(colon.group(1)!);
-      final second = int.parse(colon.group(2)!);
-      final third = colon.group(3);
-      if (third != null) {
-        return Duration(
-          hours: first,
-          minutes: second,
-          seconds: int.parse(third),
-        );
-      }
-      return Duration(minutes: first, seconds: second);
-    }
-    return null;
-  }
 }
