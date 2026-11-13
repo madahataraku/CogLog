@@ -101,7 +101,7 @@ def main() -> int:
         return _die(
             f"SSCMA / mmengine import failed: {exc}. "
             "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
-            "Also `pip install pycocotools mmengine`. "
+            "Also `pip install pycocotools mmengine six`. "
             "Ensure deepen_factor is applied in YOLOv5CSPDarknet "
             "(make_round(num_blocks, self.deepen_factor)).",
             code=2,
