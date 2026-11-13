@@ -480,6 +480,10 @@ abstract final class MeterSpatialLayoutInferencer {
   /// _parseDurationToken('0.30.00');
   /// ```
   static Duration? _parseDurationToken(String normalized) {
+    // 負号付きは部分一致で正の時間に化けうるので採用しない。
+    if (normalized.startsWith('-')) {
+      return null;
+    }
     final colon = MeterDurationParser.parseColonOnly(normalized);
     if (colon != null) {
       return colon;
@@ -518,18 +522,25 @@ abstract final class MeterSpatialLayoutInferencer {
   /// _hintOcrDigits('l2.o');
   /// ```
   static String _hintOcrDigits(String normalized) {
-    final unit = RegExp(r'(km/h|kmh|km|kcal|cal)$').firstMatch(normalized);
+    // 末尾の記号ノイズを外してから単位 / hms を保護する。
+    final trailing = RegExp(
+      r'^(.*?)([^A-Za-z0-9\u3040-\u30ff\u3400-\u9fff]*)$',
+      unicode: true,
+    ).firstMatch(normalized);
+    final core = trailing?.group(1) ?? normalized;
+    final suffix = trailing?.group(2) ?? '';
+    final unit = RegExp(r'(km/h|kmh|km|kcal|cal)$').firstMatch(core);
     if (unit != null) {
-      final head = normalized.substring(0, unit.start);
-      return '${_hintOcrDigitsRaw(head)}${unit.group(0)!}';
+      final head = core.substring(0, unit.start);
+      return '${_hintOcrDigitsRaw(head)}${unit.group(0)!}$suffix';
     }
-    final hms = RegExp(r'^(.*)(h)(.*)(m)(.*)(s)$').firstMatch(normalized);
+    final hms = RegExp(r'^(.*)(h)(.*)(m)(.*)(s)$').firstMatch(core);
     if (hms != null) {
       return '${_hintOcrDigitsRaw(hms.group(1)!)}h'
           '${_hintOcrDigitsRaw(hms.group(3)!)}m'
-          '${_hintOcrDigitsRaw(hms.group(5)!)}s';
+          '${_hintOcrDigitsRaw(hms.group(5)!)}s$suffix';
     }
-    return _hintOcrDigitsRaw(normalized);
+    return '${_hintOcrDigitsRaw(core)}$suffix';
   }
 
   /// 単位全体を桁ヒントで置換する。

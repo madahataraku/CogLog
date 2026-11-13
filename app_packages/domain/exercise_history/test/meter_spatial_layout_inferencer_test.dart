@@ -211,12 +211,31 @@ void main() {
     expect(values.duration, const Duration(minutes: 30));
   });
 
+  test('末尾ノイズ付きでも単位と hms を読む', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('カロリー', 0.1, 0.10, 0.2, 0.05),
+      t('l2kcal.', 0.1, 0.18, 0.2, 0.06),
+      t('時間', 0.1, 0.30, 0.2, 0.05),
+      t('0h3om00s!', 0.1, 0.38, 0.25, 0.06),
+    ]);
+    expect(values.caloriesKcal, 12);
+    expect(values.duration, const Duration(minutes: 30));
+  });
+
   test('負数は距離として採用しない', () {
     final values = MeterSpatialLayoutInferencer.infer([
       t('距離', 0.1, 0.10, 0.2, 0.05),
       t('-12.3km', 0.1, 0.18, 0.2, 0.06),
     ]);
     expect(values.distanceKm, isNull);
+  });
+
+  test('負号付き hms は時間として採用しない', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('時間', 0.1, 0.10, 0.2, 0.05),
+      t('-1h30m00s', 0.1, 0.18, 0.25, 0.06),
+    ]);
+    expect(values.duration, isNull);
   });
 
   test('otherDigits は other のうち桁ありだけ数える', () {
