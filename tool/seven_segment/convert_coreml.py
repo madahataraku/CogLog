@@ -121,7 +121,7 @@ def main() -> int:
             f"SSCMA / mmengine import failed: {exc}. "
             "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
             "Also `pip install 'torch==2.2.0' 'torchvision==0.17.0' "
-            "'numpy<2' pycocotools mmengine six tqdm`. "
+            "'numpy<2' pycocotools mmengine six tqdm albumentations`. "
             "Do not `pip install pyarrow` (conflicts with numpy<2); "
             "this script stubs pyarrow/lance for import only. "
             "Ensure deepen_factor is applied in YOLOv5CSPDarknet "

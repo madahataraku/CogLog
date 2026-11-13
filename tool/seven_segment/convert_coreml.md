@@ -56,14 +56,16 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
      'Pillow' \
      'PyYAML' \
      'terminaltables' \
-     'shapely'
+     'shapely' \
+     'tqdm' \
+     'albumentations'
    python -c "import torch, torchvision, numpy as np; print(torch.__version__, torchvision.__version__, np.__version__)"
    # 期待例: 2.2.0 / 0.17.0 / 1.26.x
    ```
 
    **入れないもの**: `pyarrow` / `lance` / `lancedb`。本物を入れると `numpy>=2` が要求され `coremltools==7.2` と衝突する。`convert_coreml.py` は import 前に空モジュールで stub する（変換に LanceDB は不要）。
 
-   ModelAssistant がさらに依存を要求したら、その都度 `pip install <名前>` する（代表例: `six`, `terminaltables`, `tqdm`）。`No module named pyarrow` でも **pyarrow は入れない**。リポジトリの最新 `convert_coreml.py` を使う。
+   まだ `No module named '…'` が出たら、その名前だけ `pip install` する（例: `albumentations`）。`pyarrow` だけは入れない。
 
    `python3 --version` が 3.10 / 3.11 以外なら、この手順は使わない（3.12 以降は不可）。
 
@@ -117,7 +119,7 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 | `Torch version 2.2.2 has not been tested` | `pip install 'torch==2.2.0'` |
 | `No module named 'coremltools.libcoremlpython'` / `libmilstoragepython` | macOS 用 binary wheel が無い。3.11 venv を作り直し `pip install --only-binary=:all: 'coremltools==7.2'`。Linux では不可 |
 | `No module named 'pycocotools'` | `pip install pycocotools` |
-| `No module named 'six'` / `terminaltables` 等 | `pip install six terminaltables`（ModelAssistant の間接依存） |
+| `No module named 'six'` / `terminaltables` / `albumentations` 等 | `pip install <その名前>`（ModelAssistant の間接依存。`pyarrow` 以外） |
 | `Torch version … has not been tested` / `2.15.0` 等 | `pip install --force-reinstall 'torch==2.2.0' 'torchvision==0.17.0' 'numpy<2,>=1.26'` |
 | `torchvision` / `register_fake` / `roi_align` で落ちる | torch と torchvision の組が不一致。上と同じく **2.2.0 + 0.17.0** に揃える |
 | `No module named 'pyarrow'` / `pyarrow requires NumPy 2.0` | **pyarrow を入れない**。`git pull` して stub 入りの最新 `convert_coreml.py` を使う。Desktop へのコピーは古いことが多い |
