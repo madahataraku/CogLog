@@ -18,12 +18,15 @@ install_apm_cli() {
   fi
   export PATH="/usr/local/bin:${HOME}/.local/bin:${PATH}"
   local escaped="${version//./\\.}"
-  # sha256 of https://aka.ms/apm-unix. Re-pin this when intentionally changing installers.
+  # sha256 of the install.sh published with the locked apm_version tag.
+  # aka.ms/apm-unix tracks main and drifts; pin the matching release tag instead.
+  # Re-pin this when intentionally changing apm_version / installers.
+  local installer_url="https://raw.githubusercontent.com/microsoft/apm/v${version}/install.sh"
   local installer_sha256="0e813353630c02a9eb961fbad82cf916967e855aa84a533940975c5d699c9caa"
   if ! apm --version 2>/dev/null | grep -Eq "(^|[^0-9.])${escaped}([^0-9.]|$)"; then
     local installer
     installer="$(mktemp)"
-    curl -fsSL https://aka.ms/apm-unix -o "${installer}"
+    curl -fsSL "${installer_url}" -o "${installer}"
     if [[ "$(sha256sum "${installer}" | awk '{ print $1 }')" != "${installer_sha256}" ]]; then
       rm -f "${installer}"
       log "apm installer checksum mismatch"
