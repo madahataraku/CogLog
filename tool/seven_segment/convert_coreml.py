@@ -86,7 +86,11 @@ def main() -> int:
         from mmengine.config import Config
         from mmengine.registry import MODELS, init_default_scope
 
-        from sscma.datasets import DetDataPreprocessor  # noqa: F401
+        # datasets/__init__.py は lancedb→pyarrow/lance を引き、numpy>=2 と
+        # coremltools 7.2（numpy<2）が衝突するため leaf モジュールから取る。
+        from sscma.datasets.data_preprocessor import (  # noqa: F401
+            DetDataPreprocessor,
+        )
         from sscma.models import (  # noqa: F401
             CrossEntropyLoss,
             DetHead,
@@ -101,9 +105,10 @@ def main() -> int:
         return _die(
             f"SSCMA / mmengine import failed: {exc}. "
             "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
-            "Also `pip install pycocotools mmengine six`. "
-            "Ensure deepen_factor is applied in YOLOv5CSPDarknet "
-            "(make_round(num_blocks, self.deepen_factor)).",
+            "Also `pip install 'torch==2.2.0' 'numpy<2' pycocotools "
+            "mmengine six`. Do not import sscma.datasets package root "
+            "(pulls pyarrow). Ensure deepen_factor is applied in "
+            "YOLOv5CSPDarknet (make_round(num_blocks, self.deepen_factor)).",
             code=2,
         )
 

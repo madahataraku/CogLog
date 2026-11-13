@@ -42,10 +42,12 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
    python3.11 -m venv .venv-coreml
    source .venv-coreml/bin/activate
    python -m pip install -U pip wheel
-   python -m pip install \
+   # torch は必ず 2.2.0（新しい torch が入ると coremltools が警告／失敗しやすい）
+   python -m pip install --force-reinstall \
      'torch==2.2.0' \
+     'numpy<2,>=1.26'
+   python -m pip install \
      --only-binary=:all: 'coremltools==7.2' \
-     'numpy<2' \
      'mmengine>=0.8.2' \
      'pycocotools' \
      'six' \
@@ -54,9 +56,13 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
      'PyYAML' \
      'terminaltables' \
      'shapely'
+   python -c "import torch, numpy; print(torch.__version__, numpy.__version__)"
+   # 期待例: 2.2.0 と 1.26.x（NumPy 2 や torch 2.5+/2.15 は不可）
    ```
 
-   ModelAssistant がさらに依存を要求したら、その都度 `pip install <名前>` する（代表例: `six`, `terminaltables`）。
+   **入れないもの**: `pyarrow` / `lance` / `lancedb`。`sscma.datasets` パッケージ根の import がこれらを引き、`numpy>=2` を要求して `coremltools==7.2`（`numpy<2`）と衝突する。変換スクリプトは `sscma.datasets.data_preprocessor` を直接 import して回避する。
+
+   ModelAssistant がさらに依存を要求したら、その都度 `pip install <名前>` する（代表例: `six`, `terminaltables`）。`pyarrow` を入れて直そうとしない。
 
    `python3 --version` が 3.10 / 3.11 以外なら、この手順は使わない（3.12 以降は不可）。
 
@@ -111,6 +117,8 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 | `No module named 'coremltools.libcoremlpython'` / `libmilstoragepython` | macOS 用 binary wheel が無い。3.11 venv を作り直し `pip install --only-binary=:all: 'coremltools==7.2'`。Linux では不可 |
 | `No module named 'pycocotools'` | `pip install pycocotools` |
 | `No module named 'six'` / `terminaltables` 等 | `pip install six terminaltables`（ModelAssistant の間接依存） |
+| `Torch version … has not been tested` / `2.15.0` 等 | `pip install --force-reinstall 'torch==2.2.0' 'numpy<2,>=1.26'` |
+| `pyarrow requires NumPy 2.0` | `pyarrow` を入れない／外す。スクリプトは datasets 根を import しない |
 | `BlobWriter not loaded` | 上と同じ（native 拡張欠落）か Linux 実行 |
 
 ## Linux での再試行結果（参考）
