@@ -109,14 +109,12 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
         MeterSpatialLayoutInferencer.tokensExcludingNumericValues(
           genericTokens,
         );
-    // 汎用で数値として確定した矩形と重なる七セグ候補は別項目へ流用しない。
-    final numericGeneric = [
-      for (final t in genericTokens)
-        if (!anchorTokens.contains(t)) t,
-    ];
+    // 汎用で実際に採用した数値の矩形と重なる七セグ候補は別項目へ流用しない。
+    final adoptedNumeric =
+        MeterSpatialLayoutInferencer.adoptedNumericValueTokens(genericTokens);
     final sevenSegForInfer = [
       for (final s in sevenSegTokens)
-        if (!_overlapsAny(s, numericGeneric)) s,
+        if (!_overlapsAny(s, adoptedNumeric)) s,
     ];
     final valuesSeven = MeterSpatialLayoutInferencer.infer([
       ...anchorTokens,

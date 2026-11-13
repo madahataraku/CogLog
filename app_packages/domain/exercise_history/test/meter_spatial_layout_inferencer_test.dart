@@ -252,6 +252,23 @@ void main() {
     expect(texts, isNot(contains('12.3')));
   });
 
+  test('adoptedNumericValueTokens は採用した数値だけ返す', () {
+    final adopted = MeterSpatialLayoutInferencer.adoptedNumericValueTokens([
+      t('12.3km', 0.1, 0.18, 0.2, 0.06),
+    ]);
+    expect(adopted, hasLength(1));
+    expect(adopted.single.text, '12.3km');
+  });
+
+  test('adoptedNumericValueTokens は曖昧な数値を含めない', () {
+    final adopted = MeterSpatialLayoutInferencer.adoptedNumericValueTokens([
+      t('距離', 0.1, 0.10, 0.2, 0.05),
+      t('12', 0.05, 0.18, 0.08, 0.05),
+      t('3', 0.25, 0.18, 0.08, 0.05),
+    ]);
+    expect(adopted, isEmpty);
+  });
+
   test('otherDigits は other のうち桁ありだけ数える', () {
     final tokens = [
       t('距離', 0.1, 0.1, 0.1, 0.04),

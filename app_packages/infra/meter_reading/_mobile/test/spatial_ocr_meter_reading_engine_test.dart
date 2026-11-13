@@ -168,13 +168,7 @@ void main() {
       kind: MeterReadingEngineKind.mlKit,
       recognizer: FakeMeterLayoutRecognizer(
         tokens: const [
-          MeterOcrToken(
-            text: '距離',
-            left: 0.05,
-            top: 0.10,
-            width: 0.1,
-            height: 0.04,
-          ),
+          // 距離ラベル無しでも 12.3km 単独で距離確定（除外無しだと七セグがカロリーへ流れる）
           MeterOcrToken(
             text: '12.3km',
             left: 0.1,
