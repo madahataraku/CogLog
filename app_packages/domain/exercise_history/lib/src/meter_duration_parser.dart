@@ -48,7 +48,7 @@ abstract final class MeterDurationParser {
   /// MeterDurationParser.parseColonOnly('0:45:00');
   /// ```
   static Duration? parseColonOnly(String token) {
-    final colon = RegExp(r'^\s*(\d+):(\d{1,2})(?::(\d{1,2}))?\s*$')
+    final colon = RegExp(r'^\s*(\d+)[:：](\d{1,2})(?:[:：](\d{1,2}))?\s*$')
         .firstMatch(token);
     if (colon == null) {
       return null;
@@ -57,11 +57,14 @@ abstract final class MeterDurationParser {
     final second = int.parse(colon.group(2)!);
     final third = colon.group(3);
     if (third != null) {
-      return Duration(
-        hours: first,
-        minutes: second,
-        seconds: int.parse(third),
-      );
+      final seconds = int.parse(third);
+      if (second > 59 || seconds > 59) {
+        return null;
+      }
+      return Duration(hours: first, minutes: second, seconds: seconds);
+    }
+    if (second > 59) {
+      return null;
     }
     return Duration(minutes: first, seconds: second);
   }

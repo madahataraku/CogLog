@@ -210,5 +210,4 @@ abstract final class MeterPanelTextParser {
   /// 0 未満または 1e6 超は未取得。
   static bool _isPlausibleMetric(double value) =>
       value >= 0 && value <= 1000000;
-
 }

@@ -20,6 +20,7 @@ final class VisionMeterLayoutRecognizer implements MeterLayoutRecognizer {
           methodChannel ??
           const MethodChannel('infra_meter_reading/vision_ocr');
 
+  /// Vision プラグインと通信する channel。
   final MethodChannel _channel;
 
   /// [photoBytes] を Vision で認識する。

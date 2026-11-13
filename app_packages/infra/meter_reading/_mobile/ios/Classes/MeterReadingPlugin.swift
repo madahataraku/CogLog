@@ -79,18 +79,12 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
       }
       let observations = (request.results as? [VNRecognizedTextObservation]) ?? []
       if withLayout {
-        let tokens: [[String: Any]] = observations.compactMap { observation in
-          guard let text = observation.topCandidates(1).first?.string else {
-            return nil
+        var tokens: [[String: Any]] = []
+        for observation in observations {
+          guard let candidate = observation.topCandidates(1).first else {
+            continue
           }
-          let box = observation.boundingBox
-          return [
-            "text": text,
-            "left": box.origin.x,
-            "top": 1.0 - box.origin.y - box.size.height,
-            "width": box.size.width,
-            "height": box.size.height,
-          ]
+          tokens.append(contentsOf: Self.layoutTokens(from: candidate))
         }
         result(tokens)
       } else {
@@ -123,6 +117,57 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
         )
       }
     }
+  }
+
+  /// Splits a Vision string into whitespace-separated tokens with per-range boxes.
+  private static func layoutTokens(
+    from candidate: VNRecognizedText
+  ) -> [[String: Any]] {
+    let string = candidate.string
+    let nsString = string as NSString
+    var tokens: [[String: Any]] = []
+    let fullRange = NSRange(location: 0, length: nsString.length)
+    nsString.enumerateSubstrings(
+      in: fullRange,
+      options: [.byWords, .localized]
+    ) { substring, substringRange, _, _ in
+      guard let substring, !substring.isEmpty else {
+        return
+      }
+      guard
+        let swiftRange = Range(substringRange, in: string),
+        let box = try? candidate.boundingBox(for: swiftRange)?.boundingBox
+      else {
+        return
+      }
+      tokens.append(
+        [
+          "text": substring,
+          "left": box.origin.x,
+          "top": 1.0 - box.origin.y - box.size.height,
+          "width": box.size.width,
+          "height": box.size.height,
+        ]
+      )
+    }
+    if tokens.isEmpty, !string.isEmpty {
+      // Fallback when word enumeration yields nothing: keep the whole observation.
+      // Bounding box for the full string may still fail; skip then.
+      if let box = try? candidate.boundingBox(for: string.startIndex..<string.endIndex)?
+        .boundingBox
+      {
+        tokens.append(
+          [
+            "text": string,
+            "left": box.origin.x,
+            "top": 1.0 - box.origin.y - box.size.height,
+            "width": box.size.width,
+            "height": box.size.height,
+          ]
+        )
+      }
+    }
+    return tokens
   }
 
   /// Maps UIImage orientation to the CGImagePropertyOrientation Vision expects.

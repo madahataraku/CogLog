@@ -23,6 +23,7 @@ final class MlKitMeterLayoutRecognizer implements MeterLayoutRecognizer {
     : _recognizer =
           recognizer ?? TextRecognizer(script: TextRecognitionScript.japanese);
 
+  /// 文字認識本体。保持資源は [close] で解放する。
   final TextRecognizer _recognizer;
 
   /// [photoBytes] を認識し要素単位のトークンを返す。

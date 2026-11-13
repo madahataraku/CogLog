@@ -57,6 +57,7 @@ abstract final class MeterSpatialLayoutInferencer {
       for (var i = 0; i < tokens.length; i++) _classifyAt(i, tokens[i]),
     ];
     final used = <int>{};
+    _consumeSpeedLinkedNumbers(classified, used);
 
     final distance = _linkNumericField(
       classified: classified,
@@ -81,6 +82,96 @@ abstract final class MeterSpatialLayoutInferencer {
     );
   }
 
+  /// 速度ラベル／単位に一意に結び付く裸数値を候補から外す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _consumeSpeedLinkedNumbers(classified, used);
+  /// ```
+  static void _consumeSpeedLinkedNumbers(
+    List<_Classified> classified,
+    Set<int> used,
+  ) {
+    while (true) {
+      final speedAnchors = [
+        for (final c in classified)
+          if (c.kind == _Kind.speedIgnore && !used.contains(c.index)) c,
+      ];
+      final otherAnchors = [
+        for (final c in classified)
+          if (!used.contains(c.index) &&
+              (c.kind == _Kind.distanceLabel ||
+                  c.kind == _Kind.distanceUnit ||
+                  c.kind == _Kind.calorieLabel ||
+                  c.kind == _Kind.calorieUnit ||
+                  c.kind == _Kind.timeLabel))
+            c,
+      ];
+      final bareNumbers = [
+        for (final c in classified)
+          if (c.kind == _Kind.bareNumber &&
+              !used.contains(c.index) &&
+              _isSpeedOwnedNumber(c, speedAnchors, otherAnchors))
+            c,
+      ];
+      if (speedAnchors.isEmpty || bareNumbers.isEmpty) {
+        return;
+      }
+      final pair = _bestUniquePair(speedAnchors, bareNumbers);
+      if (pair == null) {
+        return;
+      }
+      used
+        ..add(pair.$1.index)
+        ..add(pair.$2.index);
+    }
+  }
+
+  /// 速度アンカーと同一行、または他フィールドより速度に近い裸数値か。
+  ///
+  /// Example:
+  /// ```dart
+  /// _isSpeedOwnedNumber(number, speedAnchors, otherAnchors);
+  /// ```
+  static bool _isSpeedOwnedNumber(
+    _Classified number,
+    List<_Classified> speedAnchors,
+    List<_Classified> otherAnchors,
+  ) {
+    if (speedAnchors.isEmpty) {
+      return false;
+    }
+    var bestSpeed = double.infinity;
+    var sameRowSpeed = false;
+    for (final speed in speedAnchors) {
+      final d = _distance(speed.token, number.token);
+      if (_sameRow(speed.token, number.token)) {
+        sameRowSpeed = true;
+      }
+      if (d < bestSpeed) {
+        bestSpeed = d;
+      }
+    }
+    if (sameRowSpeed) {
+      return true;
+    }
+    if (otherAnchors.isEmpty) {
+      return true;
+    }
+    for (final other in otherAnchors) {
+      if (_distance(other.token, number.token) <= bestSpeed) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /// コロン一意または時間ラベル近傍から運動時間を取る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _resolveDuration(classified, used);
+  /// ```
   static Duration? _resolveDuration(
     List<_Classified> classified,
     Set<int> used,
@@ -96,6 +187,12 @@ abstract final class MeterSpatialLayoutInferencer {
     return _linkDurationWithAnchors(classified, used);
   }
 
+  /// 時間ラベルと近傍の時間値を一意に結ぶ。
+  ///
+  /// Example:
+  /// ```dart
+  /// _linkDurationWithAnchors(classified, used);
+  /// ```
   static Duration? _linkDurationWithAnchors(
     List<_Classified> classified,
     Set<int> used,
@@ -129,6 +226,18 @@ abstract final class MeterSpatialLayoutInferencer {
     return pair.$2.duration;
   }
 
+  /// アンカー近傍の数値を一意に結ぶ。無いときは単位付き単独値を許す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _linkNumericField(
+  ///   classified: classified,
+  ///   used: used,
+  ///   anchorKinds: {_Kind.distanceLabel},
+  ///   valueKinds: {_Kind.bareNumber},
+  ///   unitKind: _Kind.distanceValueWithUnit,
+  /// );
+  /// ```
   static double? _linkNumericField({
     required List<_Classified> classified,
     required Set<int> used,
@@ -169,6 +278,12 @@ abstract final class MeterSpatialLayoutInferencer {
     return pair.$2.number;
   }
 
+  /// 同一行優先の最近傍が一意なときだけアンカーと値の組を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _bestUniquePair(anchors, values);
+  /// ```
   static (_Classified, _Classified)? _bestUniquePair(
     List<_Classified> anchors,
     List<_Classified> values,
@@ -176,7 +291,12 @@ abstract final class MeterSpatialLayoutInferencer {
     final scored = <(double, bool, _Classified, _Classified)>[];
     for (final a in anchors) {
       for (final v in values) {
-        scored.add((_distance(a.token, v.token), _sameRow(a.token, v.token), a, v));
+        scored.add((
+          _distance(a.token, v.token),
+          _sameRow(a.token, v.token),
+          a,
+          v,
+        ));
       }
     }
     scored.sort((x, y) {
@@ -200,17 +320,35 @@ abstract final class MeterSpatialLayoutInferencer {
     return (best.$3, best.$4);
   }
 
+  /// 正規化矩形中心のユークリッド距離。
+  ///
+  /// Example:
+  /// ```dart
+  /// _distance(a, b);
+  /// ```
   static double _distance(MeterOcrToken a, MeterOcrToken b) {
     final dx = a.centerX - b.centerX;
     final dy = a.centerY - b.centerY;
     return math.sqrt(dx * dx + dy * dy);
   }
 
+  /// 縦方向のずれが行高さ閾値以内なら同一行とみなす。
+  ///
+  /// Example:
+  /// ```dart
+  /// _sameRow(a, b);
+  /// ```
   static bool _sameRow(MeterOcrToken a, MeterOcrToken b) {
     final threshold = math.max(0.06, math.max(a.height, b.height));
     return (a.centerY - b.centerY).abs() <= threshold;
   }
 
+  /// 1 トークンをラベル／単位／数値／時間／無視へ分類する。
+  ///
+  /// Example:
+  /// ```dart
+  /// _classifyAt(0, token);
+  /// ```
   static _Classified _classifyAt(int index, MeterOcrToken token) {
     final t = _normalize(token.text);
     if (_speedLabels.contains(t) || _speedUnits.contains(t)) {
@@ -231,7 +369,7 @@ abstract final class MeterSpatialLayoutInferencer {
     if (t == 'kcal' || t == 'cal') {
       return _Classified(index: index, token: token, kind: _Kind.calorieUnit);
     }
-    final colon = MeterDurationParser.parseColonOnly(token.text);
+    final colon = MeterDurationParser.parseColonOnly(t);
     if (colon != null) {
       return _Classified(
         index: index,
@@ -272,6 +410,12 @@ abstract final class MeterSpatialLayoutInferencer {
     return _Classified(index: index, token: token, kind: _Kind.other);
   }
 
+  /// 全角桁・全角コロンを半角にし、空白を潰して小文字化する。
+  ///
+  /// Example:
+  /// ```dart
+  /// _normalize('１２．３');
+  /// ```
   static String _normalize(String raw) {
     final buffer = StringBuffer();
     for (final unit in raw.runes) {
@@ -279,19 +423,27 @@ abstract final class MeterSpatialLayoutInferencer {
         buffer.writeCharCode(0x30 + (unit - 0xff10));
         continue;
       }
+      if (unit == 0xff1a) {
+        buffer.write(':');
+        continue;
+      }
       buffer.writeCharCode(unit);
     }
-    return buffer
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replaceAll(RegExp(r'\s+'), '');
+    return buffer.toString().toLowerCase().trim().replaceAll(
+      RegExp(r'\s+'),
+      '',
+    );
   }
 
+  /// 正規化済み文字列から数値と任意単位を取る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _parseNumberWithOptionalUnit('12.3km');
+  /// ```
   static (double, String?)? _parseNumberWithOptionalUnit(String normalized) {
-    final match = RegExp(
-      r'^-?(\d+(?:\.\d+)?)(km/h|kmh|km|kcal|cal)?$',
-    ).firstMatch(normalized);
+    final match = RegExp(r'^-?(\d+(?:\.\d+)?)(km/h|kmh|km|kcal|cal)?$')
+        .firstMatch(normalized);
     if (match == null) {
       return null;
     }
@@ -303,6 +455,7 @@ abstract final class MeterSpatialLayoutInferencer {
   }
 }
 
+/// 空間推論内部のトークン種別。
 enum _Kind {
   distanceLabel,
   calorieLabel,
@@ -317,7 +470,14 @@ enum _Kind {
   other,
 }
 
+/// 分類済みトークンと任意の数値／時間。
 final class _Classified {
+  /// [index] と [token] に [kind] を付ける。
+  ///
+  /// Example:
+  /// ```dart
+  /// _Classified(index: 0, token: token, kind: _Kind.other);
+  /// ```
   const _Classified({
     required this.index,
     required this.token,
@@ -326,9 +486,18 @@ final class _Classified {
     this.duration,
   });
 
+  /// 元リスト上の位置。
   final int index;
+
+  /// 元トークン。
   final MeterOcrToken token;
+
+  /// 分類結果。
   final _Kind kind;
+
+  /// 数値フィールド用の値。
   final double? number;
+
+  /// 時間フィールド用の値。
   final Duration? duration;
 }
