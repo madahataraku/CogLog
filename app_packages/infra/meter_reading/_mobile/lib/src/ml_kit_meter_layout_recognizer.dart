@@ -37,10 +37,16 @@ final class MlKitMeterLayoutRecognizer implements MeterLayoutRecognizer {
   @override
   Future<List<MeterOcrToken>> recognizeLayout(Uint8List photoBytes) async {
     final loaded = await _loader.load(photoBytes);
+    final imageWidth = loaded.imageWidth;
+    final imageHeight = loaded.imageHeight;
+    // サイズ不明のまま画素座標を正規化すると誤ったレイアウトになる。
+    if (imageWidth == null || imageHeight == null) {
+      return const [];
+    }
     return _tokensFrom(
       loaded.recognized,
-      imageWidth: loaded.imageWidth,
-      imageHeight: loaded.imageHeight,
+      imageWidth: imageWidth,
+      imageHeight: imageHeight,
     );
   }
 

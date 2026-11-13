@@ -35,6 +35,9 @@ Future<T> runJapaneseThenLatin<T>({
 
 /// ML Kit 認識結果と正規化用の画像サイズ。
 ///
+/// [imageWidth] / [imageHeight] はデコードできたときだけ入り、座標正規化に使う。
+/// 文字列だけ使う呼び出しでは null でもよい。
+///
 /// Example:
 /// ```dart
 /// MlKitRecognizedImage(
@@ -44,7 +47,7 @@ Future<T> runJapaneseThenLatin<T>({
 /// );
 /// ```
 final class MlKitRecognizedImage {
-  /// [recognized] と画素サイズを持つ。
+  /// [recognized] と任意の画素サイズを持つ。
   ///
   /// Example:
   /// ```dart
@@ -56,18 +59,18 @@ final class MlKitRecognizedImage {
   /// ```
   const MlKitRecognizedImage({
     required this.recognized,
-    required this.imageWidth,
-    required this.imageHeight,
+    this.imageWidth,
+    this.imageHeight,
   });
 
   /// ML Kit の認識結果。
   final RecognizedText recognized;
 
-  /// 画像幅（px）。
-  final double imageWidth;
+  /// 画像幅（px）。デコード不能なら null。
+  final double? imageWidth;
 
-  /// 画像高さ（px）。
-  final double imageHeight;
+  /// 画像高さ（px）。デコード不能なら null。
+  final double? imageHeight;
 }
 
 /// ML Kit の [RecognizedText] を画像バイトから読み出す。
@@ -164,7 +167,7 @@ final class MlKitRecognizedTextLoader {
 
   /// JPEG/PNG を RGBA にできればディスク非経由で認識する。
   ///
-  /// デコード失敗だけ null。認識例外はそのまま投げる。
+  /// デコード／入力生成の失敗だけ null。認識例外はそのまま投げる。
   ///
   /// Example:
   /// ```dart
@@ -176,6 +179,9 @@ final class MlKitRecognizedTextLoader {
   ) async {
     ui.Codec? codec;
     ui.Image? image;
+    late final InputImage input;
+    late final double imageWidth;
+    late final double imageHeight;
     try {
       codec = await ui.instantiateImageCodec(photoBytes);
       final frame = await codec.getNextFrame();
@@ -186,30 +192,30 @@ final class MlKitRecognizedTextLoader {
       if (byteData == null) {
         return null;
       }
-      final input = InputImage.fromBitmap(
+      imageWidth = image.width.toDouble();
+      imageHeight = image.height.toDouble();
+      input = InputImage.fromBitmap(
         bitmap: byteData.buffer.asUint8List(),
         width: image.width,
         height: image.height,
       );
-      final recognized = await recognizer.processImage(input);
-      return MlKitRecognizedImage(
-        recognized: recognized,
-        imageWidth: image.width.toDouble(),
-        imageHeight: image.height.toDouble(),
-      );
     } on Object {
-      // デコード段階の失敗は一時ファイルへ。認識例外は呼び出し元へ。
-      if (image == null) {
-        return null;
-      }
-      rethrow;
+      return null;
     } finally {
       image?.dispose();
       codec?.dispose();
     }
+    final recognized = await recognizer.processImage(input);
+    return MlKitRecognizedImage(
+      recognized: recognized,
+      imageWidth: imageWidth,
+      imageHeight: imageHeight,
+    );
   }
 
   /// 一時ファイル経由で認識し、画像サイズは別途デコードして取る。
+  ///
+  /// サイズが取れなくても [RecognizedText] は返す（幅・高さは null）。
   ///
   /// Example:
   /// ```dart
@@ -228,8 +234,8 @@ final class MlKitRecognizedTextLoader {
       final size = await _decodeSize(photoBytes);
       return MlKitRecognizedImage(
         recognized: recognized,
-        imageWidth: size.$1,
-        imageHeight: size.$2,
+        imageWidth: size?.$1,
+        imageHeight: size?.$2,
       );
     } finally {
       await _deleteQuietly(file);
@@ -237,13 +243,13 @@ final class MlKitRecognizedTextLoader {
     }
   }
 
-  /// 画像バイトの幅と高さを読む。失敗時は (1, 1)。
+  /// 画像バイトの幅と高さを読む。失敗時は null。
   ///
   /// Example:
   /// ```dart
   /// await loader._decodeSize(Uint8List(0));
   /// ```
-  Future<(double, double)> _decodeSize(Uint8List photoBytes) async {
+  Future<(double, double)?> _decodeSize(Uint8List photoBytes) async {
     ui.Codec? codec;
     ui.Image? image;
     try {
@@ -252,7 +258,7 @@ final class MlKitRecognizedTextLoader {
       image = frame.image;
       return (image.width.toDouble(), image.height.toDouble());
     } on Object {
-      return (1.0, 1.0);
+      return null;
     } finally {
       image?.dispose();
       codec?.dispose();
