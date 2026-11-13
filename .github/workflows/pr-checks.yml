@@ -114,6 +114,9 @@ jobs:
             echo "test ${dir} (shard ${SHARD}/${SHARD_COUNT})"
             if grep -q 'sdk: flutter' "$pubspec"; then
               (cd "$dir" && flutter test)
+            elif [ "$dir" = "./app_packages/domain/exercise_history" ]; then
+              # 暦日差の DST 回帰を検出するため、夏時間がある TZ で実行する。
+              (cd "$dir" && TZ=America/New_York dart test)
             else
               (cd "$dir" && dart test)
             fi

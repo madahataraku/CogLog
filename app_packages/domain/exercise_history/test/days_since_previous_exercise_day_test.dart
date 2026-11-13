@@ -64,13 +64,22 @@ void main() {
   });
 
   // America/New_York では 2024-03-10 に夏時間が始まる。
-  // 現地 DateTime の difference.inDays だと 7 暦日が 6 になることがある。
+  // 現地午前零時同士の difference.inDays だと 7 暦日が 6 になる。
+  // CI では domain_exercise_history を TZ=America/New_York で実行する。
   test('夏時間開始をまたぐ 7 暦日は 7', () {
+    final previousMidnight = DateTime(2024, 3, 10);
+    final todayMidnight = DateTime(2024, 3, 17);
+    final naiveLocalDays = todayMidnight.difference(previousMidnight).inDays;
+
     expect(
       DaysSincePreviousExerciseDay.of([
         ride(recordedAt: DateTime(2024, 3, 10, 12)),
       ], DateTime(2024, 3, 17, 15)),
       7,
     );
+    // DST がある TZ では naive が 6 になり、UTC 正規化の回帰を検出できる。
+    if (naiveLocalDays != 7) {
+      expect(naiveLocalDays, 6);
+    }
   });
 }
