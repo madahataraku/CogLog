@@ -10,9 +10,11 @@ environment:
 dependencies:
   domain_exercise_history: any
   infra_meter_reading: any
+  infra_on_device_llm: any
   usecase_read_meter_panel: any
 
 dev_dependencies:
   flutter_lints: any
   infra_meter_reading_testing: any
+  infra_on_device_llm_testing: any
   test: any

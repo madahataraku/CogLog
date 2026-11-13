@@ -2,35 +2,49 @@ import 'dart:async';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
+import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 
-/// 利用可能なエンジンを順に試し、後勝ちでマージする。
+/// LLM ready なら LLM のみ、それ以外は空間 OCR のみを試す（併用しない）。
 ///
-/// コアが揃った時点で打ち切る。全失敗でも空に近い値を返し例外にしない。
-/// 全体の上限は [timeout]（既定 30 秒）。超過時はその時点のマージ結果を返す。
+/// 全体の上限は [timeout]（既定 30 秒）。超過時はその時点の結果を返す。
 ///
 /// Example:
 /// ```dart
-/// ReadMeterPanelUsecaseImpl(engines: engines).execute(
-///   ReadMeterPanelRequest(photoBytes: Uint8List(0)),
-/// );
+/// ReadMeterPanelUsecaseImpl(
+///   llm: llm,
+///   llmEngine: llmEngine,
+///   spatialEngine: spatialEngine,
+/// ).execute(ReadMeterPanelRequest(photoBytes: Uint8List(0)));
 /// ```
 final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
-  /// [engines] を使う実装を作る。
+  /// [llm] の可否で [llmEngine] / [spatialEngine] を排他選択する。
   ///
   /// Example:
   /// ```dart
-  /// ReadMeterPanelUsecaseImpl(engines: engines);
+  /// ReadMeterPanelUsecaseImpl(
+  ///   llm: llm,
+  ///   llmEngine: llmEngine,
+  ///   spatialEngine: spatialEngine,
+  /// );
   /// ```
   const ReadMeterPanelUsecaseImpl({
-    required this.engines,
+    required this.llm,
+    required this.llmEngine,
+    required this.spatialEngine,
     this.timeout = const Duration(seconds: 30),
   });
 
-  /// 試すエンジン列。先頭から順に使う。
-  final List<MeterReadingEngine> engines;
+  /// 準備状態と vision 可否の判定に使う。
+  final OnDeviceLlm llm;
 
-  /// 読み取り全体の上限。超過時はそれまでのマージ結果で手打ちへ進む。
+  /// LLM 読み取りエンジン。
+  final MeterReadingEngine llmEngine;
+
+  /// 空間 OCR エンジン。
+  final MeterReadingEngine spatialEngine;
+
+  /// 読み取り全体の上限。
   final Duration timeout;
 
   /// [request] の写真を読み、初期平均速度を埋めて返す。
@@ -41,42 +55,57 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   /// ```
   @override
   Future<ReadMeterPanelResult> execute(ReadMeterPanelRequest request) async {
-    var merged = const MeterReadingValues();
+    var values = const MeterReadingValues();
 
-    Future<MeterReadingValues> runEngines() async {
-      for (final engine in engines) {
-        try {
-          if (!await engine.isAvailable) {
-            continue;
-          }
-          final next = await engine.read(request.photoBytes);
-          merged = MeterReadingMerger.merge(merged, next);
-          if (isCompleteMeterReadingCore(merged)) {
-            break;
-          }
-        } on Object {
-          // 可否判定・読み取りの失敗は次エンジンへ。全失敗でも手打ちへ進む。
-        }
+    Future<MeterReadingValues> runSelected() async {
+      final engine = await _selectEngine();
+      if (engine == null) {
+        return const MeterReadingValues();
       }
-      return merged;
+      try {
+        if (!await engine.isAvailable) {
+          return const MeterReadingValues();
+        }
+        return await engine.read(request.photoBytes);
+      } on Object {
+        return const MeterReadingValues();
+      }
     }
 
     try {
-      merged = await runEngines().timeout(timeout);
+      values = await runSelected().timeout(timeout);
     } on TimeoutException {
-      // その時点の merged を使う。
+      // その時点の values を使う。
     }
 
-    final resolved = resolveInitialAverageSpeed(merged: merged);
+    final resolved = resolveInitialAverageSpeed(merged: values);
     return ReadMeterPanelResult(
       values: MeterReadingValues(
-        distanceKm: merged.distanceKm,
-        duration: merged.duration,
-        caloriesKcal: merged.caloriesKcal,
+        distanceKm: values.distanceKm,
+        duration: values.duration,
+        caloriesKcal: values.caloriesKcal,
         averageSpeedKmh: resolved.speed,
       ),
-      // 平均速度は常に距離÷時間。パネル由来フラグは載せない。
       averageSpeedFromPanel: false,
     );
+  }
+
+  /// ready かつ vision なら LLM、それ以外は空間 OCR（利用不可なら null）。
+  ///
+  /// Example:
+  /// ```dart
+  /// // execute 内で選択される
+  /// await usecase.execute(request);
+  /// ```
+  Future<MeterReadingEngine?> _selectEngine() async {
+    final readiness = await llm.readiness;
+    final vision = await llm.supportsVision;
+    if (readiness == OnDeviceLlmReadiness.ready && vision) {
+      return llmEngine;
+    }
+    if (await spatialEngine.isAvailable) {
+      return spatialEngine;
+    }
+    return null;
   }
 }
