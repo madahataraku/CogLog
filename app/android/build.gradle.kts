@@ -19,6 +19,9 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// プラグインの Java/Kotlin JVM ターゲットを 17 に揃える。
+apply(from = "gradle/jvm17.gradle")
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
