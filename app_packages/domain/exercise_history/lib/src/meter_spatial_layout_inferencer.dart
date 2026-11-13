@@ -58,6 +58,26 @@ abstract final class MeterSpatialLayoutInferencer {
     return counts;
   }
 
+  /// `other` のうち桁を含む件数。OCR が数値を取りこぼしたかの切り分け用。
+  ///
+  /// Example:
+  /// ```dart
+  /// MeterSpatialLayoutInferencer.countOtherWithDigits(const []);
+  /// ```
+  static int countOtherWithDigits(List<MeterOcrToken> tokens) {
+    var count = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      final classified = _classifyAt(i, tokens[i]);
+      if (classified.kind != _Kind.other) {
+        continue;
+      }
+      if (RegExp(r'\d').hasMatch(_normalize(classified.token.text))) {
+        count += 1;
+      }
+    }
+    return count;
+  }
+
   /// [tokens] から読めた項目だけを返す。
   ///
   /// Example:
@@ -377,48 +397,151 @@ abstract final class MeterSpatialLayoutInferencer {
     if (t == 'kcal' || t == 'cal') {
       return _Classified(index: index, token: token, kind: _Kind.calorieUnit);
     }
-    final colon = MeterDurationParser.parseColonOnly(t);
-    if (colon != null) {
+    final duration = _parseDurationToken(t);
+    if (duration != null) {
       return _Classified(
         index: index,
         token: token,
         kind: _Kind.durationValue,
-        duration: colon,
+        duration: duration,
       );
     }
     final embedded = _parseNumberWithOptionalUnit(t);
     if (embedded != null) {
-      final (value, unit) = embedded;
-      if (unit == 'km/h' || unit == 'kmh') {
-        return _Classified(index: index, token: token, kind: _Kind.speedIgnore);
-      }
-      if (unit == 'km') {
+      return _classifiedNumber(index: index, token: token, embedded: embedded);
+    }
+    final hinted = _hintOcrDigits(t);
+    if (hinted != t) {
+      final hintedDuration = _parseDurationToken(hinted);
+      if (hintedDuration != null) {
         return _Classified(
           index: index,
           token: token,
-          kind: _Kind.distanceValueWithUnit,
-          number: value,
+          kind: _Kind.durationValue,
+          duration: hintedDuration,
         );
       }
-      if (unit == 'kcal' || unit == 'cal') {
-        return _Classified(
+      final hintedNumber = _parseNumberWithOptionalUnit(hinted);
+      if (hintedNumber != null) {
+        return _classifiedNumber(
           index: index,
           token: token,
-          kind: _Kind.calorieValueWithUnit,
-          number: value,
+          embedded: hintedNumber,
         );
       }
-      return _Classified(
-        index: index,
-        token: token,
-        kind: _Kind.bareNumber,
-        number: value,
-      );
     }
     return _Classified(index: index, token: token, kind: _Kind.other);
   }
 
-  /// 全角桁・全角コロンを半角にし、空白を潰して小文字化する。
+  /// 数値パース結果を速度／距離／カロリー／裸数値へ振り分ける。
+  ///
+  /// Example:
+  /// ```dart
+  /// _classifiedNumber(index: 0, token: token, embedded: (12.3, 'km'));
+  /// ```
+  static _Classified _classifiedNumber({
+    required int index,
+    required MeterOcrToken token,
+    required (double, String?) embedded,
+  }) {
+    final (value, unit) = embedded;
+    if (unit == 'km/h' || unit == 'kmh') {
+      return _Classified(index: index, token: token, kind: _Kind.speedIgnore);
+    }
+    if (unit == 'km') {
+      return _Classified(
+        index: index,
+        token: token,
+        kind: _Kind.distanceValueWithUnit,
+        number: value,
+      );
+    }
+    if (unit == 'kcal' || unit == 'cal') {
+      return _Classified(
+        index: index,
+        token: token,
+        kind: _Kind.calorieValueWithUnit,
+        number: value,
+      );
+    }
+    return _Classified(
+      index: index,
+      token: token,
+      kind: _Kind.bareNumber,
+      number: value,
+    );
+  }
+
+  /// コロン／ドット／日本語時分秒などから運動時間を取る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _parseDurationToken('0.30.00');
+  /// ```
+  static Duration? _parseDurationToken(String normalized) {
+    final colon = MeterDurationParser.parseColonOnly(normalized);
+    if (colon != null) {
+      return colon;
+    }
+    final dotted = _durationDotsToColons(normalized);
+    if (dotted != null) {
+      final fromDots = MeterDurationParser.parseColonOnly(dotted);
+      if (fromDots != null) {
+        return fromDots;
+      }
+    }
+    return MeterDurationParser.parse(normalized);
+  }
+
+  /// `H.MM.SS` だけをコロン形式へ写す。該当しなければ null。
+  ///
+  /// 小数距離（`12.3`）を `M.SS` と誤認しないよう、区切りは 2 つ必須とする。
+  ///
+  /// Example:
+  /// ```dart
+  /// _durationDotsToColons('0.30.00');
+  /// ```
+  static String? _durationDotsToColons(String normalized) {
+    if (!RegExp(r'^\d+[./]\d{1,2}[./]\d{1,2}$').hasMatch(normalized)) {
+      return null;
+    }
+    return normalized.replaceAll(RegExp(r'[./]'), ':');
+  }
+
+  /// 七セグ OCR で桁に化けやすい文字を数字へ寄せる。
+  ///
+  /// Example:
+  /// ```dart
+  /// _hintOcrDigits('l2.o');
+  /// ```
+  static String _hintOcrDigits(String normalized) {
+    final buffer = StringBuffer();
+    for (final unit in normalized.runes) {
+      switch (unit) {
+        case 0x6f: // o
+        case 0x3bf: // Greek omicron
+          buffer.write('0');
+        case 0x6c: // l
+        case 0x69: // i
+        case 0x7c: // |
+          buffer.write('1');
+        case 0x7a: // z
+          buffer.write('2');
+        case 0x73: // s
+          buffer.write('5');
+        case 0x62: // b
+          buffer.write('6');
+        case 0x67: // g
+        case 0x71: // q
+          buffer.write('9');
+        default:
+          buffer.writeCharCode(unit);
+      }
+    }
+    return buffer.toString();
+  }
+
+  /// 全角桁・全角句読点を半角にし、単位記号を ASCII へ寄せ、空白を潰す。
   ///
   /// Example:
   /// ```dart
@@ -435,23 +558,46 @@ abstract final class MeterSpatialLayoutInferencer {
         buffer.write(':');
         continue;
       }
+      if (unit == 0xff0e || unit == 0x3002) {
+        // 全角ピリオド・句点
+        buffer.write('.');
+        continue;
+      }
+      if (unit == 0x339e) {
+        // ㎞
+        buffer.write('km');
+        continue;
+      }
       buffer.writeCharCode(unit);
     }
-    return buffer.toString().toLowerCase().trim().replaceAll(
+    var text = buffer.toString().toLowerCase().trim().replaceAll(
       RegExp(r'\s+'),
       '',
     );
+    // 小数のカンマ（12,3）を点へ。桁区切りの複数カンマは触らない。
+    if (RegExp(r'^\d+,\d+$').hasMatch(text)) {
+      text = text.replaceFirst(',', '.');
+    }
+    return text;
   }
 
   /// 正規化済み文字列から数値と任意単位を取る。
+  ///
+  /// 前後の記号ノイズは許し、途中に別の桁列があるときは採用しない。
   ///
   /// Example:
   /// ```dart
   /// _parseNumberWithOptionalUnit('12.3km');
   /// ```
   static (double, String?)? _parseNumberWithOptionalUnit(String normalized) {
-    final match = RegExp(r'^-?(\d+(?:\.\d+)?)(km/h|kmh|km|kcal|cal)?$')
-        .firstMatch(normalized);
+    // 前後は記号ノイズのみ許可（英字・かな漢字は数値トークンとみなさない）。
+    final match = RegExp(
+      r'^[^A-Za-z0-9\u3040-\u30ff\u3400-\u9fff]*'
+      r'(-?\d+(?:\.\d+)?)'
+      r'(km/h|kmh|km|kcal|cal)?'
+      r'[^A-Za-z0-9\u3040-\u30ff\u3400-\u9fff]*$',
+      unicode: true,
+    ).firstMatch(normalized);
     if (match == null) {
       return null;
     }
