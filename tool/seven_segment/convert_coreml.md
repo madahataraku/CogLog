@@ -17,7 +17,12 @@
 - `mmengine` / `pycocotools`（ModelAssistant の import に必要）
 - [Seeed-Studio/ModelAssistant](https://github.com/Seeed-Studio/ModelAssistant)（Swift-YOLO 定義。Colab と同系なら `2.0.0`、main でも可）
 
-NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_round(num_blocks)` のみだと `deepen_factor` が効かず、重みとブロック数が不一致になる。変換前に `make_round(num_blocks, self.deepen_factor)` になっていることを確認する。
+NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_round(num_blocks)` のみだと `deepen_factor` が効かず、`state_dict mismatch (missing≈140)` になる。`convert_coreml.py` は実行時に当該 1 行を自動パッチする。手動なら:
+
+```python
+# sscma/models/backbones/csp_darknet.py の build_stage_layer
+num_blocks = make_round(num_blocks, self.deepen_factor)
+```
 
 ## アプリ契約（固定）
 
@@ -60,7 +65,7 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
      'shapely' \
      'tqdm' \
      'albumentations' \
-     'scikit-learn' \
+     'scikit-learn==1.1.2' \
      'timm'
    python -c "import torch, torchvision, numpy as np; print(torch.__version__, torchvision.__version__, np.__version__)"
    # 期待例: 2.2.0 / 0.17.0 / 1.26.x
@@ -126,6 +131,8 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 | `No module named 'coremltools.libcoremlpython'` / `libmilstoragepython` | macOS 用 binary wheel が無い。3.11 venv を作り直し `pip install --only-binary=:all: 'coremltools==7.2'`。Linux では不可 |
 | `No module named 'pycocotools'` | `pip install pycocotools` |
 | `No module named 'six'` / `terminaltables` / `albumentations` 等 | `pip install <その名前>`（ModelAssistant の間接依存。`pyarrow` 以外） |
+| `scikit-learn version … is not supported` | coremltools は ≤1.1.2。`pip install 'scikit-learn==1.1.2'`（変換自体は警告のみで進むこともある） |
+| `state_dict mismatch (missing=140…)` | deepen_factor 未適用。最新 `convert_coreml.py` で再実行（自動パッチ）。または `csp_darknet.py` を上記 NOTE どおり手動修正 |
 | `Torch version … has not been tested` / `2.15.0` 等 | `pip install --force-reinstall 'torch==2.2.0' 'torchvision==0.17.0' 'numpy<2,>=1.26'` |
 | `torchvision` / `register_fake` / `roi_align` / `has no attribute 'extension'` | 壊れた torchvision。`pip uninstall -y torch torchvision torchaudio` → `pip install 'torch==2.2.0' 'torchvision==0.17.0' 'torchaudio==2.2.0'`。先に `python -c "from torchvision.ops import roi_align; print('ok')"` が通ることを確認 |
 | `No module named 'torchaudio'` | `pip install 'torchaudio==2.2.0'`（torch 2.2.0 と揃える） |

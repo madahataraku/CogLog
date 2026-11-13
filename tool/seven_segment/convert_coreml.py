@@ -19,6 +19,29 @@ def _die(message: str, code: int = 1) -> int:
     return code
 
 
+def _ensure_yolov5_csp_deepen_factor(sscma_root: Path) -> None:
+    """main の YOLOv5CSPDarknet が deepen_factor を落とすバグを局所修正する。
+
+    `make_round(num_blocks)` → `make_round(num_blocks, self.deepen_factor)`
+    （未修正だと tiny 重みで missing≈140 になる）
+    """
+    path = sscma_root / "sscma" / "models" / "backbones" / "csp_darknet.py"
+    if not path.is_file():
+        raise FileNotFoundError(f"Missing backbone file: {path}")
+    text = path.read_text(encoding="utf-8")
+    good = "num_blocks = make_round(num_blocks, self.deepen_factor)"
+    bad = "num_blocks = make_round(num_blocks)"
+    if good in text:
+        return
+    if bad not in text:
+        raise RuntimeError(
+            f"{path} has neither the known-good nor known-bad make_round "
+            "call; check deepen_factor wiring manually."
+        )
+    path.write_text(text.replace(bad, good, 1), encoding="utf-8")
+    print(f"Patched {path} to apply deepen_factor in make_round")
+
+
 def _stub_sscma_optional_deps() -> None:
     """ModelAssistant の datasets 根が pyarrow/lance を要求するのを避ける。
 
@@ -113,6 +136,10 @@ def main() -> int:
         root = args.sscma_root.resolve()
         if not root.is_dir():
             return _die(f"--sscma-root not a directory: {root}")
+        try:
+            _ensure_yolov5_csp_deepen_factor(root)
+        except (OSError, RuntimeError) as exc:
+            return _die(str(exc), code=2)
         sys.path.insert(0, str(root))
 
     _stub_sscma_optional_deps()
@@ -190,7 +217,10 @@ def main() -> int:
         return _die(
             "state_dict mismatch "
             f"(missing={len(missing)}, unexpected={len(unexpected)}). "
-            "Check deepen_factor wiring in ModelAssistant."
+            "YOLOv5CSPDarknet must use "
+            "`make_round(num_blocks, self.deepen_factor)`. "
+            "Re-run after `git pull` of this script (it auto-patches), "
+            "or edit sscma/models/backbones/csp_darknet.py manually."
         )
     detector.eval()
 
