@@ -84,18 +84,26 @@ final class OnInitializeDelegate {
     required String locale,
     required AdviceTemplate noExercise,
     required List<AdviceTemplate> fallbackTemplates,
+    required ConditionalAdviceCatalog conditionalCatalog,
+    required Map<ConditionalAdviceMetric, String> metricLabels,
   }) async {
     await state.updateWithLock((_, emitter) async {
+      final now = DateTime.now();
       final result = await loadTopScreenUsecase.execute(
-        LoadTopScreenRequest(now: DateTime.now()),
+        LoadTopScreenRequest(now: now),
       );
       final advice = await generateTopAdviceUsecase.execute(
         GenerateTopAdviceRequest(
           histories: result.todayHistories,
           locale: locale,
+          now: now,
           goal: result.goal,
           consecutiveExerciseDays: result.consecutiveExerciseDays,
+          consecutiveGoalAchievementDays: result.consecutiveGoalAchievementDays,
+          daysSincePreviousExerciseDay: result.daysSincePreviousExerciseDay,
           noExercise: noExercise,
+          conditionalCatalog: conditionalCatalog,
+          metricLabels: metricLabels,
           fallbackTemplates: fallbackTemplates,
         ),
       );

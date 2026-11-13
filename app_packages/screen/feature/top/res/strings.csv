@@ -11,6 +11,33 @@ advice_no_exercise,今日はまだ運動の記録がありません。記録が�
 advice_template_1,今日の記録を見ながら、自分のペースで続けましょう。,Keep going at your own pace while looking at today's log.,LLM不可時の定型1
 advice_template_2,よく動けました。今日の記録は、次の運動の目安になります。,Nice work. Today's log can guide your next session.,LLM不可時の定型2
 advice_template_3,小さな積み重ねが続きます。今日も自分のペースで進めましょう。,Small steps add up. Keep going at your own pace today.,LLM不可時の定型3
+advice_over_300_1,今日はさらに大きく目標を超えましたね。とてつもない成果です！ただし、やり過ぎは禁物。適度な休養も取りましょう。,"You went well beyond your goals today—an incredible result! Still, don't overdo it. Make time to rest.",条件付き over_300 1
+advice_over_300_2,目標の3倍を超えるペースです。素晴らしい一方で、体をいたわる時間も大切にしましょう。,"You're pacing at more than triple your goals. Amazing—and take care to recover, too.",条件付き over_300 2
+advice_over_300_3,驚異的な伸びです！調子が良くても、回復の日を挟むと続きやすくなります。,"What a leap! Even when things go well, a recovery day helps you keep going.",条件付き over_300 3
+advice_over_200_1,今日は大きく目標を超えることができました！素晴らしい成果です。もし、簡単なら、より高い目標を設定してみましょう！,"You clearly beat your goals today—great work! If it felt easy, try setting a higher target.",条件付き over_200 1
+advice_over_200_2,目標の2倍を超えています。調子が良い証拠です。余裕があるなら、目標を少し上げてみるのもおすすめです。,"You're past double your goals. That's a strong sign. If you have room, nudge the goals up a bit.",条件付き over_200 2
+advice_over_200_3,大きく上振れできましたね。この調子なら、次はもう一段高い目標にも挑戦できそうです。,"A big overshoot today. At this pace, the next step up in goals looks reachable.",条件付き over_200 3
+advice_streak_goals_1,今日も目標を達成できました！継続は力なり、さらに高い目標を設定してもいいかも知れません。目標の自動更新機能も試してみてね。,"You hit your goals again today! Consistency pays off—raising them a bit may be fine. Try auto-update too.",条件付き streak_goals 1
+advice_streak_goals_2,連日の目標達成、すばらしいです。積み重ねが力になります。自動更新で目標を伸ばすのもありですよ。,"Goals met several days in a row—wonderful. Stacking days builds strength. Auto-update can raise them for you.",条件付き streak_goals 2
+advice_streak_goals_3,また目標をクリアできました。続いている今がチャンスです。目標の自動更新も活用してみてください。,"Another clear day. While the streak holds, try goal auto-update as well.",条件付き streak_goals 3
+advice_all_perfect_1,パーフェクト！今日の目標は達成です！毎日コツコツ運動するのが大切です。明日もまた頑張りましょう！,Perfect—today's goals are done! Steady daily movement matters. Let's go again tomorrow.,条件付き all_perfect 1
+advice_all_perfect_2,今日の目標、しっかり達成できました。小さな積み重ねが効いてきます。明日もこのペースでいきましょう。,You solidly met today's goals. Small stacks add up. Keep this pace tomorrow.,条件付き all_perfect 2
+advice_all_perfect_3,目標クリア、おつかれさまです！継続がいちばんの近道です。また明日も記録してみましょう。,Goals cleared—nice work! Staying consistent is the shortest path. Log again tomorrow.,条件付き all_perfect 3
+advice_two_achieved_1,{metric}があと少しです。残りひとつ、頑張りましょう！,{metric} is almost there. One left—you've got this!,条件付き two_achieved 1
+advice_two_achieved_2,あと一歩、{metric}が届けば今日の目標は達成です。もうひと踏ん張りです！,One more push: clear {metric} and today's goals are done.,条件付き two_achieved 2
+advice_two_achieved_3,ふたつクリアできています。残るは{metric}だけ。きっとできますよ！,Two cleared. Only {metric} remains. You can do it!,条件付き two_achieved 3
+advice_one_achieved_1,{metric}は目標を達成しました。あとは残りふたつ。きっとできますよ！,{metric} met the goal. Two left—you can do it!,条件付き one_achieved 1
+advice_one_achieved_2,{metric}クリア、いいスタートです。残るふたつも、この調子でいきましょう！,{metric} cleared—good start. Keep that pace for the other two!,条件付き one_achieved 2
+advice_one_achieved_3,まずは{metric}を達成できました。あとふたつ、焦らず進めましょう。,"First, {metric} is done. Two remain—no rush.",条件付き one_achieved 3
+advice_near_miss_low_1,{metric}をあと一歩伸ばしたら今日の目標は達成です。もうひと踏ん張り！頑張りましょう！,Stretch {metric} a little more and today's goals are done. One more push!,条件付き near_miss_low 1
+advice_near_miss_low_2,今日の達成まで、もう少しです。{metric}を伸ばせばゴールです。応援しています！,Almost there today. Grow {metric} and you reach the finish. Cheering you on!,条件付き near_miss_low 2
+advice_near_miss_low_3,{metric}があと一息です。そこを超えれば、今日の目標クリアですよ。,{metric} needs one last bit. Clear it and today's goals are yours.,条件付き near_miss_low 3
+advice_welcome_back_1,おかえりなさい！また今日から頑張っていきましょう！目標が高すぎたら、一度少し下げてみるのもいいかも知れません。,"Welcome back! Let's keep at it from today. If goals feel high, lowering them a little is fine.",条件付き welcome_back 1
+advice_welcome_back_2,お久しぶりです。再スタート、応援しています。きつかったら目標を見直すのも手ですよ。,Long time no see. Glad you're restarting. Revisiting goals is okay if it feels hard.,条件付き welcome_back 2
+advice_welcome_back_3,また記録できましたね。無理のないペースで再開しましょう。目標の調整も遠慮なくどうぞ。,Nice to see a log again. Ease back in at your pace. Adjust goals anytime.,条件付き welcome_back 3
+advice_no_positive_goal_1,記録ありがとうございます。一日あたりの目標を設定すると、達成の目安が見やすくなります。,Thanks for logging. Setting a daily goal makes progress easier to see.,条件付き no_positive_goal 1
+advice_no_positive_goal_2,今日の記録を残せました。目標を決めておくと、次の一歩が選びやすくなりますよ。,Today's log is in. Picking a goal helps you choose the next step.,条件付き no_positive_goal 2
+advice_no_positive_goal_3,記録おつかれさまです。正の目標を設定すると、ホームで達成の進み具合が見られるようになります。,Nice work logging. A positive daily goal unlocks progress on Home.,条件付き no_positive_goal 3
 achievement_title,目標達成率,Goal progress,目標達成率セクションの見出し
 unset_prompt,目標設定で一日あたりの目標を設定しましょう,Set a daily goal in Goals,目標未設定時の設定促進
 actual_label,実績,Actual,実績のラベル

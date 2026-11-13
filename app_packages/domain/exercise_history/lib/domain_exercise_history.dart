@@ -10,6 +10,7 @@ library;
 
 export 'src/average_speed.dart';
 export 'src/consecutive_exercise_days.dart';
+export 'src/days_since_previous_exercise_day.dart';
 export 'src/exercise_history.dart';
 export 'src/meter_duration_parser.dart';
 export 'src/meter_ocr_token.dart';

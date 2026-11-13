@@ -5,7 +5,12 @@ import 'package:test/test.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
 
-ExerciseHistory ride({required DateTime recordedAt}) {
+ExerciseHistory ride({
+  required DateTime recordedAt,
+  double distanceKm = 2,
+  double caloriesKcal = 80,
+  Duration duration = const Duration(minutes: 20),
+}) {
   const id = '11111111-1111-4111-8111-111111111111';
   return ExerciseHistory(
     id: id,
@@ -14,14 +19,33 @@ ExerciseHistory ride({required DateTime recordedAt}) {
     capturedAt: recordedAt,
     recordedAt: recordedAt,
     recordedAtManuallySet: false,
-    distanceKm: 2,
-    duration: const Duration(minutes: 20),
-    caloriesKcal: 80,
+    distanceKm: distanceKm,
+    duration: duration,
+    caloriesKcal: caloriesKcal,
     averageSpeedKmh: 6,
     photoRelativePath: 'exercise_histories/$id/meter.jpg',
     healthWorkoutId: null,
   );
 }
+
+const _conditionalOver300 = AdviceTemplate(
+  text: '今日は大きく超過',
+  tone: AdviceTone.realized,
+);
+const _conditionalTwoAchieved = AdviceTemplate(
+  text: '残りは{metric}',
+  tone: AdviceTone.fun,
+);
+const _conditionalWelcomeBack = AdviceTemplate(
+  text: 'おかえり',
+  tone: AdviceTone.fun,
+);
+
+ConditionalAdviceCatalog sampleConditionalCatalog() => ConditionalAdviceCatalog(
+  over300: const [_conditionalOver300],
+  twoAchieved: const [_conditionalTwoAchieved],
+  welcomeBack: const [_conditionalWelcomeBack],
+);
 
 const _templateA = AdviceTemplate(text: '定型A', tone: AdviceTone.fun);
 const _templateB = AdviceTemplate(text: '定型B', tone: AdviceTone.happy);
@@ -31,15 +55,28 @@ GenerateTopAdviceRequest request({
   List<ExerciseHistory> histories = const [],
   DailyGoal goal = DailyGoal.unset,
   int consecutiveExerciseDays = 0,
+  DateTime? now,
+  int consecutiveGoalAchievementDays = 0,
+  int? daysSincePreviousExerciseDay,
+  ConditionalAdviceCatalog? conditionalCatalog,
 }) => GenerateTopAdviceRequest(
   histories: histories,
   locale: 'ja',
+  now: now ?? DateTime(2026, 11, 5, 12),
   goal: goal,
   consecutiveExerciseDays: consecutiveExerciseDays,
+  consecutiveGoalAchievementDays: consecutiveGoalAchievementDays,
+  daysSincePreviousExerciseDay: daysSincePreviousExerciseDay,
   noExercise: const AdviceTemplate(
     text: '今日はまだ運動していません',
     tone: AdviceTone.realized,
   ),
+  conditionalCatalog: conditionalCatalog ?? ConditionalAdviceCatalog(),
+  metricLabels: const {
+    ConditionalAdviceMetric.distance: '距離',
+    ConditionalAdviceMetric.calories: 'カロリー',
+    ConditionalAdviceMetric.duration: '時間',
+  },
   fallbackTemplates: const [_templateA, _templateB, _templateC],
 );
 
@@ -180,5 +217,116 @@ void main() {
 
     expect(result.advice, '定型A');
     expect(result.tone, AdviceTone.fun);
+  });
+
+  test('LLM 不可かつ条件該当時は条件付き定型とトーンを返す', () async {
+    final llm = FakeOnDeviceLlm(available: false);
+    final recordedAt = DateTime(2026, 11, 5, 12);
+    final result =
+        await GenerateTopAdviceUsecaseImpl(
+          llm: llm,
+          picker: const FixedAdviceTemplatePicker(),
+        ).execute(
+          request(
+            histories: [
+              ride(recordedAt: recordedAt, distanceKm: 31, caloriesKcal: 50),
+            ],
+            goal: const DailyGoal(
+              distanceKm: 10,
+              caloriesKcal: 100,
+              duration: Duration(minutes: 30),
+            ),
+            conditionalCatalog: sampleConditionalCatalog(),
+          ),
+        );
+
+    expect(result.advice, '今日は大きく超過');
+    expect(result.tone, AdviceTone.realized);
+    expect(llm.generateCallCount, 0);
+  });
+
+  test('条件付き twoAchieved で {metric} を置換する', () async {
+    final llm = FakeOnDeviceLlm(throwOnGenerate: true);
+    final result =
+        await GenerateTopAdviceUsecaseImpl(
+          llm: llm,
+          picker: const FixedAdviceTemplatePicker(),
+        ).execute(
+          request(
+            histories: [
+              ride(
+                recordedAt: DateTime(2026, 11, 5, 12),
+                distanceKm: 10,
+                caloriesKcal: 50,
+                duration: const Duration(minutes: 30),
+              ),
+            ],
+            goal: const DailyGoal(
+              distanceKm: 10,
+              caloriesKcal: 100,
+              duration: Duration(minutes: 30),
+            ),
+            conditionalCatalog: sampleConditionalCatalog(),
+          ),
+        );
+
+    expect(result.advice, '残りはカロリー');
+    expect(result.tone, AdviceTone.fun);
+  });
+
+  test('条件非該当時は従来の fallbackTemplates を使う', () async {
+    final llm = FakeOnDeviceLlm(available: false);
+    final result =
+        await GenerateTopAdviceUsecaseImpl(
+          llm: llm,
+          picker: const FixedAdviceTemplatePicker(index: 1),
+        ).execute(
+          request(
+            histories: [ride(recordedAt: DateTime(2026, 11, 5, 12))],
+            goal: const DailyGoal(distanceKm: 10),
+            conditionalCatalog: sampleConditionalCatalog(),
+          ),
+        );
+
+    expect(result.advice, '定型B');
+    expect(result.tone, AdviceTone.happy);
+  });
+
+  test('welcomeBack 条件では catalog の fun トーンを返す', () async {
+    final llm = FakeOnDeviceLlm(available: false);
+    final result =
+        await GenerateTopAdviceUsecaseImpl(
+          llm: llm,
+          picker: const FixedAdviceTemplatePicker(),
+        ).execute(
+          request(
+            histories: [ride(recordedAt: DateTime(2026, 11, 5, 12))],
+            daysSincePreviousExerciseDay: 7,
+            conditionalCatalog: sampleConditionalCatalog(),
+          ),
+        );
+
+    expect(result.advice, 'おかえり');
+    expect(result.tone, AdviceTone.fun);
+  });
+
+  test('LLM 成功時は条件付き定型を使わない', () async {
+    final llm = FakeOnDeviceLlm(response: 'TONE=happy\nADVICE=LLM本文');
+    final result =
+        await GenerateTopAdviceUsecaseImpl(
+          llm: llm,
+          picker: const FixedAdviceTemplatePicker(),
+        ).execute(
+          request(
+            histories: [
+              ride(recordedAt: DateTime(2026, 11, 5, 12), distanceKm: 31),
+            ],
+            goal: const DailyGoal(distanceKm: 10),
+            conditionalCatalog: sampleConditionalCatalog(),
+          ),
+        );
+
+    expect(result.advice, 'LLM本文');
+    expect(result.tone, AdviceTone.happy);
   });
 }

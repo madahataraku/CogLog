@@ -27,9 +27,117 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_actual_label =>
       LocalizeStringDelegate.get('screen_feature_top_actual_label');
 
+  /// 条件付き all_perfect 1
+  String get screen_feature_top_advice_all_perfect_1 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_all_perfect_1');
+
+  /// 条件付き all_perfect 2
+  String get screen_feature_top_advice_all_perfect_2 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_all_perfect_2');
+
+  /// 条件付き all_perfect 3
+  String get screen_feature_top_advice_all_perfect_3 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_all_perfect_3');
+
+  /// 条件付き near_miss_low 1
+  String screen_feature_top_advice_near_miss_low_1({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_near_miss_low_1',
+        arguments: [metric],
+      );
+
+  /// 条件付き near_miss_low 2
+  String screen_feature_top_advice_near_miss_low_2({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_near_miss_low_2',
+        arguments: [metric],
+      );
+
+  /// 条件付き near_miss_low 3
+  String screen_feature_top_advice_near_miss_low_3({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_near_miss_low_3',
+        arguments: [metric],
+      );
+
   /// 履歴0件のワンポイント
   String get screen_feature_top_advice_no_exercise =>
       LocalizeStringDelegate.get('screen_feature_top_advice_no_exercise');
+
+  /// 条件付き no_positive_goal 1
+  String get screen_feature_top_advice_no_positive_goal_1 =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_no_positive_goal_1',
+      );
+
+  /// 条件付き no_positive_goal 2
+  String get screen_feature_top_advice_no_positive_goal_2 =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_no_positive_goal_2',
+      );
+
+  /// 条件付き no_positive_goal 3
+  String get screen_feature_top_advice_no_positive_goal_3 =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_no_positive_goal_3',
+      );
+
+  /// 条件付き one_achieved 1
+  String screen_feature_top_advice_one_achieved_1({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_one_achieved_1',
+        arguments: [metric],
+      );
+
+  /// 条件付き one_achieved 2
+  String screen_feature_top_advice_one_achieved_2({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_one_achieved_2',
+        arguments: [metric],
+      );
+
+  /// 条件付き one_achieved 3
+  String screen_feature_top_advice_one_achieved_3({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_one_achieved_3',
+        arguments: [metric],
+      );
+
+  /// 条件付き over_200 1
+  String get screen_feature_top_advice_over_200_1 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_over_200_1');
+
+  /// 条件付き over_200 2
+  String get screen_feature_top_advice_over_200_2 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_over_200_2');
+
+  /// 条件付き over_200 3
+  String get screen_feature_top_advice_over_200_3 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_over_200_3');
+
+  /// 条件付き over_300 1
+  String get screen_feature_top_advice_over_300_1 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_over_300_1');
+
+  /// 条件付き over_300 2
+  String get screen_feature_top_advice_over_300_2 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_over_300_2');
+
+  /// 条件付き over_300 3
+  String get screen_feature_top_advice_over_300_3 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_over_300_3');
+
+  /// 条件付き streak_goals 1
+  String get screen_feature_top_advice_streak_goals_1 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_streak_goals_1');
+
+  /// 条件付き streak_goals 2
+  String get screen_feature_top_advice_streak_goals_2 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_streak_goals_2');
+
+  /// 条件付き streak_goals 3
+  String get screen_feature_top_advice_streak_goals_3 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_streak_goals_3');
 
   /// LLM不可時の定型1
   String get screen_feature_top_advice_template_1 =>
@@ -42,6 +150,39 @@ mixin class L10nStringsMixin {
   /// LLM不可時の定型3
   String get screen_feature_top_advice_template_3 =>
       LocalizeStringDelegate.get('screen_feature_top_advice_template_3');
+
+  /// 条件付き two_achieved 1
+  String screen_feature_top_advice_two_achieved_1({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_two_achieved_1',
+        arguments: [metric],
+      );
+
+  /// 条件付き two_achieved 2
+  String screen_feature_top_advice_two_achieved_2({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_two_achieved_2',
+        arguments: [metric],
+      );
+
+  /// 条件付き two_achieved 3
+  String screen_feature_top_advice_two_achieved_3({required String metric}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_advice_two_achieved_3',
+        arguments: [metric],
+      );
+
+  /// 条件付き welcome_back 1
+  String get screen_feature_top_advice_welcome_back_1 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_welcome_back_1');
+
+  /// 条件付き welcome_back 2
+  String get screen_feature_top_advice_welcome_back_2 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_welcome_back_2');
+
+  /// 条件付き welcome_back 3
+  String get screen_feature_top_advice_welcome_back_3 =>
+      LocalizeStringDelegate.get('screen_feature_top_advice_welcome_back_3');
 
   /// アドバイスキャラクターの代替テキスト
   String get screen_feature_top_advisor_semantics =>

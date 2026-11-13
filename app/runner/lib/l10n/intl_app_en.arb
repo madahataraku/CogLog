@@ -1125,9 +1125,123 @@
   "@screen_feature_top_actual_label": {
     "description": "実績のラベル"
   },
+  "screen_feature_top_advice_all_perfect_1": "Perfect—today's goals are done! Steady daily movement matters. Let's go again tomorrow.",
+  "@screen_feature_top_advice_all_perfect_1": {
+    "description": "条件付き all_perfect 1"
+  },
+  "screen_feature_top_advice_all_perfect_2": "You solidly met today's goals. Small stacks add up. Keep this pace tomorrow.",
+  "@screen_feature_top_advice_all_perfect_2": {
+    "description": "条件付き all_perfect 2"
+  },
+  "screen_feature_top_advice_all_perfect_3": "Goals cleared—nice work! Staying consistent is the shortest path. Log again tomorrow.",
+  "@screen_feature_top_advice_all_perfect_3": {
+    "description": "条件付き all_perfect 3"
+  },
+  "screen_feature_top_advice_near_miss_low_1": "Stretch {metric} a little more and today's goals are done. One more push!",
+  "@screen_feature_top_advice_near_miss_low_1": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き near_miss_low 1"
+  },
+  "screen_feature_top_advice_near_miss_low_2": "Almost there today. Grow {metric} and you reach the finish. Cheering you on!",
+  "@screen_feature_top_advice_near_miss_low_2": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き near_miss_low 2"
+  },
+  "screen_feature_top_advice_near_miss_low_3": "{metric} needs one last bit. Clear it and today's goals are yours.",
+  "@screen_feature_top_advice_near_miss_low_3": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き near_miss_low 3"
+  },
   "screen_feature_top_advice_no_exercise": "No exercise logged today. Logging makes the gap to your goals easier to see.",
   "@screen_feature_top_advice_no_exercise": {
     "description": "履歴0件のワンポイント"
+  },
+  "screen_feature_top_advice_no_positive_goal_1": "Thanks for logging. Setting a daily goal makes progress easier to see.",
+  "@screen_feature_top_advice_no_positive_goal_1": {
+    "description": "条件付き no_positive_goal 1"
+  },
+  "screen_feature_top_advice_no_positive_goal_2": "Today's log is in. Picking a goal helps you choose the next step.",
+  "@screen_feature_top_advice_no_positive_goal_2": {
+    "description": "条件付き no_positive_goal 2"
+  },
+  "screen_feature_top_advice_no_positive_goal_3": "Nice work logging. A positive daily goal unlocks progress on Home.",
+  "@screen_feature_top_advice_no_positive_goal_3": {
+    "description": "条件付き no_positive_goal 3"
+  },
+  "screen_feature_top_advice_one_achieved_1": "{metric} met the goal. Two left—you can do it!",
+  "@screen_feature_top_advice_one_achieved_1": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き one_achieved 1"
+  },
+  "screen_feature_top_advice_one_achieved_2": "{metric} cleared—good start. Keep that pace for the other two!",
+  "@screen_feature_top_advice_one_achieved_2": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き one_achieved 2"
+  },
+  "screen_feature_top_advice_one_achieved_3": "First, {metric} is done. Two remain—no rush.",
+  "@screen_feature_top_advice_one_achieved_3": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き one_achieved 3"
+  },
+  "screen_feature_top_advice_over_200_1": "You clearly beat your goals today—great work! If it felt easy, try setting a higher target.",
+  "@screen_feature_top_advice_over_200_1": {
+    "description": "条件付き over_200 1"
+  },
+  "screen_feature_top_advice_over_200_2": "You're past double your goals. That's a strong sign. If you have room, nudge the goals up a bit.",
+  "@screen_feature_top_advice_over_200_2": {
+    "description": "条件付き over_200 2"
+  },
+  "screen_feature_top_advice_over_200_3": "A big overshoot today. At this pace, the next step up in goals looks reachable.",
+  "@screen_feature_top_advice_over_200_3": {
+    "description": "条件付き over_200 3"
+  },
+  "screen_feature_top_advice_over_300_1": "You went well beyond your goals today—an incredible result! Still, don't overdo it. Make time to rest.",
+  "@screen_feature_top_advice_over_300_1": {
+    "description": "条件付き over_300 1"
+  },
+  "screen_feature_top_advice_over_300_2": "You're pacing at more than triple your goals. Amazing—and take care to recover, too.",
+  "@screen_feature_top_advice_over_300_2": {
+    "description": "条件付き over_300 2"
+  },
+  "screen_feature_top_advice_over_300_3": "What a leap! Even when things go well, a recovery day helps you keep going.",
+  "@screen_feature_top_advice_over_300_3": {
+    "description": "条件付き over_300 3"
+  },
+  "screen_feature_top_advice_streak_goals_1": "You hit your goals again today! Consistency pays off—raising them a bit may be fine. Try auto-update too.",
+  "@screen_feature_top_advice_streak_goals_1": {
+    "description": "条件付き streak_goals 1"
+  },
+  "screen_feature_top_advice_streak_goals_2": "Goals met several days in a row—wonderful. Stacking days builds strength. Auto-update can raise them for you.",
+  "@screen_feature_top_advice_streak_goals_2": {
+    "description": "条件付き streak_goals 2"
+  },
+  "screen_feature_top_advice_streak_goals_3": "Another clear day. While the streak holds, try goal auto-update as well.",
+  "@screen_feature_top_advice_streak_goals_3": {
+    "description": "条件付き streak_goals 3"
   },
   "screen_feature_top_advice_template_1": "Keep going at your own pace while looking at today's log.",
   "@screen_feature_top_advice_template_1": {
@@ -1140,6 +1254,45 @@
   "screen_feature_top_advice_template_3": "Small steps add up. Keep going at your own pace today.",
   "@screen_feature_top_advice_template_3": {
     "description": "LLM不可時の定型3"
+  },
+  "screen_feature_top_advice_two_achieved_1": "{metric} is almost there. One left—you've got this!",
+  "@screen_feature_top_advice_two_achieved_1": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き two_achieved 1"
+  },
+  "screen_feature_top_advice_two_achieved_2": "One more push: clear {metric} and today's goals are done.",
+  "@screen_feature_top_advice_two_achieved_2": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き two_achieved 2"
+  },
+  "screen_feature_top_advice_two_achieved_3": "Two cleared. Only {metric} remains. You can do it!",
+  "@screen_feature_top_advice_two_achieved_3": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    },
+    "description": "条件付き two_achieved 3"
+  },
+  "screen_feature_top_advice_welcome_back_1": "Welcome back! Let's keep at it from today. If goals feel high, lowering them a little is fine.",
+  "@screen_feature_top_advice_welcome_back_1": {
+    "description": "条件付き welcome_back 1"
+  },
+  "screen_feature_top_advice_welcome_back_2": "Long time no see. Glad you're restarting. Revisiting goals is okay if it feels hard.",
+  "@screen_feature_top_advice_welcome_back_2": {
+    "description": "条件付き welcome_back 2"
+  },
+  "screen_feature_top_advice_welcome_back_3": "Nice to see a log again. Ease back in at your pace. Adjust goals anytime.",
+  "@screen_feature_top_advice_welcome_back_3": {
+    "description": "条件付き welcome_back 3"
   },
   "screen_feature_top_advisor_semantics": "Advisor",
   "@screen_feature_top_advisor_semantics": {

@@ -11,6 +11,7 @@ dependencies:
   data_repository_daily_goal: any
   data_repository_exercise_history: any
   data_repository_top_screen_metric: any
+  domain_daily_goal: any
   domain_exercise_history: any
   usecase_load_achievements: any
   usecase_load_top_screen: any
@@ -19,6 +20,5 @@ dev_dependencies:
   data_repository_daily_goal_testing: any
   data_repository_exercise_history_testing: any
   data_repository_top_screen_metric_testing: any
-  domain_daily_goal: any
   flutter_lints: any
   test: any
