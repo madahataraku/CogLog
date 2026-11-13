@@ -93,7 +93,7 @@ def main() -> int:
     except ImportError as exc:
         return _die(
             f"Missing dependency: {exc}. "
-            "Use Python 3.11 venv and "
+            "Use Python 3.10 venv and "
             "`pip install --force-reinstall 'torch==2.2.0' "
             "'torchvision==0.17.0' 'numpy<2,>=1.26'`.",
             code=2,
@@ -115,7 +115,7 @@ def main() -> int:
     except ImportError as exc:
         return _die(
             "coremltools native BlobWriter is missing "
-            f"({exc}). On macOS use Python 3.11 venv and "
+            f"({exc}). On macOS use Python 3.10 venv and "
             "`pip install --only-binary=:all: 'coremltools==7.2' "
             "'torch==2.2.0'`. See tool/seven_segment/convert_coreml.md.",
             code=2,
@@ -124,7 +124,7 @@ def main() -> int:
         return _die(
             "coremltools BlobWriter failed to load. "
             "Reinstall macOS binary wheel of coremltools 7.2 "
-            "(Python 3.10/3.11). See tool/seven_segment/convert_coreml.md.",
+            "(Python 3.10). See tool/seven_segment/convert_coreml.md.",
             code=2,
         )
 
