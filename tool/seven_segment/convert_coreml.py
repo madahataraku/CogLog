@@ -105,10 +105,12 @@ def main() -> int:
         return _die(
             f"SSCMA / mmengine import failed: {exc}. "
             "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
-            "Also `pip install 'torch==2.2.0' 'numpy<2' pycocotools "
-            "mmengine six`. Do not import sscma.datasets package root "
-            "(pulls pyarrow). Ensure deepen_factor is applied in "
-            "YOLOv5CSPDarknet (make_round(num_blocks, self.deepen_factor)).",
+            "Also `pip install 'torch==2.2.0' 'torchvision==0.17.0' "
+            "'numpy<2' pycocotools mmengine six`. "
+            "Mismatched torchvision often fails at register_fake/roi_align. "
+            "Do not import sscma.datasets package root (pulls pyarrow). "
+            "Ensure deepen_factor is applied in YOLOv5CSPDarknet "
+            "(make_round(num_blocks, self.deepen_factor)).",
             code=2,
         )
 
