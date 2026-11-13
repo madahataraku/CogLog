@@ -214,7 +214,9 @@ List<Override> usecaseOverrides({
   ),
   ReadMeterPanelUsecase.provider.overrideWith(
     (ref) => ReadMeterPanelUsecaseImpl(
-      engines: ref.watch(meterReadingEnginesProvider),
+      llm: ref.watch(onDeviceLlmProvider),
+      llmEngine: ref.watch(meterReadingLlmEngineProvider),
+      spatialEngine: ref.watch(meterReadingSpatialEngineProvider),
     ),
   ),
   SyncExerciseReminderUsecase.provider.overrideWith(

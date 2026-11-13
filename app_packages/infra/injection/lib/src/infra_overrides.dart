@@ -54,6 +54,12 @@ List<Override> infraOverrides({
     (ref) => meterPhotoSource ?? MobileMeterPhotoSource(),
   ),
   meterReadingEnginesProvider.overrideWith((ref) => _meterReadingEngines(ref)),
+  meterReadingLlmEngineProvider.overrideWith(
+    (ref) => _meterReadingLlmEngine(ref),
+  ),
+  meterReadingSpatialEngineProvider.overrideWith(
+    (ref) => _meterReadingSpatialEngine(),
+  ),
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
   ),
@@ -96,35 +102,70 @@ List<Override> infraOverrides({
   ),
 ];
 
-/// OS ごとの読み取りエンジン列。iOS は FoundationModel、Android は Gemini Nano のみ。
+/// LLM メーター読み取りエンジン。
+///
+/// Example:
+/// ```dart
+/// _meterReadingLlmEngine(ref);
+/// ```
+MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
+  final llm = ref.watch(onDeviceLlmProvider);
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.iOS:
+      return LlmMeterReadingEngine(
+        kind: MeterReadingEngineKind.foundationModel,
+        llm: llm,
+      );
+    case TargetPlatform.android:
+      return LlmMeterReadingEngine(
+        kind: MeterReadingEngineKind.geminiNano,
+        llm: llm,
+      );
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
+      return const UnavailableMeterReadingEngine(
+        MeterReadingEngineKind.geminiNano,
+      );
+  }
+}
+
+/// 空間 OCR エンジン。desktop は Unavailable。
+///
+/// Example:
+/// ```dart
+/// _meterReadingSpatialEngine();
+/// ```
+MeterReadingEngine _meterReadingSpatialEngine() {
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.iOS:
+      return SpatialOcrMeterReadingEngine(
+        kind: MeterReadingEngineKind.visionOcr,
+        recognizer: VisionMeterLayoutRecognizer(),
+      );
+    case TargetPlatform.android:
+      return SpatialOcrMeterReadingEngine(
+        kind: MeterReadingEngineKind.mlKit,
+        recognizer: MlKitMeterLayoutRecognizer(),
+      );
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
+      return const UnavailableMeterReadingEngine(
+        MeterReadingEngineKind.visionOcr,
+      );
+  }
+}
+
+/// デバッグ／一覧用の両エンジン。Usecase の排他選択には使わない。
 ///
 /// Example:
 /// ```dart
 /// _meterReadingEngines(ref);
 /// ```
-List<MeterReadingEngine> _meterReadingEngines(Ref ref) {
-  final llm = ref.watch(onDeviceLlmProvider);
-  switch (defaultTargetPlatform) {
-    case TargetPlatform.iOS:
-      return [
-        LlmMeterReadingEngine(
-          kind: MeterReadingEngineKind.foundationModel,
-          llm: llm,
-        ),
-      ];
-    case TargetPlatform.android:
-      return [
-        LlmMeterReadingEngine(
-          kind: MeterReadingEngineKind.geminiNano,
-          llm: llm,
-        ),
-      ];
-    case TargetPlatform.fuchsia:
-    case TargetPlatform.linux:
-    case TargetPlatform.macOS:
-    case TargetPlatform.windows:
-      return const [
-        UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano),
-      ];
-  }
-}
+List<MeterReadingEngine> _meterReadingEngines(Ref ref) => [
+  _meterReadingLlmEngine(ref),
+  _meterReadingSpatialEngine(),
+];

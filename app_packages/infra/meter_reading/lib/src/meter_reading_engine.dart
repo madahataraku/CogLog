@@ -38,3 +38,23 @@ abstract interface class MeterReadingEngine {
 final meterReadingEnginesProvider = Provider<List<MeterReadingEngine>>(
   (ref) => throw UnimplementedError('meterReadingEnginesProvider'),
 );
+
+/// LLM メーター読み取りエンジンの注入点。
+///
+/// Example:
+/// ```dart
+/// meterReadingLlmEngineProvider;
+/// ```
+final meterReadingLlmEngineProvider = Provider<MeterReadingEngine>(
+  (ref) => throw UnimplementedError('meterReadingLlmEngineProvider'),
+);
+
+/// 空間 OCR メーター読み取りエンジンの注入点。
+///
+/// Example:
+/// ```dart
+/// meterReadingSpatialEngineProvider;
+/// ```
+final meterReadingSpatialEngineProvider = Provider<MeterReadingEngine>(
+  (ref) => throw UnimplementedError('meterReadingSpatialEngineProvider'),
+);

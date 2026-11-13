@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_meter_reading_testing/infra_meter_reading_testing.dart';
+import 'package:infra_on_device_llm/infra_on_device_llm.dart';
+import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
 import 'package:test/test.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_read_meter_panel_impl/usecase_read_meter_panel_impl.dart';
@@ -10,90 +12,81 @@ import 'package:usecase_read_meter_panel_impl/usecase_read_meter_panel_impl.dart
 void main() {
   final photo = Uint8List.fromList([1]);
 
-  // R1: 先のエンジンでコア完了なら打ち切り、後続は呼ばない。
-  test('R1: 先のエンジンでコア完了なら後続を呼ばない', () async {
-    final first = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
+  test('LLM ready+vision なら LLM のみ', () async {
+    final llm = FakeOnDeviceLlm(
+      readiness: OnDeviceLlmReadiness.ready,
+      supportsVisionValue: true,
+    );
+    final llmEngine = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(
         distanceKm: 10,
         duration: Duration(hours: 1),
         caloriesKcal: 100,
-        averageSpeedKmh: 10,
       ),
     );
-    final second = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.foundationModel,
+    final spatial = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.visionOcr,
       values: const MeterReadingValues(distanceKm: 99),
     );
 
-    final result = await ReadMeterPanelUsecaseImpl(engines: [first, second])
-        .execute(ReadMeterPanelRequest(photoBytes: photo));
+    final result = await ReadMeterPanelUsecaseImpl(
+      llm: llm,
+      llmEngine: llmEngine,
+      spatialEngine: spatial,
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
-    expect(first.readCallCount, 1);
-    expect(second.readCallCount, 0);
+    expect(llmEngine.readCallCount, 1);
+    expect(spatial.readCallCount, 0);
     expect(result.values.distanceKm, 10);
-    expect(result.values.caloriesKcal, 100);
     expect(result.values.averageSpeedKmh, 10);
-    expect(result.averageSpeedFromPanel, isFalse);
   });
 
-  // R2: 同項目は後勝ち。
-  test('R2: 部分結果の同項目は後勝ち', () async {
-    final first = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.mlKit,
-      values: const MeterReadingValues(
-        distanceKm: 1,
-        duration: Duration(minutes: 30),
-      ),
+  test('LLM ready で不完全でも空間 OCR へ落とさない', () async {
+    final llm = FakeOnDeviceLlm(
+      readiness: OnDeviceLlmReadiness.ready,
+      supportsVisionValue: true,
     );
-    final second = FakeMeterReadingEngine(
+    final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.geminiNano,
-      values: const MeterReadingValues(distanceKm: 2, caloriesKcal: 50),
-    );
-
-    final result = await ReadMeterPanelUsecaseImpl(engines: [first, second])
-        .execute(ReadMeterPanelRequest(photoBytes: photo));
-
-    expect(first.readCallCount, 1);
-    expect(second.readCallCount, 1);
-    expect(result.values.distanceKm, 2);
-    expect(result.values.duration, const Duration(minutes: 30));
-    expect(result.values.caloriesKcal, 50);
-    expect(result.averageSpeedFromPanel, isFalse);
-    expect(result.values.averageSpeedKmh, 4);
-  });
-
-  // R3: 全 unavailable でも例外なし、空に近い values。
-  test('R3: 全 unavailable でも空に近い結果を返す', () async {
-    final first = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      available: false,
-    );
-    final second = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.foundationModel,
-      available: false,
-    );
-
-    final result = await ReadMeterPanelUsecaseImpl(engines: [first, second])
-        .execute(ReadMeterPanelRequest(photoBytes: photo));
-
-    expect(first.readCallCount, 0);
-    expect(second.readCallCount, 0);
-    expect(result.values.distanceKm, isNull);
-    expect(result.values.duration, isNull);
-    expect(result.values.caloriesKcal, isNull);
-    expect(result.values.averageSpeedKmh, isNull);
-    expect(result.averageSpeedFromPanel, isFalse);
-  });
-
-  test('利用不可は skip し、利用可能だけ読む', () async {
-    final unavailable = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.mlKit,
-      available: false,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final available = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.geminiNano,
+    final spatial = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.mlKit,
+      values: const MeterReadingValues(
+        distanceKm: 2,
+        duration: Duration(minutes: 10),
+        caloriesKcal: 20,
+      ),
+    );
+
+    final result = await ReadMeterPanelUsecaseImpl(
+      llm: llm,
+      llmEngine: llmEngine,
+      spatialEngine: spatial,
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(llmEngine.readCallCount, 1);
+    expect(spatial.readCallCount, 0);
+    expect(result.values.distanceKm, 1);
+    expect(result.values.duration, isNull);
+    expect(
+      classifyMeterReadingMessages(result.values),
+      MeterReadingMessageKind.incomplete,
+    );
+  });
+
+  test('modelNotDownloaded なら空間 OCR のみ', () async {
+    final llm = FakeOnDeviceLlm(
+      readiness: OnDeviceLlmReadiness.modelNotDownloaded,
+      supportsVisionValue: true,
+    );
+    final llmEngine = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.foundationModel,
+      values: const MeterReadingValues(distanceKm: 1),
+    );
+    final spatial = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.visionOcr,
       values: const MeterReadingValues(
         distanceKm: 3,
         duration: Duration(hours: 1),
@@ -102,91 +95,93 @@ void main() {
     );
 
     final result = await ReadMeterPanelUsecaseImpl(
-      engines: [unavailable, available],
+      llm: llm,
+      llmEngine: llmEngine,
+      spatialEngine: spatial,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
-    expect(unavailable.readCallCount, 0);
-    expect(available.readCallCount, 1);
+    expect(llmEngine.readCallCount, 0);
+    expect(spatial.readCallCount, 1);
     expect(result.values.distanceKm, 3);
-    expect(result.averageSpeedFromPanel, isFalse);
-    expect(result.values.averageSpeedKmh, 3);
+    expect(
+      classifyMeterReadingMessages(result.values),
+      MeterReadingMessageKind.complete,
+    );
   });
 
-  test('read 失敗は次エンジンへ進む', () async {
-    final failing = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      throwOnRead: true,
+  test('vision 非対応なら空間 OCR のみ', () async {
+    final llm = FakeOnDeviceLlm(
+      readiness: OnDeviceLlmReadiness.ready,
+      supportsVisionValue: false,
     );
-    final ok = FakeMeterReadingEngine(
+    final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
-      values: const MeterReadingValues(
-        distanceKm: 5,
-        duration: Duration(hours: 1),
-        caloriesKcal: 40,
-        averageSpeedKmh: 5,
-      ),
     );
-
-    final result = await ReadMeterPanelUsecaseImpl(engines: [failing, ok])
-        .execute(ReadMeterPanelRequest(photoBytes: photo));
-
-    expect(failing.readCallCount, 1);
-    expect(ok.readCallCount, 1);
-    expect(result.values.distanceKm, 5);
-    expect(result.values.averageSpeedKmh, 5);
-    expect(result.averageSpeedFromPanel, isFalse);
-  });
-
-  test('パネル平均速度と計算値が違っても計算値を使い fromPanel は false', () async {
-    final engine = FakeMeterReadingEngine(
+    final spatial = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.visionOcr,
-      values: const MeterReadingValues(
-        distanceKm: 10,
-        duration: Duration(hours: 1),
-        caloriesKcal: 100,
-        averageSpeedKmh: 99,
-      ),
+      values: const MeterReadingValues(distanceKm: 4),
     );
 
-    final result = await ReadMeterPanelUsecaseImpl(engines: [engine])
-        .execute(ReadMeterPanelRequest(photoBytes: photo));
+    await ReadMeterPanelUsecaseImpl(
+      llm: llm,
+      llmEngine: llmEngine,
+      spatialEngine: spatial,
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
-    expect(result.values.averageSpeedKmh, 10);
-    expect(result.averageSpeedFromPanel, isFalse);
+    expect(llmEngine.readCallCount, 0);
+    expect(spatial.readCallCount, 1);
   });
 
-  test('タイムアウト: 先頭 hang なら空に近い結果', () async {
-    final hang = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.mlKit,
-      hangOnRead: true,
+  test('空間 OCR throw でも空を返す', () async {
+    final llm = FakeOnDeviceLlm(readiness: OnDeviceLlmReadiness.unavailable);
+    final result = await ReadMeterPanelUsecaseImpl(
+      llm: llm,
+      llmEngine: FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.foundationModel,
+      ),
+      spatialEngine: FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.visionOcr,
+        throwOnRead: true,
+      ),
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(result.values.distanceKm, isNull);
+    expect(
+      classifyMeterReadingMessages(result.values),
+      MeterReadingMessageKind.empty,
+    );
+  });
+
+  test('空間 OCR unavailable なら read しない', () async {
+    final spatial = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.visionOcr,
+      available: false,
     );
     final result = await ReadMeterPanelUsecaseImpl(
-      engines: [hang],
+      llm: FakeOnDeviceLlm(readiness: OnDeviceLlmReadiness.unavailable),
+      llmEngine: FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.foundationModel,
+      ),
+      spatialEngine: spatial,
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(spatial.readCallCount, 0);
+    expect(result.values.distanceKm, isNull);
+  });
+
+  test('ハング時は timeout 後に空', () async {
+    final result = await ReadMeterPanelUsecaseImpl(
+      llm: FakeOnDeviceLlm(readiness: OnDeviceLlmReadiness.unavailable),
+      llmEngine: FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.foundationModel,
+      ),
+      spatialEngine: FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.visionOcr,
+        hangOnRead: true,
+      ),
       timeout: const Duration(milliseconds: 20),
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(result.values.distanceKm, isNull);
-    expect(result.values.averageSpeedKmh, isNull);
-    expect(result.averageSpeedFromPanel, isFalse);
-  });
-
-  test('タイムアウト: 部分マージ後 hang なら部分結果', () async {
-    final partial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.mlKit,
-      values: const MeterReadingValues(distanceKm: 7, averageSpeedKmh: 11),
-    );
-    final hang = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.geminiNano,
-      hangOnRead: true,
-    );
-    final result = await ReadMeterPanelUsecaseImpl(
-      engines: [partial, hang],
-      timeout: const Duration(milliseconds: 20),
-    ).execute(ReadMeterPanelRequest(photoBytes: photo));
-
-    expect(result.values.distanceKm, 7);
-    // 時間が無いためパネル速度は捨て、計算もできない。
-    expect(result.values.averageSpeedKmh, isNull);
-    expect(result.averageSpeedFromPanel, isFalse);
   });
 }

@@ -10,36 +10,61 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  test('iOS は foundationModel のみ', () {
+  test('iOS は LLM foundationModel と spatial visionOcr', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
-    final engines = container.read(meterReadingEnginesProvider);
-    expect(engines.map((e) => e.kind).toList(), [
+
+    expect(
+      container.read(meterReadingLlmEngineProvider).kind,
       MeterReadingEngineKind.foundationModel,
-    ]);
-    expect(engines.single, isA<LlmMeterReadingEngine>());
+    );
+    expect(
+      container.read(meterReadingLlmEngineProvider),
+      isA<LlmMeterReadingEngine>(),
+    );
+    expect(
+      container.read(meterReadingSpatialEngineProvider).kind,
+      MeterReadingEngineKind.visionOcr,
+    );
+    expect(
+      container.read(meterReadingSpatialEngineProvider),
+      isA<SpatialOcrMeterReadingEngine>(),
+    );
+    expect(container.read(meterReadingEnginesProvider), hasLength(2));
   });
 
-  test('Android は geminiNano のみ', () {
+  test('Android は LLM geminiNano と spatial mlKit', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
-    final engines = container.read(meterReadingEnginesProvider);
-    expect(engines.map((e) => e.kind).toList(), [
+
+    expect(
+      container.read(meterReadingLlmEngineProvider).kind,
       MeterReadingEngineKind.geminiNano,
-    ]);
-    expect(engines.single, isA<LlmMeterReadingEngine>());
+    );
+    expect(
+      container.read(meterReadingSpatialEngineProvider).kind,
+      MeterReadingEngineKind.mlKit,
+    );
+    expect(
+      container.read(meterReadingSpatialEngineProvider),
+      isA<SpatialOcrMeterReadingEngine>(),
+    );
   });
 
-  test('desktop は Unavailable の geminiNano のみ', () {
+  test('desktop は両 Unavailable', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
-    final engines = container.read(meterReadingEnginesProvider);
-    expect(engines.map((e) => e.kind).toList(), [
-      MeterReadingEngineKind.geminiNano,
-    ]);
-    expect(engines.single, isA<UnavailableMeterReadingEngine>());
+
+    expect(
+      container.read(meterReadingLlmEngineProvider),
+      isA<UnavailableMeterReadingEngine>(),
+    );
+    expect(
+      container.read(meterReadingSpatialEngineProvider),
+      isA<UnavailableMeterReadingEngine>(),
+    );
   });
 }
