@@ -14,8 +14,7 @@ File: DigitalMeterElectricity192.mlpackage
 Source weights (.pth):
   https://files.seeedstudio.com/sscma/model_zoo/detection/electricity_meter/yolov5_tiny_1xb16_300e_coco_sha1_b26cffe14038a7155315c40b49f851679a547dec.pth
 Conversion: tool/seven_segment/convert_coreml.py (coremltools) — **macOS required**
-Status: converted on macOS (coremltools). Bundle by copying into
-  app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage
+Status: bundled at ios/Resources/DigitalMeterElectricity192.mlpackage
 I/O names: input / output
 Output shape: (1, 2268, 15)
 Bytes (tree): 1530698
