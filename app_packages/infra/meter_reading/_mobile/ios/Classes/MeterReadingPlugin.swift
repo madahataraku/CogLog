@@ -119,42 +119,45 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
     }
   }
 
-  /// Splits a Vision string into whitespace-separated tokens with per-range boxes.
+  /// Splits a Vision string on whitespace only, keeping `:`, `：`, `/` inside tokens.
   private static func layoutTokens(
     from candidate: VNRecognizedText
   ) -> [[String: Any]] {
     let string = candidate.string
-    let nsString = string as NSString
     var tokens: [[String: Any]] = []
-    let fullRange = NSRange(location: 0, length: nsString.length)
-    nsString.enumerateSubstrings(
-      in: fullRange,
-      options: [.byWords, .localized]
-    ) { substring, substringRange, _, _ in
-      guard let substring, !substring.isEmpty else {
-        return
+    var start = string.startIndex
+    while start < string.endIndex {
+      while start < string.endIndex, string[start].isWhitespace {
+        start = string.index(after: start)
       }
-      guard
-        let swiftRange = Range(substringRange, in: string),
-        let box = try? candidate.boundingBox(for: swiftRange)?.boundingBox
-      else {
-        return
+      guard start < string.endIndex else {
+        break
       }
-      tokens.append(
-        [
-          "text": substring,
-          "left": box.origin.x,
-          "top": 1.0 - box.origin.y - box.size.height,
-          "width": box.size.width,
-          "height": box.size.height,
-        ]
-      )
+      var end = start
+      while end < string.endIndex, !string[end].isWhitespace {
+        end = string.index(after: end)
+      }
+      let range = start..<end
+      let substring = String(string[range])
+      if let box = try? candidate.boundingBox(for: range)?.boundingBox {
+        tokens.append(
+          [
+            "text": substring,
+            "left": box.origin.x,
+            "top": 1.0 - box.origin.y - box.size.height,
+            "width": box.size.width,
+            "height": box.size.height,
+          ]
+        )
+      }
+      start = end
     }
-    if tokens.isEmpty, !string.isEmpty {
-      // Fallback when word enumeration yields nothing: keep the whole observation.
-      // Bounding box for the full string may still fail; skip then.
-      if let box = try? candidate.boundingBox(for: string.startIndex..<string.endIndex)?
-        .boundingBox
+    if tokens.isEmpty {
+      let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+      if !trimmed.isEmpty,
+        let box = try? candidate.boundingBox(
+          for: string.startIndex..<string.endIndex
+        )?.boundingBox
       {
         tokens.append(
           [

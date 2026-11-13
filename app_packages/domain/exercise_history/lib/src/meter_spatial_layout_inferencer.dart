@@ -127,7 +127,7 @@ abstract final class MeterSpatialLayoutInferencer {
     }
   }
 
-  /// 速度アンカーと同一行、または他フィールドより速度に近い裸数値か。
+  /// 他フィールドより速度アンカーに近い裸数値か（距離が近ければ速度所有ではない）。
   ///
   /// Example:
   /// ```dart
@@ -142,18 +142,11 @@ abstract final class MeterSpatialLayoutInferencer {
       return false;
     }
     var bestSpeed = double.infinity;
-    var sameRowSpeed = false;
     for (final speed in speedAnchors) {
       final d = _distance(speed.token, number.token);
-      if (_sameRow(speed.token, number.token)) {
-        sameRowSpeed = true;
-      }
       if (d < bestSpeed) {
         bestSpeed = d;
       }
-    }
-    if (sameRowSpeed) {
-      return true;
     }
     if (otherAnchors.isEmpty) {
       return true;

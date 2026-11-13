@@ -58,6 +58,19 @@ void main() {
     expect(values.caloriesKcal, isNull);
   });
 
+  test('横並びでも距離値を速度に奪わない', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('距離', 0.05, 0.20, 0.10, 0.04),
+      t('5.0', 0.18, 0.20, 0.08, 0.04),
+      t('km', 0.28, 0.20, 0.06, 0.04),
+      t('速度', 0.40, 0.20, 0.10, 0.04),
+      t('20.0', 0.55, 0.20, 0.08, 0.04),
+      t('km/h', 0.66, 0.20, 0.08, 0.04),
+    ]);
+    expect(values.distanceKm, 5.0);
+    expect(values.caloriesKcal, isNull);
+  });
+
   test('速度の数値はカロリーに流用しない', () {
     final values = MeterSpatialLayoutInferencer.infer([
       t('距離', 0.05, 0.2, 0.15, 0.04),
