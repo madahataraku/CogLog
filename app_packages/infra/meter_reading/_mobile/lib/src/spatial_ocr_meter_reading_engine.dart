@@ -109,9 +109,18 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
         MeterSpatialLayoutInferencer.tokensExcludingNumericValues(
           genericTokens,
         );
+    // 汎用で数値として確定した矩形と重なる七セグ候補は別項目へ流用しない。
+    final numericGeneric = [
+      for (final t in genericTokens)
+        if (!anchorTokens.contains(t)) t,
+    ];
+    final sevenSegForInfer = [
+      for (final s in sevenSegTokens)
+        if (!_overlapsAny(s, numericGeneric)) s,
+    ];
     final valuesSeven = MeterSpatialLayoutInferencer.infer([
       ...anchorTokens,
-      ...sevenSegTokens,
+      ...sevenSegForInfer,
     ]);
     final values = MeterReadingMerger.preferFirst(valuesGeneric, valuesSeven);
     log.append(
@@ -153,6 +162,24 @@ final class _EmptySevenSegmentRecognizer
   /// ```
   @override
   Future<void> close() async {}
+}
+
+/// [candidate] が [regions] のいずれかの矩形と交差するか。
+bool _overlapsAny(MeterOcrToken candidate, List<MeterOcrToken> regions) {
+  for (final r in regions) {
+    final left = candidate.left > r.left ? candidate.left : r.left;
+    final top = candidate.top > r.top ? candidate.top : r.top;
+    final right = (candidate.left + candidate.width) < (r.left + r.width)
+        ? candidate.left + candidate.width
+        : r.left + r.width;
+    final bottom = (candidate.top + candidate.height) < (r.top + r.height)
+        ? candidate.top + candidate.height
+        : r.top + r.height;
+    if (right > left && bottom > top) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /// 汎用で欠け、結果で埋まったフィールド名だけを列挙する（数値は出さない）。

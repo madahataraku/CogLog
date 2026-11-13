@@ -17,6 +17,7 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
       binaryMessenger: registrar.messenger()
     )
     let runner = SevenSegmentCoreMlRunner()
+    let predictQueue = DispatchQueue(label: "infra_meter_reading.seven_segment")
     sevenSeg.setMethodCallHandler { call, result in
       guard call.method == "predict" else {
         result(FlutterMethodNotImplemented)
@@ -29,10 +30,24 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
         result(FlutterError(code: "BAD_ARGS", message: "inputFloat32 required", details: nil))
         return
       }
-      do {
-        result(try runner.predict(inputFloat32: typed.data))
-      } catch {
-        result(FlutterError(code: "COREML_FAILED", message: error.localizedDescription, details: nil))
+      let data = typed.data
+      predictQueue.async {
+        do {
+          let rows = try runner.predict(inputFloat32: data)
+          DispatchQueue.main.async {
+            result(rows)
+          }
+        } catch {
+          DispatchQueue.main.async {
+            result(
+              FlutterError(
+                code: "COREML_FAILED",
+                message: error.localizedDescription,
+                details: nil
+              )
+            )
+          }
+        }
       }
     }
   }

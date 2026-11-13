@@ -45,14 +45,18 @@ abstract final class SevenSegmentYoloPostprocess {
       for (var i = 0; i < out.length; i++) {
         out[i] = 114 / 255.0;
       }
-      for (var y = 0; y < srcH.toInt(); y++) {
-        for (var x = 0; x < srcW.toInt(); x++) {
-          final dx = (x * scale + padX).floor();
-          final dy = (y * scale + padY).floor();
-          if (dx < 0 || dy < 0 || dx >= inputSize || dy >= inputSize) {
-            continue;
-          }
-          final si = (y * srcW.toInt() + x) * 4;
+      final srcWi = srcW.toInt();
+      final srcHi = srcH.toInt();
+      // 出力画素から入力座標を逆算し、拡大時も画像領域をすべて埋める。
+      final dstLeft = padX.floor().clamp(0, inputSize);
+      final dstTop = padY.floor().clamp(0, inputSize);
+      final dstRight = (padX + newW).ceil().clamp(0, inputSize);
+      final dstBottom = (padY + newH).ceil().clamp(0, inputSize);
+      for (var dy = dstTop; dy < dstBottom; dy++) {
+        for (var dx = dstLeft; dx < dstRight; dx++) {
+          final sx = ((dx - padX) / scale).floor().clamp(0, srcWi - 1);
+          final sy = ((dy - padY) / scale).floor().clamp(0, srcHi - 1);
+          final si = (sy * srcWi + sx) * 4;
           final oi = (dy * inputSize + dx) * 3;
           out[oi] = rgba[si] / 255.0;
           out[oi + 1] = rgba[si + 1] / 255.0;
@@ -123,20 +127,25 @@ abstract final class SevenSegmentYoloPostprocess {
       final h = row[3];
       final leftPx = (cx - w / 2 - letterbox.padX) / letterbox.scale;
       final topPx = (cy - h / 2 - letterbox.padY) / letterbox.scale;
-      final widthPx = w / letterbox.scale;
-      final heightPx = h / letterbox.scale;
-      final left = (leftPx / letterbox.srcWidth).clamp(0.0, 1.0);
-      final top = (topPx / letterbox.srcHeight).clamp(0.0, 1.0);
-      final width = (widthPx / letterbox.srcWidth).clamp(0.0, 1.0 - left);
-      final height = (heightPx / letterbox.srcHeight).clamp(0.0, 1.0 - top);
+      final rightPx = leftPx + w / letterbox.scale;
+      final bottomPx = topPx + h / letterbox.scale;
+      final leftClamped = leftPx.clamp(0.0, letterbox.srcWidth);
+      final rightClamped = rightPx.clamp(0.0, letterbox.srcWidth);
+      final topClamped = topPx.clamp(0.0, letterbox.srcHeight);
+      final bottomClamped = bottomPx.clamp(0.0, letterbox.srcHeight);
+      final widthPx = rightClamped - leftClamped;
+      final heightPx = bottomClamped - topClamped;
+      if (widthPx <= 0 || heightPx <= 0) {
+        continue;
+      }
       raw.add(
         SevenSegmentDigitDetection(
           digit: digit,
           score: score,
-          left: left,
-          top: top,
-          width: width,
-          height: height,
+          left: leftClamped / letterbox.srcWidth,
+          top: topClamped / letterbox.srcHeight,
+          width: widthPx / letterbox.srcWidth,
+          height: heightPx / letterbox.srcHeight,
         ),
       );
     }

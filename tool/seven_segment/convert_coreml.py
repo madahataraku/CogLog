@@ -106,10 +106,18 @@ def main() -> int:
     if not isinstance(ckpt, dict) or "state_dict" not in ckpt:
         return _die("Unsupported checkpoint: expected dict with 'state_dict'")
 
-    cfg = Config.fromfile(
-        str(config_file),
-        modified_constant={"num_classes": 10, "height": 192, "width": 192},
-    )
+    # mmengine 0.8.2 の Config.fromfile は modified_constant を受け取らない。
+    cfg = Config.fromfile(str(config_file))
+    cfg.num_classes = 10
+    cfg.height = 192
+    cfg.width = 192
+    bbox_head = getattr(cfg.model, "bbox_head", None)
+    if bbox_head is not None:
+        if hasattr(bbox_head, "num_classes"):
+            bbox_head.num_classes = 10
+        head_module = getattr(bbox_head, "head_module", None)
+        if head_module is not None and hasattr(head_module, "num_classes"):
+            head_module.num_classes = 10
     cfg.model.backbone.deepen_factor = 0.33
     cfg.model.neck.deepen_factor = 0.33
     init_default_scope("sscma")

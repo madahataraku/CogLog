@@ -71,8 +71,6 @@ final class SevenSegmentCoreMlRunner {
 
   private static func flattenToRows(_ multi: MLMultiArray) -> [[Double]] {
     let shape = multi.shape.map { $0.intValue }
-    let strides = multi.strides.map { $0.intValue }
-    let count = multi.count
     let rowCount: Int
     let colCount = 15
     if shape.count == 3, shape[0] == 1, shape[1] == 2268, shape[2] == 15 {
@@ -86,15 +84,14 @@ final class SevenSegmentCoreMlRunner {
     for r in 0..<rowCount {
       rows[r] = [Double](repeating: 0, count: colCount)
       for c in 0..<colCount {
-        let index: Int
+        // stride パディングがあっても座標キーで読む（論理 count 比較はしない）。
+        let key: [NSNumber]
         if shape.count == 3 {
-          index = r * strides[1] + c * strides[2]
+          key = [0, r, c].map { NSNumber(value: $0) }
         } else {
-          index = r * strides[0] + c * strides[1]
+          key = [r, c].map { NSNumber(value: $0) }
         }
-        if index < count {
-          rows[r][c] = multi[index].doubleValue
-        }
+        rows[r][c] = multi[key].doubleValue
       }
     }
     return rows

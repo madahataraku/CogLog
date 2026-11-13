@@ -50,6 +50,25 @@ void main() {
     expect(dets, isEmpty);
   });
 
+  test('画像外にはみ出す矩形は端を切り詰めて幅を求める', () {
+    final row = List<double>.filled(15, 0);
+    row[0] = 5;
+    row[1] = 96;
+    row[2] = 20;
+    row[3] = 20;
+    row[4] = 0.9;
+    row[6] = 1;
+    final dets = SevenSegmentYoloPostprocess.decodeDetections(
+      [row],
+      scoreThreshold: 0.25,
+      nmsIoU: 0.45,
+      letterbox: letterbox,
+    );
+    expect(dets, hasLength(1));
+    expect(dets.first.left, 0);
+    expect(dets.first.width, closeTo(15 / 192, 0.001));
+  });
+
   test('NMS で高 IoU の弱い検出を落とす', () {
     const hi = SevenSegmentDigitDetection(
       digit: 1,
@@ -134,6 +153,47 @@ void main() {
       ];
       final tokens = SevenSegmentDigitClusterer.clusterToTokens(dets);
       expect(tokens.single.text, '12.3');
+    });
+
+    test('離れた数値群は別トークン', () {
+      const dets = [
+        SevenSegmentDigitDetection(
+          digit: 1,
+          score: 1,
+          left: 0.10,
+          top: 0.20,
+          width: 0.05,
+          height: 0.08,
+        ),
+        SevenSegmentDigitDetection(
+          digit: 2,
+          score: 1,
+          left: 0.16,
+          top: 0.20,
+          width: 0.05,
+          height: 0.08,
+        ),
+        SevenSegmentDigitDetection(
+          digit: 3,
+          score: 1,
+          left: 0.65,
+          top: 0.20,
+          width: 0.05,
+          height: 0.08,
+        ),
+        SevenSegmentDigitDetection(
+          digit: 4,
+          score: 1,
+          left: 0.71,
+          top: 0.20,
+          width: 0.05,
+          height: 0.08,
+        ),
+      ];
+      final tokens = SevenSegmentDigitClusterer.clusterToTokens(dets);
+      expect(tokens, hasLength(2));
+      expect(tokens[0].text, '12');
+      expect(tokens[1].text, '34');
     });
 
     test('2 行でトークン 2 件', () {

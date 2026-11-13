@@ -163,6 +163,53 @@ void main() {
     expect(log.entries[1].message, contains('candidates=0'));
   });
 
+  test('汎用単位付き数値と重なる七セグは別項目へ流用しない', () async {
+    final engine = SpatialOcrMeterReadingEngine(
+      kind: MeterReadingEngineKind.mlKit,
+      recognizer: FakeMeterLayoutRecognizer(
+        tokens: const [
+          MeterOcrToken(
+            text: '距離',
+            left: 0.05,
+            top: 0.10,
+            width: 0.1,
+            height: 0.04,
+          ),
+          MeterOcrToken(
+            text: '12.3km',
+            left: 0.1,
+            top: 0.18,
+            width: 0.2,
+            height: 0.06,
+          ),
+          MeterOcrToken(
+            text: 'カロリー',
+            left: 0.05,
+            top: 0.50,
+            width: 0.15,
+            height: 0.04,
+          ),
+        ],
+      ),
+      sevenSegmentRecognizer: FakeMeterSevenSegmentRecognizer(
+        tokens: const [
+          MeterOcrToken(
+            text: '12.3',
+            left: 0.1,
+            top: 0.18,
+            width: 0.2,
+            height: 0.06,
+          ),
+        ],
+      ),
+      log: AppLogStore(),
+    );
+
+    final values = await engine.read(Uint8List(0));
+    expect(values.distanceKm, 12.3);
+    expect(values.caloriesKcal, isNull);
+  });
+
   test('七セグノイズは汎用埋め済み項目を変えない', () async {
     final engine = SpatialOcrMeterReadingEngine(
       kind: MeterReadingEngineKind.mlKit,
