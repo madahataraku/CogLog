@@ -103,6 +103,8 @@ const _loadResult = LoadTopScreenResult(
   goal: DailyGoal.unset,
   todayHistories: [],
   consecutiveExerciseDays: 0,
+  consecutiveGoalAchievementDays: 0,
+  daysSincePreviousExerciseDay: null,
   hasNewAchievements: false,
 );
 

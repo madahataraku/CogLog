@@ -69,6 +69,8 @@ final class _LoadTop implements LoadTopScreenUsecase {
       goal: DailyGoal.unset,
       todayHistories: const [],
       consecutiveExerciseDays: 0,
+      consecutiveGoalAchievementDays: 0,
+      daysSincePreviousExerciseDay: null,
       hasNewAchievements: hasNew,
     );
   }

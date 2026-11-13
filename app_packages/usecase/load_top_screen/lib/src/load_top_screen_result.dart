@@ -1,7 +1,7 @@
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 
-/// トップ画面の指標と 3 期間の合計、目標、本日履歴、連続運動日数、新規有無。
+/// トップ画面の指標と 3 期間の合計、目標、本日履歴、連続運動日数、連続目標達成日数、運動空白日数、新規有無。
 ///
 /// 合計は丸めていない。
 ///
@@ -15,11 +15,13 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 ///   goal: DailyGoal.unset,
 ///   todayHistories: const [],
 ///   consecutiveExerciseDays: 0,
+///   consecutiveGoalAchievementDays: 0,
+///   daysSincePreviousExerciseDay: null,
 ///   hasNewAchievements: false,
 /// );
 /// ```
 final class LoadTopScreenResult {
-  /// 指標・期間・目標・本日履歴・連続運動日数・新規有無を持つ。
+  /// 指標・期間・目標・本日履歴・連続運動日数・連続目標達成日数・運動空白日数・新規有無を持つ。
   ///
   /// Example:
   /// ```dart
@@ -31,6 +33,8 @@ final class LoadTopScreenResult {
   ///   goal: DailyGoal.unset,
   ///   todayHistories: const [],
   ///   consecutiveExerciseDays: 0,
+  ///   consecutiveGoalAchievementDays: 0,
+  ///   daysSincePreviousExerciseDay: null,
   ///   hasNewAchievements: false,
   /// );
   /// ```
@@ -42,6 +46,8 @@ final class LoadTopScreenResult {
     required this.goal,
     required this.todayHistories,
     required this.consecutiveExerciseDays,
+    required this.consecutiveGoalAchievementDays,
+    required this.daysSincePreviousExerciseDay,
     required this.hasNewAchievements,
   });
 
@@ -66,6 +72,12 @@ final class LoadTopScreenResult {
   /// 本日を起点とした連続運動日数。
   final int consecutiveExerciseDays;
 
+  /// 本日を起点とした連続目標達成日数。本日未達成なら 0。
+  final int consecutiveGoalAchievementDays;
+
+  /// 直前運動日から本日までの暦日差。直前運動日が無ければ null。
+  final int? daysSincePreviousExerciseDay;
+
   /// 新規アチーブメントが 1 件以上あるとき true。
   final bool hasNewAchievements;
 
@@ -84,6 +96,8 @@ final class LoadTopScreenResult {
         goal: goal,
         todayHistories: todayHistories,
         consecutiveExerciseDays: consecutiveExerciseDays,
+        consecutiveGoalAchievementDays: consecutiveGoalAchievementDays,
+        daysSincePreviousExerciseDay: daysSincePreviousExerciseDay,
         hasNewAchievements: hasNewAchievements,
       );
 }

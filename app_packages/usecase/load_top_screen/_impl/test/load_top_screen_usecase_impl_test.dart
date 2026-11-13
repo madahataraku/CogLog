@@ -11,6 +11,7 @@ import 'package:usecase_load_top_screen_impl/usecase_load_top_screen_impl.dart';
 ExerciseHistory ride({
   required DateTime recordedAt,
   double distanceKm = 1,
+  double caloriesKcal = 1,
   String id = '11111111-1111-4111-8111-111111111111',
 }) {
   return ExerciseHistory(
@@ -22,7 +23,7 @@ ExerciseHistory ride({
     recordedAtManuallySet: false,
     distanceKm: distanceKm,
     duration: const Duration(minutes: 1),
-    caloriesKcal: 1,
+    caloriesKcal: caloriesKcal,
     averageSpeedKmh: 1,
     photoRelativePath: 'exercise_histories/$id/meter.jpg',
     healthWorkoutId: null,
@@ -54,6 +55,8 @@ void main() {
     expect(result.goal.duration, isNull);
     expect(result.todayHistories, isEmpty);
     expect(result.consecutiveExerciseDays, 0);
+    expect(result.consecutiveGoalAchievementDays, 0);
+    expect(result.daysSincePreviousExerciseDay, isNull);
   });
 
   test('11月5日、11月1日、10月31日をそれぞれの期間へ入れる', () async {
@@ -101,6 +104,39 @@ void main() {
     ).execute(LoadTopScreenRequest(now: now));
 
     expect(result.consecutiveExerciseDays, 2);
+  });
+
+  test('連続目標達成日数を返す', () async {
+    final goals = MemoryDailyGoalRepository();
+    await goals.write(const DailyGoal(caloriesKcal: 100));
+    final result = await LoadTopScreenUsecaseImpl(
+      histories: FixedExerciseHistoryRepository([
+        ride(recordedAt: DateTime(2026, 11, 5, 10), caloriesKcal: 100),
+        ride(
+          recordedAt: DateTime(2026, 11, 4, 10),
+          caloriesKcal: 100,
+          id: '22222222-2222-4222-8222-222222222222',
+        ),
+      ]),
+      metrics: MemoryTopScreenMetricRepository(),
+      goals: goals,
+      newIndicator: const _FixedNewIndicator(),
+    ).execute(LoadTopScreenRequest(now: now));
+
+    expect(result.consecutiveGoalAchievementDays, 2);
+  });
+
+  test('直前運動日からの暦日差を返す', () async {
+    final result = await LoadTopScreenUsecaseImpl(
+      histories: FixedExerciseHistoryRepository([
+        ride(recordedAt: DateTime(2026, 10, 29, 12)),
+      ]),
+      metrics: MemoryTopScreenMetricRepository(),
+      goals: MemoryDailyGoalRepository(),
+      newIndicator: const _FixedNewIndicator(),
+    ).execute(LoadTopScreenRequest(now: now));
+
+    expect(result.daysSincePreviousExerciseDay, 7);
   });
 
   test('1.14 km が 2 件の表記は 2.3', () async {
@@ -194,6 +230,14 @@ void main() {
     expect(swapped.todayHistories, hasLength(1));
     expect(swapped.today, result.today);
     expect(swapped.consecutiveExerciseDays, result.consecutiveExerciseDays);
+    expect(
+      swapped.consecutiveGoalAchievementDays,
+      result.consecutiveGoalAchievementDays,
+    );
+    expect(
+      swapped.daysSincePreviousExerciseDay,
+      result.daysSincePreviousExerciseDay,
+    );
     expect(swapped.hasNewAchievements, result.hasNewAchievements);
   });
 

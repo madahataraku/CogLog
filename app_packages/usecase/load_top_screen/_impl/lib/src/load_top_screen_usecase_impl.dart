@@ -1,6 +1,7 @@
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
+import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
@@ -75,6 +76,13 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
       goal: goal,
       todayHistories: todayHistories,
       consecutiveExerciseDays: ConsecutiveExerciseDays.of(all, now),
+      consecutiveGoalAchievementDays: ConsecutiveGoalAchievementDays.of(
+        all,
+        goal,
+        now,
+        null,
+      ),
+      daysSincePreviousExerciseDay: DaysSincePreviousExerciseDay.of(all, now),
       hasNewAchievements: hasNew,
     );
   }
