@@ -397,19 +397,7 @@ abstract final class MeterSpatialLayoutInferencer {
     if (t == 'kcal' || t == 'cal') {
       return _Classified(index: index, token: token, kind: _Kind.calorieUnit);
     }
-    final duration = _parseDurationToken(t);
-    if (duration != null) {
-      return _Classified(
-        index: index,
-        token: token,
-        kind: _Kind.durationValue,
-        duration: duration,
-      );
-    }
-    final embedded = _parseNumberWithOptionalUnit(t);
-    if (embedded != null) {
-      return _classifiedNumber(index: index, token: token, embedded: embedded);
-    }
+    // `|` など桁化け文字は通常解析で記号ノイズとして捨てられる前に補正する。
     final hinted = _hintOcrDigits(t);
     if (hinted != t) {
       final hintedDuration = _parseDurationToken(hinted);
@@ -429,6 +417,19 @@ abstract final class MeterSpatialLayoutInferencer {
           embedded: hintedNumber,
         );
       }
+    }
+    final duration = _parseDurationToken(t);
+    if (duration != null) {
+      return _Classified(
+        index: index,
+        token: token,
+        kind: _Kind.durationValue,
+        duration: duration,
+      );
+    }
+    final embedded = _parseNumberWithOptionalUnit(t);
+    if (embedded != null) {
+      return _classifiedNumber(index: index, token: token, embedded: embedded);
     }
     return _Classified(index: index, token: token, kind: _Kind.other);
   }
@@ -510,11 +511,34 @@ abstract final class MeterSpatialLayoutInferencer {
 
   /// 七セグ OCR で桁に化けやすい文字を数字へ寄せる。
   ///
+  /// 末尾単位と `h/m/s` 区切りは数値へ化けさせない。
+  ///
   /// Example:
   /// ```dart
   /// _hintOcrDigits('l2.o');
   /// ```
   static String _hintOcrDigits(String normalized) {
+    final unit = RegExp(r'(km/h|kmh|km|kcal|cal)$').firstMatch(normalized);
+    if (unit != null) {
+      final head = normalized.substring(0, unit.start);
+      return '${_hintOcrDigitsRaw(head)}${unit.group(0)!}';
+    }
+    final hms = RegExp(r'^(.*)(h)(.*)(m)(.*)(s)$').firstMatch(normalized);
+    if (hms != null) {
+      return '${_hintOcrDigitsRaw(hms.group(1)!)}h'
+          '${_hintOcrDigitsRaw(hms.group(3)!)}m'
+          '${_hintOcrDigitsRaw(hms.group(5)!)}s';
+    }
+    return _hintOcrDigitsRaw(normalized);
+  }
+
+  /// 単位全体を桁ヒントで置換する。
+  ///
+  /// Example:
+  /// ```dart
+  /// _hintOcrDigitsRaw('l2.o');
+  /// ```
+  static String _hintOcrDigitsRaw(String normalized) {
     final buffer = StringBuffer();
     for (final unit in normalized.runes) {
       switch (unit) {
@@ -591,8 +615,9 @@ abstract final class MeterSpatialLayoutInferencer {
   /// ```
   static (double, String?)? _parseNumberWithOptionalUnit(String normalized) {
     // 前後は記号ノイズのみ許可（英字・かな漢字は数値トークンとみなさない）。
+    // 先頭の `-` は数値キャプチャ側に残し、負数チェックで落とす。
     final match = RegExp(
-      r'^[^A-Za-z0-9\u3040-\u30ff\u3400-\u9fff]*'
+      r'^[^A-Za-z0-9\u3040-\u30ff\u3400-\u9fff\-]*'
       r'(-?\d+(?:\.\d+)?)'
       r'(km/h|kmh|km|kcal|cal)?'
       r'[^A-Za-z0-9\u3040-\u30ff\u3400-\u9fff]*$',
