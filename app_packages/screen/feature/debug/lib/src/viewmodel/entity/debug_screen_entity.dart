@@ -100,7 +100,7 @@ final class DebugScreenEntity {
   /// プローブ省略理由。
   final String probeSkipped;
 
-  /// 新しい行が上になるログ文字列。
+  /// 古い行が先（上が古い）になるログ文字列。各要素は 1 エントリ分。
   final List<String> logLines;
 
   /// 空間 OCR 強制スイッチの値。

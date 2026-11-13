@@ -32,7 +32,7 @@ final class DebugStateToEntityDelegate {
       return value;
     }
 
-    final logLines = state.logs.reversed
+    final logLines = state.logs
         .map((entry) {
           final time =
               '${entry.at.hour.toString().padLeft(2, '0')}:'

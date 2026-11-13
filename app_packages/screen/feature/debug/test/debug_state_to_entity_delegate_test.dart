@@ -47,4 +47,77 @@ void main() {
     expect(entity.logLines.single, contains('t: m'));
     expect(entity.forceSpatialOcr, isTrue);
   });
+
+  test('古い行が先（3件）', () {
+    final entity = const DebugStateToEntityDelegate().execute(
+      DebugScreenState(
+        running: false,
+        result: null,
+        logs: [
+          AppLogEntry(
+            at: DateTime.utc(2026, 1, 1, 12, 0, 1),
+            level: AppLogLevel.info,
+            tag: 'a',
+            message: 'first',
+          ),
+          AppLogEntry(
+            at: DateTime.utc(2026, 1, 1, 12, 0, 2),
+            level: AppLogLevel.info,
+            tag: 'b',
+            message: 'second',
+          ),
+          AppLogEntry(
+            at: DateTime.utc(2026, 1, 1, 12, 0, 3),
+            level: AppLogLevel.info,
+            tag: 'c',
+            message: 'third',
+          ),
+        ],
+        forceSpatialOcr: false,
+      ),
+    );
+    expect(entity.logLines, hasLength(3));
+    expect(entity.logLines.first, contains('first'));
+    expect(entity.logLines.last, contains('third'));
+  });
+
+  test('長文が省略されない', () {
+    final longMessage = 'x' * 5000;
+    final entity = const DebugStateToEntityDelegate().execute(
+      DebugScreenState(
+        running: false,
+        result: null,
+        logs: [
+          AppLogEntry(
+            at: DateTime.utc(2026, 1, 1, 12, 0, 0),
+            level: AppLogLevel.info,
+            tag: 't',
+            message: longMessage,
+          ),
+        ],
+        forceSpatialOcr: false,
+      ),
+    );
+    expect(entity.logLines.single, contains(longMessage));
+  });
+
+  test('改行を正規化しない', () {
+    const multilineMessage = 'line1\nline2';
+    final entity = const DebugStateToEntityDelegate().execute(
+      DebugScreenState(
+        running: false,
+        result: null,
+        logs: [
+          AppLogEntry(
+            at: DateTime.utc(2026, 1, 1, 12, 0, 0),
+            level: AppLogLevel.info,
+            tag: 't',
+            message: multilineMessage,
+          ),
+        ],
+        forceSpatialOcr: false,
+      ),
+    );
+    expect(entity.logLines.single, contains(multilineMessage));
+  });
 }
