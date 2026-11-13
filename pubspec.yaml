@@ -179,6 +179,7 @@ dependency_overrides:
   state_stream_riverpod: 2.0.1
   syncfusion_flutter_charts: 35.1.46
   syncfusion_flutter_core: 35.1.46
+  tflite_flutter: 0.12.1
   uuid: 4.5.2
 
 dev_dependencies:

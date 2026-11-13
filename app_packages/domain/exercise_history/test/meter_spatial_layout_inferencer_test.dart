@@ -238,6 +238,20 @@ void main() {
     expect(values.duration, isNull);
   });
 
+  test('tokensExcludingNumericValues は数値種を除きラベルと単位を残す', () {
+    final tokens = [
+      t('距離', 0.1, 0.1, 0.2, 0.05),
+      t('12.3', 0.1, 0.18, 0.2, 0.06),
+      t('km', 0.32, 0.18, 0.08, 0.06),
+    ];
+    final filtered = MeterSpatialLayoutInferencer.tokensExcludingNumericValues(
+      tokens,
+    );
+    final texts = filtered.map((e) => e.text).toSet();
+    expect(texts, containsAll(['距離', 'km']));
+    expect(texts, isNot(contains('12.3')));
+  });
+
   test('otherDigits は other のうち桁ありだけ数える', () {
     final tokens = [
       t('距離', 0.1, 0.1, 0.1, 0.04),

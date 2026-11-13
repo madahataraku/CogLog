@@ -73,6 +73,14 @@ Monolith が書く次のファイルは手で編集しない。
 
 空間 OCR（Android）は `google_mlkit_text_recognition` を使う。日本語モデルはプラグイン側が `compileOnly` のため、`app/android/app/build.gradle.kts` に `com.google.mlkit:text-recognition-japanese` を `implementation` する。release の R8 で Text Recognition の反射登録が欠けないよう、`app/android/app/proguard-rules.pro` に `com.google.mlkit.vision.**` などの keep を置く。
 
+空間 OCR の七セグ補完は、Android では `tflite_flutter`（dependency_overrides で 0.12.1）と
+同梱 TFLite FLOAT32、iOS では Core ML（`DigitalMeterElectricity192.mlpackage`、`.pth` から
+`tool/seven_segment` で変換）を使う。Core ML への変換と `.mlpackage` 保存は **macOS 必須**
+（Linux では coremltools の BlobWriter が無く保存できない）。前後処理は共通。debug / profile /
+release を含むモバイル向けビルドで各 OS のモデル同梱必須。mlpackage 未配置時は podspec が
+resources を省略し、実行時は七セグ経路が失敗して汎用 OCR のみで完了する。ホスト単体テストは
+Fake 差し替え可。依存とモデル NOTICE は OSS ライセンス再生成対象に含める。
+
 ## iOS
 
 `IPHONEOS_DEPLOYMENT_TARGET` と `app/ios/Podfile` の `platform :ios` は次に固定する。プラグイン（`infra_meter_reading_mobile` / `infra_on_device_llm_mobile`）が 16.4 を要求するため、これ未満にしない。

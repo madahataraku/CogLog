@@ -78,6 +78,29 @@ abstract final class MeterSpatialLayoutInferencer {
     return count;
   }
 
+  /// 七セグ数値と混ぜるとき、汎用側の数値バリュー種を除いたトークン列。
+  ///
+  /// Example:
+  /// ```dart
+  /// MeterSpatialLayoutInferencer.tokensExcludingNumericValues(const []);
+  /// ```
+  static List<MeterOcrToken> tokensExcludingNumericValues(
+    List<MeterOcrToken> tokens,
+  ) {
+    final out = <MeterOcrToken>[];
+    for (var i = 0; i < tokens.length; i++) {
+      final kind = _classifyAt(i, tokens[i]).kind;
+      if (kind == _Kind.bareNumber ||
+          kind == _Kind.distanceValueWithUnit ||
+          kind == _Kind.calorieValueWithUnit ||
+          kind == _Kind.durationValue) {
+        continue;
+      }
+      out.add(tokens[i]);
+    }
+    return out;
+  }
+
   /// [tokens] から読めた項目だけを返す。
   ///
   /// Example:
