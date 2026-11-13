@@ -477,6 +477,10 @@
   "@screen_feature_debug_empty_logs": {
     "description": "ログ空表示"
   },
+  "screen_feature_debug_force_spatial_ocr_item": "空間 OCR を強制",
+  "@screen_feature_debug_force_spatial_ocr_item": {
+    "description": "空間 OCR 強制スイッチの項目名"
+  },
   "screen_feature_debug_generate_error_label": "generate error",
   "@screen_feature_debug_generate_error_label": {
     "description": "生成例外ラベル"
@@ -528,6 +532,10 @@
   "screen_feature_debug_section_logs": "アプリログ",
   "@screen_feature_debug_section_logs": {
     "description": "ログセクション見出し"
+  },
+  "screen_feature_debug_section_overrides": "上書き",
+  "@screen_feature_debug_section_overrides": {
+    "description": "デバッグ上書きセクション見出し"
   },
   "screen_feature_debug_section_probe": "生成プローブ",
   "@screen_feature_debug_section_probe": {

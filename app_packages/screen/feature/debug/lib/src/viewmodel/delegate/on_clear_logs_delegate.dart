@@ -38,6 +38,7 @@ final class OnClearLogsDelegate {
           running: current.running,
           result: current.result,
           logs: log.entries,
+          forceSpatialOcr: current.forceSpatialOcr,
         ),
       );
     });

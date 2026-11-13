@@ -7,7 +7,7 @@ import '../strings.dart';
 import '../viewmodel/debug_screen_view_model.dart';
 import 'debug_screen_providers.dart';
 
-/// 診断結果とアプリログ。
+/// 上書きスイッチ・診断結果・アプリログ。
 ///
 /// Example:
 /// ```dart
@@ -23,7 +23,7 @@ class DebugScreenBody extends ConsumerWidget {
   /// ```
   const DebugScreenBody({super.key});
 
-  /// 診断セクションとログを縦に並べる。
+  /// 上書き・診断・ログを縦に並べる。
   ///
   /// Example:
   /// ```dart
@@ -51,6 +51,27 @@ class DebugScreenBody extends ConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Text(
+            strings.screen_feature_debug_section_overrides,
+            style: context.theme.typography.body.lg.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          FTileGroup(
+            children: [
+              FTile(
+                title: Text(
+                  strings.screen_feature_debug_force_spatial_ocr_item,
+                ),
+                suffix: FSwitch(
+                  value: entity.forceSpatialOcr,
+                  onChange: viewModel.onToggleForceSpatialOcr,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
           Text(
             strings.screen_feature_debug_section_availability,
             style: context.theme.typography.body.lg.copyWith(

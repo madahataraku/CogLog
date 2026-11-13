@@ -35,6 +35,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_empty_logs =>
       LocalizeStringDelegate.get('screen_feature_debug_empty_logs');
 
+  /// 空間 OCR 強制スイッチの項目名
+  String get screen_feature_debug_force_spatial_ocr_item =>
+      LocalizeStringDelegate.get('screen_feature_debug_force_spatial_ocr_item');
+
   /// 生成例外ラベル
   String get screen_feature_debug_generate_error_label =>
       LocalizeStringDelegate.get('screen_feature_debug_generate_error_label');
@@ -86,6 +90,10 @@ mixin class L10nStringsMixin {
   /// ログセクション見出し
   String get screen_feature_debug_section_logs =>
       LocalizeStringDelegate.get('screen_feature_debug_section_logs');
+
+  /// デバッグ上書きセクション見出し
+  String get screen_feature_debug_section_overrides =>
+      LocalizeStringDelegate.get('screen_feature_debug_section_overrides');
 
   /// 生成プローブ見出し
   String get screen_feature_debug_section_probe =>
