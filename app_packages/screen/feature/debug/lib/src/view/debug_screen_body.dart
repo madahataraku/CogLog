@@ -1,3 +1,4 @@
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -9,12 +10,14 @@ import 'debug_screen_providers.dart';
 
 /// 上書きスイッチ・診断結果・アプリログ。
 ///
+/// アプリログは固定高さの編集不可テキスト領域で示し、親 ListView と独立してスクロールする。
+///
 /// Example:
 /// ```dart
 /// const DebugScreenBody();
 /// ```
 @internal
-class DebugScreenBody extends ConsumerWidget {
+class DebugScreenBody extends HookConsumerWidget {
   /// 本文を作る。
   ///
   /// Example:
@@ -22,6 +25,9 @@ class DebugScreenBody extends ConsumerWidget {
   /// const DebugScreenBody();
   /// ```
   const DebugScreenBody({super.key});
+
+  /// ログ領域の固定高さ（論理ピクセル）。親 ListView 内で内部スクロールさせる。
+  static const double _logAreaHeight = 240;
 
   /// 上書き・診断・ログを縦に並べる。
   ///
@@ -32,7 +38,14 @@ class DebugScreenBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entity = ref.watch(DebugScreenProviders.entity);
-    final viewModel = ref.watch(DebugScreenViewModel.provider);
+    final logController = useTextEditingController();
+    final logScrollController = useScrollController();
+    final logText = entity.logLines.join('\n');
+    useEffect(() {
+      // Entity の結合文字列を Controller へ映す。変化時のみ。スクロール位置は維持する。
+      syncLogText(logController, logScrollController, logText);
+      return null;
+    }, [logText]);
     final canGenerateText = switch (entity.canGenerate) {
       null => '-',
       true => strings.screen_feature_debug_yes,
@@ -43,7 +56,7 @@ class DebugScreenBody extends ConsumerWidget {
         title: Text(strings.screen_feature_debug_title),
         prefixes: [
           FHeaderAction.back(
-            onPress: viewModel.onBack,
+            onPress: () => ref.read(DebugScreenViewModel.provider).onBack(),
             semanticsLabel: strings.screen_feature_debug_back_semantics,
           ),
         ],
@@ -66,7 +79,9 @@ class DebugScreenBody extends ConsumerWidget {
                 ),
                 suffix: FSwitch(
                   value: entity.forceSpatialOcr,
-                  onChange: viewModel.onToggleForceSpatialOcr,
+                  onChange: (value) => ref
+                      .read(DebugScreenViewModel.provider)
+                      .onToggleForceSpatialOcr(value),
                 ),
               ),
             ],
@@ -129,7 +144,9 @@ class DebugScreenBody extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           FButton(
-            onPress: entity.running ? null : viewModel.onInitialize,
+            onPress: entity.running
+                ? null
+                : () => ref.read(DebugScreenViewModel.provider).onInitialize(),
             child: Text(strings.screen_feature_debug_run_diagnose),
           ),
           const SizedBox(height: 24),
@@ -145,23 +162,25 @@ class DebugScreenBody extends ConsumerWidget {
               ),
               FButton(
                 variant: .secondary,
-                onPress: viewModel.onClearLogs,
+                onPress: () =>
+                    ref.read(DebugScreenViewModel.provider).onClearLogs(),
                 child: Text(strings.screen_feature_debug_clear_logs),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          if (entity.logLines.isEmpty)
-            Text(strings.screen_feature_debug_empty_logs)
-          else
-            for (final line in entity.logLines)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: SelectableText(
-                  line,
-                  style: context.theme.typography.body.sm,
-                ),
-              ),
+          SizedBox(
+            height: _logAreaHeight,
+            // readOnly: true かつ enabled は落とさない（選択・コピーを維持）。
+            child: FTextField(
+              control: .managed(controller: logController),
+              readOnly: true,
+              expands: true,
+              maxLines: null,
+              minLines: null,
+              scrollController: logScrollController,
+            ),
+          ),
         ],
       ),
     );
@@ -173,4 +192,39 @@ class DebugScreenBody extends ConsumerWidget {
       child: SelectableText('$label: $value'),
     );
   }
+}
+
+/// [logText] を [logController] へ同期し、[logScrollController] の offset を復元する。
+///
+/// Example:
+/// ```dart
+/// syncLogText(controller, scrollController, 'a\\nb');
+/// ```
+@visibleForTesting
+void syncLogText(
+  TextEditingController logController,
+  ScrollController logScrollController,
+  String logText,
+) {
+  if (logController.text == logText) {
+    return;
+  }
+  final previousOffset = logScrollController.hasClients
+      ? logScrollController.offset
+      : 0.0;
+  final previousSelection = logController.selection;
+  final max = logText.length;
+  final base = previousSelection.baseOffset.clamp(0, max);
+  final extent = previousSelection.extentOffset.clamp(0, max);
+  logController.value = TextEditingValue(
+    text: logText,
+    selection: TextSelection(baseOffset: base, extentOffset: extent),
+  );
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!logScrollController.hasClients) {
+      return;
+    }
+    final maxScroll = logScrollController.position.maxScrollExtent;
+    logScrollController.jumpTo(previousOffset.clamp(0.0, maxScroll));
+  });
 }
