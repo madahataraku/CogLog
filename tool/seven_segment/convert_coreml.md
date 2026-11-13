@@ -59,13 +59,14 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
    import platform, coremltools
    print("platform:", platform.platform())
    print("coremltools:", coremltools.__version__)
-   import coremltools.libmilstoragepython as mil
-   print("BlobWriter:", hasattr(mil, "BlobWriter"))
+   # 公開名は BlobWriter ではなく _BlobStorageWriter
+   from coremltools.libmilstoragepython import _BlobStorageWriter
+   print("BlobWriter OK:", _BlobStorageWriter is not None)
    PY
    uname -m   # arm64 / x86_64
-   python -c "import coremltools, pathlib; print(pathlib.Path(coremltools.__file__).parent)"
    ```
 
+   - `7.2` と出たあと `BlobWriter: False` だけなら、古い確認スクリプトの誤判定のことが多い。上の `_BlobStorageWriter` import が通れば続行してよい
    - `No module named 'coremltools.libmilstoragepython'` → **macOS 用 wheel が入っていない**。venv を消し、`python3.11` で作り直してから `pip install --only-binary=:all: 'coremltools==7.2'` を試す
    - Linux / コンテナ上ではこの確認は必ず失敗する（仕様）
 

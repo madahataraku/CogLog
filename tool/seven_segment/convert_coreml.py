@@ -53,13 +53,22 @@ def main() -> int:
         return _die(f"Missing dependency: {exc}", code=2)
 
     try:
-        import coremltools.libmilstoragepython as _mil_storage  # noqa: F401
+        from coremltools.libmilstoragepython import (  # noqa: F401
+            _BlobStorageWriter as _MilBlobWriter,
+        )
     except ImportError as exc:
         return _die(
             "coremltools native BlobWriter is missing "
             f"({exc}). On macOS use Python 3.11 venv and "
             "`pip install --only-binary=:all: 'coremltools==7.2' "
             "'torch==2.2.0'`. See tool/seven_segment/convert_coreml.md.",
+            code=2,
+        )
+    if _MilBlobWriter is None:
+        return _die(
+            "coremltools BlobWriter failed to load. "
+            "Reinstall macOS binary wheel of coremltools 7.2 "
+            "(Python 3.10/3.11). See tool/seven_segment/convert_coreml.md.",
             code=2,
         )
 
