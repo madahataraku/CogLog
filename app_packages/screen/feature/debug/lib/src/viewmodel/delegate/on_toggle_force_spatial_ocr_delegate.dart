@@ -1,4 +1,5 @@
 import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
+import 'package:meta/meta.dart';
 
 /// 空間 OCR 強制フラグを書き換える。
 ///
@@ -8,6 +9,7 @@ import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 ///   forceSpatialOcr: ForceSpatialOcrStore(),
 /// ).execute(true);
 /// ```
+@internal
 final class OnToggleForceSpatialOcrDelegate {
   /// 依存を受け取る。
   ///
