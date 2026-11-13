@@ -1,0 +1,119 @@
+# main に対して日次で analyze / 全パッケージテストを実行する。
+# App Distribution では検証しないため、main 上の回帰はここで拾う。
+# ジョブ構成・シャード方式は PR Checks の Analyze / Test と同じ。
+name: Daily Checks
+
+on:
+  schedule:
+    # 毎日 17:00 UTC = 翌 02:00 JST
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-checks-main
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # actions/checkout@v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+  # パッケージ一覧をソートし、index % shard_count で分散する（重い screen が偏らないようにする）。
+  test_packages:
+    name: Test packages (${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # actions/checkout@v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+          cache: true
+
+      - name: Resolve dependencies and generate dart-define
+        run: |
+          set -euo pipefail
+          flutter pub get
+          dart run monolith_runner:define
+
+      - name: Run package tests (shard ${{ matrix.shard }})
+        env:
+          SHARD: ${{ matrix.shard }}
+          SHARD_COUNT: ${{ strategy.job-total }}
+        run: |
+          set -euo pipefail
+          index=0
+          ran=0
+          while IFS= read -r pubspec; do
+            dir="$(dirname "$pubspec")"
+            if [ ! -d "${dir}/test" ]; then
+              continue
+            fi
+            if [ "$((index % SHARD_COUNT))" -ne "${SHARD}" ]; then
+              index=$((index + 1))
+              continue
+            fi
+            index=$((index + 1))
+            ran=$((ran + 1))
+            echo "test ${dir} (shard ${SHARD}/${SHARD_COUNT})"
+            if grep -q 'sdk: flutter' "$pubspec"; then
+              (cd "$dir" && flutter test)
+            else
+              (cd "$dir" && dart test)
+            fi
+          done < <(find . -name pubspec.yaml -not -path '*/.dart_tool/*' -not -path '*/build/*' | sort)
+          echo "ran ${ran} package(s) on shard ${SHARD}/${SHARD_COUNT}"
+          if [ "${ran}" -eq 0 ]; then
+            echo "no packages assigned to this shard" >&2
+            exit 1
+          fi
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: test_packages
+    if: ${{ always() }}
+    steps:
+      - name: Confirm all test shards passed
+        run: |
+          set -euo pipefail
+          result="${{ needs.test_packages.result }}"
+          echo "test_packages result: ${result}"
+          if [ "${result}" != "success" ]; then
+            exit 1
+          fi
