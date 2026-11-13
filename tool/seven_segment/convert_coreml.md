@@ -46,6 +46,7 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
    python -m pip install --force-reinstall \
      'torch==2.2.0' \
      'torchvision==0.17.0' \
+     'torchaudio==2.2.0' \
      'numpy<2,>=1.26'
    python -m pip install \
      --only-binary=:all: 'coremltools==7.2' \
@@ -124,7 +125,8 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 | `No module named 'pycocotools'` | `pip install pycocotools` |
 | `No module named 'six'` / `terminaltables` / `albumentations` 等 | `pip install <その名前>`（ModelAssistant の間接依存。`pyarrow` 以外） |
 | `Torch version … has not been tested` / `2.15.0` 等 | `pip install --force-reinstall 'torch==2.2.0' 'torchvision==0.17.0' 'numpy<2,>=1.26'` |
-| `torchvision` / `register_fake` / `roi_align` / `has no attribute 'extension'` | 壊れた torchvision。`pip uninstall -y torch torchvision` → `pip install 'torch==2.2.0' 'torchvision==0.17.0'`。先に `python -c "from torchvision.ops import roi_align; print('ok')"` が通ることを確認 |
+| `torchvision` / `register_fake` / `roi_align` / `has no attribute 'extension'` | 壊れた torchvision。`pip uninstall -y torch torchvision torchaudio` → `pip install 'torch==2.2.0' 'torchvision==0.17.0' 'torchaudio==2.2.0'`。先に `python -c "from torchvision.ops import roi_align; print('ok')"` が通ることを確認 |
+| `No module named 'torchaudio'` | `pip install 'torchaudio==2.2.0'`（torch 2.2.0 と揃える） |
 | `No module named 'pyarrow'` / `pyarrow requires NumPy 2.0` | **pyarrow を入れない**。`git pull` して stub 入りの最新 `convert_coreml.py` を使う。Desktop へのコピーは古いことが多い |
 | `BlobWriter not loaded` | 上と同じ（native 拡張欠落）か Linux 実行 |
 
