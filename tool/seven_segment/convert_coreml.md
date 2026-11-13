@@ -59,7 +59,8 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
      'terminaltables' \
      'shapely' \
      'tqdm' \
-     'albumentations'
+     'albumentations' \
+     'scikit-learn'
    python -c "import torch, torchvision, numpy as np; print(torch.__version__, torchvision.__version__, np.__version__)"
    # 期待例: 2.2.0 / 0.17.0 / 1.26.x
    ```
