@@ -799,12 +799,6 @@ abstract class L10n {
   /// **'ログを消去'**
   String get screen_feature_debug_clear_logs;
 
-  /// ログ空表示
-  ///
-  /// In ja, this message translates to:
-  /// **'ログはまだありません'**
-  String get screen_feature_debug_empty_logs;
-
   /// 空間 OCR 強制スイッチの項目名
   ///
   /// In ja, this message translates to:

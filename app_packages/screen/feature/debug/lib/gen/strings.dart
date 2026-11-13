@@ -31,10 +31,6 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_clear_logs =>
       LocalizeStringDelegate.get('screen_feature_debug_clear_logs');
 
-  /// ログ空表示
-  String get screen_feature_debug_empty_logs =>
-      LocalizeStringDelegate.get('screen_feature_debug_empty_logs');
-
   /// 空間 OCR 強制スイッチの項目名
   String get screen_feature_debug_force_spatial_ocr_item =>
       LocalizeStringDelegate.get('screen_feature_debug_force_spatial_ocr_item');

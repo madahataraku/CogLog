@@ -434,9 +434,6 @@ class L10nEn extends L10n {
   String get screen_feature_debug_clear_logs => 'Clear logs';
 
   @override
-  String get screen_feature_debug_empty_logs => 'No logs yet';
-
-  @override
   String get screen_feature_debug_force_spatial_ocr_item => 'Force spatial OCR';
 
   @override

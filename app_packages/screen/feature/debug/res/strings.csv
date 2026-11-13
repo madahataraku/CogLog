@@ -21,6 +21,5 @@ generate_error_label,generate error,generate error,生成例外ラベル
 prepare_error_label,prepare error,prepare error,準備例外ラベル
 probe_skipped_label,probe skipped,probe skipped,プローブ省略理由ラベル
 running,診断中…,Diagnosing…,診断中表示
-empty_logs,ログはまだありません,No logs yet,ログ空表示
 yes,はい,Yes,真の表示
 no,いいえ,No,偽の表示
