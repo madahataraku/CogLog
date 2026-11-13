@@ -78,6 +78,29 @@ abstract final class MeterSpatialLayoutInferencer {
     return count;
   }
 
+  /// 七セグ数値と混ぜるとき、汎用側の数値バリュー種を除いたトークン列。
+  ///
+  /// Example:
+  /// ```dart
+  /// MeterSpatialLayoutInferencer.tokensExcludingNumericValues(const []);
+  /// ```
+  static List<MeterOcrToken> tokensExcludingNumericValues(
+    List<MeterOcrToken> tokens,
+  ) {
+    final out = <MeterOcrToken>[];
+    for (var i = 0; i < tokens.length; i++) {
+      final kind = _classifyAt(i, tokens[i]).kind;
+      if (kind == _Kind.bareNumber ||
+          kind == _Kind.distanceValueWithUnit ||
+          kind == _Kind.calorieValueWithUnit ||
+          kind == _Kind.durationValue) {
+        continue;
+      }
+      out.add(tokens[i]);
+    }
+    return out;
+  }
+
   /// [tokens] から読めた項目だけを返す。
   ///
   /// Example:
@@ -85,35 +108,86 @@ abstract final class MeterSpatialLayoutInferencer {
   /// MeterSpatialLayoutInferencer.infer(const []);
   /// ```
   static MeterReadingValues infer(List<MeterOcrToken> tokens) {
+    final linked = _linkFields(tokens);
+    return linked.values;
+  }
+
+  /// 距離・時間・カロリーの値として実際に採用した数値トークン。
+  ///
+  /// 分類上は数値でも採用されなかったトークンは含まない。
+  ///
+  /// Example:
+  /// ```dart
+  /// MeterSpatialLayoutInferencer.adoptedNumericValueTokens(const []);
+  /// ```
+  static List<MeterOcrToken> adoptedNumericValueTokens(
+    List<MeterOcrToken> tokens,
+  ) {
+    return _linkFields(tokens).adoptedValueTokens;
+  }
+
+  /// 推論結果と採用した数値トークンを同時に返す。
+  static ({MeterReadingValues values, List<MeterOcrToken> adoptedValueTokens})
+  _linkFields(List<MeterOcrToken> tokens) {
     if (tokens.isEmpty) {
-      return const MeterReadingValues();
+      return (
+        values: const MeterReadingValues(),
+        adoptedValueTokens: const <MeterOcrToken>[],
+      );
     }
     final classified = [
       for (var i = 0; i < tokens.length; i++) _classifyAt(i, tokens[i]),
     ];
     final used = <int>{};
+    final adoptedValueIndices = <int>{};
     _consumeSpeedLinkedNumbers(classified, used);
 
-    final distance = _linkNumericField(
-      classified: classified,
-      used: used,
-      anchorKinds: {_Kind.distanceLabel, _Kind.distanceUnit},
-      valueKinds: {_Kind.bareNumber, _Kind.distanceValueWithUnit},
-      unitKind: _Kind.distanceValueWithUnit,
-    );
-    final calories = _linkNumericField(
-      classified: classified,
-      used: used,
-      anchorKinds: {_Kind.calorieLabel, _Kind.calorieUnit},
-      valueKinds: {_Kind.bareNumber, _Kind.calorieValueWithUnit},
-      unitKind: _Kind.calorieValueWithUnit,
-    );
-    final duration = _resolveDuration(classified, used);
+    void capture(void Function() link) {
+      final before = Set<int>.from(used);
+      link();
+      for (final i in used.difference(before)) {
+        final kind = classified.firstWhere((c) => c.index == i).kind;
+        if (kind == _Kind.bareNumber ||
+            kind == _Kind.distanceValueWithUnit ||
+            kind == _Kind.calorieValueWithUnit ||
+            kind == _Kind.durationValue) {
+          adoptedValueIndices.add(i);
+        }
+      }
+    }
 
-    return MeterReadingValues(
-      distanceKm: distance,
-      duration: duration,
-      caloriesKcal: calories,
+    late final double? distance;
+    capture(() {
+      distance = _linkNumericField(
+        classified: classified,
+        used: used,
+        anchorKinds: {_Kind.distanceLabel, _Kind.distanceUnit},
+        valueKinds: {_Kind.bareNumber, _Kind.distanceValueWithUnit},
+        unitKind: _Kind.distanceValueWithUnit,
+      );
+    });
+    late final double? calories;
+    capture(() {
+      calories = _linkNumericField(
+        classified: classified,
+        used: used,
+        anchorKinds: {_Kind.calorieLabel, _Kind.calorieUnit},
+        valueKinds: {_Kind.bareNumber, _Kind.calorieValueWithUnit},
+        unitKind: _Kind.calorieValueWithUnit,
+      );
+    });
+    late final Duration? duration;
+    capture(() {
+      duration = _resolveDuration(classified, used);
+    });
+
+    return (
+      values: MeterReadingValues(
+        distanceKm: distance,
+        duration: duration,
+        caloriesKcal: calories,
+      ),
+      adoptedValueTokens: [for (final i in adoptedValueIndices) tokens[i]],
     );
   }
 

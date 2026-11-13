@@ -16,6 +16,7 @@ dependencies:
   google_mlkit_text_recognition: any
   infra_meter_reading: any
   infra_on_device_llm: any
+  tflite_flutter: any
 
 dev_dependencies:
   flutter_lints: any
@@ -26,6 +27,9 @@ dev_dependencies:
   test: any
 
 flutter:
+  assets:
+    - assets/seven_segment/digital_meter_electricity_swift_yolo_192_float32.tflite
+    - assets/seven_segment/NOTICE.md
   plugin:
     platforms:
       android:

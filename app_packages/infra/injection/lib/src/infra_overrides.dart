@@ -148,12 +148,14 @@ MeterReadingEngine _meterReadingSpatialEngine(Ref ref) {
       return SpatialOcrMeterReadingEngine(
         kind: MeterReadingEngineKind.visionOcr,
         recognizer: VisionMeterLayoutRecognizer(),
+        sevenSegmentRecognizer: CoreMlSevenSegmentRecognizer(),
         log: log,
       );
     case TargetPlatform.android:
       return SpatialOcrMeterReadingEngine(
         kind: MeterReadingEngineKind.mlKit,
         recognizer: MlKitMeterLayoutRecognizer(),
+        sevenSegmentRecognizer: TfLiteSevenSegmentRecognizer(),
         log: log,
       );
     case TargetPlatform.fuchsia:

@@ -11,6 +11,45 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
     )
     let instance = MeterReadingPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
+
+    let sevenSeg = FlutterMethodChannel(
+      name: "infra_meter_reading/seven_segment",
+      binaryMessenger: registrar.messenger()
+    )
+    let runner = SevenSegmentCoreMlRunner()
+    let predictQueue = DispatchQueue(label: "infra_meter_reading.seven_segment")
+    sevenSeg.setMethodCallHandler { call, result in
+      guard call.method == "predict" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard
+        let args = call.arguments as? [String: Any],
+        let typed = args["inputFloat32"] as? FlutterStandardTypedData
+      else {
+        result(FlutterError(code: "BAD_ARGS", message: "inputFloat32 required", details: nil))
+        return
+      }
+      let data = typed.data
+      predictQueue.async {
+        do {
+          let rows = try runner.predict(inputFloat32: data)
+          DispatchQueue.main.async {
+            result(rows)
+          }
+        } catch {
+          DispatchQueue.main.async {
+            result(
+              FlutterError(
+                code: "COREML_FAILED",
+                message: error.localizedDescription,
+                details: nil
+              )
+            )
+          }
+        }
+      }
+    }
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
