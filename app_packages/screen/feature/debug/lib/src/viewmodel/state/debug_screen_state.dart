@@ -8,7 +8,7 @@ import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.da
 /// DebugScreenState.initial;
 /// ```
 final class DebugScreenState {
-  /// 診断結果・実行中フラグ・ログ行を持つ。
+  /// 診断結果・実行中フラグ・ログ行・強制フラグを持つ。
   ///
   /// Example:
   /// ```dart
@@ -16,12 +16,14 @@ final class DebugScreenState {
   ///   running: false,
   ///   result: null,
   ///   logs: [],
+  ///   forceSpatialOcr: false,
   /// );
   /// ```
   const DebugScreenState({
     required this.running,
     required this.result,
     required this.logs,
+    required this.forceSpatialOcr,
   });
 
   /// 初期状態。
@@ -29,6 +31,7 @@ final class DebugScreenState {
     running: false,
     result: null,
     logs: [],
+    forceSpatialOcr: false,
   );
 
   /// 診断実行中なら true。
@@ -39,4 +42,7 @@ final class DebugScreenState {
 
   /// 表示するログ行（新しい順ではない、ストア順）。
   final List<AppLogEntry> logs;
+
+  /// 空間 OCR 強制が ON なら true。
+  final bool forceSpatialOcr;
 }

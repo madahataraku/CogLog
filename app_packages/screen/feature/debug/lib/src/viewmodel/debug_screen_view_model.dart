@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:foundation_app_log/foundation_app_log.dart';
+import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
@@ -12,6 +13,7 @@ import 'delegate/on_back_delegate.dart';
 import 'delegate/on_clear_logs_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_refresh_logs_delegate.dart';
+import 'delegate/on_toggle_force_spatial_ocr_delegate.dart';
 import 'entity/debug_screen_entity.dart';
 import 'state/debug_screen_state.dart';
 
@@ -34,10 +36,19 @@ final class DebugScreenViewModel {
   static final provider = Provider.autoDispose<DebugScreenViewModel>(
     (ref) {
       final log = ref.watch(appLogStoreProvider);
+      final forceSpatialOcr = ref.watch(forceSpatialOcrStoreProvider);
       final result = DebugScreenViewModel._(
-        state: MutableStateStream(DebugScreenState.initial),
+        state: MutableStateStream(
+          DebugScreenState(
+            running: false,
+            result: null,
+            logs: [],
+            forceSpatialOcr: forceSpatialOcr.enabled,
+          ),
+        ),
         diagnoseUsecase: ref.watch(DiagnoseOnDeviceLlmUsecase.provider),
         log: log,
+        forceSpatialOcr: forceSpatialOcr,
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const DebugStateToEntityDelegate(),
       );
@@ -45,9 +56,26 @@ final class DebugScreenViewModel {
         unawaited(result.onRefreshLogs());
       }
 
+      void onForceSpatialOcrChanged() {
+        unawaited(
+          result.state.updateWithLock((current, emitter) async {
+            await emitter.emit(
+              DebugScreenState(
+                running: current.running,
+                result: current.result,
+                logs: current.logs,
+                forceSpatialOcr: forceSpatialOcr.enabled,
+              ),
+            );
+          }),
+        );
+      }
+
       log.addListener(onLogChanged);
+      forceSpatialOcr.addListener(onForceSpatialOcrChanged);
       ref.onDispose(() {
         log.removeListener(onLogChanged);
+        forceSpatialOcr.removeListener(onForceSpatialOcrChanged);
         unawaited(result._close());
       });
       return result;
@@ -55,6 +83,7 @@ final class DebugScreenViewModel {
     dependencies: [
       DiagnoseOnDeviceLlmUsecase.provider,
       appLogStoreProvider,
+      forceSpatialOcrStoreProvider,
       screenNavigationProvider,
     ],
   );
@@ -70,6 +99,10 @@ final class DebugScreenViewModel {
   /// アプリログ。
   @visibleForTesting
   final AppLogStore log;
+
+  /// 空間 OCR 強制ストア。
+  @visibleForTesting
+  final ForceSpatialOcrStore forceSpatialOcr;
 
   /// 画面遷移。
   @visibleForTesting
@@ -89,6 +122,7 @@ final class DebugScreenViewModel {
     required this.state,
     required this.diagnoseUsecase,
     required this.log,
+    required this.forceSpatialOcr,
     required this.navigation,
     required this.stateToEntity,
   });

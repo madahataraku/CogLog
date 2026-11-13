@@ -805,6 +805,12 @@ abstract class L10n {
   /// **'ログはまだありません'**
   String get screen_feature_debug_empty_logs;
 
+  /// 空間 OCR 強制スイッチの項目名
+  ///
+  /// In ja, this message translates to:
+  /// **'空間 OCR を強制'**
+  String get screen_feature_debug_force_spatial_ocr_item;
+
   /// 生成例外ラベル
   ///
   /// In ja, this message translates to:
@@ -882,6 +888,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'アプリログ'**
   String get screen_feature_debug_section_logs;
+
+  /// デバッグ上書きセクション見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'上書き'**
+  String get screen_feature_debug_section_overrides;
 
   /// 生成プローブ見出し
   ///

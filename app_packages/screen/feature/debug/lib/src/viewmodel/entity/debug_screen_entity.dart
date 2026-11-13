@@ -17,6 +17,7 @@
 ///   prepareError: '-',
 ///   probeSkipped: '-',
 ///   logLines: [],
+///   forceSpatialOcr: false,
 /// );
 /// ```
 final class DebugScreenEntity {
@@ -39,6 +40,7 @@ final class DebugScreenEntity {
   ///   prepareError: '-',
   ///   probeSkipped: '-',
   ///   logLines: ['line'],
+  ///   forceSpatialOcr: true,
   /// );
   /// ```
   const DebugScreenEntity({
@@ -56,6 +58,7 @@ final class DebugScreenEntity {
     required this.prepareError,
     required this.probeSkipped,
     required this.logLines,
+    required this.forceSpatialOcr,
   });
 
   /// 診断実行中。
@@ -99,4 +102,7 @@ final class DebugScreenEntity {
 
   /// 新しい行が上になるログ文字列。
   final List<String> logLines;
+
+  /// 空間 OCR 強制スイッチの値。
+  final bool forceSpatialOcr;
 }

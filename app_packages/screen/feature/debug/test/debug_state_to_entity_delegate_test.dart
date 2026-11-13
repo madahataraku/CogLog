@@ -13,9 +13,10 @@ void main() {
     expect(entity.readiness, '-');
     expect(entity.canGenerate, isNull);
     expect(entity.logLines, isEmpty);
+    expect(entity.forceSpatialOcr, isFalse);
   });
 
-  test('結果とログを写す', () {
+  test('結果とログと強制フラグを写す', () {
     final entity = const DebugStateToEntityDelegate().execute(
       DebugScreenState(
         running: false,
@@ -37,11 +38,13 @@ void main() {
             message: 'm',
           ),
         ],
+        forceSpatialOcr: true,
       ),
     );
     expect(entity.readiness, 'ready');
     expect(entity.canGenerate, isTrue);
     expect(entity.sampleOutput, 'hi');
     expect(entity.logLines.single, contains('t: m'));
+    expect(entity.forceSpatialOcr, isTrue);
   });
 }

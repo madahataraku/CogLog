@@ -47,15 +47,25 @@ final class OnInitializeDelegate {
   /// await delegate.execute();
   /// ```
   Future<void> execute() async {
-    await state.updateWithLock((_, emitter) async {
+    await state.updateWithLock((current, emitter) async {
       await emitter.emit(
-        DebugScreenState(running: true, result: null, logs: log.entries),
+        DebugScreenState(
+          running: true,
+          result: null,
+          logs: log.entries,
+          forceSpatialOcr: current.forceSpatialOcr,
+        ),
       );
     });
     final result = await diagnoseUsecase.execute();
-    await state.updateWithLock((_, emitter) async {
+    await state.updateWithLock((current, emitter) async {
       await emitter.emit(
-        DebugScreenState(running: false, result: result, logs: log.entries),
+        DebugScreenState(
+          running: false,
+          result: result,
+          logs: log.entries,
+          forceSpatialOcr: current.forceSpatialOcr,
+        ),
       );
     });
   }

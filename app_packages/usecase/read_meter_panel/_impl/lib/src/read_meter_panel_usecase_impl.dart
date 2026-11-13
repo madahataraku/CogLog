@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 
 /// LLM ready なら LLM のみ、それ以外は空間 OCR のみを試す（併用しない）。
 ///
+/// デバッグの空間 OCR 強制が ON のときは LLM ready でも空間 OCR のみとし、
+/// 使えなければ手打ちへ進む（LLM には戻さない）。
 /// 全体の上限は [timeout]（既定 30 秒）。超過時はその時点の結果を返す。
 ///
 /// Example:
@@ -15,10 +18,11 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 ///   llm: llm,
 ///   llmEngine: llmEngine,
 ///   spatialEngine: spatialEngine,
+///   forceSpatialOcr: ForceSpatialOcrStore(),
 /// ).execute(ReadMeterPanelRequest(photoBytes: Uint8List(0)));
 /// ```
 final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
-  /// [llm] の可否で [llmEngine] / [spatialEngine] を排他選択する。
+  /// [forceSpatialOcr] と [llm] の可否で [llmEngine] / [spatialEngine] を排他選択する。
   ///
   /// Example:
   /// ```dart
@@ -26,12 +30,14 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   ///   llm: llm,
   ///   llmEngine: llmEngine,
   ///   spatialEngine: spatialEngine,
+  ///   forceSpatialOcr: ForceSpatialOcrStore(),
   /// );
   /// ```
   const ReadMeterPanelUsecaseImpl({
     required this.llm,
     required this.llmEngine,
     required this.spatialEngine,
+    required this.forceSpatialOcr,
     this.timeout = const Duration(seconds: 30),
   });
 
@@ -43,6 +49,9 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
 
   /// 空間 OCR エンジン。
   final MeterReadingEngine spatialEngine;
+
+  /// デバッグ用の空間 OCR 強制フラグ。
+  final ForceSpatialOcrStore forceSpatialOcr;
 
   /// 読み取り全体の上限。
   final Duration timeout;
@@ -90,7 +99,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     );
   }
 
-  /// ready かつ vision なら LLM、それ以外は空間 OCR（利用不可なら null）。
+  /// 強制 ON なら空間 OCR のみ。通常は ready+vision なら LLM、それ以外は空間 OCR。
   ///
   /// Example:
   /// ```dart
@@ -98,6 +107,12 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   /// await usecase.execute(request);
   /// ```
   Future<MeterReadingEngine?> _selectEngine() async {
+    if (forceSpatialOcr.enabled) {
+      if (await spatialEngine.isAvailable) {
+        return spatialEngine;
+      }
+      return null;
+    }
     final readiness = await llm.readiness;
     final vision = await llm.supportsVision;
     if (readiness == OnDeviceLlmReadiness.ready && vision) {

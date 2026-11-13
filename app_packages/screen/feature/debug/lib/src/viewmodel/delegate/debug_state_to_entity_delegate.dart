@@ -57,6 +57,7 @@ final class DebugStateToEntityDelegate {
       prepareError: dash(result?.prepareError),
       probeSkipped: dash(result?.probeSkippedReason),
       logLines: logLines,
+      forceSpatialOcr: state.forceSpatialOcr,
     );
   }
 }

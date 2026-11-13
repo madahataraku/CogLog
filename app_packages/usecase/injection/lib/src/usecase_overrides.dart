@@ -4,6 +4,7 @@ import 'package:data_repository_exercise_history/data_repository_exercise_histor
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
+import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
@@ -217,6 +218,7 @@ List<Override> usecaseOverrides({
       llm: ref.watch(onDeviceLlmProvider),
       llmEngine: ref.watch(meterReadingLlmEngineProvider),
       spatialEngine: ref.watch(meterReadingSpatialEngineProvider),
+      forceSpatialOcr: ref.watch(forceSpatialOcrStoreProvider),
     ),
   ),
   SyncExerciseReminderUsecase.provider.overrideWith(

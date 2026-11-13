@@ -37,6 +37,7 @@ final class OnRefreshLogsDelegate {
           running: current.running,
           result: current.result,
           logs: log.entries,
+          forceSpatialOcr: current.forceSpatialOcr,
         ),
       );
     });
