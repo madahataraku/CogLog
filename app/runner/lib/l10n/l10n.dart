@@ -1710,11 +1710,137 @@ abstract class L10n {
   /// **'実績'**
   String get screen_feature_top_actual_label;
 
+  /// 条件付き all_perfect 1
+  ///
+  /// In ja, this message translates to:
+  /// **'パーフェクト！今日の目標は達成です！毎日コツコツ運動するのが大切です。明日もまた頑張りましょう！'**
+  String get screen_feature_top_advice_all_perfect_1;
+
+  /// 条件付き all_perfect 2
+  ///
+  /// In ja, this message translates to:
+  /// **'今日の目標、しっかり達成できました。小さな積み重ねが効いてきます。明日もこのペースでいきましょう。'**
+  String get screen_feature_top_advice_all_perfect_2;
+
+  /// 条件付き all_perfect 3
+  ///
+  /// In ja, this message translates to:
+  /// **'目標クリア、おつかれさまです！継続がいちばんの近道です。また明日も記録してみましょう。'**
+  String get screen_feature_top_advice_all_perfect_3;
+
+  /// 条件付き near_miss_low 1
+  ///
+  /// In ja, this message translates to:
+  /// **'{metric}をあと一歩伸ばしたら今日の目標は達成です。もうひと踏ん張り！頑張りましょう！'**
+  String screen_feature_top_advice_near_miss_low_1(String metric);
+
+  /// 条件付き near_miss_low 2
+  ///
+  /// In ja, this message translates to:
+  /// **'今日の達成まで、もう少しです。{metric}を伸ばせばゴールです。応援しています！'**
+  String screen_feature_top_advice_near_miss_low_2(String metric);
+
+  /// 条件付き near_miss_low 3
+  ///
+  /// In ja, this message translates to:
+  /// **'{metric}があと一息です。そこを超えれば、今日の目標クリアですよ。'**
+  String screen_feature_top_advice_near_miss_low_3(String metric);
+
   /// 履歴0件のワンポイント
   ///
   /// In ja, this message translates to:
   /// **'今日はまだ運動の記録がありません。記録があると、目標との差も見えやすくなります。'**
   String get screen_feature_top_advice_no_exercise;
+
+  /// 条件付き no_positive_goal 1
+  ///
+  /// In ja, this message translates to:
+  /// **'記録ありがとうございます。一日あたりの目標を設定すると、達成の目安が見やすくなります。'**
+  String get screen_feature_top_advice_no_positive_goal_1;
+
+  /// 条件付き no_positive_goal 2
+  ///
+  /// In ja, this message translates to:
+  /// **'今日の記録を残せました。目標を決めておくと、次の一歩が選びやすくなりますよ。'**
+  String get screen_feature_top_advice_no_positive_goal_2;
+
+  /// 条件付き no_positive_goal 3
+  ///
+  /// In ja, this message translates to:
+  /// **'記録おつかれさまです。正の目標を設定すると、ホームで達成の進み具合が見られるようになります。'**
+  String get screen_feature_top_advice_no_positive_goal_3;
+
+  /// 条件付き one_achieved 1
+  ///
+  /// In ja, this message translates to:
+  /// **'{metric}は目標を達成しました。あとは残りふたつ。きっとできますよ！'**
+  String screen_feature_top_advice_one_achieved_1(String metric);
+
+  /// 条件付き one_achieved 2
+  ///
+  /// In ja, this message translates to:
+  /// **'{metric}クリア、いいスタートです。残るふたつも、この調子でいきましょう！'**
+  String screen_feature_top_advice_one_achieved_2(String metric);
+
+  /// 条件付き one_achieved 3
+  ///
+  /// In ja, this message translates to:
+  /// **'まずは{metric}を達成できました。あとふたつ、焦らず進めましょう。'**
+  String screen_feature_top_advice_one_achieved_3(String metric);
+
+  /// 条件付き over_200 1
+  ///
+  /// In ja, this message translates to:
+  /// **'今日は大きく目標を超えることができました！素晴らしい成果です。もし、簡単なら、より高い目標を設定してみましょう！'**
+  String get screen_feature_top_advice_over_200_1;
+
+  /// 条件付き over_200 2
+  ///
+  /// In ja, this message translates to:
+  /// **'目標の2倍を超えています。調子が良い証拠です。余裕があるなら、目標を少し上げてみるのもおすすめです。'**
+  String get screen_feature_top_advice_over_200_2;
+
+  /// 条件付き over_200 3
+  ///
+  /// In ja, this message translates to:
+  /// **'大きく上振れできましたね。この調子なら、次はもう一段高い目標にも挑戦できそうです。'**
+  String get screen_feature_top_advice_over_200_3;
+
+  /// 条件付き over_300 1
+  ///
+  /// In ja, this message translates to:
+  /// **'今日はさらに大きく目標を超えましたね。とてつもない成果です！ただし、やり過ぎは禁物。適度な休養も取りましょう。'**
+  String get screen_feature_top_advice_over_300_1;
+
+  /// 条件付き over_300 2
+  ///
+  /// In ja, this message translates to:
+  /// **'目標の3倍を超えるペースです。素晴らしい一方で、体をいたわる時間も大切にしましょう。'**
+  String get screen_feature_top_advice_over_300_2;
+
+  /// 条件付き over_300 3
+  ///
+  /// In ja, this message translates to:
+  /// **'驚異的な伸びです！調子が良くても、回復の日を挟むと続きやすくなります。'**
+  String get screen_feature_top_advice_over_300_3;
+
+  /// 条件付き streak_goals 1
+  ///
+  /// In ja, this message translates to:
+  /// **'今日も目標を達成できました！継続は力なり、さらに高い目標を設定してもいいかも知れません。目標の自動更新機能も試してみてね。'**
+  String get screen_feature_top_advice_streak_goals_1;
+
+  /// 条件付き streak_goals 2
+  ///
+  /// In ja, this message translates to:
+  /// **'連日の目標達成、すばらしいです。積み重ねが力になります。自動更新で目標を伸ばすのもありですよ。'**
+  String get screen_feature_top_advice_streak_goals_2;
+
+  /// 条件付き streak_goals 3
+  ///
+  /// In ja, this message translates to:
+  /// **'また目標をクリアできました。続いている今がチャンスです。目標の自動更新も活用してみてください。'**
+  String get screen_feature_top_advice_streak_goals_3;
 
   /// LLM不可時の定型1
   ///
@@ -1733,6 +1859,42 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'小さな積み重ねが続きます。今日も自分のペースで進めましょう。'**
   String get screen_feature_top_advice_template_3;
+
+  /// 条件付き two_achieved 1
+  ///
+  /// In ja, this message translates to:
+  /// **'{metric}があと少しです。残りひとつ、頑張りましょう！'**
+  String screen_feature_top_advice_two_achieved_1(String metric);
+
+  /// 条件付き two_achieved 2
+  ///
+  /// In ja, this message translates to:
+  /// **'あと一歩、{metric}が届けば今日の目標は達成です。もうひと踏ん張りです！'**
+  String screen_feature_top_advice_two_achieved_2(String metric);
+
+  /// 条件付き two_achieved 3
+  ///
+  /// In ja, this message translates to:
+  /// **'ふたつクリアできています。残るは{metric}だけ。きっとできますよ！'**
+  String screen_feature_top_advice_two_achieved_3(String metric);
+
+  /// 条件付き welcome_back 1
+  ///
+  /// In ja, this message translates to:
+  /// **'おかえりなさい！また今日から頑張っていきましょう！目標が高すぎたら、一度少し下げてみるのもいいかも知れません。'**
+  String get screen_feature_top_advice_welcome_back_1;
+
+  /// 条件付き welcome_back 2
+  ///
+  /// In ja, this message translates to:
+  /// **'お久しぶりです。再スタート、応援しています。きつかったら目標を見直すのも手ですよ。'**
+  String get screen_feature_top_advice_welcome_back_2;
+
+  /// 条件付き welcome_back 3
+  ///
+  /// In ja, this message translates to:
+  /// **'また記録できましたね。無理のないペースで再開しましょう。目標の調整も遠慮なくどうぞ。'**
+  String get screen_feature_top_advice_welcome_back_3;
 
   /// アドバイスキャラクターの代替テキスト
   ///

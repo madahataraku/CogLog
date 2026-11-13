@@ -964,8 +964,98 @@ class L10nEn extends L10n {
   String get screen_feature_top_actual_label => 'Actual';
 
   @override
+  String get screen_feature_top_advice_all_perfect_1 =>
+      'Perfect—today\'s goals are done! Steady daily movement matters. Let\'s go again tomorrow.';
+
+  @override
+  String get screen_feature_top_advice_all_perfect_2 =>
+      'You solidly met today\'s goals. Small stacks add up. Keep this pace tomorrow.';
+
+  @override
+  String get screen_feature_top_advice_all_perfect_3 =>
+      'Goals cleared—nice work! Staying consistent is the shortest path. Log again tomorrow.';
+
+  @override
+  String screen_feature_top_advice_near_miss_low_1(String metric) {
+    return 'Stretch $metric a little more and today\'s goals are done. One more push!';
+  }
+
+  @override
+  String screen_feature_top_advice_near_miss_low_2(String metric) {
+    return 'Almost there today. Grow $metric and you reach the finish. Cheering you on!';
+  }
+
+  @override
+  String screen_feature_top_advice_near_miss_low_3(String metric) {
+    return '$metric needs one last bit. Clear it and today\'s goals are yours.';
+  }
+
+  @override
   String get screen_feature_top_advice_no_exercise =>
       'No exercise logged today. Logging makes the gap to your goals easier to see.';
+
+  @override
+  String get screen_feature_top_advice_no_positive_goal_1 =>
+      'Thanks for logging. Setting a daily goal makes progress easier to see.';
+
+  @override
+  String get screen_feature_top_advice_no_positive_goal_2 =>
+      'Today\'s log is in. Picking a goal helps you choose the next step.';
+
+  @override
+  String get screen_feature_top_advice_no_positive_goal_3 =>
+      'Nice work logging. A positive daily goal unlocks progress on Home.';
+
+  @override
+  String screen_feature_top_advice_one_achieved_1(String metric) {
+    return '$metric met the goal. Two left—you can do it!';
+  }
+
+  @override
+  String screen_feature_top_advice_one_achieved_2(String metric) {
+    return '$metric cleared—good start. Keep that pace for the other two!';
+  }
+
+  @override
+  String screen_feature_top_advice_one_achieved_3(String metric) {
+    return 'First, $metric is done. Two remain—no rush.';
+  }
+
+  @override
+  String get screen_feature_top_advice_over_200_1 =>
+      'You clearly beat your goals today—great work! If it felt easy, try setting a higher target.';
+
+  @override
+  String get screen_feature_top_advice_over_200_2 =>
+      'You\'re past double your goals. That\'s a strong sign. If you have room, nudge the goals up a bit.';
+
+  @override
+  String get screen_feature_top_advice_over_200_3 =>
+      'A big overshoot today. At this pace, the next step up in goals looks reachable.';
+
+  @override
+  String get screen_feature_top_advice_over_300_1 =>
+      'You went well beyond your goals today—an incredible result! Still, don\'t overdo it. Make time to rest.';
+
+  @override
+  String get screen_feature_top_advice_over_300_2 =>
+      'You\'re pacing at more than triple your goals. Amazing—and take care to recover, too.';
+
+  @override
+  String get screen_feature_top_advice_over_300_3 =>
+      'What a leap! Even when things go well, a recovery day helps you keep going.';
+
+  @override
+  String get screen_feature_top_advice_streak_goals_1 =>
+      'You hit your goals again today! Consistency pays off—raising them a bit may be fine. Try auto-update too.';
+
+  @override
+  String get screen_feature_top_advice_streak_goals_2 =>
+      'Goals met several days in a row—wonderful. Stacking days builds strength. Auto-update can raise them for you.';
+
+  @override
+  String get screen_feature_top_advice_streak_goals_3 =>
+      'Another clear day. While the streak holds, try goal auto-update as well.';
 
   @override
   String get screen_feature_top_advice_template_1 =>
@@ -978,6 +1068,33 @@ class L10nEn extends L10n {
   @override
   String get screen_feature_top_advice_template_3 =>
       'Small steps add up. Keep going at your own pace today.';
+
+  @override
+  String screen_feature_top_advice_two_achieved_1(String metric) {
+    return '$metric is almost there. One left—you\'ve got this!';
+  }
+
+  @override
+  String screen_feature_top_advice_two_achieved_2(String metric) {
+    return 'One more push: clear $metric and today\'s goals are done.';
+  }
+
+  @override
+  String screen_feature_top_advice_two_achieved_3(String metric) {
+    return 'Two cleared. Only $metric remains. You can do it!';
+  }
+
+  @override
+  String get screen_feature_top_advice_welcome_back_1 =>
+      'Welcome back! Let\'s keep at it from today. If goals feel high, lowering them a little is fine.';
+
+  @override
+  String get screen_feature_top_advice_welcome_back_2 =>
+      'Long time no see. Glad you\'re restarting. Revisiting goals is okay if it feels hard.';
+
+  @override
+  String get screen_feature_top_advice_welcome_back_3 =>
+      'Nice to see a log again. Ease back in at your pace. Adjust goals anytime.';
 
   @override
   String get screen_feature_top_advisor_semantics => 'Advisor';

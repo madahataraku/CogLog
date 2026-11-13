@@ -9,6 +9,7 @@ import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../strings.dart';
 import '../viewmodel/top_screen_view_model.dart';
+import 'top_conditional_advice_catalog.dart';
 import 'top_screen_impl.dart';
 import 'top_screen_providers.dart';
 
@@ -56,6 +57,8 @@ class TopScreen extends HookConsumerWidget {
         tone: AdviceTone.fun,
       ),
     ];
+    final conditionalCatalog = buildTopConditionalAdviceCatalog();
+    final metricLabels = buildTopConditionalAdviceMetricLabels();
     final homeTabSelected = (ShellTabIndexScope.maybeOf(context) ?? 0) == 0;
     final lifecycle = useAppLifecycleState();
     useEffect(() {
@@ -70,6 +73,8 @@ class TopScreen extends HookConsumerWidget {
         locale: locale,
         noExercise: noExercise,
         fallbackTemplates: fallbackTemplates,
+        conditionalCatalog: conditionalCatalog,
+        metricLabels: metricLabels,
       );
       return null;
     }, [viewModel, homeTabSelected, locale, lifecycle]);

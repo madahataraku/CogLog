@@ -18,10 +18,12 @@ final class _Load implements LoadTopScreenUsecase {
 
   final LoadTopScreenResult result;
   var calls = 0;
+  LoadTopScreenRequest? lastRequest;
 
   @override
   Future<LoadTopScreenResult> execute(LoadTopScreenRequest request) async {
     calls += 1;
+    lastRequest = request;
     return result;
   }
 }
@@ -90,6 +92,16 @@ const _fallbackTemplates = [
   AdviceTemplate(text: 'c', tone: AdviceTone.fun),
 ];
 
+final _conditionalCatalog = ConditionalAdviceCatalog(
+  over300: const [AdviceTemplate(text: 'over', tone: AdviceTone.realized)],
+);
+
+const _metricLabels = {
+  ConditionalAdviceMetric.distance: '走行距離',
+  ConditionalAdviceMetric.calories: '消費カロリー',
+  ConditionalAdviceMetric.duration: '運動時間',
+};
+
 const _loadResult = LoadTopScreenResult(
   metric: PeriodTotalMetric.calories,
   today: PeriodAggregate(
@@ -132,6 +144,8 @@ void main() {
       locale: 'ja',
       noExercise: _noExercise,
       fallbackTemplates: _fallbackTemplates,
+      conditionalCatalog: _conditionalCatalog,
+      metricLabels: _metricLabels,
     );
 
     expect(state.state.loaded, isTrue);
@@ -143,6 +157,36 @@ void main() {
     expect(load.calls, 1);
     expect(advice.calls, 1);
     expect(advice.lastRequest?.locale, 'ja');
+    expect(
+      advice.lastRequest?.consecutiveGoalAchievementDays,
+      _loadResult.consecutiveGoalAchievementDays,
+    );
+    expect(
+      advice.lastRequest?.daysSincePreviousExerciseDay,
+      _loadResult.daysSincePreviousExerciseDay,
+    );
+    expect(advice.lastRequest?.conditionalCatalog, _conditionalCatalog);
+    expect(advice.lastRequest?.metricLabels, _metricLabels);
+  });
+
+  test('Load と Advice で同じ now を渡す', () async {
+    final load = _Load(_loadResult);
+    final advice = _Advice();
+    await OnInitializeDelegate(
+      state: state,
+      loadTopScreenUsecase: load,
+      generateTopAdviceUsecase: advice,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+    ).execute(
+      locale: 'ja',
+      noExercise: _noExercise,
+      fallbackTemplates: _fallbackTemplates,
+      conditionalCatalog: _conditionalCatalog,
+      metricLabels: _metricLabels,
+    );
+
+    expect(load.lastRequest?.now, advice.lastRequest?.now);
   });
 
   test('OnInitialize を 2 回呼ぶと Generate も 2 回', () async {
@@ -159,11 +203,15 @@ void main() {
       locale: 'ja',
       noExercise: _noExercise,
       fallbackTemplates: _fallbackTemplates,
+      conditionalCatalog: _conditionalCatalog,
+      metricLabels: _metricLabels,
     );
     await delegate.execute(
       locale: 'ja',
       noExercise: _noExercise,
       fallbackTemplates: _fallbackTemplates,
+      conditionalCatalog: _conditionalCatalog,
+      metricLabels: _metricLabels,
     );
 
     expect(load.calls, 2);
@@ -181,6 +229,8 @@ void main() {
       locale: 'ja',
       noExercise: _noExercise,
       fallbackTemplates: _fallbackTemplates,
+      conditionalCatalog: _conditionalCatalog,
+      metricLabels: _metricLabels,
     );
     expect(state.state.loaded, isTrue);
     expect(state.state.pendingModelDownloadGuidance, isTrue);
@@ -202,6 +252,8 @@ void main() {
           locale: 'ja',
           noExercise: _noExercise,
           fallbackTemplates: _fallbackTemplates,
+          conditionalCatalog: _conditionalCatalog,
+          metricLabels: _metricLabels,
         );
 
     await Future<void>.delayed(const Duration(milliseconds: 10));
@@ -227,6 +279,8 @@ void main() {
       locale: 'ja',
       noExercise: _noExercise,
       fallbackTemplates: _fallbackTemplates,
+      conditionalCatalog: _conditionalCatalog,
+      metricLabels: _metricLabels,
     );
     expect(state.state.pendingModelDownloadGuidance, isFalse);
     expect(evaluate.calls, 0);
@@ -243,6 +297,8 @@ void main() {
       locale: 'ja',
       noExercise: _noExercise,
       fallbackTemplates: _fallbackTemplates,
+      conditionalCatalog: _conditionalCatalog,
+      metricLabels: _metricLabels,
     );
     expect(state.state.pendingModelDownloadGuidance, isFalse);
   });

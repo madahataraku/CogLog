@@ -154,6 +154,12 @@ Future<void> _pumpTop(WidgetTester tester, {required bool hasNew}) async {
     locale: 'ja',
     noExercise: const AdviceTemplate(text: 'a', tone: AdviceTone.realized),
     fallbackTemplates: const [AdviceTemplate(text: 'b', tone: AdviceTone.fun)],
+    conditionalCatalog: ConditionalAdviceCatalog(),
+    metricLabels: const {
+      ConditionalAdviceMetric.distance: '距離',
+      ConditionalAdviceMetric.calories: 'カロリー',
+      ConditionalAdviceMetric.duration: '時間',
+    },
   );
 
   await tester.pumpWidget(

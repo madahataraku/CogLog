@@ -1164,9 +1164,111 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_top_actual_label;
       },
+      'screen_feature_top_advice_all_perfect_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_all_perfect_1;
+      },
+      'screen_feature_top_advice_all_perfect_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_all_perfect_2;
+      },
+      'screen_feature_top_advice_all_perfect_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_all_perfect_3;
+      },
+      'screen_feature_top_advice_near_miss_low_1': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_near_miss_low_1(metric);
+      },
+      'screen_feature_top_advice_near_miss_low_2': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_near_miss_low_2(metric);
+      },
+      'screen_feature_top_advice_near_miss_low_3': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_near_miss_low_3(metric);
+      },
       'screen_feature_top_advice_no_exercise': (source) {
         // No Placeholders
         return l10n.screen_feature_top_advice_no_exercise;
+      },
+      'screen_feature_top_advice_no_positive_goal_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_no_positive_goal_1;
+      },
+      'screen_feature_top_advice_no_positive_goal_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_no_positive_goal_2;
+      },
+      'screen_feature_top_advice_no_positive_goal_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_no_positive_goal_3;
+      },
+      'screen_feature_top_advice_one_achieved_1': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_one_achieved_1(metric);
+      },
+      'screen_feature_top_advice_one_achieved_2': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_one_achieved_2(metric);
+      },
+      'screen_feature_top_advice_one_achieved_3': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_one_achieved_3(metric);
+      },
+      'screen_feature_top_advice_over_200_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_over_200_1;
+      },
+      'screen_feature_top_advice_over_200_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_over_200_2;
+      },
+      'screen_feature_top_advice_over_200_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_over_200_3;
+      },
+      'screen_feature_top_advice_over_300_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_over_300_1;
+      },
+      'screen_feature_top_advice_over_300_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_over_300_2;
+      },
+      'screen_feature_top_advice_over_300_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_over_300_3;
+      },
+      'screen_feature_top_advice_streak_goals_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_streak_goals_1;
+      },
+      'screen_feature_top_advice_streak_goals_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_streak_goals_2;
+      },
+      'screen_feature_top_advice_streak_goals_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_streak_goals_3;
       },
       'screen_feature_top_advice_template_1': (source) {
         // No Placeholders
@@ -1179,6 +1281,39 @@ final class L10nHelper {
       'screen_feature_top_advice_template_3': (source) {
         // No Placeholders
         return l10n.screen_feature_top_advice_template_3;
+      },
+      'screen_feature_top_advice_two_achieved_1': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_two_achieved_1(metric);
+      },
+      'screen_feature_top_advice_two_achieved_2': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_two_achieved_2(metric);
+      },
+      'screen_feature_top_advice_two_achieved_3': (source) {
+        // Has Placeholders
+        var index = 0;
+        String metric = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_advice_two_achieved_3(metric);
+      },
+      'screen_feature_top_advice_welcome_back_1': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_welcome_back_1;
+      },
+      'screen_feature_top_advice_welcome_back_2': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_welcome_back_2;
+      },
+      'screen_feature_top_advice_welcome_back_3': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_advice_welcome_back_3;
       },
       'screen_feature_top_advisor_semantics': (source) {
         // No Placeholders

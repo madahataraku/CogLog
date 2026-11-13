@@ -22,6 +22,8 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     required String locale,
     required AdviceTemplate noExercise,
     required List<AdviceTemplate> fallbackTemplates,
+    required ConditionalAdviceCatalog conditionalCatalog,
+    required Map<ConditionalAdviceMetric, String> metricLabels,
   }) {
     final delegate = OnInitializeDelegate(
       state: state,
@@ -34,6 +36,8 @@ extension TopScreenViewModelActions on TopScreenViewModel {
       locale: locale,
       noExercise: noExercise,
       fallbackTemplates: fallbackTemplates,
+      conditionalCatalog: conditionalCatalog,
+      metricLabels: metricLabels,
     );
   }
 
