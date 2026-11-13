@@ -166,4 +166,85 @@ void main() {
     ]);
     expect(counts, {'bareNumber': 2, 'distanceLabel': 1, 'other': 2});
   });
+
+  test('前後ノイズ付き数値をラベル近傍で読む', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('距離', 0.1, 0.10, 0.2, 0.05),
+      t('~12.3!', 0.1, 0.18, 0.2, 0.06),
+      t('時間', 0.1, 0.30, 0.2, 0.05),
+      t('0.30.00', 0.1, 0.38, 0.25, 0.06),
+      t('カロリー', 0.1, 0.50, 0.25, 0.05),
+      t('200kcal.', 0.1, 0.58, 0.2, 0.06),
+    ]);
+    expect(values.distanceKm, 12.3);
+    expect(values.duration, const Duration(minutes: 30));
+    expect(values.caloriesKcal, 200);
+  });
+
+  test('OCR桁化けと日本語分を読む', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('距離', 0.1, 0.10, 0.2, 0.05),
+      t('l2.o', 0.1, 0.18, 0.2, 0.06),
+      t('時間', 0.1, 0.30, 0.2, 0.05),
+      t('30分', 0.1, 0.38, 0.2, 0.06),
+    ]);
+    expect(values.distanceKm, 12.0);
+    expect(values.duration, const Duration(minutes: 30));
+  });
+
+  test('| 付き桁化けは補正してから数値にする', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('距離', 0.1, 0.10, 0.2, 0.05),
+      t('|2.0', 0.1, 0.18, 0.2, 0.06),
+    ]);
+    expect(values.distanceKm, 12.0);
+  });
+
+  test('単位付き桁化けと hms 形式を読む', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('カロリー', 0.1, 0.10, 0.2, 0.05),
+      t('l2kcal', 0.1, 0.18, 0.2, 0.06),
+      t('時間', 0.1, 0.30, 0.2, 0.05),
+      t('0h3om00s', 0.1, 0.38, 0.25, 0.06),
+    ]);
+    expect(values.caloriesKcal, 12);
+    expect(values.duration, const Duration(minutes: 30));
+  });
+
+  test('末尾ノイズ付きでも単位と hms を読む', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('カロリー', 0.1, 0.10, 0.2, 0.05),
+      t('l2kcal.', 0.1, 0.18, 0.2, 0.06),
+      t('時間', 0.1, 0.30, 0.2, 0.05),
+      t('0h3om00s!', 0.1, 0.38, 0.25, 0.06),
+    ]);
+    expect(values.caloriesKcal, 12);
+    expect(values.duration, const Duration(minutes: 30));
+  });
+
+  test('負数は距離として採用しない', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('距離', 0.1, 0.10, 0.2, 0.05),
+      t('-12.3km', 0.1, 0.18, 0.2, 0.06),
+    ]);
+    expect(values.distanceKm, isNull);
+  });
+
+  test('負号付き hms は時間として採用しない', () {
+    final values = MeterSpatialLayoutInferencer.infer([
+      t('時間', 0.1, 0.10, 0.2, 0.05),
+      t('-1h30m00s', 0.1, 0.18, 0.25, 0.06),
+    ]);
+    expect(values.duration, isNull);
+  });
+
+  test('otherDigits は other のうち桁ありだけ数える', () {
+    final tokens = [
+      t('距離', 0.1, 0.1, 0.1, 0.04),
+      t('abc', 0.1, 0.2, 0.1, 0.04),
+      t('x9y', 0.1, 0.3, 0.1, 0.04),
+      t('12.3', 0.1, 0.4, 0.1, 0.04),
+    ];
+    expect(MeterSpatialLayoutInferencer.countOtherWithDigits(tokens), 1);
+  });
 }

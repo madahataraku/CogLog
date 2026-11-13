@@ -63,12 +63,16 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
   Future<MeterReadingValues> read(Uint8List photoBytes) async {
     final tokens = await recognizer.recognizeLayout(photoBytes);
     final kindCounts = MeterSpatialLayoutInferencer.classifyKindCounts(tokens);
+    final otherDigits = MeterSpatialLayoutInferencer.countOtherWithDigits(
+      tokens,
+    );
     log.append(
       tag: 'meter.spatial',
       level: tokens.isEmpty ? AppLogLevel.warn : AppLogLevel.info,
       message:
           'kind=${kind.name}; tokens=${tokens.length}; '
-          'classes=${_formatKindCounts(kindCounts)}',
+          'classes=${_formatKindCounts(kindCounts)}; '
+          'otherDigits=$otherDigits',
     );
     final values = MeterSpatialLayoutInferencer.infer(tokens);
     log.append(

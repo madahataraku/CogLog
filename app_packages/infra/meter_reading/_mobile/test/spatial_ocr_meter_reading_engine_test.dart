@@ -37,6 +37,7 @@ void main() {
       log.entries.first.message,
       contains('classes=[distanceValueWithUnit:1]'),
     );
+    expect(log.entries.first.message, contains('otherDigits=0'));
     expect(log.entries.first.message, isNot(contains('12.3')));
     expect(log.entries.last.message, contains('present=[distanceKm'));
     expect(log.entries.last.message, isNot(contains('distanceKm=12.3')));
