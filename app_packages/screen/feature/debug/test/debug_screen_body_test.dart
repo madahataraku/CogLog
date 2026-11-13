@@ -53,7 +53,7 @@ final class _Nav implements ScreenNavigation {
 
 void main() {
   group('syncLogText', () {
-    testWidgets('テキストが変わったとき selection を可能な範囲で維持する', (tester) async {
+    testWidgets('末尾追記では selection を維持する', (tester) async {
       final logController = TextEditingController(text: 'ab');
       logController.selection = const TextSelection(
         baseOffset: 1,
@@ -81,6 +81,29 @@ void main() {
       syncLogText(logController, scrollController, 'same');
 
       expect(listenerCount, 0);
+    });
+  });
+
+  group('mapLogSelection', () {
+    test('先頭破棄では残存部分へ選択を移す', () {
+      final mapped = mapLogSelection(
+        previousText: 'A\nB\nC',
+        nextText: 'B\nC\nD',
+        previousSelection: const TextSelection(baseOffset: 2, extentOffset: 3),
+      );
+      expect(mapped.baseOffset, 0);
+      expect(mapped.extentOffset, 1);
+      expect('B\nC\nD'.substring(mapped.start, mapped.end), 'B');
+    });
+
+    test('対応できない置換では選択を解除する', () {
+      final mapped = mapLogSelection(
+        previousText: 'abc',
+        nextText: 'xyz',
+        previousSelection: const TextSelection(baseOffset: 1, extentOffset: 2),
+      );
+      expect(mapped.isCollapsed, isTrue);
+      expect(mapped.baseOffset, 0);
     });
   });
 

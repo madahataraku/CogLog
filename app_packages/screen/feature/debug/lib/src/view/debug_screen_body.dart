@@ -202,7 +202,10 @@ class DebugScreenBody extends HookConsumerWidget {
   }
 }
 
-/// [logText] を [logController] へ同期し、[logScrollController] の offset を復元する。
+/// [logText] を [logController] へ同期し、必要なら [logScrollController] の offset を復元する。
+///
+/// 末尾追記では選択を維持し、先頭破棄では残存部分へ選択を移す。対応できない置換では選択を解除する。
+/// 利用者のドラッグ／慣性スクロール中、および補正不要時は [ScrollController.jumpTo] を呼ばない。
 ///
 /// Example:
 /// ```dart
@@ -217,22 +220,77 @@ void syncLogText(
   if (logController.text == logText) {
     return;
   }
+  final previousText = logController.text;
   final previousOffset = logScrollController.hasClients
       ? logScrollController.offset
       : 0.0;
   final previousSelection = logController.selection;
-  final max = logText.length;
-  final base = previousSelection.baseOffset.clamp(0, max);
-  final extent = previousSelection.extentOffset.clamp(0, max);
   logController.value = TextEditingValue(
     text: logText,
-    selection: TextSelection(baseOffset: base, extentOffset: extent),
+    selection: mapLogSelection(
+      previousText: previousText,
+      nextText: logText,
+      previousSelection: previousSelection,
+    ),
   );
   WidgetsBinding.instance.addPostFrameCallback((_) {
     if (!logScrollController.hasClients) {
       return;
     }
-    final maxScroll = logScrollController.position.maxScrollExtent;
-    logScrollController.jumpTo(previousOffset.clamp(0.0, maxScroll));
+    final position = logScrollController.position;
+    if (position.isScrollingNotifier.value) {
+      return;
+    }
+    final target = previousOffset.clamp(0.0, position.maxScrollExtent);
+    if ((position.pixels - target).abs() < 0.5) {
+      return;
+    }
+    logScrollController.jumpTo(target);
   });
+}
+
+/// ログ文字列の差し替えに合わせて [previousSelection] を写す。
+///
+/// Example:
+/// ```dart
+/// mapLogSelection(
+///   previousText: 'ab',
+///   nextText: 'abc',
+///   previousSelection: TextSelection(baseOffset: 1, extentOffset: 2),
+/// );
+/// ```
+@visibleForTesting
+TextSelection mapLogSelection({
+  required String previousText,
+  required String nextText,
+  required TextSelection previousSelection,
+}) {
+  if (!previousSelection.isValid) {
+    return const TextSelection.collapsed(offset: 0);
+  }
+  if (nextText.startsWith(previousText)) {
+    return TextSelection(
+      baseOffset: previousSelection.baseOffset.clamp(0, nextText.length),
+      extentOffset: previousSelection.extentOffset.clamp(0, nextText.length),
+    );
+  }
+  var drop = -1;
+  for (var i = 0; i <= previousText.length; i++) {
+    if (nextText.startsWith(previousText.substring(i))) {
+      drop = i;
+      break;
+    }
+  }
+  if (drop < 0 ||
+      previousSelection.baseOffset < drop ||
+      previousSelection.extentOffset < drop) {
+    return const TextSelection.collapsed(offset: 0);
+  }
+  return TextSelection(
+    baseOffset: (previousSelection.baseOffset - drop).clamp(0, nextText.length),
+    extentOffset: (previousSelection.extentOffset - drop).clamp(
+      0,
+      nextText.length,
+    ),
+  );
 }
