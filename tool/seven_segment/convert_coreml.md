@@ -116,11 +116,11 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
      --sscma-root "$SSCMA_ROOT"
    ```
 
-6. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認し、本ファイルと `SevenSegmentCoreMlRunner.swift` の定数をそれに合わせる。
+6. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認する（現行同梱物は `input` / `output`）。
 
-7. 成果物の bytes / SHA-256 を `assets/seven_segment/NOTICE.md` の iOS 節へ転記する。
+7. 成果物の bytes / SHA-256 を `assets/seven_segment/NOTICE.md` の iOS 節と照合する（現行: 1530698 / `fae51fe4…e5ee5`）。
 
-8. `ios/infra_meter_reading_mobile.podspec` は mlpackage が存在するときだけ `s.resources` に載せる。配置後は `pod install` でバンドルされることを確認する。
+8. `ios/infra_meter_reading_mobile.podspec` は mlpackage が存在するときだけ `s.resources` に載せる。同梱済みなら `pod install` でバンドルされることを確認する。
 
 ## よくあるエラー
 
