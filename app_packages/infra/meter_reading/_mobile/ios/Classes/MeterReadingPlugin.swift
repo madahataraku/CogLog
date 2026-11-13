@@ -29,13 +29,32 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
         )
         return
       }
-      recognize(imageBytes: bytes.data, result: result)
+      recognize(imageBytes: bytes.data, withLayout: false, result: result)
+    case "recognizeLayout":
+      guard
+        let args = call.arguments as? [String: Any],
+        let bytes = args["imageBytes"] as? FlutterStandardTypedData
+      else {
+        result(
+          FlutterError(
+            code: "BAD_ARGS",
+            message: "imageBytes is required",
+            details: nil
+          )
+        )
+        return
+      }
+      recognize(imageBytes: bytes.data, withLayout: true, result: result)
     default:
       result(FlutterMethodNotImplemented)
     }
   }
 
-  private func recognize(imageBytes: Data, result: @escaping FlutterResult) {
+  private func recognize(
+    imageBytes: Data,
+    withLayout: Bool,
+    result: @escaping FlutterResult
+  ) {
     guard let image = UIImage(data: imageBytes), let cgImage = image.cgImage else {
       result(
         FlutterError(
@@ -59,8 +78,25 @@ public class MeterReadingPlugin: NSObject, FlutterPlugin {
         return
       }
       let observations = (request.results as? [VNRecognizedTextObservation]) ?? []
-      let lines = observations.compactMap { $0.topCandidates(1).first?.string }
-      result(lines.joined(separator: "\n"))
+      if withLayout {
+        let tokens: [[String: Any]] = observations.compactMap { observation in
+          guard let text = observation.topCandidates(1).first?.string else {
+            return nil
+          }
+          let box = observation.boundingBox
+          return [
+            "text": text,
+            "left": box.origin.x,
+            "top": 1.0 - box.origin.y - box.size.height,
+            "width": box.size.width,
+            "height": box.size.height,
+          ]
+        }
+        result(tokens)
+      } else {
+        let lines = observations.compactMap { $0.topCandidates(1).first?.string }
+        result(lines.joined(separator: "\n"))
+      }
     }
     request.recognitionLevel = .accurate
     request.usesLanguageCorrection = true
