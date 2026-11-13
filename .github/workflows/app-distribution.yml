@@ -392,6 +392,26 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - name: Cache Gradle
+        if: ${{ matrix.platform == 'android' }}
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # actions/cache@v4.3.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('app/android/**/*.gradle*', 'app/android/**/*.gradle.kts', 'app/android/**/gradle-wrapper.properties', 'pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Android NDK
+        if: ${{ matrix.platform == 'android' }}
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # actions/cache@v4.3.0
+        with:
+          path: /usr/local/lib/android/sdk/ndk
+          key: ${{ runner.os }}-android-ndk-flutter-3.47.9
+          restore-keys: |
+            ${{ runner.os }}-android-ndk-
+
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # subosito/flutter-action@v2.23.0
         with:
@@ -404,46 +424,6 @@ jobs:
           set -euo pipefail
           flutter pub get
           dart run monolith_runner:define
-
-      - name: Analyze and test
-        run: |
-          set -euo pipefail
-          flutter analyze
-          # Golden 期待画像は Linux 描画を正とする。macOS では *_golden_test.dart を外す。
-          skip_goldens=0
-          if [ "$(uname -s)" = Darwin ]; then
-            skip_goldens=1
-          fi
-          while IFS= read -r pubspec; do
-            dir="$(dirname "$pubspec")"
-            if [ ! -d "${dir}/test" ]; then
-              continue
-            fi
-            echo "test ${dir}"
-            if grep -q 'sdk: flutter' "$pubspec"; then
-              (
-                cd "$dir"
-                if [ "${skip_goldens}" -eq 1 ]; then
-                  tests=()
-                  while IFS= read -r test_file; do
-                    tests+=("${test_file}")
-                  done < <(
-                    find test -type f -name '*_test.dart' \
-                      ! -name '*_golden_test.dart' | sort
-                  )
-                  if [ "${#tests[@]}" -eq 0 ]; then
-                    echo "skip ${dir}: golden-only on macOS"
-                    exit 0
-                  fi
-                  flutter test "${tests[@]}"
-                else
-                  flutter test
-                fi
-              )
-            else
-              (cd "$dir" && dart test)
-            fi
-          done < <(find . -name pubspec.yaml -not -path '*/.dart_tool/*' -not -path '*/build/*' | sort)
 
       - name: Accept Android licenses
         if: ${{ matrix.platform == 'android' }}

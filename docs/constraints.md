@@ -117,6 +117,17 @@ Flutter の版は App Distribution と同じく `3.47.9`（stable）に固定す
 
 これらのチェックをマージ条件にするため、Ruleset `mainブランチ` の required status checks に、上表のジョブ名 `Format`・`Analyze`・`Test` を入れる（シャード名は入れない）。設定場所は **Settings → Rules → mainブランチ** である。ワークフローを一度 `main` へマージして実行実績が出てから、チェック名を選べる。
 
+## Daily チェック
+
+`.github/workflows/daily-checks.yml` は、`main` に対して日次で Analyze と全パッケージテストを実行する。秘密情報や Environment は使わない。トリガーは `schedule`（毎日 17:00 UTC = 翌 02:00 JST）と、手動の `workflow_dispatch` である。checkout の `ref` は常に `main` とする。
+
+| ジョブ名 | 内容 |
+| --- | --- |
+| Analyze | PR Checks の Analyze と同じ（`flutter pub get` のあと `flutter analyze`） |
+| Test | PR Checks と同じく、`Test packages` のマトリクスシャード（`0` / `1` / `2`）を集約する |
+
+`Test packages` の分割方法・Flutter 版・Action の SHA ピン留めは PR Checks と同じである。Golden Test も含め、runner は `ubuntu-latest` のみとする。App Distribution では Analyze / テストを回さないため、main 上の回帰は Daily チェックで拾う。
+
 ## App Distribution
 
 `.github/workflows/app-distribution.yml` は、`main` への push と、`main` を選んだ手動の `workflow_dispatch` で、Android の release APK と iOS の Ad Hoc IPA を Firebase App Distribution へ出す。ジョブは `github.ref == refs/heads/main` のときだけ動き、Environment `app-distribution` を使う。
@@ -184,9 +195,9 @@ principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workl
 
 テスターグループはリポジトリ変数 `FIREBASE_APP_DISTRIBUTION_GROUPS` にカンマ区切りで置く。手動起動の `groups` 入力があるときはそれを使う。
 
-配布の前に、各 matrix レッグでリポジトリルートの `flutter analyze` と、`test/` がある各パッケージのテストを実行する。`sdk: flutter` を持つパッケージは `flutter test`、それ以外は `dart test` である。
+Analyze とパッケージテストは App Distribution では実行しない。PR では PR Checks、main の日次では Daily チェックが担う。配布ジョブは署名・ビルド・Firebase へのアップロードに専念する。
 
-Golden Test（`*_golden_test.dart`）の期待画像は Linux（PR Checks と android レッグの `ubuntu-latest`）で担保する。ios レッグの `macos-26` では、ホスト OS のフォント描画差でピクセルがずれるため、`*_golden_test.dart` を実行しない。ユニットテストとその他の `*_test.dart` は macOS でも実行する。
+Android レッグでは Gradle（`~/.gradle/caches` と `~/.gradle/wrapper`）と Android NDK（`$ANDROID_HOME/ndk`）を `actions/cache` でキャッシュする。キーには Gradle 設定・`pubspec.lock`・Flutter 版（NDK は `flutter.ndkVersion` に追随するため）を含める。
 
 versionName は `pubspec.yaml` のままにする。versionCode / CFBundleVersion は GitHub Actions の run number にする。Android の release 署名は同じ upload keystore を使い、配布済みの APK を上書き更新できるようにする。debug 署名は release に使わない。
 
