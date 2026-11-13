@@ -5,9 +5,48 @@ import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_meter_reading_mobile/infra_meter_reading_mobile.dart';
 import 'package:infra_meter_reading_testing/infra_meter_reading_testing.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('両認識器が空なら全フィールド未設定のまま完了する', () async {
+    final seven = FakeMeterSevenSegmentRecognizer();
+    final engine = SpatialOcrMeterReadingEngine(
+      kind: MeterReadingEngineKind.mlKit,
+      recognizer: FakeMeterLayoutRecognizer(tokens: const []),
+      sevenSegmentRecognizer: seven,
+    );
+    final values = await engine.read(Uint8List(0));
+    expect(values.distanceKm, isNull);
+    expect(values.duration, isNull);
+    expect(values.caloriesKcal, isNull);
+    expect(values.averageSpeedKmh, isNull);
+    expect(seven.callCount, 1);
+  });
+
+  test('補完失敗でもゼロの距離・時間・カロリーを保持する', () async {
+    final engine = SpatialOcrMeterReadingEngine(
+      kind: MeterReadingEngineKind.mlKit,
+      recognizer: FakeMeterLayoutRecognizer(tokens: const [
+        MeterOcrToken(
+          text: '0km', left: 0.1, top: 0.1, width: 0.2, height: 0.05,
+        ),
+        MeterOcrToken(
+          text: '0:00:00', left: 0.1, top: 0.4, width: 0.2, height: 0.05,
+        ),
+        MeterOcrToken(
+          text: '0kcal', left: 0.1, top: 0.7, width: 0.2, height: 0.05,
+        ),
+      ]),
+      sevenSegmentRecognizer: FakeMeterSevenSegmentRecognizer(
+        throwOnRecognize: true,
+      ),
+    );
+    final values = await engine.read(Uint8List(0));
+    expect(values.distanceKm, 0);
+    expect(values.duration, Duration.zero);
+    expect(values.caloriesKcal, 0);
+  });
+
   test('空間 OCR エンジンは認識結果を推論する', () async {
     final log = AppLogStore();
     final recognizer = FakeMeterLayoutRecognizer(

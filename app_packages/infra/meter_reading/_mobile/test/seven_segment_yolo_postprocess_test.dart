@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_relative_lib_imports
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import '../lib/src/seven_segment_digit_clusterer.dart';
 import '../lib/src/seven_segment_digit_detection.dart';
@@ -8,6 +8,76 @@ import '../lib/src/seven_segment_letterbox_meta.dart';
 import '../lib/src/seven_segment_yolo_postprocess.dart';
 
 void main() {
+  test('短い行、空行、面積のない検出、画像外の検出は除外する', () {
+    final rows = <List<double>>[
+      [],
+      List.filled(14, 1),
+      [96, 96, 0, 20, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [96, 96, 20, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [-50, -50, 10, 10, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    expect(
+      SevenSegmentYoloPostprocess.decodeDetections(
+        rows,
+        scoreThreshold: 0.25,
+        nmsIoU: 0.45,
+        letterbox: const SevenSegmentLetterboxMeta(
+          scale: 1, padX: 0, padY: 0, srcWidth: 192, srcHeight: 192,
+        ),
+      ),
+      isEmpty,
+    );
+  });
+
+  test('閾値と等しい score を採用し letterbox の倍率と余白を戻す', () {
+    final result = SevenSegmentYoloPostprocess.decodeDetections(
+      [
+        [48, 96, 48, 48, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      ],
+      scoreThreshold: 0.25,
+      nmsIoU: 0.45,
+      letterbox: const SevenSegmentLetterboxMeta(
+        scale: 0.5, padX: 0, padY: 48, srcWidth: 384, srcHeight: 192,
+      ),
+    );
+    expect(result.single.digit, 9);
+    expect(result.single.score, 0.25);
+    expect(result.single.left, 0.125);
+    expect(result.single.top, 0.25);
+    expect(result.single.width, 0.25);
+    expect(result.single.height, 0.5);
+  });
+
+  test('NMS はクラスに関係なく最大 score を残し入力順を変えない', () {
+    const a = SevenSegmentDigitDetection(
+      digit: 1, score: 0.5, left: 0, top: 0, width: 0.5, height: 0.5,
+    );
+    const b = SevenSegmentDigitDetection(
+      digit: 9, score: 0.9, left: 0, top: 0, width: 0.5, height: 0.5,
+    );
+    final input = [a, b];
+    expect(SevenSegmentYoloPostprocess.nonMaxSuppression(input, 0.5), [b]);
+    expect(input, [a, b]);
+    // IoU と閾値が等しいときは抑制しない。
+    expect(SevenSegmentYoloPostprocess.nonMaxSuppression(input, 1), [b, a]);
+    expect(SevenSegmentYoloPostprocess.iou(a, b), 1);
+  });
+
+  test('交差しない矩形と面積ゼロの IoU はゼロ', () {
+    const a = SevenSegmentDigitDetection(
+      digit: 0, score: 1, left: 0, top: 0, width: 0.5, height: 0.5,
+    );
+    const b = SevenSegmentDigitDetection(
+      digit: 0, score: 1, left: 0.5, top: 0, width: 0.5, height: 0.5,
+    );
+    const zero = SevenSegmentDigitDetection(
+      digit: 0, score: 1, left: 0, top: 0, width: 0, height: 0,
+    );
+    expect(SevenSegmentYoloPostprocess.iou(a, b), 0);
+    expect(SevenSegmentYoloPostprocess.iou(zero, zero), 0);
+    expect(SevenSegmentYoloPostprocess.nonMaxSuppression([b, a], 0), [b, a]);
+  });
+
   const letterbox = SevenSegmentLetterboxMeta(
     scale: 1,
     padX: 0,
