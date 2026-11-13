@@ -1,7 +1,10 @@
+import 'package:domain_daily_goal/domain_daily_goal.dart';
+import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 
+import 'conditional_advice_selector.dart';
 import 'default_top_advice_prompt_builder.dart';
 import 'random_advice_template_picker.dart';
 import 'top_advice_llm_response_parser_impl.dart';
@@ -130,7 +133,42 @@ final class GenerateTopAdviceUsecaseImpl implements GenerateTopAdviceUsecase {
       );
     }
 
+    final today = PeriodAggregate.of(
+      request.histories,
+      PeriodWindow.today(request.now),
+    );
+    final achievement = GoalAchievement.of(request.goal, today);
+    final selection = ConditionalAdviceSelector.select(
+      achievement: achievement,
+      goal: request.goal,
+      consecutiveGoalAchievementDays: request.consecutiveGoalAchievementDays,
+      daysSincePreviousExerciseDay: request.daysSincePreviousExerciseDay,
+    );
+    if (selection != null) {
+      final templates = request.conditionalCatalog.templatesFor(selection.kind);
+      if (templates.isNotEmpty) {
+        final picked = picker.pick(templates);
+        final advice = _resolveMetric(
+          picked.text,
+          selection.metric,
+          request.metricLabels,
+        );
+        return GenerateTopAdviceResult(advice: advice, tone: picked.tone);
+      }
+    }
+
     final picked = picker.pick(request.fallbackTemplates);
     return GenerateTopAdviceResult(advice: picked.text, tone: picked.tone);
+  }
+
+  static String _resolveMetric(
+    String text,
+    ConditionalAdviceMetric? metric,
+    Map<ConditionalAdviceMetric, String> labels,
+  ) {
+    if (metric == null || !text.contains('{metric}')) {
+      return text;
+    }
+    return text.replaceAll('{metric}', labels[metric]!);
   }
 }
