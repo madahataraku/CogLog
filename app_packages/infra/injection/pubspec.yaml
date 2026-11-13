@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  foundation_app_log: any
   infra_app_runtime_info: any
   infra_app_runtime_info_mobile: any
   infra_app_settings: any

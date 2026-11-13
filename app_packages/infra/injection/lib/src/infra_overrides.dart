@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_runtime_info_mobile/infra_app_runtime_info_mobile.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
@@ -58,7 +59,7 @@ List<Override> infraOverrides({
     (ref) => _meterReadingLlmEngine(ref),
   ),
   meterReadingSpatialEngineProvider.overrideWith(
-    (ref) => _meterReadingSpatialEngine(),
+    (ref) => _meterReadingSpatialEngine(ref),
   ),
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
@@ -110,16 +111,19 @@ List<Override> infraOverrides({
 /// ```
 MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
   final llm = ref.watch(onDeviceLlmProvider);
+  final log = ref.watch(appLogStoreProvider);
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
       return LlmMeterReadingEngine(
         kind: MeterReadingEngineKind.foundationModel,
         llm: llm,
+        log: log,
       );
     case TargetPlatform.android:
       return LlmMeterReadingEngine(
         kind: MeterReadingEngineKind.geminiNano,
         llm: llm,
+        log: log,
       );
     case TargetPlatform.fuchsia:
     case TargetPlatform.linux:
@@ -135,19 +139,22 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
 ///
 /// Example:
 /// ```dart
-/// _meterReadingSpatialEngine();
+/// _meterReadingSpatialEngine(ref);
 /// ```
-MeterReadingEngine _meterReadingSpatialEngine() {
+MeterReadingEngine _meterReadingSpatialEngine(Ref ref) {
+  final log = ref.watch(appLogStoreProvider);
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
       return SpatialOcrMeterReadingEngine(
         kind: MeterReadingEngineKind.visionOcr,
         recognizer: VisionMeterLayoutRecognizer(),
+        log: log,
       );
     case TargetPlatform.android:
       return SpatialOcrMeterReadingEngine(
         kind: MeterReadingEngineKind.mlKit,
         recognizer: MlKitMeterLayoutRecognizer(),
+        log: log,
       );
     case TargetPlatform.fuchsia:
     case TargetPlatform.linux:
@@ -167,5 +174,5 @@ MeterReadingEngine _meterReadingSpatialEngine() {
 /// ```
 List<MeterReadingEngine> _meterReadingEngines(Ref ref) => [
   _meterReadingLlmEngine(ref),
-  _meterReadingSpatialEngine(),
+  _meterReadingSpatialEngine(ref),
 ];

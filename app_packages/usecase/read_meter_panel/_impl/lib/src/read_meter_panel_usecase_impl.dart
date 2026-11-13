@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
@@ -11,6 +12,7 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 /// デバッグの空間 OCR 強制が ON のときは LLM ready でも空間 OCR のみとし、
 /// 使えなければ手打ちへ進む（LLM には戻さない）。
 /// 全体の上限は [timeout]（既定 30 秒）。超過時はその時点の結果を返す。
+/// 選択理由・例外・最終値は [log] へ出す。
 ///
 /// Example:
 /// ```dart
@@ -19,6 +21,7 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 ///   llmEngine: llmEngine,
 ///   spatialEngine: spatialEngine,
 ///   forceSpatialOcr: ForceSpatialOcrStore(),
+///   log: AppLogStore(),
 /// ).execute(ReadMeterPanelRequest(photoBytes: Uint8List(0)));
 /// ```
 final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
@@ -31,15 +34,17 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   ///   llmEngine: llmEngine,
   ///   spatialEngine: spatialEngine,
   ///   forceSpatialOcr: ForceSpatialOcrStore(),
+  ///   log: AppLogStore(),
   /// );
   /// ```
-  const ReadMeterPanelUsecaseImpl({
+  ReadMeterPanelUsecaseImpl({
     required this.llm,
     required this.llmEngine,
     required this.spatialEngine,
     required this.forceSpatialOcr,
+    AppLogStore? log,
     this.timeout = const Duration(seconds: 30),
-  });
+  }) : log = log ?? AppLogStore();
 
   /// 準備状態と vision 可否の判定に使う。
   final OnDeviceLlm llm;
@@ -52,6 +57,9 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
 
   /// デバッグ用の空間 OCR 強制フラグ。
   final ForceSpatialOcrStore forceSpatialOcr;
+
+  /// デバッグ画面向けのプロセス内ログ。
+  final AppLogStore log;
 
   /// 読み取り全体の上限。
   final Duration timeout;
@@ -69,14 +77,42 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     Future<MeterReadingValues> runSelected() async {
       final engine = await _selectEngine();
       if (engine == null) {
+        log.append(
+          tag: 'meter.read',
+          level: AppLogLevel.warn,
+          message: 'no engine selected',
+        );
         return const MeterReadingValues();
       }
       try {
         if (!await engine.isAvailable) {
+          log.append(
+            tag: 'meter.read',
+            level: AppLogLevel.warn,
+            message: 'engine unavailable kind=${engine.kind.name}',
+          );
           return const MeterReadingValues();
         }
-        return await engine.read(request.photoBytes);
-      } on Object {
+        log.append(
+          tag: 'meter.read',
+          level: AppLogLevel.info,
+          message: 'reading kind=${engine.kind.name}',
+        );
+        final read = await engine.read(request.photoBytes);
+        log.append(
+          tag: 'meter.read',
+          level: AppLogLevel.info,
+          message: 'engine fields ${_formatFieldPresence(read)}',
+        );
+        return read;
+      } on Object catch (error) {
+        log.append(
+          tag: 'meter.read',
+          level: AppLogLevel.error,
+          message:
+              'engine failed kind=${engine.kind.name}: '
+              '${formatExceptionDetail(error)}',
+        );
         return const MeterReadingValues();
       }
     }
@@ -84,17 +120,29 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     try {
       values = await runSelected().timeout(timeout);
     } on TimeoutException {
-      // その時点の values を使う。
+      log.append(
+        tag: 'meter.read',
+        level: AppLogLevel.warn,
+        message:
+            'timeout after ${timeout.inSeconds}s; '
+            'partial ${_formatFieldPresence(values)}',
+      );
     }
 
     final resolved = resolveInitialAverageSpeed(merged: values);
+    final resultValues = MeterReadingValues(
+      distanceKm: values.distanceKm,
+      duration: values.duration,
+      caloriesKcal: values.caloriesKcal,
+      averageSpeedKmh: resolved.speed,
+    );
+    log.append(
+      tag: 'meter.read',
+      level: AppLogLevel.info,
+      message: 'final ${_formatFieldPresence(resultValues)}',
+    );
     return ReadMeterPanelResult(
-      values: MeterReadingValues(
-        distanceKm: values.distanceKm,
-        duration: values.duration,
-        caloriesKcal: values.caloriesKcal,
-        averageSpeedKmh: resolved.speed,
-      ),
+      values: resultValues,
       averageSpeedFromPanel: false,
     );
   }
@@ -109,18 +157,71 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   Future<MeterReadingEngine?> _selectEngine() async {
     if (forceSpatialOcr.enabled) {
       if (await spatialEngine.isAvailable) {
+        log.append(
+          tag: 'meter.read',
+          level: AppLogLevel.info,
+          message:
+              'select spatial kind=${spatialEngine.kind.name}; '
+              'reason=forceSpatialOcr',
+        );
         return spatialEngine;
       }
+      log.append(
+        tag: 'meter.read',
+        level: AppLogLevel.warn,
+        message: 'forceSpatialOcr on but spatial unavailable',
+      );
       return null;
     }
     final readiness = await llm.readiness;
     final vision = await llm.supportsVision;
     if (readiness == OnDeviceLlmReadiness.ready && vision) {
+      log.append(
+        tag: 'meter.read',
+        level: AppLogLevel.info,
+        message:
+            'select llm kind=${llmEngine.kind.name}; '
+            'reason=ready+vision; readiness=${readiness.name}',
+      );
       return llmEngine;
     }
     if (await spatialEngine.isAvailable) {
+      log.append(
+        tag: 'meter.read',
+        level: AppLogLevel.info,
+        message:
+            'select spatial kind=${spatialEngine.kind.name}; '
+            'reason=llm_not_ready_or_no_vision; '
+            'readiness=${readiness.name}; vision=$vision',
+      );
       return spatialEngine;
     }
+    log.append(
+      tag: 'meter.read',
+      level: AppLogLevel.warn,
+      message:
+          'no engine; readiness=${readiness.name}; vision=$vision; '
+          'spatial unavailable',
+    );
     return null;
   }
+}
+
+/// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
+String _formatFieldPresence(MeterReadingValues values) {
+  final present = <String>[];
+  final missing = <String>[];
+  void classify(String name, Object? value) {
+    if (value == null) {
+      missing.add(name);
+    } else {
+      present.add(name);
+    }
+  }
+
+  classify('distanceKm', values.distanceKm);
+  classify('duration', values.duration);
+  classify('caloriesKcal', values.caloriesKcal);
+  classify('averageSpeedKmh', values.averageSpeedKmh);
+  return 'present=[${present.join(',')}]; missing=[${missing.join(',')}]';
 }

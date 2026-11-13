@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_meter_reading_testing/infra_meter_reading_testing.dart';
@@ -18,6 +19,7 @@ void main() {
     required MeterReadingEngine llmEngine,
     required MeterReadingEngine spatialEngine,
     ForceSpatialOcrStore? forceSpatialOcr,
+    AppLogStore? log,
     Duration timeout = const Duration(seconds: 30),
   }) {
     return ReadMeterPanelUsecaseImpl(
@@ -25,11 +27,13 @@ void main() {
       llmEngine: llmEngine,
       spatialEngine: spatialEngine,
       forceSpatialOcr: forceSpatialOcr ?? ForceSpatialOcrStore(),
+      log: log,
       timeout: timeout,
     );
   }
 
   test('LLM ready+vision なら LLM のみ', () async {
+    final log = AppLogStore();
     final llm = FakeOnDeviceLlm(
       readiness: OnDeviceLlmReadiness.ready,
       supportsVisionValue: true,
@@ -51,12 +55,22 @@ void main() {
       llm: llm,
       llmEngine: llmEngine,
       spatialEngine: spatial,
+      log: log,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
     expect(spatial.readCallCount, 0);
     expect(result.values.distanceKm, 10);
     expect(result.values.averageSpeedKmh, 10);
+    expect(log.entries.map((e) => e.message), contains(contains('select llm')));
+    expect(
+      log.entries.map((e) => e.message),
+      contains(contains('final present=[distanceKm')),
+    );
+    expect(
+      log.entries.every((e) => !e.message.contains('distanceKm=10')),
+      isTrue,
+    );
   });
 
   test('LLM ready で不完全でも空間 OCR へ落とさない', () async {

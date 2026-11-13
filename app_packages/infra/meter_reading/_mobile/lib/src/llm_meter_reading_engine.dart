@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
@@ -16,11 +17,14 @@ const _meterExtractPrompt =
 
 /// 端末上 LLM の画像生成でメーター値を取るエンジン。
 ///
+/// 生文の長さと解析フィールドの有無だけを [log] へ出す（測定値・生文は出さない）。
+///
 /// Example:
 /// ```dart
 /// LlmMeterReadingEngine(
 ///   kind: MeterReadingEngineKind.geminiNano,
 ///   llm: llm,
+///   log: AppLogStore(),
 /// );
 /// ```
 final class LlmMeterReadingEngine implements MeterReadingEngine {
@@ -33,13 +37,15 @@ final class LlmMeterReadingEngine implements MeterReadingEngine {
   /// LlmMeterReadingEngine(
   ///   kind: MeterReadingEngineKind.foundationModel,
   ///   llm: llm,
+  ///   log: AppLogStore(),
   /// );
   /// ```
-  const LlmMeterReadingEngine({
+  LlmMeterReadingEngine({
     required this.kind,
     required this.llm,
     this.requireVision = true,
-  });
+    AppLogStore? log,
+  }) : log = log ?? AppLogStore();
 
   /// エンジン種別（iOS は foundationModel、Android は geminiNano）。
   @override
@@ -50,6 +56,9 @@ final class LlmMeterReadingEngine implements MeterReadingEngine {
 
   /// true のとき vision 非対応なら利用不可とする。
   final bool requireVision;
+
+  /// デバッグ画面向けのプロセス内ログ。
+  final AppLogStore log;
 
   /// [llm] が利用可能で、必要なら vision 対応のとき true。
   ///
@@ -80,6 +89,36 @@ final class LlmMeterReadingEngine implements MeterReadingEngine {
       prompt: _meterExtractPrompt,
       imageBytes: photoBytes,
     );
-    return MeterPanelTextParser.parse(raw);
+    log.append(
+      tag: 'meter.llm',
+      level: raw.trim().isEmpty ? AppLogLevel.warn : AppLogLevel.info,
+      message: 'kind=${kind.name}; rawLength=${raw.length}',
+    );
+    final values = MeterPanelTextParser.parse(raw);
+    log.append(
+      tag: 'meter.llm',
+      level: AppLogLevel.info,
+      message: 'kind=${kind.name}; parsed ${_formatFieldPresence(values)}',
+    );
+    return values;
   }
+}
+
+/// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
+String _formatFieldPresence(MeterReadingValues values) {
+  final present = <String>[];
+  final missing = <String>[];
+  void classify(String name, Object? value) {
+    if (value == null) {
+      missing.add(name);
+    } else {
+      present.add(name);
+    }
+  }
+
+  classify('distanceKm', values.distanceKm);
+  classify('duration', values.duration);
+  classify('caloriesKcal', values.caloriesKcal);
+  classify('averageSpeedKmh', values.averageSpeedKmh);
+  return 'present=[${present.join(',')}]; missing=[${missing.join(',')}]';
 }
