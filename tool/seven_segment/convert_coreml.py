@@ -52,6 +52,17 @@ def main() -> int:
     except ImportError as exc:
         return _die(f"Missing dependency: {exc}", code=2)
 
+    try:
+        import coremltools.libmilstoragepython as _mil_storage  # noqa: F401
+    except ImportError as exc:
+        return _die(
+            "coremltools native BlobWriter is missing "
+            f"({exc}). On macOS use Python 3.11 venv and "
+            "`pip install --only-binary=:all: 'coremltools==7.2' "
+            "'torch==2.2.0'`. See tool/seven_segment/convert_coreml.md.",
+            code=2,
+        )
+
     weights = args.weights
     if not weights.is_file():
         return _die(f"Weights not found: {weights}")
@@ -81,6 +92,7 @@ def main() -> int:
         return _die(
             f"SSCMA / mmengine import failed: {exc}. "
             "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
+            "Also `pip install pycocotools mmengine`. "
             "Ensure deepen_factor is applied in YOLOv5CSPDarknet "
             "(make_round(num_blocks, self.deepen_factor)).",
             code=2,

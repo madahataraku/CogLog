@@ -7,15 +7,16 @@
 - `coremltools` の `mlprogram` 保存はネイティブ `BlobWriter`（`libmilstoragepython`）に依存する
 - Linux ではグラフ変換まで進んでも `RuntimeError: BlobWriter not loaded` で保存できない（Cloud Agent / Linux CI では完了不可）
 - Core ML ランタイムでの形状確認も macOS / iOS 上で行う
+- **実機 Mac の Python** で入れる。Rosetta / 純ソース build / Linux 用 wheel だと `libcoremlpython` / `libmilstoragepython` が欠ける
 
 ## 依存（ピン留め例）
 
-- macOS + **Python 3.10 または 3.11 を推奨**（3.12+ は標準から `distutils` が消え、`No module named distutils` になりやすい）
-- `torch` 2.2.x（`.pth` ロード用）
-- `coremltools` 7.2（`numpy<2` と併用）
-- `setuptools`（3.12 を使う場合の `distutils` 互換。先に入れる）
+- macOS + **Python 3.10 または 3.11**（3.12+ は避ける。`distutils` 欠落や wheel 非対応が起きやすい）
+- `torch==2.2.0`（coremltools 7.2 の検証済み上限。2.2.2 は警告が出る）
+- `coremltools==7.2`（`numpy<2` と併用。**macOS 用 binary wheel** であること）
+- `setuptools`（保険。3.12 を使う場合の `distutils` 互換）
+- `mmengine` / `pycocotools`（ModelAssistant の import に必要）
 - [Seeed-Studio/ModelAssistant](https://github.com/Seeed-Studio/ModelAssistant)（Swift-YOLO 定義。Colab と同系なら `2.0.0`、main でも可）
-- `mmengine`（ModelAssistant / チェックポイント周辺）
 
 NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_round(num_blocks)` のみだと `deepen_factor` が効かず、重みとブロック数が不一致になる。変換前に `make_round(num_blocks, self.deepen_factor)` になっていることを確認する。
 
@@ -26,9 +27,48 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 - score / クラスは **0–1 系**（SSCMA `DetHead._forward` の ×100 は変換ラッパで ÷100 して TFLite 契約に揃える）
 - 入出力名は変換成功時の値が正。現状プレースホルダは `input` / `output`（変換後に本ファイルと `SevenSegmentCoreMlRunner.swift` を同値に更新）
 
-## 手順
+## 手順（推奨: 干净な venv）
 
-1. 重みを取得し SHA-1 `b26cffe14038a7155315c40b49f851679a547dec` を確認する。
+1. ModelAssistant を clone する。
+
+   ```bash
+   git clone https://github.com/Seeed-Studio/ModelAssistant.git ~/ModelAssistant
+   # deepen_factor を確認（無い場合は make_round(num_blocks, self.deepen_factor) に直す）
+   ```
+
+2. **Python 3.11** で venv を作り、依存を入れる。
+
+   ```bash
+   cd /path/to/CogLog
+   python3.11 -m venv .venv-coreml
+   source .venv-coreml/bin/activate
+   python -m pip install -U pip 'setuptools>=69' wheel
+   python -m pip install \
+     'torch==2.2.0' \
+     'coremltools==7.2' \
+     'numpy<2' \
+     'mmengine>=0.8.2' \
+     'pycocotools'
+   ```
+
+3. native 拡張が入ったか確認する（ここで失敗したら変換しない）。
+
+   ```bash
+   python - <<'PY'
+   import platform, coremltools
+   print("platform:", platform.platform())
+   print("coremltools:", coremltools.__version__)
+   import coremltools.libmilstoragepython as mil
+   print("BlobWriter:", hasattr(mil, "BlobWriter"))
+   PY
+   uname -m   # arm64 / x86_64
+   python -c "import coremltools, pathlib; print(pathlib.Path(coremltools.__file__).parent)"
+   ```
+
+   - `No module named 'coremltools.libmilstoragepython'` → **macOS 用 wheel が入っていない**。venv を消し、`python3.11` で作り直してから `pip install --only-binary=:all: 'coremltools==7.2'` を試す
+   - Linux / コンテナ上ではこの確認は必ず失敗する（仕様）
+
+4. 重みを取得し SHA-1 `b26cffe14038a7155315c40b49f851679a547dec` を確認する。
 
    ```bash
    curl -fSL -o /tmp/digital_meter.pth \
@@ -36,29 +76,31 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
    shasum -a 1 /tmp/digital_meter.pth
    ```
 
-2. ModelAssistant を用意し、Swift-YOLO tiny を `num_classes=10` / `192²` / `deepen_factor=0.33` / `widen_factor=0.15` で構築できる状態にする。
-
-3. リポジトリルートで変換スクリプトを実行する（**macOS**）。
+5. リポジトリルートで変換する。
 
    ```bash
-   python3 --version   # 3.10 / 3.11 推奨。3.12+ なら次行の setuptools が必須
-   python3 -m pip install -U 'setuptools>=69' \
-     'coremltools==7.2' 'torch==2.2.2' 'numpy<2' 'mmengine>=0.8.2'
-   # ModelAssistant を import 可能にしてから:
-   export SSCMA_ROOT=/path/to/ModelAssistant
-   python3 tool/seven_segment/convert_coreml.py \
+   export SSCMA_ROOT=~/ModelAssistant
+   python tool/seven_segment/convert_coreml.py \
      --weights /tmp/digital_meter.pth \
      --output app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage \
      --sscma-root "$SSCMA_ROOT"
    ```
 
-   `No module named distutils` が出たら、いまのインタプリタが 3.12+ の可能性が高い。上記 `setuptools` を入れ直すか、`pyenv` / Homebrew の Python 3.11 で venv を作り直す。
+6. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認し、本ファイルと `SevenSegmentCoreMlRunner.swift` の定数をそれに合わせる。
 
-4. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認し、本ファイルと `SevenSegmentCoreMlRunner.swift` の定数をそれに合わせる。
+7. 成果物の bytes / SHA-256 を `assets/seven_segment/NOTICE.md` の iOS 節へ転記する。
 
-5. 成果物の bytes / SHA-256 を `assets/seven_segment/NOTICE.md` の iOS 節へ転記する。
+8. `ios/infra_meter_reading_mobile.podspec` は mlpackage が存在するときだけ `s.resources` に載せる。配置後は `pod install` でバンドルされることを確認する。
 
-6. `ios/infra_meter_reading_mobile.podspec` は mlpackage が存在するときだけ `s.resources` に載せる（未配置時は CocoaPods を壊さない）。配置後は `pod install` でバンドルされることを確認する。
+## よくあるエラー
+
+| メッセージ | 対処 |
+| --- | --- |
+| `No module named distutils` | Python 3.12+。3.11 venv に切り替えるか `pip install -U setuptools` |
+| `Torch version 2.2.2 has not been tested` | `pip install 'torch==2.2.0'` |
+| `No module named 'coremltools.libcoremlpython'` / `libmilstoragepython` | macOS 用 binary wheel が無い。3.11 venv を作り直し `pip install --only-binary=:all: 'coremltools==7.2'`。Linux では不可 |
+| `No module named 'pycocotools'` | `pip install pycocotools` |
+| `BlobWriter not loaded` | 上と同じ（native 拡張欠落）か Linux 実行 |
 
 ## Linux での再試行結果（参考）
 
