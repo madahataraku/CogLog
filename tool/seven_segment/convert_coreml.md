@@ -61,9 +61,9 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
    # 期待例: 2.2.0 / 0.17.0 / 1.26.x
    ```
 
-   **入れないもの**: `pyarrow` / `lance` / `lancedb`。`sscma.datasets` パッケージ根の import がこれらを引き、`numpy>=2` を要求して `coremltools==7.2`（`numpy<2`）と衝突する。変換スクリプトは `sscma.datasets.data_preprocessor` を直接 import して回避する。
+   **入れないもの**: `pyarrow` / `lance` / `lancedb`。本物を入れると `numpy>=2` が要求され `coremltools==7.2` と衝突する。`convert_coreml.py` は import 前に空モジュールで stub する（変換に LanceDB は不要）。
 
-   ModelAssistant がさらに依存を要求したら、その都度 `pip install <名前>` する（代表例: `six`, `terminaltables`）。`pyarrow` を入れて直そうとしない。
+   ModelAssistant がさらに依存を要求したら、その都度 `pip install <名前>` する（代表例: `six`, `terminaltables`, `tqdm`）。`No module named pyarrow` でも **pyarrow は入れない**。リポジトリの最新 `convert_coreml.py` を使う。
 
    `python3 --version` が 3.10 / 3.11 以外なら、この手順は使わない（3.12 以降は不可）。
 
@@ -120,7 +120,7 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 | `No module named 'six'` / `terminaltables` 等 | `pip install six terminaltables`（ModelAssistant の間接依存） |
 | `Torch version … has not been tested` / `2.15.0` 等 | `pip install --force-reinstall 'torch==2.2.0' 'torchvision==0.17.0' 'numpy<2,>=1.26'` |
 | `torchvision` / `register_fake` / `roi_align` で落ちる | torch と torchvision の組が不一致。上と同じく **2.2.0 + 0.17.0** に揃える |
-| `pyarrow requires NumPy 2.0` | `pyarrow` を入れない／外す。スクリプトは datasets 根を import しない |
+| `No module named 'pyarrow'` / `pyarrow requires NumPy 2.0` | **pyarrow を入れない**。`git pull` して stub 入りの最新 `convert_coreml.py` を使う。Desktop へのコピーは古いことが多い |
 | `BlobWriter not loaded` | 上と同じ（native 拡張欠落）か Linux 実行 |
 
 ## Linux での再試行結果（参考）

@@ -19,6 +19,20 @@ def _die(message: str, code: int = 1) -> int:
     return code
 
 
+def _stub_sscma_optional_deps() -> None:
+    """ModelAssistant の datasets 根が pyarrow/lance を要求するのを避ける。
+
+    `sscma/__init__.py` → visualization → datasets と辿るため leaf import でも
+    `lancedb_datasets` が読まれる。変換には不要なので空モジュールで埋める。
+    （本物の pyarrow は NumPy 2 を要求し coremltools 7.2 と衝突する）
+    """
+    import types
+
+    for name in ("pyarrow", "lance", "lancedb"):
+        if name not in sys.modules:
+            sys.modules[name] = types.ModuleType(name)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
@@ -82,12 +96,13 @@ def main() -> int:
             return _die(f"--sscma-root not a directory: {root}")
         sys.path.insert(0, str(root))
 
+    _stub_sscma_optional_deps()
+
     try:
         from mmengine.config import Config
         from mmengine.registry import MODELS, init_default_scope
 
-        # datasets/__init__.py は lancedb→pyarrow/lance を引き、numpy>=2 と
-        # coremltools 7.2（numpy<2）が衝突するため leaf モジュールから取る。
+        # visualization→datasets 経由で lancedb が読まれるが、上で stub 済み。
         from sscma.datasets.data_preprocessor import (  # noqa: F401
             DetDataPreprocessor,
         )
@@ -106,9 +121,9 @@ def main() -> int:
             f"SSCMA / mmengine import failed: {exc}. "
             "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
             "Also `pip install 'torch==2.2.0' 'torchvision==0.17.0' "
-            "'numpy<2' pycocotools mmengine six`. "
-            "Mismatched torchvision often fails at register_fake/roi_align. "
-            "Do not import sscma.datasets package root (pulls pyarrow). "
+            "'numpy<2' pycocotools mmengine six tqdm`. "
+            "Do not `pip install pyarrow` (conflicts with numpy<2); "
+            "this script stubs pyarrow/lance for import only. "
             "Ensure deepen_factor is applied in YOLOv5CSPDarknet "
             "(make_round(num_blocks, self.deepen_factor)).",
             code=2,
