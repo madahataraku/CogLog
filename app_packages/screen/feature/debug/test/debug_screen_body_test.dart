@@ -105,6 +105,16 @@ void main() {
       expect(mapped.isCollapsed, isTrue);
       expect(mapped.baseOffset, 0);
     });
+
+    test('空テキストへの置換では選択を解除する', () {
+      final mapped = mapLogSelection(
+        previousText: 'abc',
+        nextText: '',
+        previousSelection: const TextSelection(baseOffset: 1, extentOffset: 2),
+      );
+      expect(mapped.isCollapsed, isTrue);
+      expect(mapped.baseOffset, 0);
+    });
   });
 
   testWidgets('ログ空でも空状態文言は出さず readOnly の FTextField を示す', (tester) async {

@@ -274,6 +274,9 @@ TextSelection mapLogSelection({
       extentOffset: previousSelection.extentOffset.clamp(0, nextText.length),
     );
   }
+  if (nextText.isEmpty) {
+    return const TextSelection.collapsed(offset: 0);
+  }
   var drop = -1;
   for (var i = 0; i <= previousText.length; i++) {
     if (nextText.startsWith(previousText.substring(i))) {
