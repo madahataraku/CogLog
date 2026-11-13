@@ -146,4 +146,24 @@ void main() {
     expect(values.caloriesKcal, isNull);
     expect(values.duration, const Duration(minutes: 10));
   });
+
+  test('分類件数は本文を含まない', () {
+    final counts = MeterSpatialLayoutInferencer.classifyKindCounts([
+      t('距離', 0.1, 0.1, 0.1, 0.04),
+      t('12.3', 0.1, 0.2, 0.1, 0.04),
+      t('???', 0.1, 0.3, 0.1, 0.04),
+    ]);
+    expect(counts, {'distanceLabel': 1, 'bareNumber': 1, 'other': 1});
+  });
+
+  test('同じ分類の件数は加算する', () {
+    final counts = MeterSpatialLayoutInferencer.classifyKindCounts([
+      t('12.3', 0.1, 0.1, 0.1, 0.04),
+      t('200', 0.1, 0.2, 0.1, 0.04),
+      t('距離', 0.1, 0.3, 0.1, 0.04),
+      t('???', 0.1, 0.4, 0.1, 0.04),
+      t('!!!', 0.1, 0.5, 0.1, 0.04),
+    ]);
+    expect(counts, {'bareNumber': 2, 'distanceLabel': 1, 'other': 2});
+  });
 }

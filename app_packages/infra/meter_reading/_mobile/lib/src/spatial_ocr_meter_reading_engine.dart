@@ -6,7 +6,8 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 
 /// 座標付き OCR と空間推論でメーター値を取るエンジン。
 ///
-/// 認識トークン数と推論フィールドの有無だけを [log] へ出す（測定値・トークン本文は出さない）。
+/// 認識トークン数・分類件数・推論フィールドの有無だけを [log] へ出す。
+/// 測定値・トークン本文は出さない。
 ///
 /// Example:
 /// ```dart
@@ -61,10 +62,13 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
   @override
   Future<MeterReadingValues> read(Uint8List photoBytes) async {
     final tokens = await recognizer.recognizeLayout(photoBytes);
+    final kindCounts = MeterSpatialLayoutInferencer.classifyKindCounts(tokens);
     log.append(
       tag: 'meter.spatial',
       level: tokens.isEmpty ? AppLogLevel.warn : AppLogLevel.info,
-      message: 'kind=${kind.name}; tokens=${tokens.length}',
+      message:
+          'kind=${kind.name}; tokens=${tokens.length}; '
+          'classes=${_formatKindCounts(kindCounts)}',
     );
     final values = MeterSpatialLayoutInferencer.infer(tokens);
     log.append(
@@ -74,6 +78,20 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
     );
     return values;
   }
+}
+
+/// 分類件数を `name:count` の昇順連結にする。
+///
+/// Example:
+/// ```dart
+/// _formatKindCounts({'other': 2, 'bareNumber': 1});
+/// ```
+String _formatKindCounts(Map<String, int> counts) {
+  if (counts.isEmpty) {
+    return '[]';
+  }
+  final keys = counts.keys.toList()..sort();
+  return '[${keys.map((k) => '$k:${counts[k]}').join(',')}]';
 }
 
 /// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
