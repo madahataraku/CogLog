@@ -36,6 +36,7 @@ workspace:
   - app_packages/domain/exercise_history
   - app_packages/domain/trends
   - app_packages/foundation/app_log
+  - app_packages/foundation/debug_overrides
   - app_packages/foundation/datetime
   - app_packages/foundation/metadata
   - app_packages/foundation/resources
