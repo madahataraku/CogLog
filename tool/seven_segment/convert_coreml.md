@@ -10,9 +10,10 @@
 
 ## 依存（ピン留め例）
 
-- macOS + Python 3.10+
+- macOS + **Python 3.10 または 3.11 を推奨**（3.12+ は標準から `distutils` が消え、`No module named distutils` になりやすい）
 - `torch` 2.2.x（`.pth` ロード用）
 - `coremltools` 7.2（`numpy<2` と併用）
+- `setuptools`（3.12 を使う場合の `distutils` 互換。先に入れる）
 - [Seeed-Studio/ModelAssistant](https://github.com/Seeed-Studio/ModelAssistant)（Swift-YOLO 定義。Colab と同系なら `2.0.0`、main でも可）
 - `mmengine`（ModelAssistant / チェックポイント周辺）
 
@@ -40,7 +41,9 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 3. リポジトリルートで変換スクリプトを実行する（**macOS**）。
 
    ```bash
-   pip install 'coremltools==7.2' 'torch==2.2.2' 'numpy<2' 'mmengine>=0.8.2'
+   python3 --version   # 3.10 / 3.11 推奨。3.12+ なら次行の setuptools が必須
+   python3 -m pip install -U 'setuptools>=69' \
+     'coremltools==7.2' 'torch==2.2.2' 'numpy<2' 'mmengine>=0.8.2'
    # ModelAssistant を import 可能にしてから:
    export SSCMA_ROOT=/path/to/ModelAssistant
    python3 tool/seven_segment/convert_coreml.py \
@@ -48,6 +51,8 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
      --output app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage \
      --sscma-root "$SSCMA_ROOT"
    ```
+
+   `No module named distutils` が出たら、いまのインタプリタが 3.12+ の可能性が高い。上記 `setuptools` を入れ直すか、`pyenv` / Homebrew の Python 3.11 で venv を作り直す。
 
 4. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認し、本ファイルと `SevenSegmentCoreMlRunner.swift` の定数をそれに合わせる。
 
