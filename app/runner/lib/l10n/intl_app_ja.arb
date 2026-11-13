@@ -473,10 +473,6 @@
   "@screen_feature_debug_clear_logs": {
     "description": "ログ消去ボタン"
   },
-  "screen_feature_debug_empty_logs": "ログはまだありません",
-  "@screen_feature_debug_empty_logs": {
-    "description": "ログ空表示"
-  },
   "screen_feature_debug_force_spatial_ocr_item": "空間 OCR を強制",
   "@screen_feature_debug_force_spatial_ocr_item": {
     "description": "空間 OCR 強制スイッチの項目名"

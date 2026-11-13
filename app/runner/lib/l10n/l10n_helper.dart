@@ -516,10 +516,6 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_clear_logs;
       },
-      'screen_feature_debug_empty_logs': (source) {
-        // No Placeholders
-        return l10n.screen_feature_debug_empty_logs;
-      },
       'screen_feature_debug_force_spatial_ocr_item': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_force_spatial_ocr_item;
