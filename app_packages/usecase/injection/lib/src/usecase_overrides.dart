@@ -219,6 +219,7 @@ List<Override> usecaseOverrides({
       llmEngine: ref.watch(meterReadingLlmEngineProvider),
       spatialEngine: ref.watch(meterReadingSpatialEngineProvider),
       forceSpatialOcr: ref.watch(forceSpatialOcrStoreProvider),
+      log: ref.watch(appLogStoreProvider),
     ),
   ),
   SyncExerciseReminderUsecase.provider.overrideWith(

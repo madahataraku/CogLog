@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
+import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 
@@ -14,13 +15,19 @@ const _meterExtractPrompt =
     'AVERAGE_SPEED_KMH=<number>\n'
     'Use ASCII digits. No other text.';
 
+/// ログに載せる LLM 生文の上限文字数。
+const _maxRawChars = 500;
+
 /// 端末上 LLM の画像生成でメーター値を取るエンジン。
+///
+/// 生文（切り詰め）と解析結果を [log] へ出す。
 ///
 /// Example:
 /// ```dart
 /// LlmMeterReadingEngine(
 ///   kind: MeterReadingEngineKind.geminiNano,
 ///   llm: llm,
+///   log: AppLogStore(),
 /// );
 /// ```
 final class LlmMeterReadingEngine implements MeterReadingEngine {
@@ -33,13 +40,15 @@ final class LlmMeterReadingEngine implements MeterReadingEngine {
   /// LlmMeterReadingEngine(
   ///   kind: MeterReadingEngineKind.foundationModel,
   ///   llm: llm,
+  ///   log: AppLogStore(),
   /// );
   /// ```
-  const LlmMeterReadingEngine({
+  LlmMeterReadingEngine({
     required this.kind,
     required this.llm,
     this.requireVision = true,
-  });
+    AppLogStore? log,
+  }) : log = log ?? AppLogStore();
 
   /// エンジン種別（iOS は foundationModel、Android は geminiNano）。
   @override
@@ -50,6 +59,9 @@ final class LlmMeterReadingEngine implements MeterReadingEngine {
 
   /// true のとき vision 非対応なら利用不可とする。
   final bool requireVision;
+
+  /// デバッグ画面向けのプロセス内ログ。
+  final AppLogStore log;
 
   /// [llm] が利用可能で、必要なら vision 対応のとき true。
   ///
@@ -80,6 +92,32 @@ final class LlmMeterReadingEngine implements MeterReadingEngine {
       prompt: _meterExtractPrompt,
       imageBytes: photoBytes,
     );
-    return MeterPanelTextParser.parse(raw);
+    final preview = raw.length <= _maxRawChars
+        ? raw
+        : '${raw.substring(0, _maxRawChars)}…';
+    log.append(
+      tag: 'meter.llm',
+      level: raw.trim().isEmpty ? AppLogLevel.warn : AppLogLevel.info,
+      message:
+          'kind=${kind.name}; rawLength=${raw.length}; '
+          'raw=${preview.replaceAll('\n', '\\n')}',
+    );
+    final values = MeterPanelTextParser.parse(raw);
+    log.append(
+      tag: 'meter.llm',
+      level: AppLogLevel.info,
+      message: 'kind=${kind.name}; parsed ${_formatValues(values)}',
+    );
+    return values;
   }
+}
+
+/// [values] を 1 行のログ向け文字列にする。
+String _formatValues(MeterReadingValues values) {
+  final duration = values.duration;
+  final durationText = duration == null ? 'null' : '${duration.inSeconds}s';
+  return 'distanceKm=${values.distanceKm}; '
+      'duration=$durationText; '
+      'caloriesKcal=${values.caloriesKcal}; '
+      'averageSpeedKmh=${values.averageSpeedKmh}';
 }
