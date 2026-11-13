@@ -1,4 +1,6 @@
-/// デバッグ画面の表示用。
+/// View が診断・プローブ・ログを描画するときに参照する不変スナップショット。
+///
+/// 文字列フィールドの空・未取得は State から Entity へ写すとき `'-'` に揃える。
 ///
 /// Example:
 /// ```dart
@@ -21,7 +23,7 @@
 /// );
 /// ```
 final class DebugScreenEntity {
-  /// 表示用の診断文字列とログ行を持つ。
+  /// 診断ラベル用の文字列、`canGenerate`、ログ行、上書きスイッチをまとめて保持する。
   ///
   /// Example:
   /// ```dart
@@ -61,48 +63,48 @@ final class DebugScreenEntity {
     required this.forceSpatialOcr,
   });
 
-  /// 診断実行中。
+  /// いま端末上 LLM 診断ユースケースが走っているとき true。
   final bool running;
 
-  /// readiness 表示。
+  /// 利用可否スナップショットの readiness 名。スナップショット無しは `'-'`。
   final String readiness;
 
-  /// status 表示。
+  /// 利用可否の status。空・未取得は `'-'`。
   final String status;
 
-  /// reason 表示。
+  /// 利用可否がその status になった理由。空・未取得は `'-'`。
   final String reason;
 
-  /// message 表示。
+  /// 利用可否に付随する説明。空・未取得は `'-'`。
   final String message;
 
-  /// backend 表示。
+  /// 診断で選択された LLM バックエンド識別子。空・未取得は `'-'`。
   final String backend;
 
-  /// platform notes 表示。
+  /// プラットフォーム向けの補足メモ。空・未取得は `'-'`。
   final String platformNotes;
 
-  /// availability 例外表示。
+  /// 利用可否取得で捕捉した例外の文字列表現。無ければ `'-'`。
   final String availabilityError;
 
-  /// 生成可否。未診断は null。
+  /// プローブ生成の可否。診断未完了・結果無しは null。
   final bool? canGenerate;
 
-  /// サンプル出力。
+  /// プローブで得たサンプル出力。空・未取得は `'-'`。
   final String sampleOutput;
 
-  /// 生成例外。
+  /// プローブ生成フェーズの例外。無ければ `'-'`。
   final String generateError;
 
-  /// 準備例外。
+  /// プローブ準備フェーズの例外。無ければ `'-'`。
   final String prepareError;
 
-  /// プローブ省略理由。
+  /// プローブをスキップした理由。該当無しは `'-'`。
   final String probeSkipped;
 
   /// 古い行が先（上が古い）になるログ文字列。各要素は 1 エントリ分。
   final List<String> logLines;
 
-  /// 空間 OCR 強制スイッチの値。
+  /// デバッグ用の空間 OCR 強制上書きが ON なら true。
   final bool forceSpatialOcr;
 }

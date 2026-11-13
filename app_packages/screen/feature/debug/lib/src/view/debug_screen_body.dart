@@ -18,7 +18,7 @@ import 'debug_screen_providers.dart';
 /// ```
 @internal
 class DebugScreenBody extends HookConsumerWidget {
-  /// 本文を作る。
+  /// デバッグ画面の本文として親ウィジェットから差し込む。引数は持たない。
   ///
   /// Example:
   /// ```dart
@@ -46,6 +46,7 @@ class DebugScreenBody extends HookConsumerWidget {
       syncLogText(logController, logScrollController, logText);
       return null;
     }, [logText]);
+    // null は未診断、bool はローカライズした yes/no へ。
     final canGenerateText = switch (entity.canGenerate) {
       null => '-',
       true => strings.screen_feature_debug_yes,
@@ -94,6 +95,7 @@ class DebugScreenBody extends HookConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
+          // 実行中はスナップショット行を出さず進行のみ示す。
           if (entity.running)
             Text(strings.screen_feature_debug_running)
           else ...[
@@ -186,6 +188,12 @@ class DebugScreenBody extends HookConsumerWidget {
     );
   }
 
+  /// 診断ラベルと Entity の文字列値を 1 行の選択可能テキストにする。
+  ///
+  /// Example:
+  /// ```dart
+  /// _line(strings.screen_feature_debug_status_label, entity.status);
+  /// ```
   Widget _line(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),

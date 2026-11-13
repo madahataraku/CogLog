@@ -8,7 +8,7 @@ import '../state/debug_screen_state.dart';
 /// const DebugStateToEntityDelegate();
 /// ```
 final class DebugStateToEntityDelegate {
-  /// 変換委譲を作る。
+  /// 状態を持たず、どの [DebugScreenState] にも使い回せる。
   ///
   /// Example:
   /// ```dart
@@ -16,7 +16,10 @@ final class DebugStateToEntityDelegate {
   /// ```
   const DebugStateToEntityDelegate();
 
-  /// [state] を Entity にする。
+  /// [state] を表示用 [DebugScreenEntity] に写す。
+  ///
+  /// null・空文字の診断文字列は `'-'` に置き換える。
+  /// ログ行は時刻・レベル・タグ付きの 1 行文字列へ整形し、[DebugScreenState.logs] の順を保つ。
   ///
   /// Example:
   /// ```dart
@@ -25,6 +28,7 @@ final class DebugStateToEntityDelegate {
   DebugScreenEntity execute(DebugScreenState state) {
     final result = state.result;
     final snapshot = result?.snapshot;
+    // ラベル行の未取得表示を画面全体で揃える。
     String dash(String? value) {
       if (value == null || value.isEmpty) {
         return '-';
