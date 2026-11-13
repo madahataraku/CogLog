@@ -14,9 +14,12 @@ File: DigitalMeterElectricity192.mlpackage
 Source weights (.pth):
   https://files.seeedstudio.com/sscma/model_zoo/detection/electricity_meter/yolov5_tiny_1xb16_300e_coco_sha1_b26cffe14038a7155315c40b49f851679a547dec.pth
 Conversion: tool/seven_segment/convert_coreml.py (coremltools) — **macOS required**
-Status: mlpackage not generated on Linux (BlobWriter unavailable). Run convert_coreml.md on macOS, then fill bytes/sha256 and Swift I/O names.
-Bytes: <fill after conversion>
-SHA-256: <fill after conversion>
+Status: converted on macOS (coremltools). Bundle by copying into
+  app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage
+I/O names: input / output
+Output shape: (1, 2268, 15)
+Bytes (tree): 1530698
+SHA-256 (tree aggregate): fae51fe46c40838a00fc221faf75cc0b3a6cc550b55028baa951bf0bda6e5ee5
 
 License: MIT (SSCMA Model Zoo model card)
 Source: Seeed Studio SSCMA — Digital Meter Electricity Swift-YOLO 192

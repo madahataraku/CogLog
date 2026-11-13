@@ -3,8 +3,7 @@ import Flutter
 
 /// Core ML で七セグ桁検出テンソルを返す。
 ///
-/// 入出力名 `input` / `output` はプレースホルダ。
-/// `tool/seven_segment/convert_coreml.py` 成功後の表示値に合わせて更新する。
+/// 入出力名は変換成果物どおり `input` / `output`（shape `[1,2268,15]`）。
 /// モデル未同梱時は例外を投げ、Dart 側エンジンが汎用 OCR のみで完了する。
 final class SevenSegmentCoreMlRunner {
   private var model: MLModel?
@@ -28,7 +27,6 @@ final class SevenSegmentCoreMlRunner {
         array[i] = NSNumber(value: src[i])
       }
     }
-    // convert_coreml.md で確定するまでプレースホルダ。変換後に置換する。
     let inputName = "input"
     let provider = try MLDictionaryFeatureProvider(
       dictionary: [inputName: MLFeatureValue(multiArray: array)]

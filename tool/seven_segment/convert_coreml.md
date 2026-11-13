@@ -29,7 +29,7 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
 - 入力: NHWC float32 `[1, 192, 192, 3]`、画素 `/255.0`、letterbox は Dart 側
 - 出力: `[1, 2268, 15]` または `[2268, 15]`。各行 `[x,y,w,h,score,c0..c9]`
 - score / クラスは **0–1 系**（SSCMA `DetHead._forward` の ×100 は変換ラッパで ÷100 して TFLite 契約に揃える）
-- 入出力名は変換成功時の値が正。現状プレースホルダは `input` / `output`（変換後に本ファイルと `SevenSegmentCoreMlRunner.swift` を同値に更新）
+- 入出力名: `input` / `output`（macOS 変換で確認済み。Swift Runner と同値）
 
 ## 手順（推奨: 干净な venv）
 
