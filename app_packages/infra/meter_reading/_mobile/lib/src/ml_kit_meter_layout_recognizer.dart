@@ -1,30 +1,32 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 
+import 'ml_kit_recognized_text_loader.dart';
+
 /// ML Kit で座標付きトークン列を起こす。
+///
+/// 日本語スクリプトが失敗したときはラテンへ落とす。
 ///
 /// Example:
 /// ```dart
 /// MlKitMeterLayoutRecognizer();
 /// ```
 final class MlKitMeterLayoutRecognizer implements MeterLayoutRecognizer {
-  /// [recognizer] を省略すると日本語スクリプトの既定実装を使う。
+  /// [loader] を省略すると日本語→ラテンの既定ローダーを使う。
   ///
   /// Example:
   /// ```dart
   /// MlKitMeterLayoutRecognizer();
   /// ```
-  MlKitMeterLayoutRecognizer({TextRecognizer? recognizer})
-    : _recognizer =
-          recognizer ?? TextRecognizer(script: TextRecognitionScript.japanese);
+  MlKitMeterLayoutRecognizer({MlKitRecognizedTextLoader? loader})
+    : _loader = loader ?? MlKitRecognizedTextLoader(),
+      _ownsLoader = loader == null;
 
-  /// 文字認識本体。保持資源は [close] で解放する。
-  final TextRecognizer _recognizer;
+  final MlKitRecognizedTextLoader _loader;
+  final bool _ownsLoader;
 
   /// [photoBytes] を認識し要素単位のトークンを返す。
   ///
@@ -34,97 +36,30 @@ final class MlKitMeterLayoutRecognizer implements MeterLayoutRecognizer {
   /// ```
   @override
   Future<List<MeterOcrToken>> recognizeLayout(Uint8List photoBytes) async {
-    final fromDecoded = await _tryFromDecoded(photoBytes);
-    if (fromDecoded != null) {
-      return fromDecoded;
+    final loaded = await _loader.load(photoBytes);
+    final imageWidth = loaded.imageWidth;
+    final imageHeight = loaded.imageHeight;
+    // サイズ不明のまま画素座標を正規化すると誤ったレイアウトになる。
+    if (imageWidth == null || imageHeight == null) {
+      return const [];
     }
-    return _viaTempFile(photoBytes);
+    return _tokensFrom(
+      loaded.recognized,
+      imageWidth: imageWidth,
+      imageHeight: imageHeight,
+    );
   }
 
-  /// [TextRecognizer] を閉じる。
+  /// 保持する認識資源を閉じる。
   ///
   /// Example:
   /// ```dart
   /// await MlKitMeterLayoutRecognizer().close();
   /// ```
   @override
-  Future<void> close() => _recognizer.close();
-
-  /// JPEG/PNG を RGBA にできればディスク非経由で要素トークンを返す。
-  ///
-  /// Example:
-  /// ```dart
-  /// await recognizer._tryFromDecoded(Uint8List(0));
-  /// ```
-  Future<List<MeterOcrToken>?> _tryFromDecoded(Uint8List photoBytes) async {
-    ui.Codec? codec;
-    ui.Image? image;
-    try {
-      codec = await ui.instantiateImageCodec(photoBytes);
-      final frame = await codec.getNextFrame();
-      image = frame.image;
-      final byteData = await image.toByteData(
-        format: ui.ImageByteFormat.rawRgba,
-      );
-      if (byteData == null) {
-        return null;
-      }
-      final input = InputImage.fromBitmap(
-        bitmap: byteData.buffer.asUint8List(),
-        width: image.width,
-        height: image.height,
-      );
-      final recognized = await _recognizer.processImage(input);
-      return _tokensFrom(
-        recognized,
-        imageWidth: image.width.toDouble(),
-        imageHeight: image.height.toDouble(),
-      );
-    } on Object {
-      return null;
-    } finally {
-      image?.dispose();
-      codec?.dispose();
-    }
-  }
-
-  /// 一時ファイル経由で認識し、画像サイズで正規化する。
-  ///
-  /// Example:
-  /// ```dart
-  /// await recognizer._viaTempFile(Uint8List(0));
-  /// ```
-  Future<List<MeterOcrToken>> _viaTempFile(Uint8List photoBytes) async {
-    final directory = await Directory.systemTemp.createTemp('meter_layout_');
-    final file = File('${directory.path}/panel.jpg');
-    try {
-      await file.writeAsBytes(photoBytes, flush: true);
-      final input = InputImage.fromFilePath(file.path);
-      final recognized = await _recognizer.processImage(input);
-      final decoded = await ui.instantiateImageCodec(photoBytes);
-      final frame = await decoded.getNextFrame();
-      final image = frame.image;
-      try {
-        return _tokensFrom(
-          recognized,
-          imageWidth: image.width.toDouble(),
-          imageHeight: image.height.toDouble(),
-        );
-      } finally {
-        image.dispose();
-        decoded.dispose();
-      }
-    } finally {
-      try {
-        if (await file.exists()) {
-          await file.delete();
-        }
-        if (await directory.exists()) {
-          await directory.delete(recursive: true);
-        }
-      } on Object {
-        // 掃除失敗は握りつぶす。
-      }
+  Future<void> close() async {
+    if (_ownsLoader) {
+      await _loader.close();
     }
   }
 

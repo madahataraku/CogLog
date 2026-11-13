@@ -71,6 +71,8 @@ Monolith が書く次のファイルは手で編集しない。
 
 `minSdk` は 34 未満にしない。プラグイン側が `compileSdk` 33 などに固定されていると `checkReleaseAarMetadata` が失敗するため、依存は `compileSdk` 34 以上の版を `dependency_overrides` で選ぶ。
 
+空間 OCR（Android）は `google_mlkit_text_recognition` を使う。日本語モデルはプラグイン側が `compileOnly` のため、`app/android/app/build.gradle.kts` に `com.google.mlkit:text-recognition-japanese` を `implementation` する。release の R8 で Text Recognition の反射登録が欠けないよう、`app/android/app/proguard-rules.pro` に `com.google.mlkit.vision.**` などの keep を置く。
+
 ## iOS
 
 `IPHONEOS_DEPLOYMENT_TARGET` と `app/ios/Podfile` の `platform :ios` は次に固定する。プラグイン（`infra_meter_reading_mobile` / `infra_on_device_llm_mobile`）が 16.4 を要求するため、これ未満にしない。

@@ -5,6 +5,13 @@
 -keep class com.google.android.gms.internal.mlkit_genai_prompt.** { *; }
 -keep class com.google.android.gms.internal.mlkit_genai_common.** { *; }
 
+# Bundled text recognition (Latin / Japanese) registers components by reflection.
+# Without these keeps, release R8 can leave getClient() half-initialized and NPE.
+-keep class com.google.mlkit.vision.** { *; }
+-keep class com.google.android.gms.internal.mlkit_vision_text_common.** { *; }
+-keep class com.google.android.gms.internal.mlkit_vision_common.** { *; }
+-keep class com.google.android.gms.internal.mlkit_vision_text_bundled_common.** { *; }
+
 # google_mlkit_text_recognition は未同梱の任意スクリプト用 Options を参照する。
 # 日本語は build.gradle.kts の implementation で入れ、他は使わないので R8 に無視させる。
 -dontwarn com.google.mlkit.vision.text.chinese.**
