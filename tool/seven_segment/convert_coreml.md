@@ -11,10 +11,9 @@
 
 ## 依存（ピン留め例）
 
-- macOS + **Python 3.10 または 3.11**（3.12+ は避ける。`distutils` 欠落や wheel 非対応が起きやすい）
+- macOS + **Python 3.10 または 3.11 必須**（`coremltools==7.2` に 3.12+ 用 wheel が無いため、3.12 以降は使わない）
 - `torch==2.2.0`（coremltools 7.2 の検証済み上限。2.2.2 は警告が出る）
 - `coremltools==7.2`（`numpy<2` と併用。**macOS 用 binary wheel** であること）
-- `setuptools`（保険。3.12 を使う場合の `distutils` 互換）
 - `mmengine` / `pycocotools`（ModelAssistant の import に必要）
 - [Seeed-Studio/ModelAssistant](https://github.com/Seeed-Studio/ModelAssistant)（Swift-YOLO 定義。Colab と同系なら `2.0.0`、main でも可）
 
@@ -42,14 +41,16 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
    cd /path/to/CogLog
    python3.11 -m venv .venv-coreml
    source .venv-coreml/bin/activate
-   python -m pip install -U pip 'setuptools>=69' wheel
+   python -m pip install -U pip wheel
    python -m pip install \
      'torch==2.2.0' \
-     'coremltools==7.2' \
+     --only-binary=:all: 'coremltools==7.2' \
      'numpy<2' \
      'mmengine>=0.8.2' \
      'pycocotools'
    ```
+
+   `python3 --version` が 3.10 / 3.11 以外なら、この手順は使わない（3.12 以降は不可）。
 
 3. native 拡張が入ったか確認する（ここで失敗したら変換しない）。
 
@@ -96,7 +97,7 @@ NOTE: ModelAssistant main の `YOLOv5CSPDarknet.build_stage_layer` が `make_rou
 
 | メッセージ | 対処 |
 | --- | --- |
-| `No module named distutils` | Python 3.12+。3.11 venv に切り替えるか `pip install -U setuptools` |
+| `No module named distutils` | Python 3.12+ を使っている。`python3.11 -m venv` で作り直す（setuptools では wheel 不足は解消しない） |
 | `Torch version 2.2.2 has not been tested` | `pip install 'torch==2.2.0'` |
 | `No module named 'coremltools.libcoremlpython'` / `libmilstoragepython` | macOS 用 binary wheel が無い。3.11 venv を作り直し `pip install --only-binary=:all: 'coremltools==7.2'`。Linux では不可 |
 | `No module named 'pycocotools'` | `pip install pycocotools` |
