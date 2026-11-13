@@ -62,4 +62,15 @@ void main() {
       7,
     );
   });
+
+  // America/New_York では 2024-03-10 に夏時間が始まる。
+  // 現地 DateTime の difference.inDays だと 7 暦日が 6 になることがある。
+  test('夏時間開始をまたぐ 7 暦日は 7', () {
+    expect(
+      DaysSincePreviousExerciseDay.of([
+        ride(recordedAt: DateTime(2024, 3, 10, 12)),
+      ], DateTime(2024, 3, 17, 15)),
+      7,
+    );
+  });
 }

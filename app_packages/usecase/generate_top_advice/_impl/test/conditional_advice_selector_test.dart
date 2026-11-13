@@ -220,15 +220,13 @@ void main() {
     });
 
     test('他に未達があれば nearMiss 不可', () {
+      // 正目標 2・距離 80%・カロリー 50%。oneAchieved（要 3 指標）に入らず
+      // nearMiss の othersMet 判定で落ちる入力にする。
       final result = select(
-        goal: tripleGoal(),
-        aggregate: today(
-          distanceKm: 8,
-          caloriesKcal: 50,
-          duration: const Duration(minutes: 30),
-        ),
+        goal: const DailyGoal(distanceKm: 10, caloriesKcal: 100),
+        aggregate: today(distanceKm: 8, caloriesKcal: 50),
       );
-      expect(result?.kind, isNot(ConditionalAdviceKind.nearMissLow));
+      expect(result, isNull);
     });
   });
 
