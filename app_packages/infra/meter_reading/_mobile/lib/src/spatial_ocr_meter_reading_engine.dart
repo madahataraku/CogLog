@@ -6,7 +6,7 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 
 /// 座標付き OCR と空間推論でメーター値を取るエンジン。
 ///
-/// 認識トークン数・本文サンプル・推論結果を [log] へ出す。
+/// 認識トークン数と推論フィールドの有無だけを [log] へ出す（測定値・トークン本文は出さない）。
 ///
 /// Example:
 /// ```dart
@@ -43,12 +43,6 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
   /// デバッグ画面向けのプロセス内ログ。
   final AppLogStore log;
 
-  /// ログに載せるトークン本文の上限件数。
-  static const int _maxLoggedTokens = 40;
-
-  /// 1 トークン本文の切り詰め文字数。
-  static const int _maxTokenChars = 40;
-
   /// モバイルでは常に試す。失敗は [read] の例外として呼び出し側が握る。
   ///
   /// Example:
@@ -70,48 +64,33 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
     log.append(
       tag: 'meter.spatial',
       level: tokens.isEmpty ? AppLogLevel.warn : AppLogLevel.info,
-      message:
-          'kind=${kind.name}; tokens=${tokens.length}; '
-          'texts=[${_formatTokenTexts(tokens)}]',
+      message: 'kind=${kind.name}; tokens=${tokens.length}',
     );
     final values = MeterSpatialLayoutInferencer.infer(tokens);
     log.append(
       tag: 'meter.spatial',
       level: AppLogLevel.info,
-      message: 'kind=${kind.name}; inferred ${_formatValues(values)}',
+      message: 'kind=${kind.name}; inferred ${_formatFieldPresence(values)}',
     );
     return values;
   }
 }
 
-/// [tokens] の本文をログ向けに要約する。
-String _formatTokenTexts(List<MeterOcrToken> tokens) {
-  if (tokens.isEmpty) {
-    return '';
+/// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
+String _formatFieldPresence(MeterReadingValues values) {
+  final present = <String>[];
+  final missing = <String>[];
+  void classify(String name, Object? value) {
+    if (value == null) {
+      missing.add(name);
+    } else {
+      present.add(name);
+    }
   }
-  final shown = tokens.take(SpatialOcrMeterReadingEngine._maxLoggedTokens);
-  final parts = [for (final token in shown) _truncate(token.text)];
-  final joined = parts.join(' | ');
-  if (tokens.length > SpatialOcrMeterReadingEngine._maxLoggedTokens) {
-    return '$joined | …(+${tokens.length - SpatialOcrMeterReadingEngine._maxLoggedTokens})';
-  }
-  return joined;
-}
 
-/// [text] を [_maxTokenChars] で切り詰める。
-String _truncate(String text) {
-  if (text.length <= SpatialOcrMeterReadingEngine._maxTokenChars) {
-    return text;
-  }
-  return '${text.substring(0, SpatialOcrMeterReadingEngine._maxTokenChars)}…';
-}
-
-/// [values] を 1 行のログ向け文字列にする。
-String _formatValues(MeterReadingValues values) {
-  final duration = values.duration;
-  final durationText = duration == null ? 'null' : '${duration.inSeconds}s';
-  return 'distanceKm=${values.distanceKm}; '
-      'duration=$durationText; '
-      'caloriesKcal=${values.caloriesKcal}; '
-      'averageSpeedKmh=${values.averageSpeedKmh}';
+  classify('distanceKm', values.distanceKm);
+  classify('duration', values.duration);
+  classify('caloriesKcal', values.caloriesKcal);
+  classify('averageSpeedKmh', values.averageSpeedKmh);
+  return 'present=[${present.join(',')}]; missing=[${missing.join(',')}]';
 }

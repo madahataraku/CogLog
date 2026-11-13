@@ -65,7 +65,11 @@ void main() {
     expect(log.entries.map((e) => e.message), contains(contains('select llm')));
     expect(
       log.entries.map((e) => e.message),
-      contains(contains('final distanceKm=10')),
+      contains(contains('final present=[distanceKm')),
+    );
+    expect(
+      log.entries.every((e) => !e.message.contains('distanceKm=10')),
+      isTrue,
     );
   });
 

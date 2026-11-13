@@ -62,7 +62,9 @@ void main() {
     expect(values.averageSpeedKmh, isNull);
     expect(log.entries, hasLength(2));
     expect(log.entries.first.tag, 'meter.llm');
-    expect(log.entries.first.message, contains('DISTANCE_KM=5'));
-    expect(log.entries.last.message, contains('distanceKm=5'));
+    expect(log.entries.first.message, contains('rawLength='));
+    expect(log.entries.first.message, isNot(contains('DISTANCE_KM=')));
+    expect(log.entries.last.message, contains('present=[distanceKm'));
+    expect(log.entries.last.message, isNot(contains('distanceKm=5')));
   });
 }

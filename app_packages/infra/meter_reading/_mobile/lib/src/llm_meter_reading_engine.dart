@@ -15,12 +15,9 @@ const _meterExtractPrompt =
     'AVERAGE_SPEED_KMH=<number>\n'
     'Use ASCII digits. No other text.';
 
-/// ログに載せる LLM 生文の上限文字数。
-const _maxRawChars = 500;
-
 /// 端末上 LLM の画像生成でメーター値を取るエンジン。
 ///
-/// 生文（切り詰め）と解析結果を [log] へ出す。
+/// 生文の長さと解析フィールドの有無だけを [log] へ出す（測定値・生文は出さない）。
 ///
 /// Example:
 /// ```dart
@@ -92,32 +89,36 @@ final class LlmMeterReadingEngine implements MeterReadingEngine {
       prompt: _meterExtractPrompt,
       imageBytes: photoBytes,
     );
-    final preview = raw.length <= _maxRawChars
-        ? raw
-        : '${raw.substring(0, _maxRawChars)}…';
     log.append(
       tag: 'meter.llm',
       level: raw.trim().isEmpty ? AppLogLevel.warn : AppLogLevel.info,
-      message:
-          'kind=${kind.name}; rawLength=${raw.length}; '
-          'raw=${preview.replaceAll('\n', '\\n')}',
+      message: 'kind=${kind.name}; rawLength=${raw.length}',
     );
     final values = MeterPanelTextParser.parse(raw);
     log.append(
       tag: 'meter.llm',
       level: AppLogLevel.info,
-      message: 'kind=${kind.name}; parsed ${_formatValues(values)}',
+      message: 'kind=${kind.name}; parsed ${_formatFieldPresence(values)}',
     );
     return values;
   }
 }
 
-/// [values] を 1 行のログ向け文字列にする。
-String _formatValues(MeterReadingValues values) {
-  final duration = values.duration;
-  final durationText = duration == null ? 'null' : '${duration.inSeconds}s';
-  return 'distanceKm=${values.distanceKm}; '
-      'duration=$durationText; '
-      'caloriesKcal=${values.caloriesKcal}; '
-      'averageSpeedKmh=${values.averageSpeedKmh}';
+/// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
+String _formatFieldPresence(MeterReadingValues values) {
+  final present = <String>[];
+  final missing = <String>[];
+  void classify(String name, Object? value) {
+    if (value == null) {
+      missing.add(name);
+    } else {
+      present.add(name);
+    }
+  }
+
+  classify('distanceKm', values.distanceKm);
+  classify('duration', values.duration);
+  classify('caloriesKcal', values.caloriesKcal);
+  classify('averageSpeedKmh', values.averageSpeedKmh);
+  return 'present=[${present.join(',')}]; missing=[${missing.join(',')}]';
 }

@@ -102,7 +102,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
         log.append(
           tag: 'meter.read',
           level: AppLogLevel.info,
-          message: 'engine values ${_formatValues(read)}',
+          message: 'engine fields ${_formatFieldPresence(read)}',
         );
         return read;
       } on Object catch (error) {
@@ -125,7 +125,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
         level: AppLogLevel.warn,
         message:
             'timeout after ${timeout.inSeconds}s; '
-            'partial ${_formatValues(values)}',
+            'partial ${_formatFieldPresence(values)}',
       );
     }
 
@@ -139,7 +139,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     log.append(
       tag: 'meter.read',
       level: AppLogLevel.info,
-      message: 'final ${_formatValues(resultValues)}',
+      message: 'final ${_formatFieldPresence(resultValues)}',
     );
     return ReadMeterPanelResult(
       values: resultValues,
@@ -207,12 +207,21 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   }
 }
 
-/// [values] を 1 行のログ向け文字列にする。
-String _formatValues(MeterReadingValues values) {
-  final duration = values.duration;
-  final durationText = duration == null ? 'null' : '${duration.inSeconds}s';
-  return 'distanceKm=${values.distanceKm}; '
-      'duration=$durationText; '
-      'caloriesKcal=${values.caloriesKcal}; '
-      'averageSpeedKmh=${values.averageSpeedKmh}';
+/// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
+String _formatFieldPresence(MeterReadingValues values) {
+  final present = <String>[];
+  final missing = <String>[];
+  void classify(String name, Object? value) {
+    if (value == null) {
+      missing.add(name);
+    } else {
+      present.add(name);
+    }
+  }
+
+  classify('distanceKm', values.distanceKm);
+  classify('duration', values.duration);
+  classify('caloriesKcal', values.caloriesKcal);
+  classify('averageSpeedKmh', values.averageSpeedKmh);
+  return 'present=[${present.join(',')}]; missing=[${missing.join(',')}]';
 }

@@ -33,8 +33,9 @@ void main() {
     expect(log.entries, hasLength(2));
     expect(log.entries.first.tag, 'meter.spatial');
     expect(log.entries.first.message, contains('tokens=1'));
-    expect(log.entries.first.message, contains('12.3km'));
-    expect(log.entries.last.message, contains('distanceKm=12.3'));
+    expect(log.entries.first.message, isNot(contains('12.3')));
+    expect(log.entries.last.message, contains('present=[distanceKm'));
+    expect(log.entries.last.message, isNot(contains('distanceKm=12.3')));
   });
 
   test('トークン0件なら warn と空の推論をログする', () async {
