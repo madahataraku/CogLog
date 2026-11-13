@@ -43,6 +43,21 @@ abstract final class MeterSpatialLayoutInferencer {
   };
   static const _speedUnits = {'km/h', 'kmh'};
 
+  /// [tokens] の分類件数だけを返す（本文・数値は含まない）。
+  ///
+  /// Example:
+  /// ```dart
+  /// MeterSpatialLayoutInferencer.classifyKindCounts(const []);
+  /// ```
+  static Map<String, int> classifyKindCounts(List<MeterOcrToken> tokens) {
+    final counts = <String, int>{};
+    for (var i = 0; i < tokens.length; i++) {
+      final name = _classifyAt(i, tokens[i]).kind.name;
+      counts[name] = (counts[name] ?? 0) + 1;
+    }
+    return counts;
+  }
+
   /// [tokens] から読めた項目だけを返す。
   ///
   /// Example:
