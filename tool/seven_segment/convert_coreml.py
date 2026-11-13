@@ -63,8 +63,27 @@ def main() -> int:
         import coremltools as ct
         import torch
         import torch.nn as nn
+        # SSCMA mask 構造が roi_align を import する前に、torchvision を完了させる。
+        # 不完全／版不一致だと circular import（extension 欠落）になる。
+        import torchvision
+        from torchvision.ops import roi_align as _roi_align  # noqa: F401
     except ImportError as exc:
-        return _die(f"Missing dependency: {exc}", code=2)
+        return _die(
+            f"Missing dependency: {exc}. "
+            "Use Python 3.11 venv and "
+            "`pip install --force-reinstall 'torch==2.2.0' "
+            "'torchvision==0.17.0' 'numpy<2,>=1.26'`.",
+            code=2,
+        )
+    except AttributeError as exc:
+        return _die(
+            f"Broken torchvision install ({exc}). "
+            "`pip uninstall -y torch torchvision` then "
+            "`pip install 'torch==2.2.0' 'torchvision==0.17.0'`. "
+            "Confirm: "
+            "`python -c \"from torchvision.ops import roi_align; print('ok')\"`.",
+            code=2,
+        )
 
     try:
         from coremltools.libmilstoragepython import (  # noqa: F401
