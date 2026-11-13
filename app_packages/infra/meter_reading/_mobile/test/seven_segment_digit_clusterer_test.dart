@@ -40,32 +40,30 @@ void main() {
 
   for (final gap in [0.03125, 0.046875]) {
     test('小数点の閾値境界 gap=$gap', () {
-      final tokens = SevenSegmentDigitClusterer.clusterToTokens(
-        [_digit(1, 0), _digit(2, 0.0625 + gap)],
-        gapDotFactor: 0.5,
-      );
+      final tokens = SevenSegmentDigitClusterer.clusterToTokens([
+        _digit(1, 0),
+        _digit(2, 0.0625 + gap),
+      ], gapDotFactor: 0.5);
       expect(tokens.single.text, gap == 0.03125 ? '12' : '1.2');
     });
   }
 
   for (final gap in [0.25, 0.265625]) {
     test('分割の閾値境界 gap=$gap', () {
-      final tokens = SevenSegmentDigitClusterer.clusterToTokens(
-        [_digit(1, 0), _digit(2, 0.0625 + gap)],
-      );
-      expect(
-        tokens.map((t) => t.text),
-        gap == 0.25 ? ['1.2'] : ['1', '2'],
-      );
+      final tokens = SevenSegmentDigitClusterer.clusterToTokens([
+        _digit(1, 0),
+        _digit(2, 0.0625 + gap),
+      ]);
+      expect(tokens.map((t) => t.text), gap == 0.25 ? ['1.2'] : ['1', '2']);
     });
   }
 
   for (final top in [0.0625, 0.078125]) {
     test('同一行の閾値境界 top=$top', () {
-      final tokens = SevenSegmentDigitClusterer.clusterToTokens(
-        [_digit(1, 0), _digit(2, 0.0625, top: top)],
-        rowThresholdFactor: 0.5,
-      );
+      final tokens = SevenSegmentDigitClusterer.clusterToTokens([
+        _digit(1, 0),
+        _digit(2, 0.0625, top: top),
+      ], rowThresholdFactor: 0.5);
       expect(tokens.map((t) => t.text), top == 0.0625 ? ['12'] : ['1', '2']);
     });
   }

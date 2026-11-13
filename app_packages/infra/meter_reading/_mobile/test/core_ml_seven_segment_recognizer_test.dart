@@ -79,7 +79,9 @@ void main() {
         [96, 96, 24, 48, 0.9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
       ];
     });
-    final tokens = await CoreMlSevenSegmentRecognizer().recognize(await _photo());
+    final tokens = await CoreMlSevenSegmentRecognizer().recognize(
+      await _photo(),
+    );
     expect(tokens.single.text, '7');
     expect(tokens.single.left, 0.4375);
     expect(tokens.single.top, 0.375);
@@ -88,9 +90,12 @@ void main() {
   });
 
   test('指定した score 閾値で検出を除外する', () async {
-    messenger.setMockMethodCallHandler(channel, (_) async => [
-      [96, 96, 24, 48, 0.5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]);
+    messenger.setMockMethodCallHandler(
+      channel,
+      (_) async => [
+        [96, 96, 24, 48, 0.5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ],
+    );
     expect(
       await CoreMlSevenSegmentRecognizer(scoreThreshold: 0.75)
           .recognize(await _photo()),

@@ -22,7 +22,11 @@ void main() {
         scoreThreshold: 0.25,
         nmsIoU: 0.45,
         letterbox: const SevenSegmentLetterboxMeta(
-          scale: 1, padX: 0, padY: 0, srcWidth: 192, srcHeight: 192,
+          scale: 1,
+          padX: 0,
+          padY: 0,
+          srcWidth: 192,
+          srcHeight: 192,
         ),
       ),
       isEmpty,
@@ -37,7 +41,11 @@ void main() {
       scoreThreshold: 0.25,
       nmsIoU: 0.45,
       letterbox: const SevenSegmentLetterboxMeta(
-        scale: 0.5, padX: 0, padY: 48, srcWidth: 384, srcHeight: 192,
+        scale: 0.5,
+        padX: 0,
+        padY: 48,
+        srcWidth: 384,
+        srcHeight: 192,
       ),
     );
     expect(result.single.digit, 9);
@@ -50,10 +58,20 @@ void main() {
 
   test('NMS はクラスに関係なく最大 score を残し入力順を変えない', () {
     const a = SevenSegmentDigitDetection(
-      digit: 1, score: 0.5, left: 0, top: 0, width: 0.5, height: 0.5,
+      digit: 1,
+      score: 0.5,
+      left: 0,
+      top: 0,
+      width: 0.5,
+      height: 0.5,
     );
     const b = SevenSegmentDigitDetection(
-      digit: 9, score: 0.9, left: 0, top: 0, width: 0.5, height: 0.5,
+      digit: 9,
+      score: 0.9,
+      left: 0,
+      top: 0,
+      width: 0.5,
+      height: 0.5,
     );
     final input = [a, b];
     expect(SevenSegmentYoloPostprocess.nonMaxSuppression(input, 0.5), [b]);
@@ -65,13 +83,28 @@ void main() {
 
   test('交差しない矩形と面積ゼロの IoU はゼロ', () {
     const a = SevenSegmentDigitDetection(
-      digit: 0, score: 1, left: 0, top: 0, width: 0.5, height: 0.5,
+      digit: 0,
+      score: 1,
+      left: 0,
+      top: 0,
+      width: 0.5,
+      height: 0.5,
     );
     const b = SevenSegmentDigitDetection(
-      digit: 0, score: 1, left: 0.5, top: 0, width: 0.5, height: 0.5,
+      digit: 0,
+      score: 1,
+      left: 0.5,
+      top: 0,
+      width: 0.5,
+      height: 0.5,
     );
     const zero = SevenSegmentDigitDetection(
-      digit: 0, score: 1, left: 0, top: 0, width: 0, height: 0,
+      digit: 0,
+      score: 1,
+      left: 0,
+      top: 0,
+      width: 0,
+      height: 0,
     );
     expect(SevenSegmentYoloPostprocess.iou(a, b), 0);
     expect(SevenSegmentYoloPostprocess.iou(zero, zero), 0);

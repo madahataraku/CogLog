@@ -28,8 +28,14 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('空画像と壊れた画像は null を返す', () async {
-    for (final bytes in [Uint8List(0), Uint8List.fromList([1, 2, 3])]) {
-      expect(await SevenSegmentYoloPostprocess.decodeAndLetterbox(bytes), isNull);
+    for (final bytes in [
+      Uint8List(0),
+      Uint8List.fromList([1, 2, 3]),
+    ]) {
+      expect(
+        await SevenSegmentYoloPostprocess.decodeAndLetterbox(bytes),
+        isNull,
+      );
     }
   });
 
@@ -50,7 +56,8 @@ void main() {
       expect(meta.padY, size == (4, 2) ? 2 : 0);
       for (var y = 0; y < 8; y++) {
         for (var x = 0; x < 8; x++) {
-          final inside = x >= meta.padX &&
+          final inside =
+              x >= meta.padX &&
               x < 8 - meta.padX &&
               y >= meta.padY &&
               y < 8 - meta.padY;

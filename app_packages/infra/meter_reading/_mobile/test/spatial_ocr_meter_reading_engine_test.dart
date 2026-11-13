@@ -26,17 +26,31 @@ void main() {
   test('補完失敗でもゼロの距離・時間・カロリーを保持する', () async {
     final engine = SpatialOcrMeterReadingEngine(
       kind: MeterReadingEngineKind.mlKit,
-      recognizer: FakeMeterLayoutRecognizer(tokens: const [
-        MeterOcrToken(
-          text: '0km', left: 0.1, top: 0.1, width: 0.2, height: 0.05,
-        ),
-        MeterOcrToken(
-          text: '0:00:00', left: 0.1, top: 0.4, width: 0.2, height: 0.05,
-        ),
-        MeterOcrToken(
-          text: '0kcal', left: 0.1, top: 0.7, width: 0.2, height: 0.05,
-        ),
-      ]),
+      recognizer: FakeMeterLayoutRecognizer(
+        tokens: const [
+          MeterOcrToken(
+            text: '0km',
+            left: 0.1,
+            top: 0.1,
+            width: 0.2,
+            height: 0.05,
+          ),
+          MeterOcrToken(
+            text: '0:00:00',
+            left: 0.1,
+            top: 0.4,
+            width: 0.2,
+            height: 0.05,
+          ),
+          MeterOcrToken(
+            text: '0kcal',
+            left: 0.1,
+            top: 0.7,
+            width: 0.2,
+            height: 0.05,
+          ),
+        ],
+      ),
       sevenSegmentRecognizer: FakeMeterSevenSegmentRecognizer(
         throwOnRecognize: true,
       ),
