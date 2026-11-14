@@ -1,6 +1,6 @@
 # Seven-segment Swift-YOLO retraining on Colab (public datasets)
 
-AGPL の Ultralytics を使わず、**SSCMA / ModelAssistant（MIT）** で桁検出を再学習し、CogLog 既存契約（入力 192・クラス 0–9）に合わせる手順。
+AGPL の Ultralytics を使わず、**SSCMA / ModelAssistant（Apache License 2.0）** で桁検出を再学習し、CogLog 既存契約（入力 192・クラス 0–9）に合わせる手順。
 
 自前撮影データは使わない前提。無料 Colab（T4 が取れれば十分）向け。
 
@@ -59,9 +59,10 @@ API キー不要。Hugging Face から取得できる。
    - ModelAssistant を clone
    - `digits-t2eg6` を取得し COCO 化（`prepare_digits_t2eg6.py`）
    - Swift-YOLO tiny・`imgsz=192`・`num_classes=10` で学習
-   - TFLite float32 を export
-   - Drive またはブラウザへ `.pth` / `.tflite` を保存
-4. Mac で `convert_coreml.md` に従い `.mlpackage` を作る。
+   - `export_tflite_float32.py` で **FLOAT32** TFLite を export（SSCMA `tools/export.py` は INT8 のみなので使わない）
+   - 学習中の checkpoint も Drive 上の `work_dirs` に置く
+   - Drive へ `.pth` / `.tflite` を保存
+4. Mac で `convert_coreml.md` の **Colab 再学習重み** 節に従い `.mlpackage` を作る（配布 zoo 重みの取得はスキップ）。
 5. アプリ資産と `NOTICE.md` を差し替え、実機で確認する。
 
 ローカル（GPU マシン）でも同じスクリプトで再現できる。
@@ -92,5 +93,6 @@ python3 test_yolo_txt_to_coco.py
 ```text
 Training dataset: LibreYOLO/digits-t2eg6 (CC BY 4.0)
 https://huggingface.co/datasets/LibreYOLO/digits-t2eg6
-Trainer: Seeed-Studio/ModelAssistant (MIT), Swift-YOLO tiny 192
+Trainer: Seeed-Studio/ModelAssistant (Apache-2.0), Swift-YOLO tiny 192
 ```
+

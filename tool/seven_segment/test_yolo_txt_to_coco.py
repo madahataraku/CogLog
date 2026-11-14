@@ -19,6 +19,7 @@ from remap_treadmill_ocr_labels import (  # noqa: E402
     DEFAULT_NAMES,
     class_id_to_digit,
     remap_label_file,
+    remap_tree,
 )
 from yolo_txt_to_coco import convert_dataset  # noqa: E402
 
@@ -71,6 +72,22 @@ class RemapTreadmillTest(unittest.TestCase):
             self.assertEqual(
                 dest.read_text(encoding="utf-8").strip(),
                 "0 0.1 0.2 0.3 0.4",
+            )
+
+    def test_keeps_images_without_labels(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "in"
+            out = Path(tmp) / "out"
+            (root / "train" / "images").mkdir(parents=True)
+            (root / "train" / "labels").mkdir(parents=True)
+            img = root / "train" / "images" / "neg.jpg"
+            Image.new("RGB", (8, 8), color=(1, 2, 3)).save(img)
+            totals = remap_tree(root, out, DEFAULT_NAMES)
+            self.assertEqual(totals["images"], 1)
+            self.assertTrue((out / "train" / "images" / "neg.jpg").exists())
+            self.assertEqual(
+                (out / "train" / "labels" / "neg.txt").read_text(encoding="utf-8"),
+                "",
             )
 
 

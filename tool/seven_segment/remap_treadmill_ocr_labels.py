@@ -135,31 +135,38 @@ def remap_label_file(src: Path, dest: Path, names: list[str]) -> tuple[int, int]
     return kept, dropped
 
 
+_IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+
+
 def remap_tree(root: Path, out: Path, names: list[str]) -> dict[str, int]:
-    totals = {"kept": 0, "dropped": 0, "files": 0}
+    totals = {"kept": 0, "dropped": 0, "files": 0, "images": 0}
     for split in ("train", "valid", "val", "test"):
-        labels = root / split / "labels"
-        if not labels.is_dir():
+        images = root / split / "images"
+        if not images.is_dir():
             continue
+        labels = root / split / "labels"
         out_split = "valid" if split == "val" else split
         out_labels = out / out_split / "labels"
         out_images = out / out_split / "images"
-        images = root / split / "images"
         out_labels.mkdir(parents=True, exist_ok=True)
         out_images.mkdir(parents=True, exist_ok=True)
-        for label_path in sorted(labels.glob("*.txt")):
-            kept, dropped = remap_label_file(
-                label_path, out_labels / label_path.name, names
-            )
-            totals["kept"] += kept
-            totals["dropped"] += dropped
-            totals["files"] += 1
-            stem = label_path.stem
-            if images.is_dir():
-                for img in images.glob(stem + ".*"):
-                    dest = out_images / img.name
-                    if not dest.exists():
-                        dest.symlink_to(img.resolve())
+        for img in sorted(images.iterdir()):
+            if not img.is_file() or img.suffix.lower() not in _IMAGE_SUFFIXES:
+                continue
+            dest = out_images / img.name
+            if not dest.exists():
+                dest.symlink_to(img.resolve())
+            totals["images"] += 1
+            label_path = labels / f"{img.stem}.txt" if labels.is_dir() else None
+            out_label = out_labels / f"{img.stem}.txt"
+            if label_path is not None and label_path.is_file():
+                kept, dropped = remap_label_file(label_path, out_label, names)
+                totals["kept"] += kept
+                totals["dropped"] += dropped
+                totals["files"] += 1
+            else:
+                # Keep negative examples (no boxes) so COCO conversion retains them.
+                out_label.write_text("", encoding="utf-8")
     return totals
 
 
@@ -194,8 +201,8 @@ def main() -> int:
     except (ValueError, FileNotFoundError) as exc:
         return _die(str(exc))
     print(
-        f"Remapped files={totals['files']} kept={totals['kept']} "
-        f"dropped_symbols={totals['dropped']} -> {args.out}"
+        f"Remapped images={totals['images']} label_files={totals['files']} "
+        f"kept={totals['kept']} dropped_symbols={totals['dropped']} -> {args.out}"
     )
     return 0
 

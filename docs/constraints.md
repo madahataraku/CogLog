@@ -88,9 +88,11 @@ Fake 差し替え可。依存とモデル NOTICE は OSS ライセンス再生�
 
 七セグの **permissive 再学習**（AGPL の Ultralytics を使わない）は Google Colab 無料枠を前提に、
 `tool/seven_segment/colab_retrain.md` と `colab_sscma_retrain.ipynb` に従う。学習器は
-Seeed ModelAssistant（MIT）、主データは Hugging Face `LibreYOLO/digits-t2eg6`（CC BY 4.0）。
-入力 192・クラス 0–9 の既存契約に合わせ、TFLite を Colab で出し、Core ML は macOS で変換する。
-Cloud Agent（Linux・GPU 無し）では本学習と Core ML 保存は行わない。
+Seeed ModelAssistant（Apache License 2.0）、主データは Hugging Face `LibreYOLO/digits-t2eg6`
+（CC BY 4.0）。入力 192・クラス 0–9 の既存契約に合わせ、TFLite FLOAT32 は
+`export_tflite_float32.py`（NHWC・score÷100）で出し、Core ML は macOS で変換する。
+SSCMA 付属 `tools/export.py` の INT8 経路は使わない。Cloud Agent（Linux・GPU 無し）では
+本学習と Core ML 保存は行わない。
 
 ## iOS
 
