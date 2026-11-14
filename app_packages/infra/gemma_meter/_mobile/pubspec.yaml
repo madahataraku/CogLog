@@ -1,15 +1,30 @@
 name: infra_gemma_meter_mobile
-description: Mobile GemmaMeterVision (Unavailable stub until LiteRT).
+description: Mobile GemmaMeterVision backed by LiteRT-LM (Gemma E2B).
 publish_to: none
 resolution: workspace
 version: 0.1.0+1
 
 environment:
   sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
 
 dependencies:
-  infra_gemma_meter:
-    path: ../
+  flutter:
+    sdk: flutter
+  infra_gemma_meter: any
+  meta: any
 
 dev_dependencies:
   flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  test: any
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: io.github.madahataraku.coglog.gemma_meter
+        pluginClass: GemmaMeterPlugin
+      ios:
+        pluginClass: GemmaMeterPlugin

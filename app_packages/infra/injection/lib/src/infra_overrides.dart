@@ -30,6 +30,8 @@ import 'package:riverpod/riverpod.dart';
 /// [onDeviceLlm] / [gemmaMeterVision] / [meterPhotoSource] /
 /// [healthBodyMetricsSource] / [networkConnectivity] を渡すと、
 /// その実装を使う（Widget テスト用）。
+/// [gemmaMeterVision] を省略したとき、iOS / Android では [PluginGemmaMeterVision]、
+/// それ以外では [UnavailableGemmaMeterVision] を束ねる。
 ///
 /// Example:
 /// ```dart
@@ -58,9 +60,22 @@ List<Override> infraOverrides({
         return const UnavailableOnDeviceLlm();
     }
   }),
-  gemmaMeterVisionProvider.overrideWith(
-    (ref) => gemmaMeterVision ?? const UnavailableGemmaMeterVision(),
-  ),
+  gemmaMeterVisionProvider.overrideWith((ref) {
+    final injected = gemmaMeterVision;
+    if (injected != null) {
+      return injected;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return PluginGemmaMeterVision();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableGemmaMeterVision();
+    }
+  }),
   networkConnectivityProvider.overrideWith(
     (ref) => networkConnectivity ?? ConnectivityPlusNetworkConnectivity(),
   ),
