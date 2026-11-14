@@ -1,4 +1,5 @@
 import 'package:infra_meter_reading/infra_meter_reading.dart';
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 
 import '../state/debug_screen_state.dart';
@@ -12,6 +13,7 @@ import '../state/debug_screen_state.dart';
 ///   sessionPreference: preference,
 /// ).execute(true);
 /// ```
+@internal
 final class OnTogglePreferGemmaDelegate {
   /// 依存を受け取る。
   ///

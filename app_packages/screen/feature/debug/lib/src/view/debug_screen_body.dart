@@ -196,6 +196,8 @@ class DebugScreenBody extends HookConsumerWidget {
                 ),
                 suffix: FSwitch(
                   value: entity.preferGemmaOverOsLlm,
+                  semanticsLabel:
+                      strings.screen_feature_debug_prefer_gemma_item,
                   onChange: (value) {
                     unawaited(
                       ref
