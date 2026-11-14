@@ -36,6 +36,18 @@ void main() {
     );
   }
 
+  test('timeout 省略時の既定は 60 秒', () {
+    final usecase = ReadMeterPanelUsecaseImpl(
+      llm: FakeOnDeviceLlm(readiness: OnDeviceLlmReadiness.unavailable),
+      llmEngine: FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.foundationModel,
+        available: false,
+      ),
+      gemmaEngine: unavailableGemma(),
+    );
+    expect(usecase.timeout, const Duration(seconds: 60));
+  });
+
   test('LLM ready+vision なら LLM のみ', () async {
     final log = AppLogStore();
     final llm = FakeOnDeviceLlm(
