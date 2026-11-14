@@ -10,16 +10,16 @@ release; product docs do not pin a model or SDK version). Models download into
 
 ## iOS / LiteRTLM (SPM)
 
-CocoaPods podspecs do not provide a stable `swift_package` hook for this
-Flutter plugin. Add LiteRTLM with Swift Package Manager in the app project:
+`ios/infra_gemma_meter_mobile/Package.swift` declares:
 
-1. Xcode → File → Add Package Dependencies…
-2. URL: `https://github.com/google-ai-edge/LiteRT-LM`
-3. Rule: from `0.12.0`
-4. Product: `LiteRTLM` → Runner target
+- FlutterFramework (Flutter-generated path for plugin packages)
+- LiteRTLM from `https://github.com/google-ai-edge/LiteRT-LM` (`from: "0.12.0"`)
 
-Until the package is linked, `GemmaMeterPlugin.swift` builds with
-`#if canImport(LiteRTLM)` and reports `unavailable` / prepare `generic`.
+With Flutter Swift Package Manager enabled (default on Flutter 3.44+), the plugin
+target links LiteRTLM and `canImport(LiteRTLM)` is true.
+
+CocoaPods still compiles the same Sources as a fallback. Without LiteRTLM on the
+pod target, availability stays `unavailable` until SPM is used.
 
 Model files are stored under Application Support/`gemma_meter` with
 `NSURLIsExcludedFromBackupKey`.
