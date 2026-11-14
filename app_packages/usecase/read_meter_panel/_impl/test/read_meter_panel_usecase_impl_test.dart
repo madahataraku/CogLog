@@ -24,7 +24,7 @@ void main() {
     required MeterReadingEngine gemmaEngine,
     AppLogStore? log,
     MeterReadingEngineSessionPreference? sessionPreference,
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = const Duration(seconds: 60),
   }) {
     return ReadMeterPanelUsecaseImpl(
       llm: llm,

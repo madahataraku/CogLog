@@ -12,7 +12,7 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 /// [sessionPreference.preferGemmaOverOsLlm] が true かつ [gemmaEngine] が available のときは
 /// ready+vision でも [gemmaEngine] を選ぶ。
 ///
-/// 全体の上限は [timeout]（既定 30 秒）。
+/// 全体の上限は [timeout]（既定 60 秒）。
 /// 超過時はその時点の結果を返す。
 /// 選択理由・例外・最終値の有無は [log] へ出す（測定値・LLM 本文は出さない）。
 ///
@@ -43,7 +43,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     required this.gemmaEngine,
     AppLogStore? log,
     MeterReadingEngineSessionPreference? sessionPreference,
-    this.timeout = const Duration(seconds: 30),
+    this.timeout = const Duration(seconds: 60),
   }) : log = log ?? AppLogStore(),
        sessionPreference =
            sessionPreference ?? MeterReadingEngineSessionPreference();
