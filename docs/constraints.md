@@ -8,7 +8,7 @@
 - 子パッケージの外部依存は `any` にする。
 - `flutter pub get` と Monolith のコマンドはリポジトリルートで実行する。
 - `flutter run` と `dart run forui` は `app/` で実行する。
-- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に MediaPipe 上の Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
+- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に LiteRT-LM 上の Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない。版は運用追従）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
 
 ## Syncfusion Charts
 
@@ -75,7 +75,7 @@ Java / Kotlin の JVM ターゲットは **17** に揃える（`app/android/app/
 `app/android/build.gradle.kts` の `subprojects`）。プラグイン側が Java 11 のままだと、
 `compileReleaseKotlin`（17）と `compileReleaseJavaWithJavac`（11）が不一致になり release APK が失敗する。
 
-メーター読み取りの自動解析は OS LLM または MediaPipe 上の Gemma E2B のみとする。空間 OCR
+メーター読み取りの自動解析は OS LLM または LiteRT-LM 上の Gemma E2B のみとする。空間 OCR
 （ML Kit / Vision / 七セグ TFLite / Core ML）は採用しない。
 
 ## iOS
