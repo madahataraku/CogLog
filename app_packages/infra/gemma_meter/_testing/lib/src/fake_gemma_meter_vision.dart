@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:infra_gemma_meter/infra_gemma_meter.dart';
@@ -25,6 +26,7 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
     this.throwOnGenerate = false,
     this.throwOnPrepare = false,
     this.throwOnAvailabilitySnapshot = false,
+    this.hangOnPrepare = false,
     this.prepareFailureKind,
     GemmaMeterAvailabilitySnapshot? availabilitySnapshot,
   }) : availabilitySnapshotValue =
@@ -56,6 +58,9 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
   /// true のとき [availabilitySnapshot] が失敗する。
   final bool throwOnAvailabilitySnapshot;
 
+  /// true のとき [prepareModel] が完了しない（購読解除を検証する用）。
+  final bool hangOnPrepare;
+
   /// 非 null のとき [prepareModel] が [GemmaMeterPrepareException] を投げる。
   final GemmaMeterPrepareFailureKind? prepareFailureKind;
 
@@ -64,6 +69,9 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
 
   /// [prepareModel] が呼ばれた回数。
   int prepareModelCallCount = 0;
+
+  /// [hangOnPrepare] 時に購読が解除された回数。
+  int prepareCancelCount = 0;
 
   /// [readinessValue] を返す。
   ///
@@ -143,15 +151,22 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
   /// }
   /// ```
   @override
-  Stream<double> prepareModel() async* {
+  Stream<double> prepareModel() {
     prepareModelCallCount++;
     final failureKind = prepareFailureKind;
     if (failureKind != null) {
-      throw GemmaMeterPrepareException(failureKind);
+      return Stream.error(GemmaMeterPrepareException(failureKind));
     }
     if (throwOnPrepare) {
-      throw StateError('fake prepare failed');
+      return Stream.error(StateError('fake prepare failed'));
     }
-    yield 1.0;
+    if (hangOnPrepare) {
+      final controller = StreamController<double>();
+      controller.onCancel = () {
+        prepareCancelCount++;
+      };
+      return controller.stream;
+    }
+    return Stream<double>.value(1.0);
   }
 }

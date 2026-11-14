@@ -13,8 +13,8 @@ let package = Package(
   ],
   dependencies: [
     .package(name: "FlutterFramework", path: "../FlutterFramework"),
-    // LiteRT-LM: product LiteRTLM. Version floor matches docs/constraints.md (from 0.12.0).
-    .package(url: "https://github.com/google-ai-edge/LiteRT-LM", from: "0.12.0"),
+    // LiteRT-LM: product LiteRTLM. Floor 0.19.0 avoids older manifests with unsafeFlags.
+    .package(url: "https://github.com/google-ai-edge/LiteRT-LM", from: "0.19.0"),
   ],
   targets: [
     .target(

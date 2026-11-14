@@ -13,7 +13,7 @@ release; product docs do not pin a model or SDK version). Models download into
 `ios/infra_gemma_meter_mobile/Package.swift` declares:
 
 - FlutterFramework (Flutter-generated path for plugin packages)
-- LiteRTLM from `https://github.com/google-ai-edge/LiteRT-LM` (`from: "0.12.0"`)
+- LiteRTLM from `https://github.com/google-ai-edge/LiteRT-LM` (`from: "0.19.0"`)
 
 With Flutter Swift Package Manager enabled (default on Flutter 3.44+), the plugin
 target links LiteRTLM and `canImport(LiteRTLM)` is true.

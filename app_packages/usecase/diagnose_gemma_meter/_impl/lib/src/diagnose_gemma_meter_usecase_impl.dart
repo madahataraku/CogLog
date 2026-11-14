@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:foundation_app_log/foundation_app_log.dart';
@@ -75,8 +76,26 @@ final class DiagnoseGemmaMeterUsecaseImpl implements DiagnoseGemmaMeterUsecase {
     );
 
     String? prepareError;
+    // last.timeout だけでは購読が残るため、明示購読して finally で解除する。
+    // ネイティブ準備の停止は購読解除とは別（クライアント onCancel へ委譲）。
+    StreamSubscription<double>? prepareSubscription;
     try {
-      await gemma.prepareModel().last.timeout(generateTimeout);
+      final done = Completer<void>();
+      prepareSubscription = gemma.prepareModel().listen(
+        (_) {},
+        onError: (Object error, StackTrace stackTrace) {
+          if (!done.isCompleted) {
+            done.completeError(error, stackTrace);
+          }
+        },
+        onDone: () {
+          if (!done.isCompleted) {
+            done.complete();
+          }
+        },
+        cancelOnError: true,
+      );
+      await done.future.timeout(generateTimeout);
       log.append(
         tag: 'gemma.diagnose',
         level: AppLogLevel.info,
@@ -89,6 +108,8 @@ final class DiagnoseGemmaMeterUsecaseImpl implements DiagnoseGemmaMeterUsecase {
         level: AppLogLevel.error,
         message: 'prepare probe failed: $prepareError',
       );
+    } finally {
+      await prepareSubscription?.cancel();
     }
 
     if (!probeGenerate) {

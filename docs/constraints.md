@@ -92,7 +92,7 @@ release を追う。ピン留めしない）。ネイティブ／アセットの
 | `IPHONEOS_DEPLOYMENT_TARGET` | `16.4` |
 | Podfile `platform :ios` | `16.4` |
 
-Gemma E2B 経路は LiteRTLM（Swift Package `https://github.com/google-ai-edge/LiteRT-LM`、`from: "0.12.0"`）を使う。CocoaPods の podspec は公式の `swift_package` を持たないため、アプリの Xcode / Podfile 側で SPM 依存を追加する（`infra_gemma_meter_mobile` の README・podspec コメントを参照）。LiteRTLM も OSS ライセンス一覧の再生成対象に含める。モデル既定は運用追従（ピン留めしない）。
+Gemma E2B 経路は LiteRTLM（Swift Package `https://github.com/google-ai-edge/LiteRT-LM`、`from: "0.19.0"`）を使う。0.19.0 未満の Package.swift は `unsafeFlags` を含むためリモート SPM 解決に使えない。CocoaPods の podspec は公式の `swift_package` を持たないため、アプリの Xcode / Flutter SPM 側で依存を追加する（`infra_gemma_meter_mobile` の README・podspec コメントを参照）。LiteRTLM も OSS ライセンス一覧（`extraOssLicenses`）の対象に含める。モデル既定は運用追従（ピン留めしない）。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 

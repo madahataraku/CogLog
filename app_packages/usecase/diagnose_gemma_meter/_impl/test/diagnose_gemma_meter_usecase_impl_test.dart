@@ -70,4 +70,16 @@ void main() {
     expect(result.generateError, isNull);
     expect(result.probeOutputLength, isNull);
   });
+
+  test('prepare タイムアウト時は購読を解除する', () async {
+    final gemma = FakeGemmaMeterVision(hangOnPrepare: true);
+    final usecase = DiagnoseGemmaMeterUsecaseImpl(
+      gemma: gemma,
+      log: AppLogStore(),
+      generateTimeout: const Duration(milliseconds: 20),
+    );
+    final result = await usecase.execute(probeGenerate: false);
+    expect(result.prepareError, contains('TimeoutException'));
+    expect(gemma.prepareCancelCount, 1);
+  });
 }
