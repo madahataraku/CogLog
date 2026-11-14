@@ -111,7 +111,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       "status": "unavailable",
       "reason": "liteRtlmMissing",
       "message":
-        "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.12.0.",
+        "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.19.0.",
     ]
     #endif
   }
@@ -146,7 +146,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
     #else
     let message =
-      "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.12.0."
+      "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.19.0."
     DispatchQueue.main.async {
       self.prepareEvents?(
         FlutterError(code: "generic", message: message, details: nil)
@@ -244,7 +244,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       code: 4,
       userInfo: [
         NSLocalizedDescriptionKey:
-          "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.12.0."
+          "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.19.0."
       ]
     )
   }
