@@ -50,20 +50,7 @@ final class OnSelectMetricDelegate {
       await saveTopScreenMetricUsecase.execute(
         SaveTopScreenMetricRequest(metric: metric),
       );
-      await emitter.emit(
-        TopScreenState(
-          loaded: true,
-          metric: metric,
-          today: current.today,
-          week: current.week,
-          month: current.month,
-          goal: current.goal,
-          adviceText: current.adviceText,
-          adviceTone: current.adviceTone,
-          pendingModelDownloadGuidance: current.pendingModelDownloadGuidance,
-          hasNewAchievements: current.hasNewAchievements,
-        ),
-      );
+      await emitter.emit(current.copyWith(loaded: true, metric: metric));
     });
   }
 }

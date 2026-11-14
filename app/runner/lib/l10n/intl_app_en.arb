@@ -1446,6 +1446,14 @@
   "@view_model_download_guidance_dismiss": {
     "description": "閉じる"
   },
+  "view_model_download_guidance_gemma_body": "The meter reading model is not on this device yet. You can start preparing it while on Wi-Fi.",
+  "@view_model_download_guidance_gemma_body": {
+    "description": "Gemma誘導本文"
+  },
+  "view_model_download_guidance_gemma_title": "Prepare meter reading model",
+  "@view_model_download_guidance_gemma_title": {
+    "description": "Gemma誘導タイトル"
+  },
   "view_model_download_guidance_prepare": "Prepare model",
   "@view_model_download_guidance_prepare": {
     "description": "準備開始"
@@ -1453,6 +1461,18 @@
   "view_model_download_guidance_prepare_failed": "Preparation failed. Please try again later.",
   "@view_model_download_guidance_prepare_failed": {
     "description": "準備失敗"
+  },
+  "view_model_download_guidance_prepare_failed_network": "Network error. Check your connection and try again.",
+  "@view_model_download_guidance_prepare_failed_network": {
+    "description": "通信失敗"
+  },
+  "view_model_download_guidance_prepare_failed_storage": "Not enough storage. Free up space and try again.",
+  "@view_model_download_guidance_prepare_failed_storage": {
+    "description": "容量不足"
+  },
+  "view_model_download_guidance_prepare_failed_wifi": "Connect to Wi-Fi and try again.",
+  "@view_model_download_guidance_prepare_failed_wifi": {
+    "description": "Wi-Fi以外で準備開始不可"
   },
   "view_model_download_guidance_title": "Prepare on-device AI model",
   "@view_model_download_guidance_title": {

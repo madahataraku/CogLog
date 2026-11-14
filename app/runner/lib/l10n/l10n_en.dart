@@ -1217,11 +1217,31 @@ class L10nEn extends L10n {
   String get view_model_download_guidance_dismiss => 'Dismiss';
 
   @override
+  String get view_model_download_guidance_gemma_body =>
+      'The meter reading model is not on this device yet. You can start preparing it while on Wi-Fi.';
+
+  @override
+  String get view_model_download_guidance_gemma_title =>
+      'Prepare meter reading model';
+
+  @override
   String get view_model_download_guidance_prepare => 'Prepare model';
 
   @override
   String get view_model_download_guidance_prepare_failed =>
       'Preparation failed. Please try again later.';
+
+  @override
+  String get view_model_download_guidance_prepare_failed_network =>
+      'Network error. Check your connection and try again.';
+
+  @override
+  String get view_model_download_guidance_prepare_failed_storage =>
+      'Not enough storage. Free up space and try again.';
+
+  @override
+  String get view_model_download_guidance_prepare_failed_wifi =>
+      'Connect to Wi-Fi and try again.';
 
   @override
   String get view_model_download_guidance_title => 'Prepare on-device AI model';

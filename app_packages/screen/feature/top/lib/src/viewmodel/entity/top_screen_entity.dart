@@ -15,6 +15,7 @@ import 'top_goal_ring_entity.dart';
 ///   adviceText: '',
 ///   adviceTone: AdviceTone.fun,
 ///   pendingModelDownloadGuidance: false,
+///   pendingGemmaMeterGuidance: false,
 ///   hasNewAchievements: false,
 ///   duration: const TopGoalRingEntity(
 ///     status: GoalMetricStatus.unset,
@@ -55,6 +56,7 @@ final class TopScreenEntity {
   ///   adviceText: '',
   ///   adviceTone: AdviceTone.fun,
   ///   pendingModelDownloadGuidance: false,
+  ///   pendingGemmaMeterGuidance: false,
   ///   hasNewAchievements: false,
   ///   duration: ring,
   ///   calories: ring,
@@ -69,6 +71,7 @@ final class TopScreenEntity {
     required this.adviceText,
     required this.adviceTone,
     required this.pendingModelDownloadGuidance,
+    required this.pendingGemmaMeterGuidance,
     required this.hasNewAchievements,
     required this.duration,
     required this.calories,
@@ -93,8 +96,11 @@ final class TopScreenEntity {
   /// ワンポイントアドバイスのトーン。
   final AdviceTone adviceTone;
 
-  /// モデル未ダウンロード誘導を表示予約しているとき true。
+  /// OS LLM モデル未ダウンロード誘導 (A) を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
+
+  /// Gemma メーター誘導 (B) を表示予約しているとき true。
+  final bool pendingGemmaMeterGuidance;
 
   /// trophy に新規ドットを出すとき true。
   final bool hasNewAchievements;

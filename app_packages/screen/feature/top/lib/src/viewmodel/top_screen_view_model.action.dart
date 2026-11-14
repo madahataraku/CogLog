@@ -30,7 +30,9 @@ extension TopScreenViewModelActions on TopScreenViewModel {
       loadTopScreenUsecase: loadTopScreenUsecase,
       generateTopAdviceUsecase: generateTopAdviceUsecase,
       evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+      evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
       guidanceSession: guidanceSession,
+      gemmaSession: gemmaSession,
     );
     return delegate.execute(
       locale: locale,
@@ -55,7 +57,7 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     return delegate.execute(metric);
   }
 
-  /// 誘導予約を消費し、同一プロセスでの再表示を止める。
+  /// (A) 誘導予約を消費し、同一プロセスでの再表示を止める。
   ///
   /// Example:
   /// ```dart
@@ -68,7 +70,7 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     ).execute();
   }
 
-  /// モデル準備を依頼する。
+  /// OS LLM モデル準備を依頼する。
   ///
   /// Example:
   /// ```dart
@@ -77,6 +79,47 @@ extension TopScreenViewModelActions on TopScreenViewModel {
   Future<void> onPrepareModelDownloadGuidance() {
     return OnPrepareModelDownloadGuidanceDelegate(
       prepareOnDeviceLlmModelUsecase: prepareOnDeviceLlmModelUsecase,
+    ).execute();
+  }
+
+  /// (A) ダイアログ完了後に (B) の要否を判定する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEvaluateGemmaMeterGuidance();
+  /// ```
+  Future<void> onEvaluateGemmaMeterGuidance() {
+    return OnEvaluateGemmaMeterGuidanceDelegate(
+      state: state,
+      evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
+      gemmaSession: gemmaSession,
+    ).execute();
+  }
+
+  /// (B) 誘導予約を消費し、同一プロセスでの再表示を止める。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeGemmaMeterGuidance();
+  /// ```
+  Future<void> onAcknowledgeGemmaMeterGuidance() {
+    return OnAcknowledgeGemmaMeterGuidanceDelegate(
+      state: state,
+      session: gemmaSession,
+    ).execute();
+  }
+
+  /// Gemma モデル準備の進捗を流す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await for (final progress in viewModel.onPrepareGemmaMeterGuidance()) {
+  ///   progress;
+  /// }
+  /// ```
+  Stream<double> onPrepareGemmaMeterGuidance() {
+    return OnPrepareGemmaMeterGuidanceDelegate(
+      prepareGemmaMeterModelUsecase: prepareGemmaMeterModelUsecase,
     ).execute();
   }
 

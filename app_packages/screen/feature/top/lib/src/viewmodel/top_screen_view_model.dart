@@ -6,16 +6,20 @@ import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
+import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
+import 'delegate/on_acknowledge_gemma_meter_guidance_delegate.dart';
 import 'delegate/on_acknowledge_model_download_guidance_delegate.dart';
+import 'delegate/on_evaluate_gemma_meter_guidance_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_open_achievements_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
+import 'delegate/on_prepare_gemma_meter_guidance_delegate.dart';
 import 'delegate/on_prepare_model_download_guidance_delegate.dart';
 import 'delegate/on_select_metric_delegate.dart';
 import 'delegate/top_screen_state_to_entity_delegate.dart';
@@ -55,7 +59,14 @@ final class TopScreenViewModel {
         prepareOnDeviceLlmModelUsecase: ref.watch(
           PrepareOnDeviceLlmModelUsecase.provider,
         ),
+        evaluateGemmaMeterGuidanceUsecase: ref.watch(
+          EvaluateGemmaMeterGuidanceUsecase.provider,
+        ),
+        prepareGemmaMeterModelUsecase: ref.watch(
+          PrepareGemmaMeterModelUsecase.provider,
+        ),
         guidanceSession: ref.watch(ModelDownloadGuidanceProviders.session),
+        gemmaSession: ref.watch(ModelDownloadGuidanceProviders.gemmaSession),
         navigation: ref.watch(screenNavigationProvider),
         newIndicator: ref.watch(LoadAchievementNewIndicatorUsecase.provider),
         stateToEntity: const TopScreenStateToEntityDelegate(),
@@ -72,7 +83,10 @@ final class TopScreenViewModel {
       GenerateTopAdviceUsecase.provider,
       EvaluateOnDeviceLlmGuidanceUsecase.provider,
       PrepareOnDeviceLlmModelUsecase.provider,
+      EvaluateGemmaMeterGuidanceUsecase.provider,
+      PrepareGemmaMeterModelUsecase.provider,
       ModelDownloadGuidanceProviders.session,
+      ModelDownloadGuidanceProviders.gemmaSession,
       screenNavigationProvider,
       LoadAchievementNewIndicatorUsecase.provider,
     ],
@@ -94,17 +108,29 @@ final class TopScreenViewModel {
   @visibleForTesting
   final GenerateTopAdviceUsecase generateTopAdviceUsecase;
 
-  /// モデル未ダウンロード誘導の要否。
+  /// OS LLM モデル未ダウンロード誘導 (A) の要否。
   @visibleForTesting
   final EvaluateOnDeviceLlmGuidanceUsecase evaluateOnDeviceLlmGuidanceUsecase;
 
-  /// モデル準備。
+  /// OS LLM モデル準備。
   @visibleForTesting
   final PrepareOnDeviceLlmModelUsecase prepareOnDeviceLlmModelUsecase;
 
-  /// プロセス内の誘導再表示抑制。
+  /// Gemma メーター誘導 (B) の要否。
+  @visibleForTesting
+  final EvaluateGemmaMeterGuidanceUsecase evaluateGemmaMeterGuidanceUsecase;
+
+  /// Gemma モデル準備。
+  @visibleForTesting
+  final PrepareGemmaMeterModelUsecase prepareGemmaMeterModelUsecase;
+
+  /// プロセス内の (A) 誘導再表示抑制。
   @visibleForTesting
   final OnDeviceLlmGuidanceSession guidanceSession;
+
+  /// プロセス内の (B) 誘導再表示抑制。
+  @visibleForTesting
+  final GemmaMeterGuidanceSession gemmaSession;
 
   /// 画面遷移。
   @visibleForTesting
@@ -135,7 +161,10 @@ final class TopScreenViewModel {
     required this.generateTopAdviceUsecase,
     required this.evaluateOnDeviceLlmGuidanceUsecase,
     required this.prepareOnDeviceLlmModelUsecase,
+    required this.evaluateGemmaMeterGuidanceUsecase,
+    required this.prepareGemmaMeterModelUsecase,
     required this.guidanceSession,
+    required this.gemmaSession,
     required this.navigation,
     required this.newIndicator,
     required this.stateToEntity,

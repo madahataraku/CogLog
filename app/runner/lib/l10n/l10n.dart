@@ -2124,6 +2124,18 @@ abstract class L10n {
   /// **'閉じる'**
   String get view_model_download_guidance_dismiss;
 
+  /// Gemma誘導本文
+  ///
+  /// In ja, this message translates to:
+  /// **'メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。'**
+  String get view_model_download_guidance_gemma_body;
+
+  /// Gemma誘導タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'メーター読み取りモデルの準備'**
+  String get view_model_download_guidance_gemma_title;
+
   /// 準備開始
   ///
   /// In ja, this message translates to:
@@ -2135,6 +2147,24 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'準備に失敗しました。しばらくしてから再度お試しください。'**
   String get view_model_download_guidance_prepare_failed;
+
+  /// 通信失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'通信に失敗しました。接続を確認してから再度お試しください。'**
+  String get view_model_download_guidance_prepare_failed_network;
+
+  /// 容量不足
+  ///
+  /// In ja, this message translates to:
+  /// **'空き容量が足りません。容量を確保してから再度お試しください。'**
+  String get view_model_download_guidance_prepare_failed_storage;
+
+  /// Wi-Fi以外で準備開始不可
+  ///
+  /// In ja, this message translates to:
+  /// **'Wi-Fiに接続してから再度お試しください。'**
+  String get view_model_download_guidance_prepare_failed_wifi;
 
   /// 誘導タイトル
   ///

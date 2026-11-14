@@ -42,6 +42,7 @@ final class TopScreenStateToEntityDelegate {
       adviceText: state.adviceText,
       adviceTone: state.adviceTone,
       pendingModelDownloadGuidance: state.pendingModelDownloadGuidance,
+      pendingGemmaMeterGuidance: state.pendingGemmaMeterGuidance,
       hasNewAchievements: state.hasNewAchievements,
       duration: _ring(
         achievement: achievement.duration,

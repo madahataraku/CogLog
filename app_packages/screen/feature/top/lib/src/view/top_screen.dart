@@ -9,6 +9,7 @@ import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../strings.dart';
 import '../viewmodel/top_screen_view_model.dart';
+import 'map_gemma_meter_prepare_error.dart';
 import 'top_conditional_advice_catalog.dart';
 import 'top_screen_impl.dart';
 import 'top_screen_providers.dart';
@@ -28,7 +29,10 @@ class TopScreen extends HookConsumerWidget {
   /// ```
   const TopScreen({super.key});
 
-  /// ホームタブ選択・前面復帰で期間合計とアドバイス（定型はトーン付き）を読み、見た目は [TopScreenImpl] に任せる。
+  /// ホームタブ選択・前面復帰で期間合計とアドバイス（定型はトーン付き）を読む。
+  ///
+  /// Ready 後は (A) 誘導、その完了後または (A) 無しのとき (B) 誘導を出す。
+  /// 見た目は [TopScreenImpl] に任せる。
   ///
   /// Example:
   /// ```dart
@@ -92,9 +96,36 @@ class TopScreen extends HookConsumerWidget {
           context,
           onPrepare: viewModel.onPrepareModelDownloadGuidance,
         );
+        if (!context.mounted) {
+          return;
+        }
+        // (A) の show 完了後に (B) を評価する。
+        await viewModel.onEvaluateGemmaMeterGuidance();
       });
       return null;
     }, [entity.pendingModelDownloadGuidance, viewModel]);
+    useEffect(() {
+      if (!entity.pendingGemmaMeterGuidance) {
+        return null;
+      }
+      // 予約時点で同期的に提示済みにし、initialize 再入とのレースを防ぐ。
+      unawaited(viewModel.onAcknowledgeGemmaMeterGuidance());
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!context.mounted) {
+          return;
+        }
+        // (B) 専用文言・進捗・準備中は閉じる無効。
+        await ModelDownloadGuidanceLauncher.show(
+          context,
+          title: strings.view_model_download_guidance_gemma_title,
+          body: strings.view_model_download_guidance_gemma_body,
+          disableDismissWhilePreparing: true,
+          onPrepareProgress: viewModel.onPrepareGemmaMeterGuidance,
+          mapPrepareError: mapGemmaMeterPrepareError,
+        );
+      });
+      return null;
+    }, [entity.pendingGemmaMeterGuidance, viewModel]);
     return const TopScreenImpl();
   }
 }

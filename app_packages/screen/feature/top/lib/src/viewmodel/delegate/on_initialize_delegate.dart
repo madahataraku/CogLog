@@ -1,11 +1,13 @@
 import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
+import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../state/top_screen_state.dart';
+import 'on_evaluate_gemma_meter_guidance_delegate.dart';
 
 /// トップ画面の期間合計とアドバイスを読み、State を置き換える。
 ///
@@ -16,7 +18,9 @@ import '../state/top_screen_state.dart';
 ///   loadTopScreenUsecase: loadTopScreenUsecase,
 ///   generateTopAdviceUsecase: generateTopAdviceUsecase,
 ///   evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+///   evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
 ///   guidanceSession: guidanceSession,
+///   gemmaSession: gemmaSession,
 /// ).execute(
 ///   locale: 'ja',
 ///   noExercise: AdviceTemplate(
@@ -39,7 +43,9 @@ final class OnInitializeDelegate {
   ///   loadTopScreenUsecase: loadTopScreenUsecase,
   ///   generateTopAdviceUsecase: generateTopAdviceUsecase,
   ///   evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
+  ///   evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
   ///   guidanceSession: guidanceSession,
+  ///   gemmaSession: gemmaSession,
   /// );
   /// ```
   const OnInitializeDelegate({
@@ -47,7 +53,9 @@ final class OnInitializeDelegate {
     required this.loadTopScreenUsecase,
     required this.generateTopAdviceUsecase,
     required this.evaluateOnDeviceLlmGuidanceUsecase,
+    required this.evaluateGemmaMeterGuidanceUsecase,
     required this.guidanceSession,
+    required this.gemmaSession,
   });
 
   /// 更新する画面状態。
@@ -59,13 +67,22 @@ final class OnInitializeDelegate {
   /// ワンポイントアドバイスの生成。
   final GenerateTopAdviceUsecase generateTopAdviceUsecase;
 
-  /// モデル未ダウンロード誘導の要否。
+  /// OS LLM モデル未ダウンロード誘導 (A) の要否。
   final EvaluateOnDeviceLlmGuidanceUsecase evaluateOnDeviceLlmGuidanceUsecase;
 
-  /// プロセス内の誘導再表示抑制。
+  /// Gemma メーター誘導 (B) の要否。
+  final EvaluateGemmaMeterGuidanceUsecase evaluateGemmaMeterGuidanceUsecase;
+
+  /// プロセス内の (A) 誘導再表示抑制。
   final OnDeviceLlmGuidanceSession guidanceSession;
 
+  /// プロセス内の (B) 誘導再表示抑制。
+  final GemmaMeterGuidanceSession gemmaSession;
+
   /// 期間合計とアドバイスを先に出し、誘導判定は後から反映する。
+  ///
+  /// (A) を出さないときだけ、ここで (B) を評価する。(A) を出すときは
+  /// ダイアログ完了後に [OnEvaluateGemmaMeterGuidanceDelegate] を呼ぶ。
   ///
   /// Example:
   /// ```dart
@@ -119,36 +136,35 @@ final class OnInitializeDelegate {
           adviceText: advice.advice,
           adviceTone: advice.tone,
           pendingModelDownloadGuidance: false,
+          pendingGemmaMeterGuidance: false,
           hasNewAchievements: result.hasNewAchievements,
         ),
       );
     });
 
-    if (!guidanceSession.shouldShow) {
-      return;
-    }
-    final decision = await evaluateOnDeviceLlmGuidanceUsecase.execute();
-    if (!decision.shouldShow || !guidanceSession.shouldShow) {
-      return;
-    }
-    await state.updateWithLock((current, emitter) async {
-      if (!guidanceSession.shouldShow) {
-        return;
+    var pendingA = false;
+    if (guidanceSession.shouldShow) {
+      final decision = await evaluateOnDeviceLlmGuidanceUsecase.execute();
+      if (decision.shouldShow && guidanceSession.shouldShow) {
+        await state.updateWithLock((current, emitter) async {
+          if (!guidanceSession.shouldShow) {
+            return;
+          }
+          pendingA = true;
+          await emitter.emit(
+            current.copyWith(pendingModelDownloadGuidance: true),
+          );
+        });
       }
-      await emitter.emit(
-        TopScreenState(
-          loaded: current.loaded,
-          metric: current.metric,
-          today: current.today,
-          week: current.week,
-          month: current.month,
-          goal: current.goal,
-          adviceText: current.adviceText,
-          adviceTone: current.adviceTone,
-          pendingModelDownloadGuidance: true,
-          hasNewAchievements: current.hasNewAchievements,
-        ),
-      );
-    });
+    }
+
+    // (A) を出さない場合は Ready 後すぐ (B) を評価する。
+    if (!pendingA) {
+      await OnEvaluateGemmaMeterGuidanceDelegate(
+        state: state,
+        evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
+        gemmaSession: gemmaSession,
+      ).execute();
+    }
   }
 }
