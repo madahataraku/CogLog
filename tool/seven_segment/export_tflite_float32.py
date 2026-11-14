@@ -23,7 +23,7 @@ from sscma_seven_seg_export_common import build_nhwc_seven_seg  # noqa: E402
 
 
 def _die(message: str, code: int = 1) -> int:
-    print(message, file=sys.stderr)
+    print(message, file=sys.stderr, flush=True)
     return code
 
 
@@ -140,26 +140,43 @@ def main() -> int:
     if not args.sscma_root.is_dir():
         return _die(f"--sscma-root not a directory: {args.sscma_root}")
 
+    log_path = args.output.with_suffix(args.output.suffix + ".log")
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    def _log(msg: str) -> None:
+        print(msg, flush=True)
+        with log_path.open("a", encoding="utf-8") as fh:
+            fh.write(msg + "\n")
+
     try:
+        _log(f"export start weights={args.weights} deepen={args.deepen_factor_mode}")
         wrapped, probed, dummy = build_nhwc_seven_seg(
             args.sscma_root.resolve(),
             args.weights.resolve(),
             deepen_factor_mode=args.deepen_factor_mode,
         )
-        print(f"Probe output shape: {tuple(probed.shape)}")
+        _log(f"Probe output shape: {tuple(probed.shape)}")
         _export_via_onnx2tf(wrapped, dummy, args.output.resolve())
     except Exception as exc:  # noqa: BLE001 — show full Colab traceback
         traceback.print_exc()
-        return _die(f"export failed: {exc}")
+        with log_path.open("a", encoding="utf-8") as fh:
+            traceback.print_exc(file=fh)
+        return _die(f"export failed: {exc}\nSee also: {log_path}")
 
     data = args.output.read_bytes()
     digest = hashlib.sha256(data).hexdigest()
-    print(f"Saved: {args.output}")
-    print(f"Bytes: {len(data)}")
-    print(f"SHA-256: {digest}")
-    print("Update assets NOTICE.md Android section with bytes / sha256.")
+    _log(f"Saved: {args.output}")
+    _log(f"Bytes: {len(data)}")
+    _log(f"SHA-256: {digest}")
+    _log("Update assets NOTICE.md Android section with bytes / sha256.")
     return 0
 
 
 if __name__ == "__main__":
+    # Line-buffered so Colab shows progress before exit.
+    try:
+        sys.stdout.reconfigure(line_buffering=True)  # type: ignore[attr-defined]
+        sys.stderr.reconfigure(line_buffering=True)  # type: ignore[attr-defined]
+    except Exception:
+        pass
     raise SystemExit(main())
