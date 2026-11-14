@@ -6,9 +6,11 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 
-/// LLM ready+vision のときだけ [llmEngine] を試し、それ以外は手打ちへ進む。
+/// OS LLM ready+vision なら [llmEngine]、さもなければ [gemmaEngine] が available ならそれを試し、
+/// どちらも無ければ手打ちへ進む。
 ///
-/// 全体の上限は [timeout]（既定 30 秒）。超過時はその時点の結果を返す。
+/// 全体の上限は [timeout]（既定 30 秒）。
+/// 超過時はその時点の結果を返す。
 /// 選択理由・例外・最終値の有無は [log] へ出す（測定値・LLM 本文は出さない）。
 ///
 /// Example:
@@ -16,23 +18,26 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 /// ReadMeterPanelUsecaseImpl(
 ///   llm: llm,
 ///   llmEngine: llmEngine,
+///   gemmaEngine: gemmaEngine,
 ///   log: AppLogStore(),
 /// ).execute(ReadMeterPanelRequest(photoBytes: Uint8List(0)));
 /// ```
 final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
-  /// [llm] の可否で [llmEngine] を選ぶ。
+  /// [llm] の ready+vision 可否で [llmEngine] か [gemmaEngine] を選ぶ。
   ///
   /// Example:
   /// ```dart
   /// ReadMeterPanelUsecaseImpl(
   ///   llm: llm,
   ///   llmEngine: llmEngine,
+  ///   gemmaEngine: gemmaEngine,
   ///   log: AppLogStore(),
   /// );
   /// ```
   ReadMeterPanelUsecaseImpl({
     required this.llm,
     required this.llmEngine,
+    required this.gemmaEngine,
     AppLogStore? log,
     this.timeout = const Duration(seconds: 30),
   }) : log = log ?? AppLogStore();
@@ -40,8 +45,11 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   /// 準備状態と vision 可否の判定に使う。
   final OnDeviceLlm llm;
 
-  /// LLM 読み取りエンジン。
+  /// OS LLM が ready+vision のとき使う読み取りエンジン。
   final MeterReadingEngine llmEngine;
+
+  /// OS LLM が使えないときのフォールバック読み取りエンジン。
+  final MeterReadingEngine gemmaEngine;
 
   /// デバッグ画面向けのプロセス内ログ。
   final AppLogStore log;
@@ -132,7 +140,9 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     );
   }
 
-  /// ready+vision なら LLM。それ以外はエンジン無し（手打ち）。
+  /// ready+vision なら [llmEngine] を返す。
+  /// さもなければ [gemmaEngine] が available ならそれを返す。
+  /// それ以外は null。
   ///
   /// Example:
   /// ```dart
@@ -152,16 +162,34 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
       );
       return llmEngine;
     }
+    if (await gemmaEngine.isAvailable) {
+      log.append(
+        tag: 'meter.read',
+        level: AppLogLevel.info,
+        message:
+            'select gemma kind=${gemmaEngine.kind.name}; '
+            'reason=os_llm_unavailable; '
+            'readiness=${readiness.name}; vision=$vision',
+      );
+      return gemmaEngine;
+    }
     log.append(
       tag: 'meter.read',
       level: AppLogLevel.warn,
-      message: 'no engine; readiness=${readiness.name}; vision=$vision',
+      message:
+          'no engine; readiness=${readiness.name}; vision=$vision; '
+          'gemmaUnavailable',
     );
     return null;
   }
 }
 
 /// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
+///
+/// Example:
+/// ```dart
+/// _formatFieldPresence(const MeterReadingValues(distanceKm: 1));
+/// ```
 String _formatFieldPresence(MeterReadingValues values) {
   final present = <String>[];
   final missing = <String>[];

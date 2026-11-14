@@ -51,6 +51,12 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_prepare_error_label =>
       LocalizeStringDelegate.get('screen_feature_debug_prepare_error_label');
 
+  /// プローブ本文長ラベル
+  String get screen_feature_debug_probe_output_length_label =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_probe_output_length_label',
+      );
+
   /// プローブ省略理由ラベル
   String get screen_feature_debug_probe_skipped_label =>
       LocalizeStringDelegate.get('screen_feature_debug_probe_skipped_label');
@@ -78,6 +84,16 @@ mixin class L10nStringsMixin {
   /// 可用性セクション見出し
   String get screen_feature_debug_section_availability =>
       LocalizeStringDelegate.get('screen_feature_debug_section_availability');
+
+  /// Gemma 可用性セクション見出し
+  String get screen_feature_debug_section_gemma_availability =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_section_gemma_availability',
+      );
+
+  /// Gemma プローブ見出し
+  String get screen_feature_debug_section_gemma_probe =>
+      LocalizeStringDelegate.get('screen_feature_debug_section_gemma_probe');
 
   /// ログセクション見出し
   String get screen_feature_debug_section_logs =>

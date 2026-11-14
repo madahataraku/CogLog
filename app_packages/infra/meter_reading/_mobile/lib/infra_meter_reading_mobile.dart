@@ -9,5 +9,6 @@
 /// ```
 library;
 
+export 'src/gemma_meter_reading_engine.dart';
 export 'src/llm_meter_reading_engine.dart';
 export 'src/unavailable_meter_reading_engine.dart';

@@ -44,20 +44,7 @@ final class OnAcknowledgeModelDownloadGuidanceDelegate {
   Future<void> execute() async {
     session.markPresented();
     await state.updateWithLock((current, emitter) async {
-      await emitter.emit(
-        TopScreenState(
-          loaded: current.loaded,
-          metric: current.metric,
-          today: current.today,
-          week: current.week,
-          month: current.month,
-          goal: current.goal,
-          adviceText: current.adviceText,
-          adviceTone: current.adviceTone,
-          pendingModelDownloadGuidance: false,
-          hasNewAchievements: current.hasNewAchievements,
-        ),
-      );
+      await emitter.emit(current.copyWith(pendingModelDownloadGuidance: false));
     });
   }
 }

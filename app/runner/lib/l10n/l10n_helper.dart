@@ -536,6 +536,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_prepare_error_label;
       },
+      'screen_feature_debug_probe_output_length_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_probe_output_length_label;
+      },
       'screen_feature_debug_probe_skipped_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_probe_skipped_label;
@@ -563,6 +567,14 @@ final class L10nHelper {
       'screen_feature_debug_section_availability': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_section_availability;
+      },
+      'screen_feature_debug_section_gemma_availability': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_gemma_availability;
+      },
+      'screen_feature_debug_section_gemma_probe': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_gemma_probe;
       },
       'screen_feature_debug_section_logs': (source) {
         // No Placeholders
@@ -1467,6 +1479,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.view_model_download_guidance_dismiss;
       },
+      'view_model_download_guidance_gemma_body': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_gemma_body;
+      },
+      'view_model_download_guidance_gemma_title': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_gemma_title;
+      },
       'view_model_download_guidance_prepare': (source) {
         // No Placeholders
         return l10n.view_model_download_guidance_prepare;
@@ -1474,6 +1494,18 @@ final class L10nHelper {
       'view_model_download_guidance_prepare_failed': (source) {
         // No Placeholders
         return l10n.view_model_download_guidance_prepare_failed;
+      },
+      'view_model_download_guidance_prepare_failed_network': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_prepare_failed_network;
+      },
+      'view_model_download_guidance_prepare_failed_storage': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_prepare_failed_storage;
+      },
+      'view_model_download_guidance_prepare_failed_wifi': (source) {
+        // No Placeholders
+        return l10n.view_model_download_guidance_prepare_failed_wifi;
       },
       'view_model_download_guidance_title': (source) {
         // No Placeholders

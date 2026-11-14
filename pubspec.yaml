@@ -45,6 +45,12 @@ workspace:
   - app_packages/infra/app_runtime_info
   - app_packages/infra/app_runtime_info/_mobile
   - app_packages/infra/app_runtime_info/_testing
+  - app_packages/infra/gemma_meter
+  - app_packages/infra/gemma_meter/_mobile
+  - app_packages/infra/gemma_meter/_testing
+  - app_packages/infra/network_connectivity
+  - app_packages/infra/network_connectivity/_mobile
+  - app_packages/infra/network_connectivity/_testing
   - app_packages/infra/health_body_metrics
   - app_packages/infra/health_body_metrics/_mobile
   - app_packages/infra/health_body_metrics/_testing
@@ -86,6 +92,8 @@ workspace:
   - app_packages/usecase/evaluate_daily_goal_auto_update/_impl
   - app_packages/usecase/diagnose_on_device_llm
   - app_packages/usecase/diagnose_on_device_llm/_impl
+  - app_packages/usecase/diagnose_gemma_meter
+  - app_packages/usecase/diagnose_gemma_meter/_impl
   - app_packages/usecase/generate_top_advice
   - app_packages/usecase/generate_top_advice/_impl
   - app_packages/usecase/injection
@@ -117,6 +125,8 @@ workspace:
   - app_packages/usecase/open_app_settings/_impl
   - app_packages/usecase/on_device_llm_guidance
   - app_packages/usecase/on_device_llm_guidance/_impl
+  - app_packages/usecase/gemma_meter_guidance
+  - app_packages/usecase/gemma_meter_guidance/_impl
   - app_packages/usecase/read_meter_panel
   - app_packages/usecase/read_meter_panel/_impl
   - app_packages/usecase/request_health_body_permission
@@ -148,6 +158,7 @@ dependency_overrides:
   flutter_timezone: 5.1.1
   timezone: 0.11.2
   app_settings: 9.0.1
+  connectivity_plus: 7.3.2
   build_runner: 2.10.4
   drift: 2.30.0
   drift_dev: 2.30.0

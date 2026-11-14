@@ -1,0 +1,16 @@
+name: usecase_diagnose_gemma_meter
+description: Diagnoses Gemma meter vision readiness and image probe.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_gemma_meter: any
+  meta: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

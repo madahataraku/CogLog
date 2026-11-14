@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
+import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 
 import 'delegate/debug_state_to_entity_delegate.dart';
@@ -36,9 +37,15 @@ final class DebugScreenViewModel {
       final log = ref.watch(appLogStoreProvider);
       final result = DebugScreenViewModel._(
         state: MutableStateStream(
-          DebugScreenState(running: false, result: null, logs: []),
+          DebugScreenState(
+            running: false,
+            result: null,
+            gemmaResult: null,
+            logs: [],
+          ),
         ),
         diagnoseUsecase: ref.watch(DiagnoseOnDeviceLlmUsecase.provider),
+        diagnoseGemmaUsecase: ref.watch(DiagnoseGemmaMeterUsecase.provider),
         log: log,
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const DebugStateToEntityDelegate(),
@@ -56,6 +63,7 @@ final class DebugScreenViewModel {
     },
     dependencies: [
       DiagnoseOnDeviceLlmUsecase.provider,
+      DiagnoseGemmaMeterUsecase.provider,
       appLogStoreProvider,
       screenNavigationProvider,
     ],
@@ -65,9 +73,13 @@ final class DebugScreenViewModel {
   @visibleForTesting
   final MutableStateStream<DebugScreenState> state;
 
-  /// 診断 Usecase。
+  /// 端末上 LLM 診断 Usecase。
   @visibleForTesting
   final DiagnoseOnDeviceLlmUsecase diagnoseUsecase;
+
+  /// Gemma メーター診断 Usecase。
+  @visibleForTesting
+  final DiagnoseGemmaMeterUsecase diagnoseGemmaUsecase;
 
   /// アプリログ。
   @visibleForTesting
@@ -90,6 +102,7 @@ final class DebugScreenViewModel {
   const DebugScreenViewModel._({
     required this.state,
     required this.diagnoseUsecase,
+    required this.diagnoseGemmaUsecase,
     required this.log,
     required this.navigation,
     required this.stateToEntity,

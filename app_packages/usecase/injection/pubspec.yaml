@@ -18,14 +18,18 @@ dependencies:
   infra_health_body_metrics: any
   infra_health_workout: any
   infra_local_notification: any
+  infra_gemma_meter: any
   infra_meter_photo: any
   infra_meter_reading: any
+  infra_network_connectivity: any
   infra_oss_license_catalog: any
   foundation_app_log: any
   infra_on_device_llm: any
   riverpod: any
   usecase_diagnose_on_device_llm: any
   usecase_diagnose_on_device_llm_impl: any
+  usecase_diagnose_gemma_meter: any
+  usecase_diagnose_gemma_meter_impl: any
   usecase_evaluate_achievements: any
   usecase_evaluate_achievements_impl: any
   usecase_evaluate_daily_goal_auto_update: any
@@ -58,6 +62,8 @@ dependencies:
   usecase_obtain_meter_photo_impl: any
   usecase_on_device_llm_guidance: any
   usecase_on_device_llm_guidance_impl: any
+  usecase_gemma_meter_guidance: any
+  usecase_gemma_meter_guidance_impl: any
   usecase_open_app_settings: any
   usecase_open_app_settings_impl: any
   usecase_read_meter_panel: any

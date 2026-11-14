@@ -13,6 +13,7 @@ extension DebugScreenViewModelActions on DebugScreenViewModel {
     return OnInitializeDelegate(
       state: state,
       diagnoseUsecase: diagnoseUsecase,
+      diagnoseGemmaUsecase: diagnoseGemmaUsecase,
       log: log,
     ).execute();
   }

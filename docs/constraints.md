@@ -8,7 +8,7 @@
 - 子パッケージの外部依存は `any` にする。
 - `flutter pub get` と Monolith のコマンドはリポジトリルートで実行する。
 - `flutter run` と `dart run forui` は `app/` で実行する。
-- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に MediaPipe 上の Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
+- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に LiteRT-LM 上の Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない。版は運用追従）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
 
 ## Syncfusion Charts
 
@@ -75,8 +75,13 @@ Java / Kotlin の JVM ターゲットは **17** に揃える（`app/android/app/
 `app/android/build.gradle.kts` の `subprojects`）。プラグイン側が Java 11 のままだと、
 `compileReleaseKotlin`（17）と `compileReleaseJavaWithJavac`（11）が不一致になり release APK が失敗する。
 
-メーター読み取りの自動解析は OS LLM または MediaPipe 上の Gemma E2B のみとする。空間 OCR
+メーター読み取りの自動解析は OS LLM または LiteRT-LM 上の Gemma E2B のみとする。空間 OCR
 （ML Kit / Vision / 七セグ TFLite / Core ML）は採用しない。
+
+Gemma E2B 経路（`infra_gemma_meter_mobile`）の Android 依存は
+`com.google.ai.edge.litertlm:litertlm-android`（実効版はビルド時に Google Maven の
+release を追う。ピン留めしない）。ネイティブ／アセットの OSS ライセンス一覧の再生成対象に含める。
+モデル成果物の既定 URL／ファイル名は運用で更新し、特定版へのピン留めはしない。
 
 ## iOS
 
@@ -86,6 +91,8 @@ Java / Kotlin の JVM ターゲットは **17** に揃える（`app/android/app/
 | --- | --- |
 | `IPHONEOS_DEPLOYMENT_TARGET` | `16.4` |
 | Podfile `platform :ios` | `16.4` |
+
+Gemma E2B 経路は LiteRTLM（Swift Package `https://github.com/google-ai-edge/LiteRT-LM`、`from: "0.19.0"`）を使う。0.19.0 未満の Package.swift は `unsafeFlags` を含むためリモート SPM 解決に使えない。CocoaPods の podspec は公式の `swift_package` を持たないため、アプリの Xcode / Flutter SPM 側で依存を追加する（`infra_gemma_meter_mobile` の README・podspec コメントを参照）。LiteRTLM も OSS ライセンス一覧（`extraOssLicenses`）の対象に含める。モデル既定は運用追従（ピン留めしない）。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 

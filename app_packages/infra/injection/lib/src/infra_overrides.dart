@@ -4,6 +4,8 @@ import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_runtime_info_mobile/infra_app_runtime_info_mobile.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_app_settings_mobile/infra_app_settings_mobile.dart';
+import 'package:infra_gemma_meter/infra_gemma_meter.dart';
+import 'package:infra_gemma_meter_mobile/infra_gemma_meter_mobile.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_body_metrics_mobile/infra_health_body_metrics_mobile.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
@@ -14,6 +16,8 @@ import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_photo_mobile/infra_meter_photo_mobile.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_meter_reading_mobile/infra_meter_reading_mobile.dart';
+import 'package:infra_network_connectivity/infra_network_connectivity.dart';
+import 'package:infra_network_connectivity_mobile/infra_network_connectivity_mobile.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_mobile/infra_on_device_llm_mobile.dart';
 import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
@@ -23,8 +27,11 @@ import 'package:riverpod/riverpod.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
-/// [onDeviceLlm] / [meterPhotoSource] / [healthBodyMetricsSource] を渡すと、
+/// [onDeviceLlm] / [gemmaMeterVision] / [meterPhotoSource] /
+/// [healthBodyMetricsSource] / [networkConnectivity] を渡すと、
 /// その実装を使う（Widget テスト用）。
+/// [gemmaMeterVision] を省略したとき、iOS / Android では [PluginGemmaMeterVision]、
+/// それ以外では [UnavailableGemmaMeterVision] を束ねる。
 ///
 /// Example:
 /// ```dart
@@ -32,8 +39,10 @@ import 'package:riverpod/riverpod.dart';
 /// ```
 List<Override> infraOverrides({
   OnDeviceLlm? onDeviceLlm,
+  GemmaMeterVision? gemmaMeterVision,
   MeterPhotoSource? meterPhotoSource,
   HealthBodyMetricsSource? healthBodyMetricsSource,
+  NetworkConnectivity? networkConnectivity,
 }) => [
   onDeviceLlmProvider.overrideWith((ref) {
     final injected = onDeviceLlm;
@@ -51,12 +60,37 @@ List<Override> infraOverrides({
         return const UnavailableOnDeviceLlm();
     }
   }),
+  gemmaMeterVisionProvider.overrideWith((ref) {
+    final injected = gemmaMeterVision;
+    if (injected != null) {
+      return injected;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return PluginGemmaMeterVision();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableGemmaMeterVision();
+    }
+  }),
+  networkConnectivityProvider.overrideWith(
+    (ref) => networkConnectivity ?? ConnectivityPlusNetworkConnectivity(),
+  ),
   meterPhotoSourceProvider.overrideWith(
     (ref) => meterPhotoSource ?? MobileMeterPhotoSource(),
   ),
   meterReadingEnginesProvider.overrideWith((ref) => _meterReadingEngines(ref)),
   meterReadingLlmEngineProvider.overrideWith(
     (ref) => _meterReadingLlmEngine(ref),
+  ),
+  meterReadingGemmaEngineProvider.overrideWith(
+    (ref) => GemmaMeterReadingEngine(
+      gemma: ref.watch(gemmaMeterVisionProvider),
+      log: ref.watch(appLogStoreProvider),
+    ),
   ),
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
@@ -132,7 +166,7 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
   }
 }
 
-/// デバッグ／一覧用の LLM エンジン。
+/// デバッグ／一覧用の LLM + Gemma エンジン。
 ///
 /// Example:
 /// ```dart
@@ -140,4 +174,5 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
 /// ```
 List<MeterReadingEngine> _meterReadingEngines(Ref ref) => [
   _meterReadingLlmEngine(ref),
+  ref.watch(meterReadingGemmaEngineProvider),
 ];

@@ -407,6 +407,10 @@ class L10nJa extends L10n {
   String get screen_feature_debug_prepare_error_label => 'prepare error';
 
   @override
+  String get screen_feature_debug_probe_output_length_label =>
+      'probe output length';
+
+  @override
   String get screen_feature_debug_probe_skipped_label => 'probe skipped';
 
   @override
@@ -426,6 +430,12 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_debug_section_availability => '端末上 LLM';
+
+  @override
+  String get screen_feature_debug_section_gemma_availability => 'Gemma E2B';
+
+  @override
+  String get screen_feature_debug_section_gemma_probe => 'Gemma 画像プローブ';
 
   @override
   String get screen_feature_debug_section_logs => 'アプリログ';
@@ -1140,11 +1150,30 @@ class L10nJa extends L10n {
   String get view_model_download_guidance_dismiss => '閉じる';
 
   @override
+  String get view_model_download_guidance_gemma_body =>
+      'メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。';
+
+  @override
+  String get view_model_download_guidance_gemma_title => 'メーター読み取りモデルの準備';
+
+  @override
   String get view_model_download_guidance_prepare => 'モデルを準備';
 
   @override
   String get view_model_download_guidance_prepare_failed =>
       '準備に失敗しました。しばらくしてから再度お試しください。';
+
+  @override
+  String get view_model_download_guidance_prepare_failed_network =>
+      '通信に失敗しました。接続を確認してから再度お試しください。';
+
+  @override
+  String get view_model_download_guidance_prepare_failed_storage =>
+      '空き容量が足りません。容量を確保してから再度お試しください。';
+
+  @override
+  String get view_model_download_guidance_prepare_failed_wifi =>
+      'Wi-Fiに接続してから再度お試しください。';
 
   @override
   String get view_model_download_guidance_title => '端末上のAIモデルの準備';

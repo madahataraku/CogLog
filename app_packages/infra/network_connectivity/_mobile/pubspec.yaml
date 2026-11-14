@@ -1,0 +1,17 @@
+name: infra_network_connectivity_mobile
+description: connectivity_plus-backed NetworkConnectivity for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  connectivity_plus: any
+  flutter:
+    sdk: flutter
+  infra_network_connectivity: any
+
+dev_dependencies:
+  flutter_lints: any

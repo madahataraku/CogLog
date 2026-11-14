@@ -28,6 +28,8 @@ final class DebugStateToEntityDelegate {
   DebugScreenEntity execute(DebugScreenState state) {
     final result = state.result;
     final snapshot = result?.snapshot;
+    final gemma = state.gemmaResult;
+    final gemmaSnapshot = gemma?.snapshot;
     // ラベル行の未取得表示を画面全体で揃える。
     String dash(String? value) {
       if (value == null || value.isEmpty) {
@@ -60,6 +62,16 @@ final class DebugStateToEntityDelegate {
       generateError: dash(result?.generateError),
       prepareError: dash(result?.prepareError),
       probeSkipped: dash(result?.probeSkippedReason),
+      gemmaReadiness: gemmaSnapshot?.readiness.name ?? '-',
+      gemmaStatus: dash(gemmaSnapshot?.status),
+      gemmaReason: dash(gemmaSnapshot?.reason),
+      gemmaMessage: dash(gemmaSnapshot?.message),
+      gemmaAvailabilityError: dash(gemma?.availabilityError),
+      gemmaCanGenerate: gemma?.canGenerate,
+      gemmaProbeOutputLength: gemma?.probeOutputLength?.toString() ?? '-',
+      gemmaGenerateError: dash(gemma?.generateError),
+      gemmaPrepareError: dash(gemma?.prepareError),
+      gemmaProbeSkipped: dash(gemma?.probeSkippedReason),
       logLines: logLines,
     );
   }

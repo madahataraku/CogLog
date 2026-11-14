@@ -57,20 +57,7 @@ final class OnOpenAchievementsDelegate {
     final hasNew = await newIndicator.execute(now: now());
     try {
       await state.updateWithLock((current, emitter) async {
-        await emitter.emit(
-          TopScreenState(
-            loaded: current.loaded,
-            metric: current.metric,
-            today: current.today,
-            week: current.week,
-            month: current.month,
-            goal: current.goal,
-            adviceText: current.adviceText,
-            adviceTone: current.adviceTone,
-            pendingModelDownloadGuidance: current.pendingModelDownloadGuidance,
-            hasNewAchievements: hasNew,
-          ),
-        );
+        await emitter.emit(current.copyWith(hasNewAchievements: hasNew));
       });
     } on StateStreamClosedException {
       return;

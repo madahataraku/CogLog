@@ -4,3 +4,8 @@ body,ワンポイントアドバイス等に使うモデルが端末にありま
 dismiss,閉じる,Dismiss,閉じる
 prepare,モデルを準備,Prepare model,準備開始
 prepare_failed,準備に失敗しました。しばらくしてから再度お試しください。,Preparation failed. Please try again later.,準備失敗
+gemma_title,メーター読み取りモデルの準備,Prepare meter reading model,Gemma誘導タイトル
+gemma_body,メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。,The meter reading model is not on this device yet. You can start preparing it while on Wi-Fi.,Gemma誘導本文
+prepare_failed_wifi,Wi-Fiに接続してから再度お試しください。,Connect to Wi-Fi and try again.,Wi-Fi以外で準備開始不可
+prepare_failed_storage,空き容量が足りません。容量を確保してから再度お試しください。,Not enough storage. Free up space and try again.,容量不足
+prepare_failed_network,通信に失敗しました。接続を確認してから再度お試しください。,Network error. Check your connection and try again.,通信失敗

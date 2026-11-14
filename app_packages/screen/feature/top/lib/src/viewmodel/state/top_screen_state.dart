@@ -27,6 +27,7 @@ final class TopScreenState {
     required this.adviceText,
     required this.adviceTone,
     required this.pendingModelDownloadGuidance,
+    required this.pendingGemmaMeterGuidance,
     required this.hasNewAchievements,
   });
 
@@ -41,6 +42,7 @@ final class TopScreenState {
     adviceText: '',
     adviceTone: AdviceTone.fun,
     pendingModelDownloadGuidance: false,
+    pendingGemmaMeterGuidance: false,
     hasNewAchievements: false,
   );
 
@@ -68,9 +70,50 @@ final class TopScreenState {
   /// ワンポイントアドバイスのトーン。
   final AdviceTone adviceTone;
 
-  /// モデル未ダウンロード誘導を表示予約しているとき true。
+  /// OS LLM モデル未ダウンロード誘導 (A) を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
+
+  /// Gemma メーター誘導 (B) を表示予約しているとき true。
+  final bool pendingGemmaMeterGuidance;
 
   /// ホーム trophy に新規ドットを出すとき true。
   final bool hasNewAchievements;
+
+  /// 指定した項目だけ差し替えた [TopScreenState] を返す。
+  ///
+  /// 未指定の項目は現在値を保つ。
+  ///
+  /// Example:
+  /// ```dart
+  /// state.copyWith(pendingGemmaMeterGuidance: true);
+  /// ```
+  TopScreenState copyWith({
+    bool? loaded,
+    PeriodTotalMetric? metric,
+    PeriodAggregate? today,
+    PeriodAggregate? week,
+    PeriodAggregate? month,
+    DailyGoal? goal,
+    String? adviceText,
+    AdviceTone? adviceTone,
+    bool? pendingModelDownloadGuidance,
+    bool? pendingGemmaMeterGuidance,
+    bool? hasNewAchievements,
+  }) {
+    return TopScreenState(
+      loaded: loaded ?? this.loaded,
+      metric: metric ?? this.metric,
+      today: today ?? this.today,
+      week: week ?? this.week,
+      month: month ?? this.month,
+      goal: goal ?? this.goal,
+      adviceText: adviceText ?? this.adviceText,
+      adviceTone: adviceTone ?? this.adviceTone,
+      pendingModelDownloadGuidance:
+          pendingModelDownloadGuidance ?? this.pendingModelDownloadGuidance,
+      pendingGemmaMeterGuidance:
+          pendingGemmaMeterGuidance ?? this.pendingGemmaMeterGuidance,
+      hasNewAchievements: hasNewAchievements ?? this.hasNewAchievements,
+    );
+  }
 }
