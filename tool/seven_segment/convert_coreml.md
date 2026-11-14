@@ -1,5 +1,15 @@
 # Seven-segment Swift-YOLO → Core ML (`DigitalMeterElectricity192.mlpackage`)
 
+Colab での公開データ再学習（SSCMA / CC BY）は `colab_retrain.md` を先に読む。
+この文書は **macOS 上での `.pth` → `.mlpackage`** のみを扱う。
+
+重みの入手元で手順が分岐する。
+
+| 経路 | 重み | 手順 |
+| --- | --- | --- |
+| A. 既存 Seeed zoo | 下記 4 の URL | 4 → 5 → 6 → 7（現行ハッシュ照合） |
+| B. Colab 再学習 | Drive の `exports/*.pth` | **4 をスキップ** → 5' → 6 → 7'（新ハッシュを NOTICE に記録） |
+
 ## 実行環境（必須）
 
 変換と `.mlpackage` の保存は **macOS 必須**である。
@@ -97,13 +107,17 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
    - `No module named 'coremltools.libmilstoragepython'` → **macOS 用 wheel が入っていない**。venv を消し、`python3.10` で作り直してから `pip install --only-binary=:all: 'coremltools==7.2'` を試す
    - Linux / コンテナ上ではこの確認は必ず失敗する（仕様）
 
-4. 重みを取得し SHA-1 `b26cffe14038a7155315c40b49f851679a547dec` を確認する。
+4. **経路 A のみ:** 配布重みを取得し SHA-1 `b26cffe14038a7155315c40b49f851679a547dec` を確認する。
 
    ```bash
    curl -fSL -o /tmp/digital_meter.pth \
      'https://files.seeedstudio.com/sscma/model_zoo/detection/electricity_meter/yolov5_tiny_1xb16_300e_coco_sha1_b26cffe14038a7155315c40b49f851679a547dec.pth'
    shasum -a 1 /tmp/digital_meter.pth
    ```
+
+   **経路 B（Colab 再学習）:** このステップは行わない。Google Drive の
+   `MyDrive/coglog_seven_segment/exports/` から `.pth` を Mac へコピーし、そのパスを
+   `--weights` に渡す。
 
 5. リポジトリルートで変換する（**Desktop などへのコピーは使わない**。`git pull` した本ファイルを実行）。
 
@@ -112,15 +126,20 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
    git pull
    source .venv-coreml/bin/activate   # CogLog 用 venv。Desktop/coreml の別 venv と混ぜない
    export SSCMA_ROOT=~/ModelAssistant
+   # 経路 A: --weights /tmp/digital_meter.pth
+   # 経路 B: --weights ~/Downloads/<colab_best_or_last>.pth
    python tool/seven_segment/convert_coreml.py \
      --weights /tmp/digital_meter.pth \
      --output app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage \
      --sscma-root "$SSCMA_ROOT"
    ```
 
-6. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認する（現行同梱物は `input` / `output`）。
+6. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認する（現行同梱物は `input` / `output`）。行数が変わった場合は Dart / Swift 側の shape 契約も合わせて更新する。
 
-7. 成果物の bytes / SHA-256 を `assets/seven_segment/NOTICE.md` の iOS 節と照合する（現行: 1530698 / `fae51fe4…e5ee5`）。
+7. 成果物の bytes / SHA-256 を扱う。
+
+   - **経路 A:** `assets/seven_segment/NOTICE.md` の iOS 節と照合する（現行: 1530698 / `fae51fe4…e5ee5`）。
+   - **経路 B:** スクリプトが出した bytes / SHA-256 を NOTICE の iOS 節へ**新規記録**する（旧ハッシュとの一致は求めない）。データセット引用（CC BY）も NOTICE に書く。
 
 8. `ios/infra_meter_reading_mobile.podspec` は mlpackage が存在するときだけ `s.resources` に載せる。同梱済みなら `pod install` でバンドルされることを確認する。
 
