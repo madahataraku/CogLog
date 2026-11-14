@@ -85,6 +85,8 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - `barrierDismissible` は `false`（外側タップでは閉じない）。
 - アクションは縦並びで「閉じる」と「モデルを準備」。
 - DialogRoute の完了（pop）は `ModelDownloadGuidanceLauncher` 内だけが行う。画面から `Navigator` を直接呼ばない。
+- OS LLM（Foundation Models / Gemini Nano）向けは、ホームとメーター記録で共用の `view_model_download_guidance` を使う。
+- OS LLM 非対応環境の Gemma E2B 向けは、アプリ起動時に同じ部品でダイアログを出す（メーター読み取り用モデルの準備）。
 
 ## アチーブメント
 
