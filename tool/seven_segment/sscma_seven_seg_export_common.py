@@ -44,9 +44,34 @@ def revert_yolov5_csp_deepen_factor(sscma_root: Path) -> None:
 
 
 def stub_sscma_optional_deps() -> None:
+    """Replace optional heavy deps with stubs for export-only imports.
+
+    ModelAssistant may import datasets → lancedb → pyarrow. A real pyarrow
+    often conflicts with Colab/numpy, so we stub. The stub must expose
+    ``__version__`` because some importers read it eagerly.
+    """
+
+    def _ensure(name: str) -> types.ModuleType:
+        mod = sys.modules.get(name)
+        if mod is None or not hasattr(mod, "__version__"):
+            mod = types.ModuleType(name)
+            mod.__version__ = "0.0.0"
+            sys.modules[name] = mod
+        elif not hasattr(mod, "__version__"):
+            mod.__version__ = "0.0.0"
+        return mod
+
     for name in ("pyarrow", "lance", "lancedb"):
-        if name not in sys.modules:
-            sys.modules[name] = types.ModuleType(name)
+        _ensure(name)
+    # Common submodules touched during import probes.
+    for name in (
+        "pyarrow.lib",
+        "pyarrow.compute",
+        "pyarrow.dataset",
+        "pyarrow.parquet",
+        "lancedb",
+    ):
+        _ensure(name)
 
 
 def _normalize_state_dict(state_dict: dict) -> dict:
