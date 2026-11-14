@@ -57,14 +57,23 @@ def _export_via_onnx2tf(wrapped, dummy, out_tflite: Path) -> None:
 
         out_dir = tmp_path / "onnx2tf_out"
         out_dir.mkdir(parents=True, exist_ok=True)
-        onnx2tf.convert(
-            str(onnx_path),
+        convert_kwargs = dict(
             output_folder_path=str(out_dir),
             batch_size=1,
             output_signaturedefs=True,
             verbosity="warn",
             output_integer_quantized_tflite=False,
         )
+        # Keep ONNX NHWC input [1,192,192,3] (CogLog Dart contract).
+        # Older onnx2tf may lack this kwarg — fail closed if unsupported.
+        try:
+            onnx2tf.convert(
+                str(onnx_path),
+                keep_shape_absolutely_input_names=["input"],
+                **convert_kwargs,
+            )
+        except TypeError:
+            onnx2tf.convert(str(onnx_path), **convert_kwargs)
         candidates = sorted(out_dir.glob("*float32*.tflite"))
         if not candidates:
             candidates = sorted(out_dir.glob("*.tflite"))
@@ -84,6 +93,13 @@ def _export_via_onnx2tf(wrapped, dummy, out_tflite: Path) -> None:
     if inp["dtype"] != np.float32 or out["dtype"] != np.float32:
         raise RuntimeError(
             f"Expected float32 TFLite, got input={inp['dtype']} output={out['dtype']}"
+        )
+    inp_shape = tuple(int(x) for x in inp["shape"])
+    if inp_shape != (1, 192, 192, 3):
+        raise RuntimeError(
+            f"Unexpected TFLite input shape {inp_shape}; expected (1, 192, 192, 3). "
+            "onnx2tf likely transposed NHWC→NCHW; upgrade onnx2tf or set "
+            "keep_shape_absolutely_input_names."
         )
     print(f"input shape={list(inp['shape'])} dtype={inp['dtype']}")
     print(f"output shape={list(out['shape'])} dtype={out['dtype']}")

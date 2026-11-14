@@ -37,12 +37,16 @@ def build_nhwc_seven_seg(sscma_root: Path, weights: Path):
     """Return (wrapped_module, probed_output_tensor) for NHWC 192 contract."""
     import torch
     import torch.nn as nn
-    from mmengine.config import Config
-    from mmengine.registry import MODELS, init_default_scope
 
     ensure_yolov5_csp_deepen_factor(sscma_root)
     stub_sscma_optional_deps()
-    sys.path.insert(0, str(sscma_root.resolve()))
+    # ModelAssistant vendors mmengine; put it on sys.path before importing.
+    root = str(sscma_root.resolve())
+    if root not in sys.path:
+        sys.path.insert(0, root)
+
+    from mmengine.config import Config
+    from mmengine.registry import MODELS, init_default_scope
 
     # Imported for side-effect registration.
     from sscma.datasets.data_preprocessor import DetDataPreprocessor  # noqa: F401
