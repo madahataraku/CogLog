@@ -93,9 +93,8 @@ void main() {
     expect(log.entries.first.message, contains('otherDigits=0'));
     expect(
       log.entries.first.message,
-      contains('texts=[##.#km@0.200,0.200,0.200,0.050]'),
+      contains('texts=[12.3km@0.200,0.200,0.200,0.050]'),
     );
-    expect(log.entries.first.message, isNot(contains('12.3')));
     expect(log.entries[1].message, contains('sevenSeg candidates='));
     expect(log.entries[1].message, contains('error=false'));
     expect(log.entries[1].message, contains('texts=[]'));
@@ -108,7 +107,7 @@ void main() {
     expect(log.entries.last.message, contains('adoptedFromSevenSeg='));
   });
 
-  test('時間形トークンは桁をマスクしコロンを残す', () async {
+  test('時間形トークンは本文と座標をログする', () async {
     final log = AppLogStore();
     final engine = SpatialOcrMeterReadingEngine(
       kind: MeterReadingEngineKind.mlKit,
@@ -129,9 +128,8 @@ void main() {
     await engine.read(Uint8List(0));
     expect(
       log.entries.first.message,
-      contains('texts=[#:##:##@0.100,0.300,0.200,0.050]'),
+      contains('texts=[0:30:00@0.100,0.300,0.200,0.050]'),
     );
-    expect(log.entries.first.message, isNot(contains('0:30:00')));
   });
 
   test('トークン0件なら warn と空の推論をログする', () async {
@@ -192,9 +190,8 @@ void main() {
     expect(log.entries[1].message, contains('sevenSeg candidates=1'));
     expect(
       log.entries[1].message,
-      contains('texts=[##.#@0.100,0.180,0.200,0.060]'),
+      contains('texts=[12.3@0.100,0.180,0.200,0.060]'),
     );
-    expect(log.entries[1].message, isNot(contains('12.3')));
     expect(log.entries.last.message, isNot(contains('distanceKm=12.3')));
   });
 
