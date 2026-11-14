@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert SSCMA Digital Meter Electricity .pth to Core ML mlpackage.
+"""Convert SSCMA seven-segment Swift-YOLO .pth to Core ML mlpackage.
 
 Requires macOS: coremltools mlprogram save needs native BlobWriter.
 See convert_coreml.md for the full procedure and Linux limitation.
@@ -31,8 +31,8 @@ def _die(message: str, code: int = 1) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Convert Digital Meter Electricity .pth to "
-            "DigitalMeterElectricity192.mlpackage (macOS required)."
+            "Convert seven-segment Swift-YOLO .pth to "
+            "SevenSegment192.mlpackage (macOS required)."
         )
     )
     parser.add_argument("--weights", type=Path, required=True)
