@@ -220,7 +220,7 @@ def build_nhwc_seven_seg(
     dummy = torch.rand(1, 192, 192, 3)
     with torch.no_grad():
         probed = wrapped(dummy)
-    if probed.ndim != 3 or probed.shape[0] != 1 or probed.shape[-1] != 15:
+    if tuple(probed.shape) not in {(1, 2268, 15), (2268, 15)}:
         raise RuntimeError(f"Unexpected output shape: {tuple(probed.shape)}")
     print(f"Probe output shape: {tuple(probed.shape)}")
     return wrapped, probed, dummy

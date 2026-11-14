@@ -94,30 +94,34 @@ def _export_via_onnx2tf(wrapped, dummy, out_tflite: Path) -> None:
         chosen = float_like[0] if float_like else candidates[0]
         if "int8" in chosen.name.lower():
             raise RuntimeError(f"Only INT8 TFLite found: {chosen}")
-        shutil.copy2(chosen, out_tflite)
 
-    interpreter = tf.lite.Interpreter(model_path=str(out_tflite))
-    interpreter.allocate_tensors()
-    inp = interpreter.get_input_details()[0]
-    out = interpreter.get_output_details()[0]
-    if inp["dtype"] != np.float32 or out["dtype"] != np.float32:
-        raise RuntimeError(
-            f"Expected float32 TFLite, got input={inp['dtype']} output={out['dtype']}"
-        )
-    inp_shape = tuple(int(x) for x in inp["shape"])
-    if inp_shape != (1, 192, 192, 3):
-        raise RuntimeError(
-            f"Unexpected TFLite input shape {inp_shape}; expected (1, 192, 192, 3). "
-            "onnx2tf likely transposed NHWC→NCHW; upgrade onnx2tf or set "
-            "keep_shape_absolutely_input_names."
-        )
-    out_shape = tuple(int(x) for x in out["shape"])
-    if len(out_shape) != 3 or out_shape[0] != 1 or out_shape[-1] != 15:
-        raise RuntimeError(
-            f"Unexpected TFLite output shape {out_shape}; expected (1, N, 15)"
-        )
-    print(f"input shape={list(inp['shape'])} dtype={inp['dtype']}")
-    print(f"output shape={list(out['shape'])} dtype={out['dtype']}")
+        # Validate the temp candidate before replacing any existing final asset.
+        interpreter = tf.lite.Interpreter(model_path=str(chosen))
+        interpreter.allocate_tensors()
+        inp = interpreter.get_input_details()[0]
+        out = interpreter.get_output_details()[0]
+        if inp["dtype"] != np.float32 or out["dtype"] != np.float32:
+            raise RuntimeError(
+                f"Expected float32 TFLite, got input={inp['dtype']} "
+                f"output={out['dtype']}"
+            )
+        inp_shape = tuple(int(x) for x in inp["shape"])
+        if inp_shape != (1, 192, 192, 3):
+            raise RuntimeError(
+                f"Unexpected TFLite input shape {inp_shape}; "
+                "expected (1, 192, 192, 3). "
+                "onnx2tf likely transposed NHWC→NCHW; upgrade onnx2tf or set "
+                "keep_shape_absolutely_input_names."
+            )
+        out_shape = tuple(int(x) for x in out["shape"])
+        if out_shape not in {(1, 2268, 15), (2268, 15)}:
+            raise RuntimeError(
+                f"Unexpected TFLite output shape {out_shape}; "
+                "expected (1, 2268, 15) or (2268, 15)"
+            )
+        print(f"input shape={list(inp['shape'])} dtype={inp['dtype']}")
+        print(f"output shape={list(out['shape'])} dtype={out['dtype']}")
+        shutil.copy2(chosen, out_tflite)
 
 
 def main() -> int:

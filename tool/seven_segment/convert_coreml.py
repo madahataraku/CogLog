@@ -162,7 +162,7 @@ def main() -> int:
             "For Colab-trained weights use --deepen-factor-mode off.",
             code=2,
         )
-    if probed.ndim != 3 or probed.shape[0] != 1 or probed.shape[-1] != 15:
+    if tuple(probed.shape) not in {(1, 2268, 15), (2268, 15)}:
         return _die(f"Unexpected output shape: {tuple(probed.shape)}")
 
     print("Tracing ...")
