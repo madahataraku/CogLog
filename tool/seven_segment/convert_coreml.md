@@ -116,8 +116,8 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
    ```
 
    **経路 B（Colab 再学習）:** このステップは行わない。Google Drive の
-   `MyDrive/coglog_seven_segment/exports/` から `.pth` を Mac へコピーし、そのパスを
-   `--weights` に渡す。
+   `MyDrive/coglog_seven_segment/exports/epoch_50.pth` を Mac へコピーし、そのパスを
+   `--weights` に渡す。**deepen パッチ前に学習した重みは `--deepen-factor-mode off` 必須。**
 
 5. リポジトリルートで変換する（**Desktop などへのコピーは使わない**。`git pull` した本ファイルを実行）。
 
@@ -126,12 +126,20 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
    git pull
    source .venv-coreml/bin/activate   # CogLog 用 venv。Desktop/coreml の別 venv と混ぜない
    export SSCMA_ROOT=~/ModelAssistant
-   # 経路 A: --weights /tmp/digital_meter.pth
-   # 経路 B: --weights ~/Downloads/<colab_best_or_last>.pth
+
+   # 経路 A（Seeed zoo）:
    python tool/seven_segment/convert_coreml.py \
      --weights /tmp/digital_meter.pth \
      --output app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage \
-     --sscma-root "$SSCMA_ROOT"
+     --sscma-root "$SSCMA_ROOT" \
+     --deepen-factor-mode on
+
+   # 経路 B（今回の Colab epoch_50.pth）:
+   python tool/seven_segment/convert_coreml.py \
+     --weights ~/Downloads/epoch_50.pth \
+     --output app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage \
+     --sscma-root "$SSCMA_ROOT" \
+     --deepen-factor-mode off
    ```
 
 6. スクリプトが表示する **入力名・出力名** と shape `[1, 2268, 15]` を確認する（現行同梱物は `input` / `output`）。行数が変わった場合は Dart / Swift 側の shape 契約も合わせて更新する。
