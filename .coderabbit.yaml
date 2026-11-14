@@ -63,7 +63,7 @@ reviews:
     - "!apm_modules/**"
     - "!apm.lock.yaml"
   path_instructions:
-    - path: "lib/**/*.dart"
+    - path: "**/lib/**/*.dart"
       instructions: |
         CogLog はエアロバイクの運動履歴と減量を記録する Flutter アプリ。
         運動セッションと体重記録が欠落、重複、黙って上書きされないかを見る。
@@ -72,27 +72,27 @@ reviews:
         個人の測定値や端末識別子をログ（debugPrint・print・コンソール・クラウド／解析イベント／永続ログを含む。送信先や保存先を問わない）や例外メッセージへ出さない。
         例外はアプリ内デバッグログ（AppLogStore）への空間 OCR 認識テキストと矩形のみ（docs/product.md のデバッグ方針）。
         ウィジェットの見た目だけの好みは指摘しない。
-    - path: "test/**/*.dart"
+    - path: "**/test/**/*.dart"
       instructions: |
         flutter_test のテストとして読む。
         カロリー、距離、時間、体重差分は 0、境界値、通常値を含める。
         記録が空のときと、日付をまたぐセッションを含める。
         センサー、Bluetooth、ファイルシステムはフェイクし、実機に依存しない。
-    - path: "integration_test/**/*.dart"
+    - path: "**/integration_test/**/*.dart"
       instructions: |
         記録の追加、一覧、再起動後の復元など、利用者が通る流れを確認する。
         実機のバイクやネットワークが無いと落ちるテストにしない。
-    - path: "android/**"
+    - path: "**/android/**"
       instructions: |
         権限はバイク接続やヘルスコネクトなど、機能に必要なものだけにする。
         keystore、key.properties、API キー、署名パスワードをリポジトリへ置かない。
         生成された Gradle やプラグイン登録コードの体裁は指摘しない。
-    - path: "ios/**"
+    - path: "**/ios/**"
       instructions: |
         権限の利用目的は、運動記録に必要な機能と一致させる。
         署名設定、プロビジョニングプロファイル、API キーをコミットしない。
         Pods や ephemeral 配下の生成物は指摘しない。
-    - path: "pubspec.yaml"
+    - path: "**/pubspec.yaml"
       instructions: |
         追加する依存関係が運動記録か減量記録に必要かを確認する。
         SDK 制約を不必要に狭めたり、未使用の依存を増やしたりしない。
@@ -135,14 +135,14 @@ code_generation:
   docstrings:
     language: ja-JP
     path_instructions:
-      - path: "lib/**/*.dart"
+      - path: "**/lib/**/*.dart"
         instructions: |
           公開 API には dartdoc を付ける。
           運動セッションと体重記録の単位、保存形式、時刻の扱いを書く。
           build メソッドなど自明なウィジェット実装には説明を付けない。
   unit_tests:
     path_instructions:
-      - path: "lib/**/*.dart"
+      - path: "**/lib/**/*.dart"
         instructions: |
           flutter_test を使う。
           カロリー、距離、時間、体重差分の計算は境界値を含める。
