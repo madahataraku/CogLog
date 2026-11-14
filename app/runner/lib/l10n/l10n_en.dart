@@ -446,6 +446,13 @@ class L10nEn extends L10n {
   String get screen_feature_debug_platform_notes_label => 'platform notes';
 
   @override
+  String get screen_feature_debug_prefer_gemma_description =>
+      'Session only; off after restart';
+
+  @override
+  String get screen_feature_debug_prefer_gemma_item => 'Prefer Gemma';
+
+  @override
   String get screen_feature_debug_prepare_error_label => 'prepare error';
 
   @override

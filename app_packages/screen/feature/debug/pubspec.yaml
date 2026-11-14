@@ -15,6 +15,7 @@ dependencies:
   forui: any
   foundation_app_log: any
   hooks_riverpod: any
+  infra_meter_reading: any
   infra_on_device_llm: any
   material_ui: any
   meta: any

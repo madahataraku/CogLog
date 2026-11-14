@@ -242,6 +242,7 @@ List<Override> usecaseOverrides({
       llmEngine: ref.watch(meterReadingLlmEngineProvider),
       gemmaEngine: ref.watch(meterReadingGemmaEngineProvider),
       log: ref.watch(appLogStoreProvider),
+      sessionPreference: ref.watch(meterReadingEngineSessionPreferenceProvider),
     ),
   ),
   SyncExerciseReminderUsecase.provider.overrideWith(

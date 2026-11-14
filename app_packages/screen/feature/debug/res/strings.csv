@@ -5,6 +5,8 @@ section_availability,端末上 LLM,On-device LLM,可用性セクション見出�
 section_probe,生成プローブ,Generation probe,生成プローブ見出し
 section_gemma_availability,Gemma E2B,Gemma E2B,Gemma 可用性セクション見出し
 section_gemma_probe,Gemma 画像プローブ,Gemma image probe,Gemma プローブ見出し
+prefer_gemma_item,Gemma 優先モード,Prefer Gemma,メーター読み取りで Gemma を優先するスイッチ
+prefer_gemma_description,同一セッションのみ。再起動でオフ,Session only; off after restart,Gemma 優先モードの説明
 section_logs,アプリログ,App logs,ログセクション見出し
 run_diagnose,再診断,Re-diagnose,診断再実行ボタン
 clear_logs,ログを消去,Clear logs,ログ消去ボタン
