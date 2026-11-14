@@ -1,0 +1,19 @@
+name: usecase_diagnose_gemma_meter_impl
+description: Implementation of Gemma meter diagnosis.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  foundation_app_log: any
+  infra_gemma_meter: any
+  meta: any
+  usecase_diagnose_gemma_meter: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_gemma_meter_testing: any
+  test: any

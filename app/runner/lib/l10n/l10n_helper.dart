@@ -536,6 +536,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_prepare_error_label;
       },
+      'screen_feature_debug_probe_output_length_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_probe_output_length_label;
+      },
       'screen_feature_debug_probe_skipped_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_probe_skipped_label;
@@ -563,6 +567,14 @@ final class L10nHelper {
       'screen_feature_debug_section_availability': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_section_availability;
+      },
+      'screen_feature_debug_section_gemma_availability': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_gemma_availability;
+      },
+      'screen_feature_debug_section_gemma_probe': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_gemma_probe;
       },
       'screen_feature_debug_section_logs': (source) {
         // No Placeholders

@@ -25,6 +25,11 @@ void main() {
     expect(gemma.prepareModelCallCount, 1);
   });
 
+  test('throwOnAvailabilitySnapshot のとき失敗する', () async {
+    final gemma = FakeGemmaMeterVision(throwOnAvailabilitySnapshot: true);
+    await expectLater(gemma.availabilitySnapshot, throwsA(isA<StateError>()));
+  });
+
   test('prepareFailureKind のとき型付き例外を投げる', () async {
     final gemma = FakeGemmaMeterVision(
       prepareFailureKind: GemmaMeterPrepareFailureKind.insufficientStorage,

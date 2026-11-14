@@ -24,6 +24,7 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
     this.response = 'DISTANCE_KM=1\nDURATION=0:10:00\nCALORIES_KCAL=10',
     this.throwOnGenerate = false,
     this.throwOnPrepare = false,
+    this.throwOnAvailabilitySnapshot = false,
     this.prepareFailureKind,
     GemmaMeterAvailabilitySnapshot? availabilitySnapshot,
   }) : availabilitySnapshotValue =
@@ -51,6 +52,9 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
   ///
   /// [prepareFailureKind] が非 null のときは型付き例外を優先する。
   final bool throwOnPrepare;
+
+  /// true のとき [availabilitySnapshot] が失敗する。
+  final bool throwOnAvailabilitySnapshot;
 
   /// 非 null のとき [prepareModel] が [GemmaMeterPrepareException] を投げる。
   final GemmaMeterPrepareFailureKind? prepareFailureKind;
@@ -80,15 +84,19 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
   Future<bool> get isAvailable async =>
       readinessValue == GemmaMeterReadiness.ready;
 
-  /// [availabilitySnapshotValue] を返す。
+  /// [availabilitySnapshotValue] を返す。設定時は失敗する。
   ///
   /// Example:
   /// ```dart
   /// await gemma.availabilitySnapshot;
   /// ```
   @override
-  Future<GemmaMeterAvailabilitySnapshot> get availabilitySnapshot async =>
-      availabilitySnapshotValue;
+  Future<GemmaMeterAvailabilitySnapshot> get availabilitySnapshot async {
+    if (throwOnAvailabilitySnapshot) {
+      throw StateError('fake availabilitySnapshot failed');
+    }
+    return availabilitySnapshotValue;
+  }
 
   /// [response] を返すか、設定に応じて失敗する。
   ///

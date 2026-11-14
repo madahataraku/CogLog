@@ -449,6 +449,10 @@ class L10nEn extends L10n {
   String get screen_feature_debug_prepare_error_label => 'prepare error';
 
   @override
+  String get screen_feature_debug_probe_output_length_label =>
+      'probe output length';
+
+  @override
   String get screen_feature_debug_probe_skipped_label => 'probe skipped';
 
   @override
@@ -468,6 +472,12 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_debug_section_availability => 'On-device LLM';
+
+  @override
+  String get screen_feature_debug_section_gemma_availability => 'Gemma E2B';
+
+  @override
+  String get screen_feature_debug_section_gemma_probe => 'Gemma image probe';
 
   @override
   String get screen_feature_debug_section_logs => 'App logs';

@@ -16,6 +16,8 @@ import 'package:infra_network_connectivity/infra_network_connectivity.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 import 'package:riverpod/misc.dart';
+import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
+import 'package:usecase_diagnose_gemma_meter_impl/usecase_diagnose_gemma_meter_impl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
 import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
@@ -159,6 +161,12 @@ List<Override> usecaseOverrides({
   DiagnoseOnDeviceLlmUsecase.provider.overrideWith(
     (ref) => DiagnoseOnDeviceLlmUsecaseImpl(
       llm: ref.watch(onDeviceLlmProvider),
+      log: ref.watch(appLogStoreProvider),
+    ),
+  ),
+  DiagnoseGemmaMeterUsecase.provider.overrideWith(
+    (ref) => DiagnoseGemmaMeterUsecaseImpl(
+      gemma: ref.watch(gemmaMeterVisionProvider),
       log: ref.watch(appLogStoreProvider),
     ),
   ),

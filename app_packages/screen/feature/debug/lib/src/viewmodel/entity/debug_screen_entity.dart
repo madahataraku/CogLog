@@ -18,6 +18,16 @@
 ///   generateError: '-',
 ///   prepareError: '-',
 ///   probeSkipped: '-',
+///   gemmaReadiness: '-',
+///   gemmaStatus: '-',
+///   gemmaReason: '-',
+///   gemmaMessage: '-',
+///   gemmaAvailabilityError: '-',
+///   gemmaCanGenerate: null,
+///   gemmaProbeOutputLength: '-',
+///   gemmaGenerateError: '-',
+///   gemmaPrepareError: '-',
+///   gemmaProbeSkipped: '-',
 ///   logLines: [],
 /// );
 /// ```
@@ -40,6 +50,16 @@ final class DebugScreenEntity {
   ///   generateError: '-',
   ///   prepareError: '-',
   ///   probeSkipped: '-',
+  ///   gemmaReadiness: 'ready',
+  ///   gemmaStatus: 'available',
+  ///   gemmaReason: 'ready',
+  ///   gemmaMessage: 'ok',
+  ///   gemmaAvailabilityError: '-',
+  ///   gemmaCanGenerate: true,
+  ///   gemmaProbeOutputLength: '2',
+  ///   gemmaGenerateError: '-',
+  ///   gemmaPrepareError: '-',
+  ///   gemmaProbeSkipped: '-',
   ///   logLines: ['line'],
   /// );
   /// ```
@@ -57,22 +77,32 @@ final class DebugScreenEntity {
     required this.generateError,
     required this.prepareError,
     required this.probeSkipped,
+    required this.gemmaReadiness,
+    required this.gemmaStatus,
+    required this.gemmaReason,
+    required this.gemmaMessage,
+    required this.gemmaAvailabilityError,
+    required this.gemmaCanGenerate,
+    required this.gemmaProbeOutputLength,
+    required this.gemmaGenerateError,
+    required this.gemmaPrepareError,
+    required this.gemmaProbeSkipped,
     required this.logLines,
   });
 
-  /// いま端末上 LLM 診断ユースケースが走っているとき true。
+  /// いま診断ユースケースが走っているとき true。
   final bool running;
 
-  /// 利用可否スナップショットの readiness 名。スナップショット無しは `'-'`。
+  /// 端末上 LLM の readiness 名。スナップショット無しは `'-'`。
   final String readiness;
 
-  /// 利用可否の status。空・未取得は `'-'`。
+  /// 端末上 LLM の status。空・未取得は `'-'`。
   final String status;
 
-  /// 利用可否がその status になった理由。空・未取得は `'-'`。
+  /// 端末上 LLM がその status になった理由。空・未取得は `'-'`。
   final String reason;
 
-  /// 利用可否に付随する説明。空・未取得は `'-'`。
+  /// 端末上 LLM の説明。空・未取得は `'-'`。
   final String message;
 
   /// 診断で選択された LLM バックエンド識別子。空・未取得は `'-'`。
@@ -98,6 +128,36 @@ final class DebugScreenEntity {
 
   /// プローブをスキップした理由。該当無しは `'-'`。
   final String probeSkipped;
+
+  /// Gemma の readiness 名。未取得は `'-'`。
+  final String gemmaReadiness;
+
+  /// Gemma の status。空・未取得は `'-'`。
+  final String gemmaStatus;
+
+  /// Gemma の reason。空・未取得は `'-'`。
+  final String gemmaReason;
+
+  /// Gemma の message。空・未取得は `'-'`。
+  final String gemmaMessage;
+
+  /// Gemma 利用可否例外。無ければ `'-'`。
+  final String gemmaAvailabilityError;
+
+  /// Gemma 画像プローブの可否。未診断は null。
+  final bool? gemmaCanGenerate;
+
+  /// Gemma プローブ本文の長さ（文字列）。未取得は `'-'`。
+  final String gemmaProbeOutputLength;
+
+  /// Gemma 生成例外。無ければ `'-'`。
+  final String gemmaGenerateError;
+
+  /// Gemma 準備例外。無ければ `'-'`。
+  final String gemmaPrepareError;
+
+  /// Gemma プローブ省略理由。該当無しは `'-'`。
+  final String gemmaProbeSkipped;
 
   /// 古い行が先（上が古い）になるログ文字列。各要素は 1 エントリ分。
   final List<String> logLines;

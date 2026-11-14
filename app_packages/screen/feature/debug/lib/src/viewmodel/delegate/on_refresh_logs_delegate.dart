@@ -36,6 +36,7 @@ final class OnRefreshLogsDelegate {
         DebugScreenState(
           running: current.running,
           result: current.result,
+          gemmaResult: current.gemmaResult,
           logs: log.entries,
         ),
       );

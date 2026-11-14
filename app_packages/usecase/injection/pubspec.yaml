@@ -28,6 +28,8 @@ dependencies:
   riverpod: any
   usecase_diagnose_on_device_llm: any
   usecase_diagnose_on_device_llm_impl: any
+  usecase_diagnose_gemma_meter: any
+  usecase_diagnose_gemma_meter_impl: any
   usecase_evaluate_achievements: any
   usecase_evaluate_achievements_impl: any
   usecase_evaluate_daily_goal_auto_update: any

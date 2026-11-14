@@ -1,4 +1,5 @@
 import 'package:foundation_app_log/foundation_app_log.dart';
+import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 
 /// デバッグ画面の状態。
@@ -15,12 +16,14 @@ final class DebugScreenState {
   /// const DebugScreenState(
   ///   running: false,
   ///   result: null,
+  ///   gemmaResult: null,
   ///   logs: [],
   /// );
   /// ```
   const DebugScreenState({
     required this.running,
     required this.result,
+    required this.gemmaResult,
     required this.logs,
   });
 
@@ -28,14 +31,18 @@ final class DebugScreenState {
   static const initial = DebugScreenState(
     running: false,
     result: null,
+    gemmaResult: null,
     logs: [],
   );
 
   /// 診断実行中なら true。
   final bool running;
 
-  /// 直近の診断結果。
+  /// 直近の端末上 LLM 診断結果。
   final DiagnoseOnDeviceLlmResult? result;
+
+  /// 直近の Gemma メーター診断結果。
+  final DiagnoseGemmaMeterResult? gemmaResult;
 
   /// 表示するログ行（新しい順ではない、ストア順）。
   final List<AppLogEntry> logs;

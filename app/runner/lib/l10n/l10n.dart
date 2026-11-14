@@ -829,6 +829,12 @@ abstract class L10n {
   /// **'prepare error'**
   String get screen_feature_debug_prepare_error_label;
 
+  /// プローブ本文長ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'probe output length'**
+  String get screen_feature_debug_probe_output_length_label;
+
   /// プローブ省略理由ラベル
   ///
   /// In ja, this message translates to:
@@ -870,6 +876,18 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'端末上 LLM'**
   String get screen_feature_debug_section_availability;
+
+  /// Gemma 可用性セクション見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'Gemma E2B'**
+  String get screen_feature_debug_section_gemma_availability;
+
+  /// Gemma プローブ見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'Gemma 画像プローブ'**
+  String get screen_feature_debug_section_gemma_probe;
 
   /// ログセクション見出し
   ///

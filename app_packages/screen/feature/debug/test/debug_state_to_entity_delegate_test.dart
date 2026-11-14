@@ -1,8 +1,10 @@
 import 'package:foundation_app_log/foundation_app_log.dart';
+import 'package:infra_gemma_meter/infra_gemma_meter.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:screen_feature_debug/src/viewmodel/delegate/debug_state_to_entity_delegate.dart';
 import 'package:screen_feature_debug/src/viewmodel/state/debug_screen_state.dart';
 import 'package:test/test.dart';
+import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 
 void main() {
@@ -12,6 +14,8 @@ void main() {
     );
     expect(entity.readiness, '-');
     expect(entity.canGenerate, isNull);
+    expect(entity.gemmaReadiness, '-');
+    expect(entity.gemmaCanGenerate, isNull);
     expect(entity.logLines, isEmpty);
   });
 
@@ -29,6 +33,16 @@ void main() {
           canGenerate: true,
           sampleOutput: 'hi',
         ),
+        gemmaResult: const DiagnoseGemmaMeterResult(
+          snapshot: GemmaMeterAvailabilitySnapshot(
+            readiness: GemmaMeterReadiness.ready,
+            status: 'available',
+            reason: 'ready',
+            message: 'gemma ok',
+          ),
+          canGenerate: true,
+          probeOutputLength: 2,
+        ),
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 30, 5),
@@ -42,6 +56,9 @@ void main() {
     expect(entity.readiness, 'ready');
     expect(entity.canGenerate, isTrue);
     expect(entity.sampleOutput, 'hi');
+    expect(entity.gemmaReadiness, 'ready');
+    expect(entity.gemmaCanGenerate, isTrue);
+    expect(entity.gemmaProbeOutputLength, '2');
     expect(entity.logLines.single, contains('t: m'));
   });
 
@@ -50,6 +67,7 @@ void main() {
       DebugScreenState(
         running: false,
         result: null,
+        gemmaResult: null,
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 1),
@@ -83,6 +101,7 @@ void main() {
       DebugScreenState(
         running: false,
         result: null,
+        gemmaResult: null,
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 0),
@@ -102,6 +121,7 @@ void main() {
       DebugScreenState(
         running: false,
         result: null,
+        gemmaResult: null,
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 0),

@@ -493,6 +493,10 @@
   "@screen_feature_debug_prepare_error_label": {
     "description": "準備例外ラベル"
   },
+  "screen_feature_debug_probe_output_length_label": "probe output length",
+  "@screen_feature_debug_probe_output_length_label": {
+    "description": "プローブ本文長ラベル"
+  },
   "screen_feature_debug_probe_skipped_label": "probe skipped",
   "@screen_feature_debug_probe_skipped_label": {
     "description": "プローブ省略理由ラベル"
@@ -520,6 +524,14 @@
   "screen_feature_debug_section_availability": "On-device LLM",
   "@screen_feature_debug_section_availability": {
     "description": "可用性セクション見出し"
+  },
+  "screen_feature_debug_section_gemma_availability": "Gemma E2B",
+  "@screen_feature_debug_section_gemma_availability": {
+    "description": "Gemma 可用性セクション見出し"
+  },
+  "screen_feature_debug_section_gemma_probe": "Gemma image probe",
+  "@screen_feature_debug_section_gemma_probe": {
+    "description": "Gemma プローブ見出し"
   },
   "screen_feature_debug_section_logs": "App logs",
   "@screen_feature_debug_section_logs": {

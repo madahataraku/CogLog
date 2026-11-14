@@ -92,6 +92,8 @@ workspace:
   - app_packages/usecase/evaluate_daily_goal_auto_update/_impl
   - app_packages/usecase/diagnose_on_device_llm
   - app_packages/usecase/diagnose_on_device_llm/_impl
+  - app_packages/usecase/diagnose_gemma_meter
+  - app_packages/usecase/diagnose_gemma_meter/_impl
   - app_packages/usecase/generate_top_advice
   - app_packages/usecase/generate_top_advice/_impl
   - app_packages/usecase/injection

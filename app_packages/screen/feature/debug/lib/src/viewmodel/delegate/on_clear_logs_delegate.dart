@@ -37,6 +37,7 @@ final class OnClearLogsDelegate {
         DebugScreenState(
           running: current.running,
           result: current.result,
+          gemmaResult: current.gemmaResult,
           logs: log.entries,
         ),
       );

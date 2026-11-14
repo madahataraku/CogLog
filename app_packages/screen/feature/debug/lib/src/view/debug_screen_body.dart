@@ -52,6 +52,11 @@ class DebugScreenBody extends HookConsumerWidget {
       true => strings.screen_feature_debug_yes,
       false => strings.screen_feature_debug_no,
     };
+    final gemmaCanGenerateText = switch (entity.gemmaCanGenerate) {
+      null => '-',
+      true => strings.screen_feature_debug_yes,
+      false => strings.screen_feature_debug_no,
+    };
     return FScaffold(
       header: FHeader.nested(
         title: Text(strings.screen_feature_debug_title),
@@ -120,6 +125,64 @@ class DebugScreenBody extends HookConsumerWidget {
           _line(
             strings.screen_feature_debug_probe_skipped_label,
             entity.probeSkipped,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            strings.screen_feature_debug_section_gemma_availability,
+            style: context.theme.typography.body.lg.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (!entity.running) ...[
+            _line(
+              strings.screen_feature_debug_readiness_label,
+              entity.gemmaReadiness,
+            ),
+            _line(
+              strings.screen_feature_debug_status_label,
+              entity.gemmaStatus,
+            ),
+            _line(
+              strings.screen_feature_debug_reason_label,
+              entity.gemmaReason,
+            ),
+            _line(
+              strings.screen_feature_debug_message_label,
+              entity.gemmaMessage,
+            ),
+            _line(
+              strings.screen_feature_debug_availability_error_label,
+              entity.gemmaAvailabilityError,
+            ),
+          ],
+          const SizedBox(height: 16),
+          Text(
+            strings.screen_feature_debug_section_gemma_probe,
+            style: context.theme.typography.body.lg.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _line(
+            strings.screen_feature_debug_can_generate_label,
+            gemmaCanGenerateText,
+          ),
+          _line(
+            strings.screen_feature_debug_probe_output_length_label,
+            entity.gemmaProbeOutputLength,
+          ),
+          _line(
+            strings.screen_feature_debug_generate_error_label,
+            entity.gemmaGenerateError,
+          ),
+          _line(
+            strings.screen_feature_debug_prepare_error_label,
+            entity.gemmaPrepareError,
+          ),
+          _line(
+            strings.screen_feature_debug_probe_skipped_label,
+            entity.gemmaProbeSkipped,
           ),
           const SizedBox(height: 12),
           FButton(
