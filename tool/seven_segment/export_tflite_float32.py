@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import shutil
+import subprocess
 import sys
 import tempfile
 import traceback
@@ -139,6 +140,30 @@ def main() -> int:
         return _die(f"Weights not found: {args.weights}")
     if not args.sscma_root.is_dir():
         return _die(f"--sscma-root not a directory: {args.sscma_root}")
+
+    # auto must use a fresh process per mode (sscma registry cannot switch deepen).
+    if args.deepen_factor_mode == "auto":
+        script = Path(__file__).resolve()
+        last_code = 1
+        for mode in ("off", "on"):
+            cmd = [
+                sys.executable,
+                "-u",
+                str(script),
+                "--weights",
+                str(args.weights),
+                "--sscma-root",
+                str(args.sscma_root),
+                "--output",
+                str(args.output),
+                "--deepen-factor-mode",
+                mode,
+            ]
+            print(f"auto: trying deepen_factor_mode={mode} in subprocess", flush=True)
+            last_code = subprocess.call(cmd)
+            if last_code == 0:
+                return 0
+        return last_code
 
     log_path = args.output.with_suffix(args.output.suffix + ".log")
     log_path.parent.mkdir(parents=True, exist_ok=True)

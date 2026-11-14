@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import platform
+import subprocess
 import sys
 from pathlib import Path
 
@@ -51,6 +52,29 @@ def main() -> int:
         ),
     )
     args = parser.parse_args()
+
+    if args.deepen_factor_mode == "auto":
+        script = Path(__file__).resolve()
+        last_code = 1
+        for mode in ("off", "on"):
+            cmd = [
+                sys.executable,
+                "-u",
+                str(script),
+                "--weights",
+                str(args.weights),
+                "--output",
+                str(args.output),
+                "--sscma-root",
+                str(args.sscma_root),
+                "--deepen-factor-mode",
+                mode,
+            ]
+            print(f"auto: trying deepen_factor_mode={mode} in subprocess", flush=True)
+            last_code = subprocess.call(cmd)
+            if last_code == 0:
+                return 0
+        return last_code
 
     if platform.system() != "Darwin":
         return _die(

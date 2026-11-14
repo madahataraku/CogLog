@@ -62,7 +62,6 @@ def stub_sscma_optional_deps() -> None:
 
     for name in ("pyarrow", "lance", "lancedb"):
         _ensure(name)
-    # Common submodules touched during import probes.
     for name in (
         "pyarrow.lib",
         "pyarrow.compute",
@@ -86,12 +85,22 @@ def _normalize_state_dict(state_dict: dict) -> dict:
     return out
 
 
+def _is_ignorable_unexpected_key(key: str) -> bool:
+    """Only EMA-related leftovers are ignorable; backbone extras are not."""
+    lower = key.lower()
+    return (
+        lower.startswith("ema_")
+        or ".ema_" in lower
+        or lower.startswith("ema.")
+        or "/ema/" in lower
+    )
+
+
 def _build_detector(sscma_root: Path, weights: Path):
     import torch
     from mmengine.config import Config
     from mmengine.registry import MODELS, init_default_scope
 
-    # Imported for side-effect registration.
     from sscma.datasets.data_preprocessor import DetDataPreprocessor  # noqa: F401
     from sscma.models import (  # noqa: F401
         CrossEntropyLoss,
@@ -141,71 +150,52 @@ def build_nhwc_seven_seg(
     sscma_root: Path,
     weights: Path,
     *,
-    deepen_factor_mode: str = "auto",
+    deepen_factor_mode: str = "off",
 ):
     """Return (wrapped_module, probed_output_tensor, dummy) for NHWC 192 contract.
 
-    deepen_factor_mode:
-      - ``auto``: try patched architecture first; on large missing, revert and retry
-      - ``on``: always patch (Seeed zoo weights)
-      - ``off``: never patch (Colab train before deepen patch)
+    deepen_factor_mode must be ``on`` or ``off`` only. ``auto`` is handled by
+    callers via a fresh subprocess per mode (registry/class cache cannot switch
+    deepen_factor safely in one process).
     """
     import torch
     import torch.nn as nn
+
+    if deepen_factor_mode not in {"on", "off"}:
+        raise ValueError(
+            f"deepen_factor_mode must be 'on' or 'off' (got {deepen_factor_mode!r}); "
+            "CLI 'auto' must spawn a new process per mode"
+        )
 
     stub_sscma_optional_deps()
     root = str(sscma_root.resolve())
     if root not in sys.path:
         sys.path.insert(0, root)
 
-    if deepen_factor_mode not in {"auto", "on", "off"}:
-        raise ValueError(f"Unknown deepen_factor_mode: {deepen_factor_mode}")
-
-    attempts: list[str]
-    if deepen_factor_mode == "auto":
-        attempts = ["on", "off"]
+    if deepen_factor_mode == "on":
+        ensure_yolov5_csp_deepen_factor(sscma_root)
     else:
-        attempts = [deepen_factor_mode]
-
-    last_error: Exception | None = None
-    detector = None
-    for mode in attempts:
         try:
-            if mode == "on":
-                ensure_yolov5_csp_deepen_factor(sscma_root)
-            else:
-                # Ensure unpatched source before import/build.
-                try:
-                    revert_yolov5_csp_deepen_factor(sscma_root)
-                except RuntimeError:
-                    pass
-            # Force re-import of backbone if a previous attempt patched/reverted.
-            for mod_name in list(sys.modules):
-                if mod_name.startswith("sscma.models.backbones"):
-                    del sys.modules[mod_name]
-            detector, missing, unexpected = _build_detector(sscma_root, weights)
-            # EMA / buffers may show as unexpected; only missing blocks the export.
-            if missing:
-                preview = ", ".join(missing[:8])
-                raise RuntimeError(
-                    f"state_dict missing={len(missing)} unexpected={len(unexpected)} "
-                    f"(mode={mode}). sample missing: {preview}"
-                )
-            if unexpected:
-                print(
-                    f"Ignoring {len(unexpected)} unexpected keys "
-                    f"(mode={mode}; often EMA/buffers)"
-                )
-            print(f"Loaded checkpoint with deepen_factor_mode={mode}")
-            break
-        except Exception as exc:  # noqa: BLE001
-            last_error = exc
-            detector = None
-            print(f"Load attempt mode={mode} failed: {exc}")
-    if detector is None:
+            revert_yolov5_csp_deepen_factor(sscma_root)
+        except RuntimeError:
+            pass
+
+    detector, missing, unexpected = _build_detector(sscma_root, weights)
+    bad_unexpected = [k for k in unexpected if not _is_ignorable_unexpected_key(k)]
+    if missing or bad_unexpected:
+        preview_m = ", ".join(missing[:8])
+        preview_u = ", ".join(bad_unexpected[:8])
         raise RuntimeError(
-            f"Failed to load weights under modes {attempts}: {last_error}"
+            f"state_dict mismatch mode={deepen_factor_mode} "
+            f"missing={len(missing)} unexpected_non_ema={len(bad_unexpected)} "
+            f"sample_missing=[{preview_m}] sample_unexpected=[{preview_u}]"
         )
+    if unexpected:
+        print(
+            f"Ignoring {len(unexpected)} EMA unexpected keys "
+            f"(mode={deepen_factor_mode})"
+        )
+    print(f"Loaded checkpoint with deepen_factor_mode={deepen_factor_mode}")
 
     detector.eval()
 
@@ -230,7 +220,6 @@ def build_nhwc_seven_seg(
     dummy = torch.rand(1, 192, 192, 3)
     with torch.no_grad():
         probed = wrapped(dummy)
-    # Row count depends on anchors/strides at imgsz=192; require 15-wide contract.
     if probed.ndim != 3 or probed.shape[0] != 1 or probed.shape[-1] != 15:
         raise RuntimeError(f"Unexpected output shape: {tuple(probed.shape)}")
     print(f"Probe output shape: {tuple(probed.shape)}")
