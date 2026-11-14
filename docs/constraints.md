@@ -8,7 +8,7 @@
 - 子パッケージの外部依存は `any` にする。
 - `flutter pub get` と Monolith のコマンドはリポジトリルートで実行する。
 - `flutter run` と `dart run forui` は `app/` で実行する。
-- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。OS モデルが使えない環境では、メーター読み取り専用に MediaPipe 上の Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
+- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に MediaPipe 上の Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
 
 ## Syncfusion Charts
 

@@ -86,7 +86,7 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - アクションは縦並びで「閉じる」と「モデルを準備」。
 - DialogRoute の完了（pop）は `ModelDownloadGuidanceLauncher` 内だけが行う。画面から `Navigator` を直接呼ばない。
 - OS LLM（Foundation Models / Gemini Nano）向けは、ホームとメーター記録で共用の `view_model_download_guidance` を使う。
-- OS LLM 非対応環境の Gemma E2B 向けは、アプリ起動時に同じ部品でダイアログを出す（メーター読み取り用モデルの準備）。
+- メーター読み取りで OS LLM が使えないとき（非対応・未 ready・画像入力非対応を含む）の Gemma E2B 向けは、アプリ起動時に同じ部品でダイアログを出す（メーター読み取り用モデルの準備。Gemma 自体が非対応の端末は対象外）。
 
 ## アチーブメント
 
