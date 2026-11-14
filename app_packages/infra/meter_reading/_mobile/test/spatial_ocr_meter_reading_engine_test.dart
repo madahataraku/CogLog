@@ -85,18 +85,52 @@ void main() {
     expect(values.distanceKm, 12.3);
     expect(log.entries, hasLength(3));
     expect(log.entries.first.tag, 'meter.spatial');
+    expect(log.entries.first.message, contains('generic kind='));
     expect(log.entries.first.message, contains('tokens=1'));
     expect(
       log.entries.first.message,
       contains('classes=[distanceValueWithUnit:1]'),
     );
     expect(log.entries.first.message, contains('otherDigits=0'));
-    expect(log.entries.first.message, isNot(contains('12.3')));
+    expect(
+      log.entries.first.message,
+      contains('texts=[12.3km@0.200,0.200,0.200,0.050]'),
+    );
     expect(log.entries[1].message, contains('sevenSeg candidates='));
     expect(log.entries[1].message, contains('error=false'));
+    expect(log.entries[1].message, contains('texts=[]'));
     expect(log.entries.last.message, contains('present=[distanceKm'));
+    // OCR 生文字列は出すが、推論フィールド代入値は出さない。
     expect(log.entries.last.message, isNot(contains('distanceKm=12.3')));
+    expect(log.entries.last.message, isNot(contains('duration=')));
+    expect(log.entries.last.message, isNot(contains('caloriesKcal=')));
+    expect(log.entries.last.message, isNot(contains('averageSpeedKmh=')));
     expect(log.entries.last.message, contains('adoptedFromSevenSeg='));
+  });
+
+  test('時間形トークンは本文と座標をログする', () async {
+    final log = AppLogStore();
+    final engine = SpatialOcrMeterReadingEngine(
+      kind: MeterReadingEngineKind.mlKit,
+      recognizer: FakeMeterLayoutRecognizer(
+        tokens: const [
+          MeterOcrToken(
+            text: '0:30:00',
+            left: 0.1,
+            top: 0.3,
+            width: 0.2,
+            height: 0.05,
+          ),
+        ],
+      ),
+      log: log,
+    );
+
+    await engine.read(Uint8List(0));
+    expect(
+      log.entries.first.message,
+      contains('texts=[0:30:00@0.100,0.300,0.200,0.050]'),
+    );
   });
 
   test('トークン0件なら warn と空の推論をログする', () async {
@@ -110,7 +144,10 @@ void main() {
     final values = await engine.read(Uint8List(0));
     expect(values.distanceKm, isNull);
     expect(log.entries.first.level, AppLogLevel.warn);
+    expect(log.entries.first.message, contains('generic kind='));
     expect(log.entries.first.message, contains('tokens=0'));
+    expect(log.entries.first.message, contains('texts=[]'));
+    expect(log.entries[1].message, contains('texts=[]'));
   });
 
   test('汎用ラベルのみ七セグで距離補完', () async {
@@ -148,11 +185,17 @@ void main() {
       log.entries.last.message,
       contains('adoptedFromSevenSeg=[distanceKm]'),
     );
+    expect(log.entries.first.message, contains('generic kind='));
+    expect(
+      log.entries.first.message,
+      contains('texts=[距離@0.100,0.100,0.200,0.050]'),
+    );
     expect(log.entries[1].message, contains('sevenSeg candidates=1'));
-    for (final entry in log.entries) {
-      expect(entry.message, isNot(contains('12.3')));
-      expect(entry.message, isNot(contains('99.9')));
-    }
+    expect(
+      log.entries[1].message,
+      contains('texts=[12.3@0.100,0.180,0.200,0.060]'),
+    );
+    expect(log.entries.last.message, isNot(contains('distanceKm=12.3')));
   });
 
   test('汎用に距離ありなら同位置の七セグは採用しない', () async {

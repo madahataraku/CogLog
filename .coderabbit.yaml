@@ -63,35 +63,36 @@ reviews:
     - "!apm_modules/**"
     - "!apm.lock.yaml"
   path_instructions:
-    - path: "lib/**/*.dart"
+    - path: "**/lib/**/*.dart"
       instructions: |
         CogLog はエアロバイクの運動履歴と減量を記録する Flutter アプリ。
         運動セッションと体重記録が欠落、重複、黙って上書きされないかを見る。
         時刻は利用者のローカル日付で揃っているか、単位は kg、kcal、分、km で揃っているかを確認する。
         保存形式を変えるときは、既存データの移行と失敗時の扱いがあるかを見る。
-        個人の測定値や端末識別子をログ、例外メッセージ、解析イベントへ出さない。
+        個人の測定値や端末識別子をログ（debugPrint・print・コンソール・クラウド／解析イベント／永続ログを含む。送信先や保存先を問わない）や例外メッセージへ出さない。
+        例外はアプリ内デバッグログ（AppLogStore）への空間 OCR 認識テキストと矩形のみ（docs/product.md のデバッグ方針）。
         ウィジェットの見た目だけの好みは指摘しない。
-    - path: "test/**/*.dart"
+    - path: "**/test/**/*.dart"
       instructions: |
         flutter_test のテストとして読む。
         カロリー、距離、時間、体重差分は 0、境界値、通常値を含める。
         記録が空のときと、日付をまたぐセッションを含める。
         センサー、Bluetooth、ファイルシステムはフェイクし、実機に依存しない。
-    - path: "integration_test/**/*.dart"
+    - path: "**/integration_test/**/*.dart"
       instructions: |
         記録の追加、一覧、再起動後の復元など、利用者が通る流れを確認する。
         実機のバイクやネットワークが無いと落ちるテストにしない。
-    - path: "android/**"
+    - path: "**/android/**"
       instructions: |
         権限はバイク接続やヘルスコネクトなど、機能に必要なものだけにする。
         keystore、key.properties、API キー、署名パスワードをリポジトリへ置かない。
         生成された Gradle やプラグイン登録コードの体裁は指摘しない。
-    - path: "ios/**"
+    - path: "**/ios/**"
       instructions: |
         権限の利用目的は、運動記録に必要な機能と一致させる。
         署名設定、プロビジョニングプロファイル、API キーをコミットしない。
         Pods や ephemeral 配下の生成物は指摘しない。
-    - path: "pubspec.yaml"
+    - path: "**/pubspec.yaml"
       instructions: |
         追加する依存関係が運動記録か減量記録に必要かを確認する。
         SDK 制約を不必要に狭めたり、未使用の依存を増やしたりしない。
@@ -111,7 +112,8 @@ reviews:
       - name: 運動記録の保全
         mode: warning
         instructions: |
-          個人の測定値をログへ出す、またはシークレット、トークン、keystore をリポジトリへ追加する場合は、プルリクエスト本文の説明に関係なく fail。
+          個人の測定値をログ（debugPrint・print・コンソール・クラウド／解析イベント／永続ログ・例外メッセージを含む。送信先や保存先を問わない）へ出す、またはシークレット、トークン、keystore をリポジトリへ追加する場合は、プルリクエスト本文の説明に関係なく fail。
+          ただし docs/product.md のデバッグ方針に従い、アプリ内プロセス限定のデバッグログ（AppLogStore）へ空間 OCR の認識テキストと矩形を出す変更だけは例外として pass。推論結果のフィールド代入値を出す場合や、空間 OCR 以外の測定値をログへ出す場合は fail。
           既存の運動履歴または体重履歴を削除するか、黙って上書きする場合、または保存済みの値を変換せずに単位を変更する場合は、プルリクエスト本文で既存データの扱いを説明していなければ fail。
           上記に該当しない変更は pass。
   tools:
@@ -133,14 +135,14 @@ code_generation:
   docstrings:
     language: ja-JP
     path_instructions:
-      - path: "lib/**/*.dart"
+      - path: "**/lib/**/*.dart"
         instructions: |
           公開 API には dartdoc を付ける。
           運動セッションと体重記録の単位、保存形式、時刻の扱いを書く。
           build メソッドなど自明なウィジェット実装には説明を付けない。
   unit_tests:
     path_instructions:
-      - path: "lib/**/*.dart"
+      - path: "**/lib/**/*.dart"
         instructions: |
           flutter_test を使う。
           カロリー、距離、時間、体重差分の計算は境界値を含める。

@@ -6,8 +6,8 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 
 /// 座標付き OCR と空間推論でメーター値を取るエンジン。
 ///
-/// 認識トークン数・分類件数・推論フィールドの有無だけを [log] へ出す。
-/// 測定値・トークン本文は出さない。
+/// [log] にはトークン数・分類件数・汎用／七セグの認識テキストと矩形・推論フィールドの有無を出す。
+/// 解釈後の距離・時間・カロリー・速度のフィールド代入値は出さない。
 ///
 /// Example:
 /// ```dart
@@ -78,9 +78,10 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
       tag: 'meter.spatial',
       level: genericTokens.isEmpty ? AppLogLevel.warn : AppLogLevel.info,
       message:
-          'kind=${kind.name}; tokens=${genericTokens.length}; '
+          'generic kind=${kind.name}; tokens=${genericTokens.length}; '
           'classes=${_formatKindCounts(kindCounts)}; '
-          'otherDigits=$otherDigits',
+          'otherDigits=$otherDigits; '
+          'texts=${_formatTokens(genericTokens)}',
     );
 
     var sevenSegTokens = const <MeterOcrToken>[];
@@ -101,7 +102,8 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
       level: AppLogLevel.info,
       message:
           'sevenSeg candidates=${sevenSegTokens.length}; '
-          'error=$sevenSegError',
+          'error=$sevenSegError; '
+          'texts=${_formatTokens(sevenSegTokens)}',
     );
 
     final valuesGeneric = MeterSpatialLayoutInferencer.infer(genericTokens);
@@ -218,6 +220,37 @@ String _formatKindCounts(Map<String, int> counts) {
   }
   final keys = counts.keys.toList()..sort();
   return '[${keys.map((k) => '$k:${counts[k]}').join(',')}]';
+}
+
+/// 認識トークンの本文と正規化矩形をログ向けに列挙する。
+///
+/// 各要素は `本文@left,top,width,height`（小数3桁）。診断用に OCR 生文字列を残す。
+///
+/// Example:
+/// ```dart
+/// _formatTokens(const [
+///   MeterOcrToken(text: '距離', left: 0.1, top: 0.2, width: 0.15, height: 0.05),
+/// ]);
+/// ```
+String _formatTokens(List<MeterOcrToken> tokens) {
+  if (tokens.isEmpty) {
+    return '[]';
+  }
+  return '[${tokens.map(_formatOneToken).join(';')}]';
+}
+
+/// 1 トークンを `本文@left,top,width,height` にする。
+///
+/// Example:
+/// ```dart
+/// _formatOneToken(
+///   const MeterOcrToken(text: '12.3km', left: 0.1, top: 0.2, width: 0.15, height: 0.05),
+/// );
+/// ```
+String _formatOneToken(MeterOcrToken token) {
+  String n(double v) => v.toStringAsFixed(3);
+  return '${token.text}@${n(token.left)},${n(token.top)},'
+      '${n(token.width)},${n(token.height)}';
 }
 
 /// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
