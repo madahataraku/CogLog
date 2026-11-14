@@ -86,6 +86,12 @@ release を含むモバイル向けビルドで各 OS のモデル同梱必須�
 resources を省略し、実行時は七セグ経路が失敗して汎用 OCR のみで完了する。ホスト単体テストは
 Fake 差し替え可。依存とモデル NOTICE は OSS ライセンス再生成対象に含める。
 
+七セグの **permissive 再学習**（AGPL の Ultralytics を使わない）は Google Colab 無料枠を前提に、
+`tool/seven_segment/colab_retrain.md` と `colab_sscma_retrain.ipynb` に従う。学習器は
+Seeed ModelAssistant（MIT）、主データは Hugging Face `LibreYOLO/digits-t2eg6`（CC BY 4.0）。
+入力 192・クラス 0–9 の既存契約に合わせ、TFLite を Colab で出し、Core ML は macOS で変換する。
+Cloud Agent（Linux・GPU 無し）では本学習と Core ML 保存は行わない。
+
 ## iOS
 
 `IPHONEOS_DEPLOYMENT_TARGET` と `app/ios/Podfile` の `platform :ios` は次に固定する。プラグイン（`infra_meter_reading_mobile` / `infra_on_device_llm_mobile`）が 16.4 を要求するため、これ未満にしない。

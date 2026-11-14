@@ -1,5 +1,8 @@
 # Seven-segment Swift-YOLO → Core ML (`DigitalMeterElectricity192.mlpackage`)
 
+Colab での公開データ再学習（SSCMA / CC BY）は `colab_retrain.md` を先に読む。
+この文書は **macOS 上での `.pth` → `.mlpackage`** のみを扱う。
+
 ## 実行環境（必須）
 
 変換と `.mlpackage` の保存は **macOS 必須**である。
