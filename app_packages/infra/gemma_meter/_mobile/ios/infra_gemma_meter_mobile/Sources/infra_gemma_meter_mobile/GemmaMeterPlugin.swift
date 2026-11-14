@@ -12,8 +12,9 @@ import LiteRTLM
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let modelDirName = "gemma_meter"
   private static let modelFileName = "gemma-3n-E2B-it-int4.litertlm"
+  /// litert.dev catalog mirror (ungated). Upstream HF google/… is gated (401).
   private static let modelURLString =
-    "https://huggingface.co/google/gemma-3n-E2B-it-litert-lm/resolve/main/gemma-3n-E2B-it-int4.litertlm"
+    "https://models.litert.dev/gemma-3n-E2B-it-int4.litertlm"
   private static let minFreeBytes: Int64 = 200 * 1024 * 1024
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")

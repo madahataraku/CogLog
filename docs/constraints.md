@@ -82,6 +82,9 @@ Gemma E2B 経路（`infra_gemma_meter_mobile`）の Android 依存は
 `com.google.ai.edge.litertlm:litertlm-android`（実効版はビルド時に Google Maven の
 release を追う。ピン留めしない）。ネイティブ／アセットの OSS ライセンス一覧の再生成対象に含める。
 モデル成果物の既定 URL／ファイル名は運用で更新し、特定版へのピン留めはしない。
+当面の既定は litert.dev ミラー
+`https://models.litert.dev/gemma-3n-E2B-it-int4.litertlm`（upstream の
+`google/gemma-3n-E2B-it-litert-lm` は gated のため、アプリからの匿名取得では使わない）。
 
 ## iOS
 

@@ -8,6 +8,10 @@ Gradle pulls `com.google.ai.edge.litertlm:litertlm-android` (concrete recent
 release; product docs do not pin a model or SDK version). Models download into
 `context.noBackupFilesDir/gemma_meter/` (OS backup excluded).
 
+Default model URL (litert.dev ungated mirror of Gemma 3n E2B int4):
+
+`https://models.litert.dev/gemma-3n-E2B-it-int4.litertlm`
+
 ## iOS / LiteRTLM (SPM)
 
 `ios/infra_gemma_meter_mobile/Package.swift` declares:
