@@ -85,9 +85,12 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - `barrierDismissible` は `false`（外側タップでは閉じない）。
 - アクションは縦並びで「閉じる」と「モデルを準備」。
 - DialogRoute の完了（pop）は `ModelDownloadGuidanceLauncher` 内だけが行う。画面から `Navigator` を直接呼ばない。
-- OS LLM（Foundation Models / Gemini Nano）向け (A) は、ホームとメーター記録で共用の `view_model_download_guidance` を使う。
+- OS LLM（Foundation Models / Gemini Nano）向け (A) は、ホームとメーター記録で共用の `view_model_download_guidance` を使う。準備中も「閉じる」は常時有効。
 - Gemma E2B 向け (B) は、 (A) が成立しないときだけホームが Ready になったあとに同じ部品でダイアログを出す（OS LLM 非対応または画像入力非対応で、Gemma は端末対応だが未ダウンロードのとき。Gemma 自体が非対応の端末は対象外。`main` に画面中身を増やさない）。
 - 同一プロセスの再表示禁止は (A) と (B) で別フラグとする。
+- (B) のモデル準備は Wi-Fi のみ開始する。モバイル回線では開始せず、ダイアログ内に通信条件エラーを出す（「閉じる」は有効のまま）。
+- 準備中は進捗（％または準ずる表示）を出す。(B) のみ準備中は「閉じる」を無効化する。
+- 容量不足／通信失敗は区別できる文言。その他失敗は共通文言。いずれもダイアログ内に出し閉じない。
 
 ## アチーブメント
 
