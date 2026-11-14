@@ -82,6 +82,10 @@ Gemma E2B 経路（`infra_gemma_meter_mobile`）の Android 依存は
 `com.google.ai.edge.litertlm:litertlm-android`（実効版はビルド時に Google Maven の
 release を追う。ピン留めしない）。ネイティブ／アセットの OSS ライセンス一覧の再生成対象に含める。
 モデル成果物の既定 URL／ファイル名は運用で更新し、特定版へのピン留めはしない。
+当面の既定は Hugging Face `litert-community` の Gemma 4 E2B
+`https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm`
+（認証不要。`models.litert.dev` の 3n ミラーは 404、`google/gemma-3n-E2B-it-litert-lm`
+は gated のためアプリからの匿名取得では使わない）。
 
 ## iOS
 

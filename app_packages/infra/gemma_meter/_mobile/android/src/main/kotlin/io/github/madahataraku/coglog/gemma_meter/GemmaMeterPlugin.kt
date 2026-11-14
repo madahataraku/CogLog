@@ -319,9 +319,11 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
 
   companion object {
     private const val MODEL_DIR = "gemma_meter"
-    private const val MODEL_FILE_NAME = "gemma-3n-E2B-it-int4.litertlm"
+    private const val MODEL_FILE_NAME = "gemma-4-E2B-it.litertlm"
+    // litert-community Gemma 4 E2B (ungated). models.litert.dev 3n mirror is 404;
+    // google/gemma-3n-… is gated (401).
     private const val MODEL_URL =
-      "https://huggingface.co/google/gemma-3n-E2B-it-litert-lm/resolve/main/gemma-3n-E2B-it-int4.litertlm"
+      "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
     private const val MIN_FREE_BYTES = 200L * 1024L * 1024L
   }
 }
