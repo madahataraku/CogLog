@@ -24,6 +24,7 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
     this.response = 'DISTANCE_KM=1\nDURATION=0:10:00\nCALORIES_KCAL=10',
     this.throwOnGenerate = false,
     this.throwOnPrepare = false,
+    this.prepareFailureKind,
     GemmaMeterAvailabilitySnapshot? availabilitySnapshot,
   }) : availabilitySnapshotValue =
            availabilitySnapshot ??
@@ -47,7 +48,12 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
   final bool throwOnGenerate;
 
   /// true のとき [prepareModel] が失敗する。
+  ///
+  /// [prepareFailureKind] が非 null のときは型付き例外を優先する。
   final bool throwOnPrepare;
+
+  /// 非 null のとき [prepareModel] が [GemmaMeterPrepareException] を投げる。
+  final GemmaMeterPrepareFailureKind? prepareFailureKind;
 
   /// [generateWithImage] が呼ばれた回数。
   int generateWithImageCallCount = 0;
@@ -131,6 +137,10 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
   @override
   Stream<double> prepareModel() async* {
     prepareModelCallCount++;
+    final failureKind = prepareFailureKind;
+    if (failureKind != null) {
+      throw GemmaMeterPrepareException(failureKind);
+    }
     if (throwOnPrepare) {
       throw StateError('fake prepare failed');
     }

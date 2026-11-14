@@ -16,6 +16,8 @@ import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_photo_mobile/infra_meter_photo_mobile.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_meter_reading_mobile/infra_meter_reading_mobile.dart';
+import 'package:infra_network_connectivity/infra_network_connectivity.dart';
+import 'package:infra_network_connectivity_mobile/infra_network_connectivity_mobile.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_mobile/infra_on_device_llm_mobile.dart';
 import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
@@ -26,7 +28,8 @@ import 'package:riverpod/riverpod.dart';
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
 /// [onDeviceLlm] / [gemmaMeterVision] / [meterPhotoSource] /
-/// [healthBodyMetricsSource] を渡すと、その実装を使う（Widget テスト用）。
+/// [healthBodyMetricsSource] / [networkConnectivity] を渡すと、
+/// その実装を使う（Widget テスト用）。
 ///
 /// Example:
 /// ```dart
@@ -37,6 +40,7 @@ List<Override> infraOverrides({
   GemmaMeterVision? gemmaMeterVision,
   MeterPhotoSource? meterPhotoSource,
   HealthBodyMetricsSource? healthBodyMetricsSource,
+  NetworkConnectivity? networkConnectivity,
 }) => [
   onDeviceLlmProvider.overrideWith((ref) {
     final injected = onDeviceLlm;
@@ -56,6 +60,9 @@ List<Override> infraOverrides({
   }),
   gemmaMeterVisionProvider.overrideWith(
     (ref) => gemmaMeterVision ?? const UnavailableGemmaMeterVision(),
+  ),
+  networkConnectivityProvider.overrideWith(
+    (ref) => networkConnectivity ?? ConnectivityPlusNetworkConnectivity(),
   ),
   meterPhotoSourceProvider.overrideWith(
     (ref) => meterPhotoSource ?? MobileMeterPhotoSource(),

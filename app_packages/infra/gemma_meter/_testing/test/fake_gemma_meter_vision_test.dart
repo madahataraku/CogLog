@@ -25,6 +25,23 @@ void main() {
     expect(gemma.prepareModelCallCount, 1);
   });
 
+  test('prepareFailureKind のとき型付き例外を投げる', () async {
+    final gemma = FakeGemmaMeterVision(
+      prepareFailureKind: GemmaMeterPrepareFailureKind.insufficientStorage,
+    );
+    await expectLater(
+      gemma.prepareModel().toList(),
+      throwsA(
+        isA<GemmaMeterPrepareException>().having(
+          (e) => e.kind,
+          'kind',
+          GemmaMeterPrepareFailureKind.insufficientStorage,
+        ),
+      ),
+    );
+    expect(gemma.prepareModelCallCount, 1);
+  });
+
   test('generateWithImage は固定文を返す', () async {
     final gemma = FakeGemmaMeterVision(response: 'DISTANCE_KM=2');
     expect(

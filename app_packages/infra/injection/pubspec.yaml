@@ -27,6 +27,8 @@ dependencies:
   infra_meter_photo_mobile: any
   infra_meter_reading: any
   infra_meter_reading_mobile: any
+  infra_network_connectivity: any
+  infra_network_connectivity_mobile: any
   infra_on_device_llm: any
   infra_on_device_llm_mobile: any
   infra_oss_license_catalog: any
