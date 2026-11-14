@@ -9,8 +9,10 @@ import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_local_notification/infra_local_notification.dart';
+import 'package:infra_gemma_meter/infra_gemma_meter.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
+import 'package:infra_network_connectivity/infra_network_connectivity.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 import 'package:riverpod/misc.dart';
@@ -22,6 +24,8 @@ import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_g
 import 'package:usecase_evaluate_daily_goal_auto_update_impl/usecase_evaluate_daily_goal_auto_update_impl.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
+import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
+import 'package:usecase_gemma_meter_guidance_impl/usecase_gemma_meter_guidance_impl.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_achievements_impl/usecase_load_achievements_impl.dart';
 import 'package:usecase_load_app_runtime_info/usecase_load_app_runtime_info.dart';
@@ -72,7 +76,7 @@ import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.da
 import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
 
 /// トップ・推移の読み込み、指標保存、一日あたり目標の読み書き、アドバイス生成、
-/// 端末上 LLM 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
+/// 端末上 LLM / Gemma 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
 /// ヘルス身体許可リクエストを上書きする。
 ///
 /// [adviceTemplatePicker] を渡すと定型選択を差し替える（Golden 用）。
@@ -206,6 +210,18 @@ List<Override> usecaseOverrides({
   PrepareOnDeviceLlmModelUsecase.provider.overrideWith(
     (ref) =>
         PrepareOnDeviceLlmModelUsecaseImpl(llm: ref.watch(onDeviceLlmProvider)),
+  ),
+  EvaluateGemmaMeterGuidanceUsecase.provider.overrideWith(
+    (ref) => EvaluateGemmaMeterGuidanceUsecaseImpl(
+      llm: ref.watch(onDeviceLlmProvider),
+      gemma: ref.watch(gemmaMeterVisionProvider),
+    ),
+  ),
+  PrepareGemmaMeterModelUsecase.provider.overrideWith(
+    (ref) => PrepareGemmaMeterModelUsecaseImpl(
+      network: ref.watch(networkConnectivityProvider),
+      gemma: ref.watch(gemmaMeterVisionProvider),
+    ),
   ),
   OpenAppSettingsUsecase.provider.overrideWith(
     (ref) => OpenAppSettingsUsecaseImpl(

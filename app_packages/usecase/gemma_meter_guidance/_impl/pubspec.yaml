@@ -1,0 +1,21 @@
+name: usecase_gemma_meter_guidance_impl
+description: Gemma meter guidance usecase implementations.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_gemma_meter: any
+  infra_network_connectivity: any
+  infra_on_device_llm: any
+  usecase_gemma_meter_guidance: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_gemma_meter_testing: any
+  infra_network_connectivity_testing: any
+  infra_on_device_llm_testing: any
+  test: any
