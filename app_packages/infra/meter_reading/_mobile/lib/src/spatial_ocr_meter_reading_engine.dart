@@ -6,8 +6,8 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 
 /// 座標付き OCR と空間推論でメーター値を取るエンジン。
 ///
-/// [log] にはトークン数・分類件数・汎用／七セグの認識テキストと矩形・推論フィールドの有無を出す。
-/// 解釈後の距離・時間・カロリー・速度の数値フィールド値は出さない。
+/// [log] にはトークン数・分類件数・汎用／七セグの認識テキスト形（桁は `#`）と矩形・
+/// 推論フィールドの有無を出す。測定値そのものや解釈後のフィールド代入値は出さない。
 ///
 /// Example:
 /// ```dart
@@ -222,9 +222,9 @@ String _formatKindCounts(Map<String, int> counts) {
   return '[${keys.map((k) => '$k:${counts[k]}').join(',')}]';
 }
 
-/// 認識トークンの本文と正規化矩形をログ向けに列挙する。
+/// 認識トークンのテキスト形と正規化矩形をログ向けに列挙する。
 ///
-/// 各要素は `本文@left,top,width,height`（小数3桁）。
+/// 各要素は `形@left,top,width,height`（小数3桁）。桁は `#` に置換する。
 ///
 /// Example:
 /// ```dart
@@ -239,18 +239,38 @@ String _formatTokens(List<MeterOcrToken> tokens) {
   return '[${tokens.map(_formatOneToken).join(';')}]';
 }
 
-/// 1 トークンを `本文@left,top,width,height` にする。
+/// 1 トークンを `形@left,top,width,height` にする。
 ///
 /// Example:
 /// ```dart
 /// _formatOneToken(
-///   const MeterOcrToken(text: '距離', left: 0.1, top: 0.2, width: 0.15, height: 0.05),
+///   const MeterOcrToken(text: '12.3km', left: 0.1, top: 0.2, width: 0.15, height: 0.05),
 /// );
 /// ```
 String _formatOneToken(MeterOcrToken token) {
   String n(double v) => v.toStringAsFixed(3);
-  return '${token.text}@${n(token.left)},${n(token.top)},'
+  return '${_maskDigits(token.text)}@${n(token.left)},${n(token.top)},'
       '${n(token.width)},${n(token.height)}';
+}
+
+/// 測定値そのものを残さないよう、ASCII / 全角の桁だけ `#` にする。
+///
+/// Example:
+/// ```dart
+/// _maskDigits('0:30:00'); // #:##:##
+/// ```
+String _maskDigits(String text) {
+  final buffer = StringBuffer();
+  for (final unit in text.runes) {
+    if (unit >= 0x30 && unit <= 0x39) {
+      buffer.write('#');
+    } else if (unit >= 0xff10 && unit <= 0xff19) {
+      buffer.write('#');
+    } else {
+      buffer.writeCharCode(unit);
+    }
+  }
+  return buffer.toString();
 }
 
 /// [values] の各フィールド有無だけをログ向けにする（数値は出さない）。
