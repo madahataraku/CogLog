@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import platform
+import subprocess
 import sys
 from pathlib import Path
 
@@ -17,10 +18,7 @@ _SCRIPT_DIR = Path(__file__).resolve().parent
 if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
 
-from sscma_seven_seg_export_common import (  # noqa: E402
-    ensure_yolov5_csp_deepen_factor as _ensure_yolov5_csp_deepen_factor,
-    stub_sscma_optional_deps as _stub_sscma_optional_deps,
-)
+from sscma_seven_seg_export_common import build_nhwc_seven_seg  # noqa: E402
 
 
 def _die(message: str, code: int = 1) -> int:
@@ -43,7 +41,40 @@ def main() -> int:
         default=None,
         help="Path to Seeed-Studio/ModelAssistant checkout (adds to sys.path).",
     )
+    parser.add_argument(
+        "--deepen-factor-mode",
+        choices=("auto", "on", "off"),
+        default="auto",
+        help=(
+            "auto: try zoo patch then unpatched; "
+            "on: Seeed zoo weights; "
+            "off: Colab train without deepen patch (this CogLog Colab run)"
+        ),
+    )
     args = parser.parse_args()
+
+    if args.deepen_factor_mode == "auto":
+        script = Path(__file__).resolve()
+        last_code = 1
+        for mode in ("off", "on"):
+            cmd = [
+                sys.executable,
+                "-u",
+                str(script),
+                "--weights",
+                str(args.weights),
+                "--output",
+                str(args.output),
+                "--sscma-root",
+                str(args.sscma_root),
+                "--deepen-factor-mode",
+                mode,
+            ]
+            print(f"auto: trying deepen_factor_mode={mode} in subprocess", flush=True)
+            last_code = subprocess.call(cmd)
+            if last_code == 0:
+                return 0
+        return last_code
 
     if platform.system() != "Darwin":
         return _die(
@@ -104,119 +135,33 @@ def main() -> int:
     if not weights.is_file():
         return _die(f"Weights not found: {weights}")
 
-    if args.sscma_root is not None:
-        root = args.sscma_root.resolve()
-        if not root.is_dir():
-            return _die(f"--sscma-root not a directory: {root}")
-        try:
-            _ensure_yolov5_csp_deepen_factor(root)
-        except (OSError, RuntimeError) as exc:
-            return _die(str(exc), code=2)
-        sys.path.insert(0, str(root))
-
-    _stub_sscma_optional_deps()
-
-    try:
-        from mmengine.config import Config
-        from mmengine.registry import MODELS, init_default_scope
-
-        # visualization→datasets 経由で lancedb が読まれるが、上で stub 済み。
-        from sscma.datasets.data_preprocessor import (  # noqa: F401
-            DetDataPreprocessor,
-        )
-        from sscma.models import (  # noqa: F401
-            CrossEntropyLoss,
-            DetHead,
-            YOLOAnchorGenerator,
-            YOLODetector,
-            YOLOV5Head,
-            YOLOv5CSPDarknet,
-            YOLOv5IoULoss,
-            YOLOv5PAFPN,
-        )
-    except ImportError as exc:
-        return _die(
-            f"SSCMA / mmengine import failed: {exc}. "
-            "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
-            "Also `pip install 'torch==2.2.0' 'torchvision==0.17.0' "
-            "'torchaudio==2.2.0' 'numpy<2' pycocotools mmengine six "
-            "tqdm albumentations scikit-learn timm`. "
-            "Do not `pip install pyarrow` (conflicts with numpy<2); "
-            "this script stubs pyarrow/lance for import only. "
-            "Ensure deepen_factor is applied in YOLOv5CSPDarknet "
-            "(make_round(num_blocks, self.deepen_factor)).",
-            code=2,
-        )
-
     sscma_root = args.sscma_root
     if sscma_root is None:
         return _die(
             "--sscma-root is required so the Swift-YOLO config can be loaded.",
             code=2,
         )
-    config_file = (
-        sscma_root / "configs" / "swift_yolo" / "swift_yolo_tiny_1xb16_300e_coco.py"
-    )
-    if not config_file.is_file():
-        return _die(f"Swift-YOLO config not found: {config_file}")
+    if not sscma_root.is_dir():
+        return _die(f"--sscma-root not a directory: {sscma_root}")
 
-    print(f"Loading {weights} ...")
+    print(f"Loading {weights} (deepen_factor_mode={args.deepen_factor_mode}) ...")
     try:
-        ckpt = torch.load(weights, map_location="cpu", weights_only=False)
-    except TypeError:
-        ckpt = torch.load(weights, map_location="cpu")
-    if not isinstance(ckpt, dict) or "state_dict" not in ckpt:
-        return _die("Unsupported checkpoint: expected dict with 'state_dict'")
-
-    # mmengine 0.8.2 の Config.fromfile は modified_constant を受け取らない。
-    cfg = Config.fromfile(str(config_file))
-    cfg.num_classes = 10
-    cfg.height = 192
-    cfg.width = 192
-    bbox_head = getattr(cfg.model, "bbox_head", None)
-    if bbox_head is not None:
-        if hasattr(bbox_head, "num_classes"):
-            bbox_head.num_classes = 10
-        head_module = getattr(bbox_head, "head_module", None)
-        if head_module is not None and hasattr(head_module, "num_classes"):
-            head_module.num_classes = 10
-    cfg.model.backbone.deepen_factor = 0.33
-    cfg.model.neck.deepen_factor = 0.33
-    init_default_scope("sscma")
-    detector = MODELS.build(cfg.model)
-    missing, unexpected = detector.load_state_dict(ckpt["state_dict"], strict=False)
-    if missing or unexpected:
-        return _die(
-            "state_dict mismatch "
-            f"(missing={len(missing)}, unexpected={len(unexpected)}). "
-            "YOLOv5CSPDarknet must use "
-            "`make_round(num_blocks, self.deepen_factor)`. "
-            "Re-run after `git pull` of this script (it auto-patches), "
-            "or edit sscma/models/backbones/csp_darknet.py manually."
+        wrapped, probed, dummy = build_nhwc_seven_seg(
+            sscma_root.resolve(),
+            weights.resolve(),
+            deepen_factor_mode=args.deepen_factor_mode,
         )
-    detector.eval()
-
-    class NhwcSevenSeg(nn.Module):
-        """NHWC [1,192,192,3] → [1,2268,15] with scores in 0–1 (÷100)."""
-
-        def __init__(self, det: nn.Module) -> None:
-            super().__init__()
-            self.backbone = det.backbone
-            self.neck = det.neck
-            self.head = det.bbox_head.head_module
-
-        def forward(self, x_nhwc: torch.Tensor) -> torch.Tensor:
-            x = x_nhwc.permute(0, 3, 1, 2).contiguous()
-            feats = self.backbone(x)
-            if self.neck is not None:
-                feats = self.neck(feats)
-            out = self.head._forward(feats)
-            return torch.cat([out[..., :4], out[..., 4:] / 100.0], dim=-1)
-
-    wrapped = NhwcSevenSeg(detector).eval()
-    dummy = torch.rand(1, 192, 192, 3)
-    with torch.no_grad():
-        probed = wrapped(dummy)
+    except Exception as exc:  # noqa: BLE001
+        return _die(
+            f"SSCMA load failed: {exc}. "
+            "Clone Seeed-Studio/ModelAssistant and pass --sscma-root. "
+            "Also `pip install 'torch==2.2.0' 'torchvision==0.17.0' "
+            "'torchaudio==2.2.0' 'numpy<2' pycocotools mmengine six "
+            "tqdm albumentations scikit-learn timm`. "
+            "Do not `pip install pyarrow` (conflicts with numpy<2). "
+            "For Colab-trained weights use --deepen-factor-mode off.",
+            code=2,
+        )
     if tuple(probed.shape) not in {(1, 2268, 15), (2268, 15)}:
         return _die(f"Unexpected output shape: {tuple(probed.shape)}")
 

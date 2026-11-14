@@ -86,6 +86,7 @@ python3 test_yolo_txt_to_coco.py
 
 - セッション切断に備え、checkpoint は Drive 上の `work_dirs` に置く（ノートブック既定）。
 - 再開時はランタイム環境変数 `RESUME=1` を付けて学習セルを再実行する（`--cfg-options resume=True`。ModelAssistant の `--resume` フラグ単体では効かない）。
+- TFLite 出力は必ず `export_tflite_float32.py`（`tools/export.py` は INT8 専用で失敗する）。学習が deepen パッチ前なら `--deepen-factor-mode off`。`auto` は **別プロセス** で `off`→`on` を順に試す。
 - GPU が付かないときは学習を始めない（CPU は非現実的）。
 - まず 30–50 epoch の smoke、問題なければ 100–150 epoch 程度を目安にする（データ規模と枠に合わせて調整）。
 
