@@ -28,7 +28,7 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/seven_segment/digital_meter_electricity_swift_yolo_192_float32.tflite
+    - assets/seven_segment/seven_segment_swift_yolo_192_float32.tflite
     - assets/seven_segment/NOTICE.md
   plugin:
     platforms:

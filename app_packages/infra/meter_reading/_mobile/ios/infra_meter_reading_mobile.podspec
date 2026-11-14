@@ -15,9 +15,9 @@ Pod::Spec.new do |s|
   s.frameworks = 'Vision', 'UIKit', 'CoreML'
   # Core ML 七セグモデルは macOS で tool/seven_segment から生成する。
   # 未配置のまま s.resources に書くと pod install が壊れるため、存在時のみ同梱する。
-  mlpackage = File.join(__dir__, 'Resources', 'DigitalMeterElectricity192.mlpackage')
+  mlpackage = File.join(__dir__, 'Resources', 'SevenSegment192.mlpackage')
   if File.exist?(mlpackage)
-    s.resources = ['Resources/DigitalMeterElectricity192.mlpackage']
+    s.resources = ['Resources/SevenSegment192.mlpackage']
   end
   s.resource_bundles = { 'infra_meter_reading_mobile_privacy' => ['Classes/PrivacyInfo.xcprivacy'] }
 end

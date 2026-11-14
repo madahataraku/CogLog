@@ -1,4 +1,4 @@
-# Seven-segment Swift-YOLO → Core ML (`DigitalMeterElectricity192.mlpackage`)
+# Seven-segment Swift-YOLO → Core ML (`SevenSegment192.mlpackage`)
 
 Colab での公開データ再学習（SSCMA / CC BY）は `colab_retrain.md` を先に読む。
 この文書は **macOS 上での `.pth` → `.mlpackage`** のみを扱う。
@@ -130,7 +130,7 @@ num_blocks = make_round(num_blocks, self.deepen_factor)
    # 経路 B: --weights ~/Downloads/<colab_best_or_last>.pth
    python tool/seven_segment/convert_coreml.py \
      --weights /tmp/digital_meter.pth \
-     --output app_packages/infra/meter_reading/_mobile/ios/Resources/DigitalMeterElectricity192.mlpackage \
+     --output app_packages/infra/meter_reading/_mobile/ios/Resources/SevenSegment192.mlpackage \
      --sscma-root "$SSCMA_ROOT"
    ```
 

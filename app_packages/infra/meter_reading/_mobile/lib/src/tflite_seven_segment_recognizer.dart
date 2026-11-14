@@ -23,7 +23,7 @@ final class TfLiteSevenSegmentRecognizer
   TfLiteSevenSegmentRecognizer({
     this.assetKey =
         'packages/infra_meter_reading_mobile/assets/seven_segment/'
-        'digital_meter_electricity_swift_yolo_192_float32.tflite',
+        'seven_segment_swift_yolo_192_float32.tflite',
     this.scoreThreshold = 0.25,
     this.nmsIoU = 0.45,
   });

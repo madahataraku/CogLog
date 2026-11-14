@@ -2,7 +2,7 @@ Seven-segment digit detector models
 ===================================
 
 ## Android (TFLite FLOAT32)
-File: digital_meter_electricity_swift_yolo_192_float32.tflite
+File: seven_segment_swift_yolo_192_float32.tflite
 Training dataset: LibreYOLO/digits-t2eg6 (CC BY 4.0)
   https://huggingface.co/datasets/LibreYOLO/digits-t2eg6
   Upstream: Roboflow 100 digits-t2eg6
@@ -14,11 +14,11 @@ SHA-256: f259fa516ae50628bab2b3e8561496d89ab9a214657c350d597fcebd567df0fc
 I/O: input [1,192,192,3] float32 / output [1,2268,15] float32
 
 ## iOS (Core ML)
-File: DigitalMeterElectricity192.mlpackage
+File: SevenSegment192.mlpackage
 Source weights (.pth):
   https://files.seeedstudio.com/sscma/model_zoo/detection/electricity_meter/yolov5_tiny_1xb16_300e_coco_sha1_b26cffe14038a7155315c40b49f851679a547dec.pth
 Conversion: tool/seven_segment/convert_coreml.py (coremltools) — **macOS required**
-Status: bundled at ios/Resources/DigitalMeterElectricity192.mlpackage
+Status: bundled at ios/Resources/SevenSegment192.mlpackage
 I/O names: input / output
 Output shape: (1, 2268, 15)
 Bytes (tree): 1530698
