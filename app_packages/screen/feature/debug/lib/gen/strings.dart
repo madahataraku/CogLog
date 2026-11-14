@@ -47,6 +47,16 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_platform_notes_label =>
       LocalizeStringDelegate.get('screen_feature_debug_platform_notes_label');
 
+  /// Gemma 優先モードの説明
+  String get screen_feature_debug_prefer_gemma_description =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_prefer_gemma_description',
+      );
+
+  /// メーター読み取りで Gemma を優先するスイッチ
+  String get screen_feature_debug_prefer_gemma_item =>
+      LocalizeStringDelegate.get('screen_feature_debug_prefer_gemma_item');
+
   /// 準備例外ラベル
   String get screen_feature_debug_prepare_error_label =>
       LocalizeStringDelegate.get('screen_feature_debug_prepare_error_label');

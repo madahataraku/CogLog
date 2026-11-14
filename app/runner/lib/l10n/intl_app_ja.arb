@@ -489,6 +489,14 @@
   "@screen_feature_debug_platform_notes_label": {
     "description": "platform notes ラベル"
   },
+  "screen_feature_debug_prefer_gemma_description": "同一セッションのみ。再起動でオフ",
+  "@screen_feature_debug_prefer_gemma_description": {
+    "description": "Gemma 優先モードの説明"
+  },
+  "screen_feature_debug_prefer_gemma_item": "Gemma 優先モード",
+  "@screen_feature_debug_prefer_gemma_item": {
+    "description": "メーター読み取りで Gemma を優先するスイッチ"
+  },
   "screen_feature_debug_prepare_error_label": "prepare error",
   "@screen_feature_debug_prepare_error_label": {
     "description": "準備例外ラベル"

@@ -23,6 +23,7 @@ void main() {
     required MeterReadingEngine llmEngine,
     required MeterReadingEngine gemmaEngine,
     AppLogStore? log,
+    MeterReadingEngineSessionPreference? sessionPreference,
     Duration timeout = const Duration(seconds: 30),
   }) {
     return ReadMeterPanelUsecaseImpl(
@@ -30,6 +31,7 @@ void main() {
       llmEngine: llmEngine,
       gemmaEngine: gemmaEngine,
       log: log,
+      sessionPreference: sessionPreference,
       timeout: timeout,
     );
   }
@@ -222,6 +224,69 @@ void main() {
       ),
       llmEngine: llmEngine,
       gemmaEngine: gemmaEngine,
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(llmEngine.readCallCount, 1);
+    expect(gemmaEngine.readCallCount, 0);
+    expect(result.values.distanceKm, 5);
+  });
+
+  test('preferGemma かつ Gemma available なら OS ready+vision でも Gemma', () async {
+    final log = AppLogStore();
+    final llmEngine = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.foundationModel,
+      values: const MeterReadingValues(distanceKm: 5),
+    );
+    final gemmaEngine = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.gemmaE2b,
+      values: const MeterReadingValues(
+        distanceKm: 8,
+        duration: Duration(minutes: 25),
+        caloriesKcal: 40,
+      ),
+    );
+
+    final result = await build(
+      llm: FakeOnDeviceLlm(
+        readiness: OnDeviceLlmReadiness.ready,
+        supportsVisionValue: true,
+      ),
+      llmEngine: llmEngine,
+      gemmaEngine: gemmaEngine,
+      sessionPreference: MeterReadingEngineSessionPreference()
+        ..preferGemmaOverOsLlm = true,
+      log: log,
+    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+
+    expect(llmEngine.readCallCount, 0);
+    expect(gemmaEngine.readCallCount, 1);
+    expect(result.values.distanceKm, 8);
+    expect(
+      log.entries.map((e) => e.message),
+      contains(contains('reason=debug_prefer_gemma')),
+    );
+  });
+
+  test('preferGemma でも Gemma unavailable なら OS LLM', () async {
+    final llmEngine = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.foundationModel,
+      values: const MeterReadingValues(
+        distanceKm: 5,
+        duration: Duration(minutes: 30),
+        caloriesKcal: 50,
+      ),
+    );
+    final gemmaEngine = unavailableGemma();
+
+    final result = await build(
+      llm: FakeOnDeviceLlm(
+        readiness: OnDeviceLlmReadiness.ready,
+        supportsVisionValue: true,
+      ),
+      llmEngine: llmEngine,
+      gemmaEngine: gemmaEngine,
+      sessionPreference: MeterReadingEngineSessionPreference()
+        ..preferGemmaOverOsLlm = true,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);

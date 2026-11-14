@@ -72,6 +72,7 @@ final class DebugStateToEntityDelegate {
       gemmaGenerateError: dash(gemma?.generateError),
       gemmaPrepareError: dash(gemma?.prepareError),
       gemmaProbeSkipped: dash(gemma?.probeSkippedReason),
+      preferGemmaOverOsLlm: state.preferGemmaOverOsLlm,
       logLines: logLines,
     );
   }

@@ -532,6 +532,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_platform_notes_label;
       },
+      'screen_feature_debug_prefer_gemma_description': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_prefer_gemma_description;
+      },
+      'screen_feature_debug_prefer_gemma_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_prefer_gemma_item;
+      },
       'screen_feature_debug_prepare_error_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_prepare_error_label;

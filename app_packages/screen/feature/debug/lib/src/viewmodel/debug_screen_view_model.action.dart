@@ -38,6 +38,19 @@ extension DebugScreenViewModelActions on DebugScreenViewModel {
     return OnClearLogsDelegate(state: state, log: log).execute();
   }
 
+  /// Gemma 優先モードを [preferGemma] に切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onTogglePreferGemma(true);
+  /// ```
+  Future<void> onTogglePreferGemma(bool preferGemma) {
+    return OnTogglePreferGemmaDelegate(
+      state: state,
+      sessionPreference: sessionPreference,
+    ).execute(preferGemma);
+  }
+
   /// 1 つ戻る。
   ///
   /// Example:

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -183,6 +185,29 @@ class DebugScreenBody extends HookConsumerWidget {
           _line(
             strings.screen_feature_debug_probe_skipped_label,
             entity.gemmaProbeSkipped,
+          ),
+          const SizedBox(height: 16),
+          FTileGroup(
+            children: [
+              FTile(
+                title: Text(strings.screen_feature_debug_prefer_gemma_item),
+                subtitle: Text(
+                  strings.screen_feature_debug_prefer_gemma_description,
+                ),
+                suffix: FSwitch(
+                  value: entity.preferGemmaOverOsLlm,
+                  semanticsLabel:
+                      strings.screen_feature_debug_prefer_gemma_item,
+                  onChange: (value) {
+                    unawaited(
+                      ref
+                          .read(DebugScreenViewModel.provider)
+                          .onTogglePreferGemma(value),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           FButton(

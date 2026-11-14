@@ -28,6 +28,7 @@
 ///   gemmaGenerateError: '-',
 ///   gemmaPrepareError: '-',
 ///   gemmaProbeSkipped: '-',
+///   preferGemmaOverOsLlm: false,
 ///   logLines: [],
 /// );
 /// ```
@@ -60,6 +61,7 @@ final class DebugScreenEntity {
   ///   gemmaGenerateError: '-',
   ///   gemmaPrepareError: '-',
   ///   gemmaProbeSkipped: '-',
+  ///   preferGemmaOverOsLlm: true,
   ///   logLines: ['line'],
   /// );
   /// ```
@@ -87,6 +89,7 @@ final class DebugScreenEntity {
     required this.gemmaGenerateError,
     required this.gemmaPrepareError,
     required this.gemmaProbeSkipped,
+    required this.preferGemmaOverOsLlm,
     required this.logLines,
   });
 
@@ -158,6 +161,9 @@ final class DebugScreenEntity {
 
   /// Gemma プローブ省略理由。該当無しは `'-'`。
   final String gemmaProbeSkipped;
+
+  /// 同一プロセス内で Gemma をメーター読み取りで優先するとき true。
+  final bool preferGemmaOverOsLlm;
 
   /// 古い行が先（上が古い）になるログ文字列。各要素は 1 エントリ分。
   final List<String> logLines;

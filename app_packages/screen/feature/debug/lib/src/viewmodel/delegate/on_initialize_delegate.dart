@@ -61,6 +61,7 @@ final class OnInitializeDelegate {
           result: null,
           gemmaResult: null,
           logs: log.entries,
+          preferGemmaOverOsLlm: current.preferGemmaOverOsLlm,
         ),
       );
     });
@@ -73,6 +74,7 @@ final class OnInitializeDelegate {
           result: result,
           gemmaResult: gemmaResult,
           logs: log.entries,
+          preferGemmaOverOsLlm: current.preferGemmaOverOsLlm,
         ),
       );
     });

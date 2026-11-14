@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:foundation_app_log/foundation_app_log.dart';
+import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
@@ -13,6 +14,7 @@ import 'delegate/on_back_delegate.dart';
 import 'delegate/on_clear_logs_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_refresh_logs_delegate.dart';
+import 'delegate/on_toggle_prefer_gemma_delegate.dart';
 import 'entity/debug_screen_entity.dart';
 import 'state/debug_screen_state.dart';
 
@@ -35,6 +37,9 @@ final class DebugScreenViewModel {
   static final provider = Provider.autoDispose<DebugScreenViewModel>(
     (ref) {
       final log = ref.watch(appLogStoreProvider);
+      final sessionPreference = ref.watch(
+        meterReadingEngineSessionPreferenceProvider,
+      );
       final result = DebugScreenViewModel._(
         state: MutableStateStream(
           DebugScreenState(
@@ -42,11 +47,13 @@ final class DebugScreenViewModel {
             result: null,
             gemmaResult: null,
             logs: [],
+            preferGemmaOverOsLlm: sessionPreference.preferGemmaOverOsLlm,
           ),
         ),
         diagnoseUsecase: ref.watch(DiagnoseOnDeviceLlmUsecase.provider),
         diagnoseGemmaUsecase: ref.watch(DiagnoseGemmaMeterUsecase.provider),
         log: log,
+        sessionPreference: sessionPreference,
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const DebugStateToEntityDelegate(),
       );
@@ -65,6 +72,7 @@ final class DebugScreenViewModel {
       DiagnoseOnDeviceLlmUsecase.provider,
       DiagnoseGemmaMeterUsecase.provider,
       appLogStoreProvider,
+      meterReadingEngineSessionPreferenceProvider,
       screenNavigationProvider,
     ],
   );
@@ -85,6 +93,10 @@ final class DebugScreenViewModel {
   @visibleForTesting
   final AppLogStore log;
 
+  /// セッション内の Gemma 優先設定。
+  @visibleForTesting
+  final MeterReadingEngineSessionPreference sessionPreference;
+
   /// 画面遷移。
   @visibleForTesting
   final ScreenNavigation navigation;
@@ -104,6 +116,7 @@ final class DebugScreenViewModel {
     required this.diagnoseUsecase,
     required this.diagnoseGemmaUsecase,
     required this.log,
+    required this.sessionPreference,
     required this.navigation,
     required this.stateToEntity,
   });
