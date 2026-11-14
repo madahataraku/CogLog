@@ -53,11 +53,10 @@ def stub_sscma_optional_deps() -> None:
 
     def _ensure(name: str) -> types.ModuleType:
         mod = sys.modules.get(name)
-        if mod is None or not hasattr(mod, "__version__"):
+        if mod is None:
             mod = types.ModuleType(name)
-            mod.__version__ = "0.0.0"
             sys.modules[name] = mod
-        elif not hasattr(mod, "__version__"):
+        if not hasattr(mod, "__version__"):
             mod.__version__ = "0.0.0"
         return mod
 
