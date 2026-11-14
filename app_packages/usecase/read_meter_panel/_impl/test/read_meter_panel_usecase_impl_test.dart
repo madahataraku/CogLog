@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
-import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_meter_reading_testing/infra_meter_reading_testing.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
@@ -17,16 +16,12 @@ void main() {
   ReadMeterPanelUsecaseImpl build({
     required OnDeviceLlm llm,
     required MeterReadingEngine llmEngine,
-    required MeterReadingEngine spatialEngine,
-    ForceSpatialOcrStore? forceSpatialOcr,
     AppLogStore? log,
     Duration timeout = const Duration(seconds: 30),
   }) {
     return ReadMeterPanelUsecaseImpl(
       llm: llm,
       llmEngine: llmEngine,
-      spatialEngine: spatialEngine,
-      forceSpatialOcr: forceSpatialOcr ?? ForceSpatialOcrStore(),
       log: log,
       timeout: timeout,
     );
@@ -46,20 +41,14 @@ void main() {
         caloriesKcal: 100,
       ),
     );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      values: const MeterReadingValues(distanceKm: 99),
-    );
 
     final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      spatialEngine: spatial,
       log: log,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
-    expect(spatial.readCallCount, 0);
     expect(result.values.distanceKm, 10);
     expect(result.values.averageSpeedKmh, 10);
     expect(log.entries.map((e) => e.message), contains(contains('select llm')));
@@ -73,7 +62,7 @@ void main() {
     );
   });
 
-  test('LLM ready で不完全でも空間 OCR へ落とさない', () async {
+  test('LLM ready で不完全でも空のまま返す', () async {
     final llm = FakeOnDeviceLlm(
       readiness: OnDeviceLlmReadiness.ready,
       supportsVisionValue: true,
@@ -82,23 +71,13 @@ void main() {
       kind: MeterReadingEngineKind.geminiNano,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.mlKit,
-      values: const MeterReadingValues(
-        distanceKm: 2,
-        duration: Duration(minutes: 10),
-        caloriesKcal: 20,
-      ),
-    );
 
     final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      spatialEngine: spatial,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
-    expect(spatial.readCallCount, 0);
     expect(result.values.distanceKm, 1);
     expect(result.values.duration, isNull);
     expect(
@@ -107,7 +86,7 @@ void main() {
     );
   });
 
-  test('modelNotDownloaded なら空間 OCR のみ', () async {
+  test('modelNotDownloaded ならエンジン無し', () async {
     final llm = FakeOnDeviceLlm(
       readiness: OnDeviceLlmReadiness.modelNotDownloaded,
       supportsVisionValue: true,
@@ -116,62 +95,48 @@ void main() {
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      values: const MeterReadingValues(
-        distanceKm: 3,
-        duration: Duration(hours: 1),
-        caloriesKcal: 30,
-      ),
-    );
 
     final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      spatialEngine: spatial,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(spatial.readCallCount, 1);
-    expect(result.values.distanceKm, 3);
+    expect(result.values.distanceKm, isNull);
     expect(
       classifyMeterReadingMessages(result.values),
-      MeterReadingMessageKind.complete,
+      MeterReadingMessageKind.empty,
     );
   });
 
-  test('vision 非対応なら空間 OCR のみ', () async {
+  test('vision 非対応ならエンジン無し', () async {
     final llm = FakeOnDeviceLlm(
       readiness: OnDeviceLlmReadiness.ready,
       supportsVisionValue: false,
     );
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
-    );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
       values: const MeterReadingValues(distanceKm: 4),
     );
 
-    await build(
+    final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      spatialEngine: spatial,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(spatial.readCallCount, 1);
+    expect(result.values.distanceKm, isNull);
   });
 
-  test('空間 OCR throw でも空を返す', () async {
-    final llm = FakeOnDeviceLlm(readiness: OnDeviceLlmReadiness.unavailable);
+  test('LLM throw でも空を返す', () async {
+    final llm = FakeOnDeviceLlm(
+      readiness: OnDeviceLlmReadiness.ready,
+      supportsVisionValue: true,
+    );
     final result = await build(
       llm: llm,
       llmEngine: FakeMeterReadingEngine(
         kind: MeterReadingEngineKind.foundationModel,
-      ),
-      spatialEngine: FakeMeterReadingEngine(
-        kind: MeterReadingEngineKind.visionOcr,
         throwOnRead: true,
       ),
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
@@ -183,157 +148,36 @@ void main() {
     );
   });
 
-  test('空間 OCR unavailable なら read しない', () async {
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
+  test('LLM unavailable なら read しない', () async {
+    final llmEngine = FakeMeterReadingEngine(
+      kind: MeterReadingEngineKind.foundationModel,
       available: false,
     );
     final result = await build(
-      llm: FakeOnDeviceLlm(readiness: OnDeviceLlmReadiness.unavailable),
-      llmEngine: FakeMeterReadingEngine(
-        kind: MeterReadingEngineKind.foundationModel,
+      llm: FakeOnDeviceLlm(
+        readiness: OnDeviceLlmReadiness.ready,
+        supportsVisionValue: true,
       ),
-      spatialEngine: spatial,
+      llmEngine: llmEngine,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
-    expect(spatial.readCallCount, 0);
+    expect(llmEngine.readCallCount, 0);
     expect(result.values.distanceKm, isNull);
   });
 
   test('ハング時は timeout 後に空', () async {
     final result = await build(
-      llm: FakeOnDeviceLlm(readiness: OnDeviceLlmReadiness.unavailable),
+      llm: FakeOnDeviceLlm(
+        readiness: OnDeviceLlmReadiness.ready,
+        supportsVisionValue: true,
+      ),
       llmEngine: FakeMeterReadingEngine(
         kind: MeterReadingEngineKind.foundationModel,
-      ),
-      spatialEngine: FakeMeterReadingEngine(
-        kind: MeterReadingEngineKind.visionOcr,
         hangOnRead: true,
       ),
       timeout: const Duration(milliseconds: 20),
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(result.values.distanceKm, isNull);
-  });
-
-  test('強制 ON+ready+vision なら空間 OCR のみ', () async {
-    final force = ForceSpatialOcrStore()..setEnabled(true);
-    final llmEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.foundationModel,
-      values: const MeterReadingValues(distanceKm: 10),
-    );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      values: const MeterReadingValues(
-        distanceKm: 5,
-        duration: Duration(hours: 1),
-        caloriesKcal: 50,
-      ),
-    );
-
-    final result = await build(
-      llm: FakeOnDeviceLlm(
-        readiness: OnDeviceLlmReadiness.ready,
-        supportsVisionValue: true,
-      ),
-      llmEngine: llmEngine,
-      spatialEngine: spatial,
-      forceSpatialOcr: force,
-    ).execute(ReadMeterPanelRequest(photoBytes: photo));
-
-    expect(llmEngine.readCallCount, 0);
-    expect(spatial.readCallCount, 1);
-    expect(result.values.distanceKm, 5);
-  });
-
-  test('強制 ON+spatial unavailable なら空手打ち・LLM 非呼出', () async {
-    final force = ForceSpatialOcrStore()..setEnabled(true);
-    final llmEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.foundationModel,
-      values: const MeterReadingValues(distanceKm: 10),
-    );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      available: false,
-    );
-
-    final result = await build(
-      llm: FakeOnDeviceLlm(
-        readiness: OnDeviceLlmReadiness.ready,
-        supportsVisionValue: true,
-      ),
-      llmEngine: llmEngine,
-      spatialEngine: spatial,
-      forceSpatialOcr: force,
-    ).execute(ReadMeterPanelRequest(photoBytes: photo));
-
-    expect(llmEngine.readCallCount, 0);
-    expect(spatial.readCallCount, 0);
-    expect(result.values.distanceKm, isNull);
-    expect(
-      classifyMeterReadingMessages(result.values),
-      MeterReadingMessageKind.empty,
-    );
-  });
-
-  test('強制 ON+modelNotDownloaded なら空間 OCR のみ', () async {
-    final force = ForceSpatialOcrStore()..setEnabled(true);
-    final llmEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.foundationModel,
-      values: const MeterReadingValues(distanceKm: 1),
-    );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      values: const MeterReadingValues(distanceKm: 7),
-    );
-
-    final result = await build(
-      llm: FakeOnDeviceLlm(
-        readiness: OnDeviceLlmReadiness.modelNotDownloaded,
-        supportsVisionValue: true,
-      ),
-      llmEngine: llmEngine,
-      spatialEngine: spatial,
-      forceSpatialOcr: force,
-    ).execute(ReadMeterPanelRequest(photoBytes: photo));
-
-    expect(llmEngine.readCallCount, 0);
-    expect(spatial.readCallCount, 1);
-    expect(result.values.distanceKm, 7);
-  });
-
-  test('同一 store で ON→OFF 後は LLM に復帰', () async {
-    final force = ForceSpatialOcrStore()..setEnabled(true);
-    final llm = FakeOnDeviceLlm(
-      readiness: OnDeviceLlmReadiness.ready,
-      supportsVisionValue: true,
-    );
-    final llmEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.foundationModel,
-      values: const MeterReadingValues(
-        distanceKm: 10,
-        duration: Duration(hours: 1),
-        caloriesKcal: 100,
-      ),
-    );
-    final spatial = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
-      values: const MeterReadingValues(distanceKm: 99),
-    );
-    final usecase = build(
-      llm: llm,
-      llmEngine: llmEngine,
-      spatialEngine: spatial,
-      forceSpatialOcr: force,
-    );
-
-    await usecase.execute(ReadMeterPanelRequest(photoBytes: photo));
-    expect(llmEngine.readCallCount, 0);
-    expect(spatial.readCallCount, 1);
-
-    force.setEnabled(false);
-    await usecase.execute(ReadMeterPanelRequest(photoBytes: photo));
-    expect(llmEngine.readCallCount, 1);
-    expect(spatial.readCallCount, 1);
   });
 }

@@ -8,7 +8,7 @@
 - 子パッケージの外部依存は `any` にする。
 - `flutter pub get` と Monolith のコマンドはリポジトリルートで実行する。
 - `flutter run` と `dart run forui` は `app/` で実行する。
-- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin（OS モデルのみ）を使う。AICore / GenAI の診断（例外型名を含む）もその実装が担う。
+- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に MediaPipe 上の Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
 
 ## Syncfusion Charts
 
@@ -72,31 +72,15 @@ Monolith が書く次のファイルは手で編集しない。
 `minSdk` は 34 未満にしない。プラグイン側が `compileSdk` 33 などに固定されていると `checkReleaseAarMetadata` が失敗するため、依存は `compileSdk` 34 以上の版を `dependency_overrides` で選ぶ。
 
 Java / Kotlin の JVM ターゲットは **17** に揃える（`app/android/app/build.gradle.kts` と
-`app/android/build.gradle.kts` の `subprojects`）。`tflite_flutter` のようにプラグイン側が
-Java 11 のままだと、`compileReleaseKotlin`（17）と `compileReleaseJavaWithJavac`（11）が
-不一致になり release APK が失敗する。
+`app/android/build.gradle.kts` の `subprojects`）。プラグイン側が Java 11 のままだと、
+`compileReleaseKotlin`（17）と `compileReleaseJavaWithJavac`（11）が不一致になり release APK が失敗する。
 
-空間 OCR（Android）は `google_mlkit_text_recognition` を使う。日本語モデルはプラグイン側が `compileOnly` のため、`app/android/app/build.gradle.kts` に `com.google.mlkit:text-recognition-japanese` を `implementation` する。release の R8 で Text Recognition の反射登録が欠けないよう、`app/android/app/proguard-rules.pro` に `com.google.mlkit.vision.**` などの keep を置く。
-
-空間 OCR の七セグ補完は、Android では `tflite_flutter`（dependency_overrides で 0.12.1）と
-同梱 TFLite FLOAT32（`seven_segment_swift_yolo_192_float32.tflite`）、iOS では Core ML（`SevenSegment192.mlpackage`、`.pth` から
-`tool/seven_segment` で変換）を使う。Core ML への変換と `.mlpackage` 保存は **macOS 必須**
-（Linux では coremltools の BlobWriter が無く保存できない）。前後処理は共通。debug / profile /
-release を含むモバイル向けビルドで各 OS のモデル同梱必須。mlpackage 未配置時は podspec が
-resources を省略し、実行時は七セグ経路が失敗して汎用 OCR のみで完了する。ホスト単体テストは
-Fake 差し替え可。依存とモデル NOTICE は OSS ライセンス再生成対象に含める。
-
-七セグの **permissive 再学習**（AGPL の Ultralytics を使わない）は Google Colab 無料枠を前提に、
-`tool/seven_segment/colab_retrain.md` と `colab_sscma_retrain.ipynb` に従う。学習器は
-Seeed ModelAssistant（Apache License 2.0）、主データは Hugging Face `LibreYOLO/digits-t2eg6`
-（CC BY 4.0）。入力 192・クラス 0–9 の既存契約に合わせ、TFLite FLOAT32 は
-`export_tflite_float32.py`（NHWC・score÷100）で出し、Core ML は macOS で変換する。
-SSCMA 付属 `tools/export.py` の INT8 経路は使わない。Cloud Agent（Linux・GPU 無し）では
-本学習と Core ML 保存は行わない。
+メーター読み取りの自動解析は OS LLM または MediaPipe 上の Gemma E2B のみとする。空間 OCR
+（ML Kit / Vision / 七セグ TFLite / Core ML）は採用しない。
 
 ## iOS
 
-`IPHONEOS_DEPLOYMENT_TARGET` と `app/ios/Podfile` の `platform :ios` は次に固定する。プラグイン（`infra_meter_reading_mobile` / `infra_on_device_llm_mobile`）が 16.4 を要求するため、これ未満にしない。
+`IPHONEOS_DEPLOYMENT_TARGET` と `app/ios/Podfile` の `platform :ios` は次に固定する。プラグイン（`infra_on_device_llm_mobile`）が 16.4 を要求するため、これ未満にしない。
 
 | 項目 | 値 |
 | --- | --- |

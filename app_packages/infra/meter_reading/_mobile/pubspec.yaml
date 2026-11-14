@@ -1,39 +1,20 @@
 name: infra_meter_reading_mobile
-description: Mobile meter reading engines (ML Kit OCR and on-device LLM) for CogLog.
+description: On-device LLM meter reading engines for CogLog.
 publish_to: none
 resolution: workspace
 version: 0.1.0+1
 
 environment:
   sdk: ^3.13.7
-  flutter: ">=3.47.0 <4.0.0"
 
 dependencies:
   domain_exercise_history: any
-  flutter:
-    sdk: flutter
   foundation_app_log: any
-  google_mlkit_text_recognition: any
   infra_meter_reading: any
   infra_on_device_llm: any
-  tflite_flutter: any
 
 dev_dependencies:
   flutter_lints: any
-  flutter_test:
-    sdk: flutter
   infra_meter_reading_testing: any
   infra_on_device_llm_testing: any
   test: any
-
-flutter:
-  assets:
-    - assets/seven_segment/seven_segment_swift_yolo_192_float32.tflite
-    - assets/seven_segment/NOTICE.md
-  plugin:
-    platforms:
-      android:
-        package: io.github.madahataraku.coglog.meter_reading
-        pluginClass: MeterReadingPlugin
-      ios:
-        pluginClass: MeterReadingPlugin

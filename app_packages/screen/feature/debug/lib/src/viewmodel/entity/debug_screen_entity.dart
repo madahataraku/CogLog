@@ -19,11 +19,10 @@
 ///   prepareError: '-',
 ///   probeSkipped: '-',
 ///   logLines: [],
-///   forceSpatialOcr: false,
 /// );
 /// ```
 final class DebugScreenEntity {
-  /// 診断ラベル用の文字列、`canGenerate`、ログ行、上書きスイッチをまとめて保持する。
+  /// 診断ラベル用の文字列、`canGenerate`、ログ行をまとめて保持する。
   ///
   /// Example:
   /// ```dart
@@ -42,7 +41,6 @@ final class DebugScreenEntity {
   ///   prepareError: '-',
   ///   probeSkipped: '-',
   ///   logLines: ['line'],
-  ///   forceSpatialOcr: true,
   /// );
   /// ```
   const DebugScreenEntity({
@@ -60,7 +58,6 @@ final class DebugScreenEntity {
     required this.prepareError,
     required this.probeSkipped,
     required this.logLines,
-    required this.forceSpatialOcr,
   });
 
   /// いま端末上 LLM 診断ユースケースが走っているとき true。
@@ -104,7 +101,4 @@ final class DebugScreenEntity {
 
   /// 古い行が先（上が古い）になるログ文字列。各要素は 1 エントリ分。
   final List<String> logLines;
-
-  /// デバッグ用の空間 OCR 強制上書きが ON なら true。
-  final bool forceSpatialOcr;
 }

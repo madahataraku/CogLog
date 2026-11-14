@@ -9,7 +9,7 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 /// Example:
 /// ```dart
 /// FakeMeterReadingEngine(
-///   kind: MeterReadingEngineKind.visionOcr,
+///   kind: MeterReadingEngineKind.foundationModel,
 ///   values: MeterReadingValues(distanceKm: 1),
 /// );
 /// ```
@@ -18,7 +18,10 @@ final class FakeMeterReadingEngine implements MeterReadingEngine {
   ///
   /// Example:
   /// ```dart
-  /// FakeMeterReadingEngine(kind: MeterReadingEngineKind.mlKit, available: false);
+  /// FakeMeterReadingEngine(
+  ///   kind: MeterReadingEngineKind.geminiNano,
+  ///   available: false,
+  /// );
   /// ```
   FakeMeterReadingEngine({
     required this.kind,
@@ -54,7 +57,8 @@ final class FakeMeterReadingEngine implements MeterReadingEngine {
   ///
   /// Example:
   /// ```dart
-  /// await FakeMeterReadingEngine(kind: MeterReadingEngineKind.mlKit).isAvailable;
+  /// await FakeMeterReadingEngine(kind: MeterReadingEngineKind.geminiNano)
+  ///     .isAvailable;
   /// ```
   @override
   Future<bool> get isAvailable async => available;
@@ -63,7 +67,7 @@ final class FakeMeterReadingEngine implements MeterReadingEngine {
   ///
   /// Example:
   /// ```dart
-  /// await FakeMeterReadingEngine(kind: MeterReadingEngineKind.mlKit)
+  /// await FakeMeterReadingEngine(kind: MeterReadingEngineKind.geminiNano)
   ///     .read(Uint8List(0));
   /// ```
   @override

@@ -392,9 +392,6 @@ class L10nJa extends L10n {
   String get screen_feature_debug_clear_logs => 'ログを消去';
 
   @override
-  String get screen_feature_debug_force_spatial_ocr_item => '空間 OCR を強制';
-
-  @override
   String get screen_feature_debug_generate_error_label => 'generate error';
 
   @override
@@ -432,9 +429,6 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_debug_section_logs => 'アプリログ';
-
-  @override
-  String get screen_feature_debug_section_overrides => '上書き';
 
   @override
   String get screen_feature_debug_section_probe => '生成プローブ';

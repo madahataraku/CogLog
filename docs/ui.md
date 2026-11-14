@@ -85,6 +85,9 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - `barrierDismissible` は `false`（外側タップでは閉じない）。
 - アクションは縦並びで「閉じる」と「モデルを準備」。
 - DialogRoute の完了（pop）は `ModelDownloadGuidanceLauncher` 内だけが行う。画面から `Navigator` を直接呼ばない。
+- OS LLM（Foundation Models / Gemini Nano）向け (A) は、ホームとメーター記録で共用の `view_model_download_guidance` を使う。
+- Gemma E2B 向け (B) は、 (A) が成立しないときだけアプリ起動時に同じ部品でダイアログを出す（OS LLM 非対応または画像入力非対応で、Gemma は端末対応だが未ダウンロードのとき。Gemma 自体が非対応の端末は対象外）。
+- 同一プロセスの再表示禁止は (A) と (B) で別フラグとする。
 
 ## アチーブメント
 
@@ -100,7 +103,7 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - アプリ設定は設定項目の一覧（上から通知設定、ライセンス、デバッグ）を `FTileGroup` とし、その下にアプリ情報専用の別 `FTileGroup`（バージョンと端末 OS。表示のみでタップでは遷移しない）を置く。ヘッダ直下の余分な余白は出さず（本文 `ListView` の top padding を 0）、二つの `FTileGroup` のあいだには 24 論理ピクセルの間隔を置く。
 - 通知設定は ON/OFF を切り替え、許可拒否時は案内テキストのみを示す（再要求ダイアログなし）。
 - OSS ライセンスは依存ライブラリの一覧と本文。空のときは空状態メッセージを出す。遷移は `ScreenNavigation` 経由とする。
-- デバッグは、診断結果より上に空間 OCR 強制の `FSwitch`（`FTileGroup`）を置き、続けて診断結果とアプリ内ログを縦スクロールで示す。
+- デバッグは、診断結果とアプリ内ログを縦スクロールで示す。
 - アプリ内ログは、編集不可（`readOnly`）で選択・コピー可能な複数行テキスト領域とする。領域は固定高さで内部スクロールし、親の縦スクロールと独立して追える。並びは古い行が上・新しい行が下。追記時の自動スクロールはしない。ストアが空でも空のテキスト領域を出し、空状態専用文言は出さない。
 
 - 画面から `Navigator` を直接呼ばない。遷移は `ScreenNavigation` 経由とする。

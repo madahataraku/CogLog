@@ -48,13 +48,3 @@ final meterReadingEnginesProvider = Provider<List<MeterReadingEngine>>(
 final meterReadingLlmEngineProvider = Provider<MeterReadingEngine>(
   (ref) => throw UnimplementedError('meterReadingLlmEngineProvider'),
 );
-
-/// 空間 OCR メーター読み取りエンジンの注入点。
-///
-/// Example:
-/// ```dart
-/// meterReadingSpatialEngineProvider;
-/// ```
-final meterReadingSpatialEngineProvider = Provider<MeterReadingEngine>(
-  (ref) => throw UnimplementedError('meterReadingSpatialEngineProvider'),
-);

@@ -8,7 +8,7 @@ import '../strings.dart';
 import '../viewmodel/debug_screen_view_model.dart';
 import 'debug_screen_providers.dart';
 
-/// 上書きスイッチ・診断結果・アプリログ。
+/// 診断結果・アプリログ。
 ///
 /// アプリログは固定高さの編集不可テキスト領域で示し、親 ListView と独立してスクロールする。
 ///
@@ -29,7 +29,7 @@ class DebugScreenBody extends HookConsumerWidget {
   /// ログ領域の固定高さ（論理ピクセル）。親 ListView 内で内部スクロールさせる。
   static const double _logAreaHeight = 240;
 
-  /// 上書き・診断・ログを縦に並べる。
+  /// 診断・ログを縦に並べる。
   ///
   /// Example:
   /// ```dart
@@ -65,29 +65,6 @@ class DebugScreenBody extends HookConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(
-            strings.screen_feature_debug_section_overrides,
-            style: context.theme.typography.body.lg.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          FTileGroup(
-            children: [
-              FTile(
-                title: Text(
-                  strings.screen_feature_debug_force_spatial_ocr_item,
-                ),
-                suffix: FSwitch(
-                  value: entity.forceSpatialOcr,
-                  onChange: (value) => ref
-                      .read(DebugScreenViewModel.provider)
-                      .onToggleForceSpatialOcr(value),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
           Text(
             strings.screen_feature_debug_section_availability,
             style: context.theme.typography.body.lg.copyWith(

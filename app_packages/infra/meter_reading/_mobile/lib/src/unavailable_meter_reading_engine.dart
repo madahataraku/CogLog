@@ -9,14 +9,14 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 ///
 /// Example:
 /// ```dart
-/// const UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit);
+/// const UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano);
 /// ```
 final class UnavailableMeterReadingEngine implements MeterReadingEngine {
   /// [kind] を持つ利用不可エンジンを作る。
   ///
   /// Example:
   /// ```dart
-  /// const UnavailableMeterReadingEngine(MeterReadingEngineKind.visionOcr);
+  /// const UnavailableMeterReadingEngine(MeterReadingEngineKind.foundationModel);
   /// ```
   const UnavailableMeterReadingEngine(this.kind);
 
@@ -28,7 +28,7 @@ final class UnavailableMeterReadingEngine implements MeterReadingEngine {
   ///
   /// Example:
   /// ```dart
-  /// await const UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit)
+  /// await const UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano)
   ///     .isAvailable;
   /// ```
   @override
@@ -38,7 +38,7 @@ final class UnavailableMeterReadingEngine implements MeterReadingEngine {
   ///
   /// Example:
   /// ```dart
-  /// await const UnavailableMeterReadingEngine(MeterReadingEngineKind.mlKit)
+  /// await const UnavailableMeterReadingEngine(MeterReadingEngineKind.geminiNano)
   ///     .read(Uint8List(0));
   /// ```
   @override

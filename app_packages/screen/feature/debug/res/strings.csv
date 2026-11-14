@@ -1,8 +1,6 @@
 id,ja,en,description
 title,デバッグ,Debug,画面タイトル
 back_semantics,戻る,Back,戻るボタンの代替テキスト
-section_overrides,上書き,Overrides,デバッグ上書きセクション見出し
-force_spatial_ocr_item,空間 OCR を強制,Force spatial OCR,空間 OCR 強制スイッチの項目名
 section_availability,端末上 LLM,On-device LLM,可用性セクション見出し
 section_probe,生成プローブ,Generation probe,生成プローブ見出し
 section_logs,アプリログ,App logs,ログセクション見出し
