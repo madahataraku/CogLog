@@ -49,15 +49,15 @@ final class SevenSegmentCoreMlRunner {
     }
     let bundle = Bundle(for: SevenSegmentCoreMlRunner.self)
     let url =
-      bundle.url(forResource: "DigitalMeterElectricity192", withExtension: "mlmodelc")
-      ?? bundle.url(forResource: "DigitalMeterElectricity192", withExtension: "mlpackage")
+      bundle.url(forResource: "SevenSegment192", withExtension: "mlmodelc")
+      ?? bundle.url(forResource: "SevenSegment192", withExtension: "mlpackage")
     guard let url else {
       throw NSError(
         domain: "seven_segment",
         code: 3,
         userInfo: [
           NSLocalizedDescriptionKey:
-            "DigitalMeterElectricity192 missing from bundle; "
+            "SevenSegment192 missing from bundle; "
             + "generate on macOS via tool/seven_segment/convert_coreml.md",
         ]
       )
