@@ -60,6 +60,9 @@ final class ModelDownloadGuidanceDialog extends HookWidget {
     super.key,
   });
 
+  /// 内容外周の余白（論理ピクセル）。枠への密着を防ぐ。
+  static const double contentPadding = 8;
+
   /// ダイアログスタイル。
   final FDialogStyle style;
 
@@ -134,34 +137,42 @@ final class ModelDownloadGuidanceDialog extends HookWidget {
     // (A) は準備中も閉じられる。(B) は disableDismissWhilePreparing で塞ぐ。
     final dismissEnabled = !preparing.value || !disableDismissWhilePreparing;
     final progressValue = progress.value;
-    // 進捗は 0〜100% の整数表記。未開始・失敗直後は出さない。
-    final progressPercent = progressValue == null
-        ? null
-        : '${(progressValue.clamp(0.0, 1.0) * 100).round()}%';
+    // 進捗は 0〜100% の整数表記。イベント前は 0% としてゲージと併記する。
+    final clampedProgress = (progressValue ?? 0.0).clamp(0.0, 1.0);
+    final progressPercent = preparing.value
+        ? '${(clampedProgress * 100).round()}%'
+        : null;
 
     return FDialog(
       style: style,
       animation: animation,
       builder: (context, style) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(title),
-            Text(body),
-            if (progressPercent != null) Text(progressPercent),
-            if (errorText.value != null) Text(errorText.value!),
-            // 副ボタン。準備中の有効／無効は dismissEnabled に従う。
-            FButton(
-              variant: .secondary,
-              onPress: dismissEnabled ? onDismiss : null,
-              child: Text(dismissLabel),
-            ),
-            FButton(
-              onPress: preparing.value ? null : onPreparePressed,
-              child: Text(prepareLabel),
-            ),
-          ],
+        return Padding(
+          padding: const EdgeInsets.all(contentPadding),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: contentPadding,
+            children: [
+              Text(title),
+              Text(body),
+              if (preparing.value) ...[
+                FDeterminateProgress(value: clampedProgress),
+                if (progressPercent != null) Text(progressPercent),
+              ],
+              if (errorText.value != null) Text(errorText.value!),
+              // 副ボタン。準備中の有効／無効は dismissEnabled に従う。
+              FButton(
+                variant: .secondary,
+                onPress: dismissEnabled ? onDismiss : null,
+                child: Text(dismissLabel),
+              ),
+              FButton(
+                onPress: preparing.value ? null : onPreparePressed,
+                child: Text(prepareLabel),
+              ),
+            ],
+          ),
         );
       },
     );
