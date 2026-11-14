@@ -404,6 +404,13 @@ class L10nJa extends L10n {
   String get screen_feature_debug_platform_notes_label => 'platform notes';
 
   @override
+  String get screen_feature_debug_prefer_gemma_description =>
+      '同一セッションのみ。再起動でオフ';
+
+  @override
+  String get screen_feature_debug_prefer_gemma_item => 'Gemma 優先モード';
+
+  @override
   String get screen_feature_debug_prepare_error_label => 'prepare error';
 
   @override
