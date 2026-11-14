@@ -78,7 +78,7 @@ final class SpatialOcrMeterReadingEngine implements MeterReadingEngine {
       tag: 'meter.spatial',
       level: genericTokens.isEmpty ? AppLogLevel.warn : AppLogLevel.info,
       message:
-          'kind=${kind.name}; tokens=${genericTokens.length}; '
+          'generic kind=${kind.name}; tokens=${genericTokens.length}; '
           'classes=${_formatKindCounts(kindCounts)}; '
           'otherDigits=$otherDigits; '
           'texts=${_formatTokens(genericTokens)}',

@@ -85,6 +85,7 @@ void main() {
     expect(values.distanceKm, 12.3);
     expect(log.entries, hasLength(3));
     expect(log.entries.first.tag, 'meter.spatial');
+    expect(log.entries.first.message, contains('generic kind='));
     expect(log.entries.first.message, contains('tokens=1'));
     expect(
       log.entries.first.message,
@@ -143,6 +144,7 @@ void main() {
     final values = await engine.read(Uint8List(0));
     expect(values.distanceKm, isNull);
     expect(log.entries.first.level, AppLogLevel.warn);
+    expect(log.entries.first.message, contains('generic kind='));
     expect(log.entries.first.message, contains('tokens=0'));
     expect(log.entries.first.message, contains('texts=[]'));
     expect(log.entries[1].message, contains('texts=[]'));
@@ -183,6 +185,7 @@ void main() {
       log.entries.last.message,
       contains('adoptedFromSevenSeg=[distanceKm]'),
     );
+    expect(log.entries.first.message, contains('generic kind='));
     expect(
       log.entries.first.message,
       contains('texts=[距離@0.100,0.100,0.200,0.050]'),
