@@ -59,11 +59,16 @@ final class OnEvaluateGemmaMeterGuidanceDelegate {
     if (!decision.shouldShow || !gemmaSession.shouldShow) {
       return;
     }
-    await state.updateWithLock((current, emitter) async {
-      if (!gemmaSession.shouldShow) {
-        return;
-      }
-      await emitter.emit(current.copyWith(pendingGemmaMeterGuidance: true));
-    });
+    try {
+      await state.updateWithLock((current, emitter) async {
+        if (!gemmaSession.shouldShow) {
+          return;
+        }
+        await emitter.emit(current.copyWith(pendingGemmaMeterGuidance: true));
+      });
+    } on StateStreamClosedException {
+      // 評価完了前に画面が破棄されたときは更新しない。
+      return;
+    }
   }
 }

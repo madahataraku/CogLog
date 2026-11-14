@@ -104,28 +104,48 @@ class TopScreen extends HookConsumerWidget {
       });
       return null;
     }, [entity.pendingModelDownloadGuidance, viewModel]);
-    useEffect(() {
-      if (!entity.pendingGemmaMeterGuidance) {
-        return null;
-      }
-      // 予約時点で同期的に提示済みにし、initialize 再入とのレースを防ぐ。
-      unawaited(viewModel.onAcknowledgeGemmaMeterGuidance());
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!context.mounted) {
-          return;
+    useEffect(
+      () {
+        if (!entity.pendingGemmaMeterGuidance) {
+          return null;
         }
-        // (B) 専用文言・進捗・準備中は閉じる無効。
-        await ModelDownloadGuidanceLauncher.show(
-          context,
-          title: strings.view_model_download_guidance_gemma_title,
-          body: strings.view_model_download_guidance_gemma_body,
-          disableDismissWhilePreparing: true,
-          onPrepareProgress: viewModel.onPrepareGemmaMeterGuidance,
-          mapPrepareError: mapGemmaMeterPrepareError,
-        );
-      });
-      return null;
-    }, [entity.pendingGemmaMeterGuidance, viewModel]);
+        // ホーム選択かつ前面のときだけ出す。満たさない間は pending を残す。
+        if (!homeTabSelected) {
+          return null;
+        }
+        if (lifecycle != null && lifecycle != AppLifecycleState.resumed) {
+          return null;
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!context.mounted) {
+            return;
+          }
+          final stillHome = (ShellTabIndexScope.maybeOf(context) ?? 0) == 0;
+          final life = WidgetsBinding.instance.lifecycleState;
+          final stillForeground =
+              life == null || life == AppLifecycleState.resumed;
+          if (!stillHome || !stillForeground) {
+            return;
+          }
+          // 表示直前に提示済みにし、initialize 再入とのレースを防ぐ。
+          await viewModel.onAcknowledgeGemmaMeterGuidance();
+          if (!context.mounted) {
+            return;
+          }
+          // (B) 専用文言・進捗・準備中は閉じる無効。
+          await ModelDownloadGuidanceLauncher.show(
+            context,
+            title: strings.view_model_download_guidance_gemma_title,
+            body: strings.view_model_download_guidance_gemma_body,
+            disableDismissWhilePreparing: true,
+            onPrepareProgress: viewModel.onPrepareGemmaMeterGuidance,
+            mapPrepareError: mapGemmaMeterPrepareError,
+          );
+        });
+        return null;
+      },
+      [entity.pendingGemmaMeterGuidance, viewModel, homeTabSelected, lifecycle],
+    );
     return const TopScreenImpl();
   }
 }
