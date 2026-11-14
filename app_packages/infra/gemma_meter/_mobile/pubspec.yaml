@@ -1,0 +1,15 @@
+name: infra_gemma_meter_mobile
+description: Mobile GemmaMeterVision (Unavailable stub until LiteRT).
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_gemma_meter:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: any

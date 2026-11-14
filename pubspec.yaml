@@ -45,6 +45,9 @@ workspace:
   - app_packages/infra/app_runtime_info
   - app_packages/infra/app_runtime_info/_mobile
   - app_packages/infra/app_runtime_info/_testing
+  - app_packages/infra/gemma_meter
+  - app_packages/infra/gemma_meter/_mobile
+  - app_packages/infra/gemma_meter/_testing
   - app_packages/infra/health_body_metrics
   - app_packages/infra/health_body_metrics/_mobile
   - app_packages/infra/health_body_metrics/_testing

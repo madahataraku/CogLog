@@ -12,10 +12,20 @@ import 'meter_reading_engine_kind.dart';
 /// await engine.isAvailable;
 /// ```
 abstract interface class MeterReadingEngine {
-  /// エンジン種別。
+  /// injection やログで使うエンジン識別子。
+  ///
+  /// Example:
+  /// ```dart
+  /// engine.kind;
+  /// ```
   MeterReadingEngineKind get kind;
 
-  /// 利用可能か。
+  /// 読み取りに使えるとき true。
+  ///
+  /// Example:
+  /// ```dart
+  /// await engine.isAvailable;
+  /// ```
   Future<bool> get isAvailable;
 
   /// [photoBytes] を読む。
@@ -47,4 +57,14 @@ final meterReadingEnginesProvider = Provider<List<MeterReadingEngine>>(
 /// ```
 final meterReadingLlmEngineProvider = Provider<MeterReadingEngine>(
   (ref) => throw UnimplementedError('meterReadingLlmEngineProvider'),
+);
+
+/// Gemma E2B メーター読み取りエンジンの注入点。
+///
+/// Example:
+/// ```dart
+/// meterReadingGemmaEngineProvider;
+/// ```
+final meterReadingGemmaEngineProvider = Provider<MeterReadingEngine>(
+  (ref) => throw UnimplementedError('meterReadingGemmaEngineProvider'),
 );
