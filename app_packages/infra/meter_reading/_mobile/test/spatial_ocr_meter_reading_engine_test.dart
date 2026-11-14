@@ -99,7 +99,11 @@ void main() {
     expect(log.entries[1].message, contains('error=false'));
     expect(log.entries[1].message, contains('texts=[]'));
     expect(log.entries.last.message, contains('present=[distanceKm'));
+    // OCR 生文字列は出すが、推論フィールド代入値は出さない。
     expect(log.entries.last.message, isNot(contains('distanceKm=12.3')));
+    expect(log.entries.last.message, isNot(contains('duration=')));
+    expect(log.entries.last.message, isNot(contains('caloriesKcal=')));
+    expect(log.entries.last.message, isNot(contains('averageSpeedKmh=')));
     expect(log.entries.last.message, contains('adoptedFromSevenSeg='));
   });
 
