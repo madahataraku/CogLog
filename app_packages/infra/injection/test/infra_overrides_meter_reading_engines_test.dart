@@ -10,7 +10,7 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  test('iOS は LLM foundationModel のみ', () {
+  test('iOS は LLM foundationModel と gemmaE2b', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -23,14 +23,22 @@ void main() {
       container.read(meterReadingLlmEngineProvider),
       isA<LlmMeterReadingEngine>(),
     );
-    expect(container.read(meterReadingEnginesProvider), hasLength(1));
     expect(
-      container.read(meterReadingEnginesProvider).single.kind,
-      MeterReadingEngineKind.foundationModel,
+      container.read(meterReadingGemmaEngineProvider).kind,
+      MeterReadingEngineKind.gemmaE2b,
     );
+    expect(
+      container.read(meterReadingGemmaEngineProvider),
+      isA<GemmaMeterReadingEngine>(),
+    );
+    expect(container.read(meterReadingEnginesProvider), hasLength(2));
+    expect(container.read(meterReadingEnginesProvider).map((e) => e.kind), [
+      MeterReadingEngineKind.foundationModel,
+      MeterReadingEngineKind.gemmaE2b,
+    ]);
   });
 
-  test('Android は LLM geminiNano のみ', () {
+  test('Android は LLM geminiNano と gemmaE2b', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -39,10 +47,18 @@ void main() {
       container.read(meterReadingLlmEngineProvider).kind,
       MeterReadingEngineKind.geminiNano,
     );
-    expect(container.read(meterReadingEnginesProvider), hasLength(1));
+    expect(
+      container.read(meterReadingGemmaEngineProvider).kind,
+      MeterReadingEngineKind.gemmaE2b,
+    );
+    expect(container.read(meterReadingEnginesProvider), hasLength(2));
+    expect(container.read(meterReadingEnginesProvider).map((e) => e.kind), [
+      MeterReadingEngineKind.geminiNano,
+      MeterReadingEngineKind.gemmaE2b,
+    ]);
   });
 
-  test('desktop は Unavailable', () {
+  test('desktop は Unavailable LLM と gemmaE2b', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -51,6 +67,14 @@ void main() {
       container.read(meterReadingLlmEngineProvider),
       isA<UnavailableMeterReadingEngine>(),
     );
-    expect(container.read(meterReadingEnginesProvider), hasLength(1));
+    expect(
+      container.read(meterReadingGemmaEngineProvider).kind,
+      MeterReadingEngineKind.gemmaE2b,
+    );
+    expect(container.read(meterReadingEnginesProvider), hasLength(2));
+    expect(
+      container.read(meterReadingEnginesProvider).map((e) => e.kind),
+      contains(MeterReadingEngineKind.gemmaE2b),
+    );
   });
 }

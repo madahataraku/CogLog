@@ -216,6 +216,7 @@ List<Override> usecaseOverrides({
     (ref) => ReadMeterPanelUsecaseImpl(
       llm: ref.watch(onDeviceLlmProvider),
       llmEngine: ref.watch(meterReadingLlmEngineProvider),
+      gemmaEngine: ref.watch(meterReadingGemmaEngineProvider),
       log: ref.watch(appLogStoreProvider),
     ),
   ),

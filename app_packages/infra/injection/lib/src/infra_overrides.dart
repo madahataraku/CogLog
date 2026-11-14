@@ -4,6 +4,8 @@ import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_runtime_info_mobile/infra_app_runtime_info_mobile.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_app_settings_mobile/infra_app_settings_mobile.dart';
+import 'package:infra_gemma_meter/infra_gemma_meter.dart';
+import 'package:infra_gemma_meter_mobile/infra_gemma_meter_mobile.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_body_metrics_mobile/infra_health_body_metrics_mobile.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
@@ -23,8 +25,8 @@ import 'package:riverpod/riverpod.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
-/// [onDeviceLlm] / [meterPhotoSource] / [healthBodyMetricsSource] を渡すと、
-/// その実装を使う（Widget テスト用）。
+/// [onDeviceLlm] / [gemmaMeterVision] / [meterPhotoSource] /
+/// [healthBodyMetricsSource] を渡すと、その実装を使う（Widget テスト用）。
 ///
 /// Example:
 /// ```dart
@@ -32,6 +34,7 @@ import 'package:riverpod/riverpod.dart';
 /// ```
 List<Override> infraOverrides({
   OnDeviceLlm? onDeviceLlm,
+  GemmaMeterVision? gemmaMeterVision,
   MeterPhotoSource? meterPhotoSource,
   HealthBodyMetricsSource? healthBodyMetricsSource,
 }) => [
@@ -51,12 +54,21 @@ List<Override> infraOverrides({
         return const UnavailableOnDeviceLlm();
     }
   }),
+  gemmaMeterVisionProvider.overrideWith(
+    (ref) => gemmaMeterVision ?? const UnavailableGemmaMeterVision(),
+  ),
   meterPhotoSourceProvider.overrideWith(
     (ref) => meterPhotoSource ?? MobileMeterPhotoSource(),
   ),
   meterReadingEnginesProvider.overrideWith((ref) => _meterReadingEngines(ref)),
   meterReadingLlmEngineProvider.overrideWith(
     (ref) => _meterReadingLlmEngine(ref),
+  ),
+  meterReadingGemmaEngineProvider.overrideWith(
+    (ref) => GemmaMeterReadingEngine(
+      gemma: ref.watch(gemmaMeterVisionProvider),
+      log: ref.watch(appLogStoreProvider),
+    ),
   ),
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
@@ -132,7 +144,7 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
   }
 }
 
-/// デバッグ／一覧用の LLM エンジン。
+/// デバッグ／一覧用の LLM + Gemma エンジン。
 ///
 /// Example:
 /// ```dart
@@ -140,4 +152,5 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
 /// ```
 List<MeterReadingEngine> _meterReadingEngines(Ref ref) => [
   _meterReadingLlmEngine(ref),
+  ref.watch(meterReadingGemmaEngineProvider),
 ];
