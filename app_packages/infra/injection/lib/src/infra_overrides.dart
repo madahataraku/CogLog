@@ -58,9 +58,6 @@ List<Override> infraOverrides({
   meterReadingLlmEngineProvider.overrideWith(
     (ref) => _meterReadingLlmEngine(ref),
   ),
-  meterReadingSpatialEngineProvider.overrideWith(
-    (ref) => _meterReadingSpatialEngine(ref),
-  ),
   healthWorkoutWriterProvider.overrideWith(
     (ref) => const UnavailableHealthWorkoutWriter(),
   ),
@@ -135,40 +132,7 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
   }
 }
 
-/// 空間 OCR エンジン。desktop は Unavailable。
-///
-/// Example:
-/// ```dart
-/// _meterReadingSpatialEngine(ref);
-/// ```
-MeterReadingEngine _meterReadingSpatialEngine(Ref ref) {
-  final log = ref.watch(appLogStoreProvider);
-  switch (defaultTargetPlatform) {
-    case TargetPlatform.iOS:
-      return SpatialOcrMeterReadingEngine(
-        kind: MeterReadingEngineKind.visionOcr,
-        recognizer: VisionMeterLayoutRecognizer(),
-        sevenSegmentRecognizer: CoreMlSevenSegmentRecognizer(),
-        log: log,
-      );
-    case TargetPlatform.android:
-      return SpatialOcrMeterReadingEngine(
-        kind: MeterReadingEngineKind.mlKit,
-        recognizer: MlKitMeterLayoutRecognizer(),
-        sevenSegmentRecognizer: TfLiteSevenSegmentRecognizer(),
-        log: log,
-      );
-    case TargetPlatform.fuchsia:
-    case TargetPlatform.linux:
-    case TargetPlatform.macOS:
-    case TargetPlatform.windows:
-      return const UnavailableMeterReadingEngine(
-        MeterReadingEngineKind.visionOcr,
-      );
-  }
-}
-
-/// デバッグ／一覧用の両エンジン。Usecase の排他選択には使わない。
+/// デバッグ／一覧用の LLM エンジン。
 ///
 /// Example:
 /// ```dart
@@ -176,5 +140,4 @@ MeterReadingEngine _meterReadingSpatialEngine(Ref ref) {
 /// ```
 List<MeterReadingEngine> _meterReadingEngines(Ref ref) => [
   _meterReadingLlmEngine(ref),
-  _meterReadingSpatialEngine(ref),
 ];

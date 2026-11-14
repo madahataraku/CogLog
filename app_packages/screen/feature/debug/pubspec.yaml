@@ -14,7 +14,6 @@ dependencies:
   flutter_hooks: any
   forui: any
   foundation_app_log: any
-  foundation_debug_overrides: any
   hooks_riverpod: any
   infra_on_device_llm: any
   material_ui: any

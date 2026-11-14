@@ -37,17 +37,6 @@ extension DebugScreenViewModelActions on DebugScreenViewModel {
     return OnClearLogsDelegate(state: state, log: log).execute();
   }
 
-  /// 空間 OCR 強制を切り替える。
-  ///
-  /// Example:
-  /// ```dart
-  /// viewModel.onToggleForceSpatialOcr(true);
-  /// ```
-  void onToggleForceSpatialOcr(bool enabled) {
-    OnToggleForceSpatialOcrDelegate(forceSpatialOcr: forceSpatialOcr)
-        .execute(enabled);
-  }
-
   /// 1 つ戻る。
   ///
   /// Example:

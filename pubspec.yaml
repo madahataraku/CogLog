@@ -36,7 +36,6 @@ workspace:
   - app_packages/domain/exercise_history
   - app_packages/domain/trends
   - app_packages/foundation/app_log
-  - app_packages/foundation/debug_overrides
   - app_packages/foundation/datetime
   - app_packages/foundation/metadata
   - app_packages/foundation/resources
@@ -157,9 +156,6 @@ dependency_overrides:
   flutter_riverpod: 3.4.3
   forui: ^0.27.7
   go_router: 18.1.3
-  # compileSdk 36 互換（1.0.x）。
-  google_mlkit_commons: 1.0.2
-  google_mlkit_text_recognition: 1.0.2
   health: 13.3.2
   hooks_riverpod: 3.4.3
   camera: 0.12.2
@@ -179,7 +175,6 @@ dependency_overrides:
   state_stream_riverpod: 2.0.1
   syncfusion_flutter_charts: 35.1.46
   syncfusion_flutter_core: 35.1.46
-  tflite_flutter: 0.12.1
   uuid: 4.5.2
 
 dev_dependencies:

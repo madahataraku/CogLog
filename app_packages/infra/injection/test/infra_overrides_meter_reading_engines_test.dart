@@ -10,7 +10,7 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  test('iOS は LLM foundationModel と spatial visionOcr', () {
+  test('iOS は LLM foundationModel のみ', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -23,18 +23,14 @@ void main() {
       container.read(meterReadingLlmEngineProvider),
       isA<LlmMeterReadingEngine>(),
     );
+    expect(container.read(meterReadingEnginesProvider), hasLength(1));
     expect(
-      container.read(meterReadingSpatialEngineProvider).kind,
-      MeterReadingEngineKind.visionOcr,
+      container.read(meterReadingEnginesProvider).single.kind,
+      MeterReadingEngineKind.foundationModel,
     );
-    expect(
-      container.read(meterReadingSpatialEngineProvider),
-      isA<SpatialOcrMeterReadingEngine>(),
-    );
-    expect(container.read(meterReadingEnginesProvider), hasLength(2));
   });
 
-  test('Android は LLM geminiNano と spatial mlKit', () {
+  test('Android は LLM geminiNano のみ', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -43,17 +39,10 @@ void main() {
       container.read(meterReadingLlmEngineProvider).kind,
       MeterReadingEngineKind.geminiNano,
     );
-    expect(
-      container.read(meterReadingSpatialEngineProvider).kind,
-      MeterReadingEngineKind.mlKit,
-    );
-    expect(
-      container.read(meterReadingSpatialEngineProvider),
-      isA<SpatialOcrMeterReadingEngine>(),
-    );
+    expect(container.read(meterReadingEnginesProvider), hasLength(1));
   });
 
-  test('desktop は両 Unavailable', () {
+  test('desktop は Unavailable', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -62,9 +51,6 @@ void main() {
       container.read(meterReadingLlmEngineProvider),
       isA<UnavailableMeterReadingEngine>(),
     );
-    expect(
-      container.read(meterReadingSpatialEngineProvider),
-      isA<UnavailableMeterReadingEngine>(),
-    );
+    expect(container.read(meterReadingEnginesProvider), hasLength(1));
   });
 }

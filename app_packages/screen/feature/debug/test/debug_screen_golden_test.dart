@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
-import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
@@ -77,9 +76,6 @@ void main() {
           overrides: [
             screenNavigationProvider.overrideWith((ref) => _Nav()),
             appLogStoreProvider.overrideWith((ref) => log),
-            forceSpatialOcrStoreProvider.overrideWith(
-              (ref) => ForceSpatialOcrStore(),
-            ),
             DiagnoseOnDeviceLlmUsecase.provider.overrideWith(
               (ref) => DiagnoseOnDeviceLlmUsecaseImpl(
                 llm: FakeOnDeviceLlm(

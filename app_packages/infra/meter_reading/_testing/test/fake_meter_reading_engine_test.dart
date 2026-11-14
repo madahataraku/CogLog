@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 void main() {
   test('利用可のとき固定値を返す', () async {
     final engine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.visionOcr,
+      kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 2.5),
     );
 
@@ -21,7 +21,7 @@ void main() {
 
   test('available false を返す', () async {
     final engine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.mlKit,
+      kind: MeterReadingEngineKind.geminiNano,
       available: false,
     );
     expect(await engine.isAvailable, isFalse);

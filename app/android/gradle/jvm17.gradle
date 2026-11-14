@@ -1,4 +1,4 @@
-// tflite_flutter などが Java 11 / Kotlin 17 を混在させ release で失敗するのを防ぐ。
+// 依存プラグインが Java 11 / Kotlin 17 を混在させ release で失敗するのを防ぐ。
 // docs/constraints.md の Android 節（JVM 17）に揃える。
 subprojects { sub ->
     sub.afterEvaluate {

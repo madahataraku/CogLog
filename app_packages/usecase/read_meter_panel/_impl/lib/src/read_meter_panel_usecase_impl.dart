@@ -2,46 +2,37 @@ import 'dart:async';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
-import 'package:foundation_debug_overrides/foundation_debug_overrides.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 
-/// LLM ready なら LLM のみ、それ以外は空間 OCR のみを試す（併用しない）。
+/// LLM ready+vision のときだけ [llmEngine] を試し、それ以外は手打ちへ進む。
 ///
-/// デバッグの空間 OCR 強制が ON のときは LLM ready でも空間 OCR のみとし、
-/// 使えなければ手打ちへ進む（LLM には戻さない）。
 /// 全体の上限は [timeout]（既定 30 秒）。超過時はその時点の結果を返す。
-/// 選択理由・例外・最終値は [log] へ出す。
+/// 選択理由・例外・最終値の有無は [log] へ出す（測定値・LLM 本文は出さない）。
 ///
 /// Example:
 /// ```dart
 /// ReadMeterPanelUsecaseImpl(
 ///   llm: llm,
 ///   llmEngine: llmEngine,
-///   spatialEngine: spatialEngine,
-///   forceSpatialOcr: ForceSpatialOcrStore(),
 ///   log: AppLogStore(),
 /// ).execute(ReadMeterPanelRequest(photoBytes: Uint8List(0)));
 /// ```
 final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
-  /// [forceSpatialOcr] と [llm] の可否で [llmEngine] / [spatialEngine] を排他選択する。
+  /// [llm] の可否で [llmEngine] を選ぶ。
   ///
   /// Example:
   /// ```dart
   /// ReadMeterPanelUsecaseImpl(
   ///   llm: llm,
   ///   llmEngine: llmEngine,
-  ///   spatialEngine: spatialEngine,
-  ///   forceSpatialOcr: ForceSpatialOcrStore(),
   ///   log: AppLogStore(),
   /// );
   /// ```
   ReadMeterPanelUsecaseImpl({
     required this.llm,
     required this.llmEngine,
-    required this.spatialEngine,
-    required this.forceSpatialOcr,
     AppLogStore? log,
     this.timeout = const Duration(seconds: 30),
   }) : log = log ?? AppLogStore();
@@ -51,12 +42,6 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
 
   /// LLM 読み取りエンジン。
   final MeterReadingEngine llmEngine;
-
-  /// 空間 OCR エンジン。
-  final MeterReadingEngine spatialEngine;
-
-  /// デバッグ用の空間 OCR 強制フラグ。
-  final ForceSpatialOcrStore forceSpatialOcr;
 
   /// デバッグ画面向けのプロセス内ログ。
   final AppLogStore log;
@@ -147,7 +132,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     );
   }
 
-  /// 強制 ON なら空間 OCR のみ。通常は ready+vision なら LLM、それ以外は空間 OCR。
+  /// ready+vision なら LLM。それ以外はエンジン無し（手打ち）。
   ///
   /// Example:
   /// ```dart
@@ -155,24 +140,6 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   /// await usecase.execute(request);
   /// ```
   Future<MeterReadingEngine?> _selectEngine() async {
-    if (forceSpatialOcr.enabled) {
-      if (await spatialEngine.isAvailable) {
-        log.append(
-          tag: 'meter.read',
-          level: AppLogLevel.info,
-          message:
-              'select spatial kind=${spatialEngine.kind.name}; '
-              'reason=forceSpatialOcr',
-        );
-        return spatialEngine;
-      }
-      log.append(
-        tag: 'meter.read',
-        level: AppLogLevel.warn,
-        message: 'forceSpatialOcr on but spatial unavailable',
-      );
-      return null;
-    }
     final readiness = await llm.readiness;
     final vision = await llm.supportsVision;
     if (readiness == OnDeviceLlmReadiness.ready && vision) {
@@ -185,23 +152,10 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
       );
       return llmEngine;
     }
-    if (await spatialEngine.isAvailable) {
-      log.append(
-        tag: 'meter.read',
-        level: AppLogLevel.info,
-        message:
-            'select spatial kind=${spatialEngine.kind.name}; '
-            'reason=llm_not_ready_or_no_vision; '
-            'readiness=${readiness.name}; vision=$vision',
-      );
-      return spatialEngine;
-    }
     log.append(
       tag: 'meter.read',
       level: AppLogLevel.warn,
-      message:
-          'no engine; readiness=${readiness.name}; vision=$vision; '
-          'spatial unavailable',
+      message: 'no engine; readiness=${readiness.name}; vision=$vision',
     );
     return null;
   }

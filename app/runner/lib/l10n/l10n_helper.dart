@@ -516,10 +516,6 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_clear_logs;
       },
-      'screen_feature_debug_force_spatial_ocr_item': (source) {
-        // No Placeholders
-        return l10n.screen_feature_debug_force_spatial_ocr_item;
-      },
       'screen_feature_debug_generate_error_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_generate_error_label;
@@ -571,10 +567,6 @@ final class L10nHelper {
       'screen_feature_debug_section_logs': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_section_logs;
-      },
-      'screen_feature_debug_section_overrides': (source) {
-        // No Placeholders
-        return l10n.screen_feature_debug_section_overrides;
       },
       'screen_feature_debug_section_probe': (source) {
         // No Placeholders

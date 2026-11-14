@@ -13,10 +13,9 @@ void main() {
     expect(entity.readiness, '-');
     expect(entity.canGenerate, isNull);
     expect(entity.logLines, isEmpty);
-    expect(entity.forceSpatialOcr, isFalse);
   });
 
-  test('結果とログと強制フラグを写す', () {
+  test('結果とログを写す', () {
     final entity = const DebugStateToEntityDelegate().execute(
       DebugScreenState(
         running: false,
@@ -38,14 +37,12 @@ void main() {
             message: 'm',
           ),
         ],
-        forceSpatialOcr: true,
       ),
     );
     expect(entity.readiness, 'ready');
     expect(entity.canGenerate, isTrue);
     expect(entity.sampleOutput, 'hi');
     expect(entity.logLines.single, contains('t: m'));
-    expect(entity.forceSpatialOcr, isTrue);
   });
 
   test('古い行が先（3件）', () {
@@ -73,7 +70,6 @@ void main() {
             message: 'third',
           ),
         ],
-        forceSpatialOcr: false,
       ),
     );
     expect(entity.logLines, hasLength(3));
@@ -95,7 +91,6 @@ void main() {
             message: longMessage,
           ),
         ],
-        forceSpatialOcr: false,
       ),
     );
     expect(entity.logLines.single, contains(longMessage));
@@ -115,7 +110,6 @@ void main() {
             message: multilineMessage,
           ),
         ],
-        forceSpatialOcr: false,
       ),
     );
     expect(entity.logLines.single, contains(multilineMessage));
