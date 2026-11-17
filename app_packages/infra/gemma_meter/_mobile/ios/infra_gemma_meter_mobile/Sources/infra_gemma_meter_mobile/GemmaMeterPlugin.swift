@@ -199,9 +199,11 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       atPath: cacheDir,
       withIntermediateDirectories: true
     )
+    // LiteRT-LM multimodal guidance: main on Metal GPU, vision on CPU.
+    // visionBackend: .gpu fails prepare on iOS (STABLEHLO_COMPOSITE / Metal).
     let config = try EngineConfig(
       modelPath: modelPath,
-      backend: .cpu(),
+      backend: .gpu,
       visionBackend: .cpu(),
       cacheDir: cacheDir
     )

@@ -27,3 +27,7 @@ pod target, availability stays `unavailable` until SPM is used.
 
 Model files are stored under Application Support/`gemma_meter` with
 `NSURLIsExcludedFromBackupKey`.
+
+Engine backends (physical device): main `backend: .gpu` (Metal),
+`visionBackend: .cpu()`. Do not set vision to GPU on iOS for Gemma 4;
+LiteRT-LM multimodal docs use CPU vision, and GPU vision prepare fails.
