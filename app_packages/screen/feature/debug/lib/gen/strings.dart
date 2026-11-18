@@ -31,6 +31,16 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_clear_logs =>
       LocalizeStringDelegate.get('screen_feature_debug_clear_logs');
 
+  /// Gemma main backend ラベル
+  String get screen_feature_debug_gemma_backend_label =>
+      LocalizeStringDelegate.get('screen_feature_debug_gemma_backend_label');
+
+  /// Gemma visionBackend ラベル
+  String get screen_feature_debug_gemma_vision_backend_label =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_gemma_vision_backend_label',
+      );
+
   /// 生成例外ラベル
   String get screen_feature_debug_generate_error_label =>
       LocalizeStringDelegate.get('screen_feature_debug_generate_error_label');

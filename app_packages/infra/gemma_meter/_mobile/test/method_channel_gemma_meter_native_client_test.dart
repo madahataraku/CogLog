@@ -15,6 +15,8 @@ void main() {
             'status': 'modelNotDownloaded',
             'reason': 'missingFile',
             'message': 'download needed',
+            'backend': 'gpu',
+            'visionBackend': 'cpu',
           };
         });
     addTearDown(() {
@@ -27,6 +29,8 @@ void main() {
     expect(availability.status, 'modelNotDownloaded');
     expect(availability.reason, 'missingFile');
     expect(availability.message, 'download needed');
+    expect(availability.backend, 'gpu');
+    expect(availability.visionBackend, 'cpu');
     expect(availability.isReady, isFalse);
   });
 

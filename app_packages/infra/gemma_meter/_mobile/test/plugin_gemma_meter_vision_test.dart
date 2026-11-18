@@ -64,6 +64,23 @@ final class _FakeClient implements GemmaMeterNativeClient {
 }
 
 void main() {
+  test('availabilitySnapshot は backend を写す', () async {
+    final plugin = PluginGemmaMeterVision(
+      client: _FakeClient(
+        availability: const GemmaMeterNativeAvailability(
+          status: 'ready',
+          reason: 'ready',
+          message: 'ok',
+          backend: 'gpu',
+          visionBackend: 'cpu',
+        ),
+      ),
+    );
+    final snapshot = await plugin.availabilitySnapshot;
+    expect(snapshot.backend, 'gpu');
+    expect(snapshot.visionBackend, 'cpu');
+  });
+
   test('readiness は ready / modelNotDownloaded / unavailable を写す', () async {
     final ready = PluginGemmaMeterVision(client: _FakeClient());
     expect(await ready.readiness, GemmaMeterReadiness.ready);

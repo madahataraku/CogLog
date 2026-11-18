@@ -40,6 +40,8 @@ void main() {
             status: 'available',
             reason: 'ready',
             message: 'gemma ok',
+            backend: 'gpu',
+            visionBackend: 'cpu',
           ),
           canGenerate: true,
           probeOutputLength: 2,
@@ -59,6 +61,8 @@ void main() {
     expect(entity.canGenerate, isTrue);
     expect(entity.sampleOutput, 'hi');
     expect(entity.gemmaReadiness, 'ready');
+    expect(entity.gemmaBackend, 'gpu');
+    expect(entity.gemmaVisionBackend, 'cpu');
     expect(entity.gemmaCanGenerate, isTrue);
     expect(entity.gemmaProbeOutputLength, '2');
     expect(entity.preferGemmaOverOsLlm, isTrue);

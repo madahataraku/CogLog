@@ -85,6 +85,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
   }
 
+  /// Configured LiteRT-LM backends (main Metal GPU, vision CPU).
+  private static let configuredBackend = "gpu"
+  private static let configuredVisionBackend = "cpu"
+
   private func availabilityMap() -> [String: String] {
     #if canImport(LiteRTLM)
     guard let model = try? modelFileURL(), FileManager.default.fileExists(atPath: model.path) else {
@@ -92,6 +96,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         "status": "modelNotDownloaded",
         "reason": "missingFile",
         "message": "Gemma meter model is not downloaded.",
+        "backend": Self.configuredBackend,
+        "visionBackend": Self.configuredVisionBackend,
       ]
     }
     do {
@@ -100,12 +106,16 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         "status": "ready",
         "reason": "ready",
         "message": "Gemma meter model is ready.",
+        "backend": Self.configuredBackend,
+        "visionBackend": Self.configuredVisionBackend,
       ]
     } catch {
       return [
         "status": "unavailable",
         "reason": "initializeFailed",
         "message": "Gemma meter model failed to initialize.",
+        "backend": Self.configuredBackend,
+        "visionBackend": Self.configuredVisionBackend,
       ]
     }
     #else
@@ -114,6 +124,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       "reason": "liteRtlmMissing",
       "message":
         "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.19.0.",
+      "backend": Self.configuredBackend,
+      "visionBackend": Self.configuredVisionBackend,
     ]
     #endif
   }

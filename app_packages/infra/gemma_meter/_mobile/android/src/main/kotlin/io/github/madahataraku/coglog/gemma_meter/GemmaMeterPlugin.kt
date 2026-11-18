@@ -101,6 +101,13 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     }
   }
 
+  /** Configured LiteRT-LM backends (main CPU, vision GPU). */
+  private fun configuredBackendFields(): Map<String, String> =
+    mapOf(
+      "backend" to "cpu",
+      "visionBackend" to "gpu",
+    )
+
   private fun availabilityMap(): Map<String, String> {
     val model = modelFile()
     if (model == null || !model.isFile || model.length() == 0L) {
@@ -108,7 +115,7 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
         "status" to "modelNotDownloaded",
         "reason" to "missingFile",
         "message" to "Gemma meter model is not downloaded.",
-      )
+      ) + configuredBackendFields()
     }
     return try {
       ensureEngine(model)
@@ -116,13 +123,13 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
         "status" to "ready",
         "reason" to "ready",
         "message" to "Gemma meter model is ready.",
-      )
+      ) + configuredBackendFields()
     } catch (_: Exception) {
       mapOf(
         "status" to "unavailable",
         "reason" to "initializeFailed",
         "message" to "Gemma meter model failed to initialize.",
-      )
+      ) + configuredBackendFields()
     }
   }
 

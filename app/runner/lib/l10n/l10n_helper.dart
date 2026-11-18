@@ -516,6 +516,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_clear_logs;
       },
+      'screen_feature_debug_gemma_backend_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_gemma_backend_label;
+      },
+      'screen_feature_debug_gemma_vision_backend_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_gemma_vision_backend_label;
+      },
       'screen_feature_debug_generate_error_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_generate_error_label;

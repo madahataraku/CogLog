@@ -36,6 +36,8 @@ final class FakeGemmaMeterVision implements GemmaMeterVision {
              status: readinessValue.name,
              reason: readinessValue.name,
              message: 'fake',
+             backend: 'cpu',
+             visionBackend: 'gpu',
            );
 
   /// [readiness] が返す値。

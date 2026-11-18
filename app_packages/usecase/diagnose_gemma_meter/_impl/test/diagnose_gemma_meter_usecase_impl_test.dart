@@ -16,9 +16,15 @@ void main() {
     expect(result.canGenerate, isTrue);
     expect(result.probeOutputLength, body.length);
     expect(result.snapshot.readiness, GemmaMeterReadiness.ready);
+    expect(result.snapshot.backend, 'cpu');
+    expect(result.snapshot.visionBackend, 'gpu');
     expect(result.prepareError, isNull);
     expect(result.availabilityError, isNull);
     expect(log.entries.map((e) => e.message).join('\n'), isNot(contains(body)));
+    expect(
+      log.entries.map((e) => e.message),
+      contains(contains('backend=cpu')),
+    );
     expect(log.entries, isNotEmpty);
   });
 
