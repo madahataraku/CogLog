@@ -115,7 +115,15 @@ final class DiagnoseGemmaMeterUsecaseImpl implements DiagnoseGemmaMeterUsecase {
       // fake async で後続 Future が完了しなくなる。onCancel は呼び出し時に走る。
       final subscription = prepareSubscription;
       if (subscription != null) {
-        unawaited(subscription.cancel());
+        unawaited(
+          subscription.cancel().catchError((Object error) {
+            log.append(
+              tag: 'gemma.diagnose',
+              level: AppLogLevel.error,
+              message: 'prepare cancel failed: ${formatExceptionDetail(error)}',
+            );
+          }),
+        );
       }
     }
 
