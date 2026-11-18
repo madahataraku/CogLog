@@ -1,6 +1,6 @@
 # infra_gemma_meter_mobile
 
-Flutter plugin for meter-reading Gemma E2B via LiteRT-LM.
+Flutter plugin for meter-reading Gemma E2B.
 
 ## Android
 
@@ -12,22 +12,27 @@ Default model URL (ungated Hugging Face `litert-community` Gemma 4 E2B):
 
 `https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm`
 
-## iOS / LiteRTLM (SPM)
+Engine backends (physical device): main `backend: cpu`, `visionBackend: gpu`
+(as reported by the Android plugin).
+
+## iOS / CoreMLLLM (SPM)
 
 `ios/infra_gemma_meter_mobile/Package.swift` declares:
 
 - FlutterFramework (Flutter-generated path for plugin packages)
-- LiteRTLM from `https://github.com/google-ai-edge/LiteRT-LM` (`from: "0.19.0"`)
+- CoreMLLLM from `https://github.com/john-rocky/CoreML-LLM` (`branch: "main"`)
 
-With Flutter Swift Package Manager enabled (default on Flutter 3.44+), the plugin
-target links LiteRTLM and `canImport(LiteRTLM)` is true.
+Requires iOS 18+. With Flutter Swift Package Manager enabled (default on
+Flutter 3.44+), the plugin target links CoreMLLLM and `canImport(CoreMLLLM)`
+is true.
 
-CocoaPods still compiles the same Sources as a fallback. Without LiteRTLM on the
-pod target, availability stays `unavailable` until SPM is used.
+CocoaPods still compiles the same Sources as a fallback. Without CoreMLLLM on
+the pod target, availability stays `unavailable` until SPM is used.
 
-Model files are stored under Application Support/`gemma_meter` with
-`NSURLIsExcludedFromBackupKey`.
+Models are **not** bundled. `ModelDownloader` fetches Hugging Face
+`mlboydaisuke/gemma-4-E2B-coreml` (default revision `n1024`, multimodal
+encoders included) into `Documents/Models/gemma4-e2b/`. The `Models` tree is
+marked excluded from OS backup after prepare.
 
-Engine backends (physical device): main `backend: .gpu` (Metal),
-`visionBackend: .cpu()`. Do not set vision to GPU on iOS for Gemma 4;
-LiteRT-LM multimodal docs use CPU vision, and GPU vision prepare fails.
+Debug availability reports `backend=ane` and `visionBackend=ane`
+(`MLComputeUnits.cpuAndNeuralEngine`).
