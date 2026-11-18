@@ -25,6 +25,10 @@ let package = Package(
       ],
       resources: [
         .process("PrivacyInfo.xcprivacy"),
+      ],
+      // Keep plugin sources on Swift 5 language mode under tools 6.0.
+      swiftSettings: [
+        .swiftLanguageMode(.v5),
       ]
     ),
   ]

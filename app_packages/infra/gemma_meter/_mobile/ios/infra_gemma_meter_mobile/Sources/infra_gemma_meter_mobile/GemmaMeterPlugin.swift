@@ -129,36 +129,35 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     preparing = true
     emitProgress(0)
     do {
-      try ensureFreeSpace()
       try awaitSync {
         try await self.downloadIfNeeded()
       }
       try excludeDownloadedModelFromBackup()
       emitProgress(1)
       preparing = false
-      DispatchQueue.main.async { result(nil) }
+      DispatchQueue.main.async {
+        self.prepareEvents?(FlutterEndOfEventStream)
+        result(nil)
+      }
     } catch {
       preparing = false
+      let code = Self.mapPrepareCode(error)
+      let message = Self.safeMessage(error)
       DispatchQueue.main.async {
-        result(
-          FlutterError(
-            code: Self.mapPrepareCode(error),
-            message: Self.safeMessage(error),
-            details: nil
-          )
+        self.prepareEvents?(
+          FlutterError(code: code, message: message, details: nil)
         )
+        result(FlutterError(code: code, message: message, details: nil))
       }
     }
     #else
+    let message =
+      "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM."
     DispatchQueue.main.async {
-      result(
-        FlutterError(
-          code: "generic",
-          message:
-            "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM.",
-          details: nil
-        )
+      self.prepareEvents?(
+        FlutterError(code: "generic", message: message, details: nil)
       )
+      result(FlutterError(code: "generic", message: message, details: nil))
     }
     #endif
   }
@@ -216,10 +215,14 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     UserDefaults.standard.set(true, forKey: ModelDownloader.includeMultimodalKey)
     let downloader = ModelDownloader.shared
     let model = ModelDownloader.ModelInfo.gemma4e2b
-    if downloader.isDownloaded(model) {
+    if hasCompleteModelBundle() {
       emitProgress(1)
       return
     }
+    // Partial/corrupt installs must not stay "ready".
+    try removeIncompleteModelDirectory()
+    try ensureModelsDirectoryExcludedFromBackup()
+    try ensureFreeSpace()
     let progressTask = Task { [weak self] in
       while !Task.isCancelled {
         let value = await MainActor.run { ModelDownloader.shared.progress }
@@ -228,36 +231,88 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       }
     }
     defer { progressTask.cancel() }
-    _ = try await downloader.download(model)
+    do {
+      _ = try await downloader.download(model)
+    } catch {
+      try? removeIncompleteModelDirectory()
+      throw error
+    }
+    guard hasCompleteModelBundle() else {
+      try? removeIncompleteModelDirectory()
+      throw PrepareError.generic("Gemma Core ML download finished without required files.")
+    }
   }
 
   private func isModelDownloaded() -> Bool {
-    ModelDownloader.shared.isDownloaded(ModelDownloader.ModelInfo.gemma4e2b)
+    hasCompleteModelBundle()
+  }
+
+  /// Required files for multimodal Gemma 4 E2B Core ML (n1024 / 4-chunk layout).
+  private static let requiredRelativePaths: [String] = [
+    "model_config.json",
+    "embed_tokens_q8.bin",
+    "embed_tokens_scales.bin",
+    "embed_tokens_per_layer_q8.bin",
+    "embed_tokens_per_layer_scales.bin",
+    "hf_model/tokenizer.json",
+    "chunk1.mlmodelc/weights/weight.bin",
+    "chunk2.mlmodelc/weights/weight.bin",
+    "chunk3.mlmodelc/weights/weight.bin",
+    "chunk4.mlmodelc/weights/weight.bin",
+    "vision.mlmodelc/weights/weight.bin",
+  ]
+
+  private func hasCompleteModelBundle() -> Bool {
+    guard let directory = modelDirectoryURL() else { return false }
+    let fm = FileManager.default
+    for relative in Self.requiredRelativePaths {
+      let url = directory.appendingPathComponent(relative)
+      guard fm.fileExists(atPath: url.path) else { return false }
+      if let attrs = try? fm.attributesOfItem(atPath: url.path),
+        let size = attrs[.size] as? NSNumber,
+        size.int64Value <= 0
+      {
+        return false
+      }
+    }
+    return true
+  }
+
+  private func modelsRootURL() -> URL? {
+    FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+      .appendingPathComponent("Models", isDirectory: true)
   }
 
   private func modelDirectoryURL() -> URL? {
-    let models = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
-      .appendingPathComponent("Models", isDirectory: true)
-    return models?.appendingPathComponent(
+    modelsRootURL()?.appendingPathComponent(
       ModelDownloader.ModelInfo.gemma4e2b.folderName,
       isDirectory: true
     )
   }
 
-  private func excludeDownloadedModelFromBackup() throws {
+  private func removeIncompleteModelDirectory() throws {
     let fm = FileManager.default
-    guard
-      let modelsRoot = fm.urls(for: .documentDirectory, in: .userDomainMask).first?
-      .appendingPathComponent("Models", isDirectory: true)
-    else {
+    guard let modelDir = modelDirectoryURL(), fm.fileExists(atPath: modelDir.path) else {
       return
     }
-    if fm.fileExists(atPath: modelsRoot.path) {
-      try excludeFromBackup(modelsRoot)
+    try fm.removeItem(at: modelDir)
+  }
+
+  private func ensureModelsDirectoryExcludedFromBackup() throws {
+    let fm = FileManager.default
+    guard let modelsRoot = modelsRootURL() else {
+      throw PrepareError.generic("Documents directory is unavailable.")
     }
-    if let modelDir = modelDirectoryURL(), fm.fileExists(atPath: modelDir.path) {
+    try fm.createDirectory(at: modelsRoot, withIntermediateDirectories: true)
+    try excludeFromBackup(modelsRoot)
+    if let modelDir = modelDirectoryURL() {
+      try fm.createDirectory(at: modelDir, withIntermediateDirectories: true)
       try excludeFromBackup(modelDir)
     }
+  }
+
+  private func excludeDownloadedModelFromBackup() throws {
+    try ensureModelsDirectoryExcludedFromBackup()
   }
 
   private func ensureFreeSpace() throws {
