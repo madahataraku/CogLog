@@ -154,6 +154,14 @@ class DebugScreenBody extends HookConsumerWidget {
               entity.gemmaMessage,
             ),
             _line(
+              strings.screen_feature_debug_gemma_backend_label,
+              entity.gemmaBackend,
+            ),
+            _line(
+              strings.screen_feature_debug_gemma_vision_backend_label,
+              entity.gemmaVisionBackend,
+            ),
+            _line(
               strings.screen_feature_debug_availability_error_label,
               entity.gemmaAvailabilityError,
             ),

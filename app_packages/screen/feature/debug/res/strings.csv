@@ -15,6 +15,8 @@ status_label,status,status,status ラベル
 reason_label,reason,reason,reason ラベル
 message_label,message,message,message ラベル
 backend_label,backend,backend,backend ラベル
+gemma_backend_label,backend,backend,Gemma main backend ラベル
+gemma_vision_backend_label,visionBackend,visionBackend,Gemma visionBackend ラベル
 platform_notes_label,platform notes,platform notes,platform notes ラベル
 availability_error_label,availability error,availability error,availability 例外ラベル
 can_generate_label,can generate,can generate,生成可否ラベル

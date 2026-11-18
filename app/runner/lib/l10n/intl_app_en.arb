@@ -473,6 +473,14 @@
   "@screen_feature_debug_clear_logs": {
     "description": "ログ消去ボタン"
   },
+  "screen_feature_debug_gemma_backend_label": "backend",
+  "@screen_feature_debug_gemma_backend_label": {
+    "description": "Gemma main backend ラベル"
+  },
+  "screen_feature_debug_gemma_vision_backend_label": "visionBackend",
+  "@screen_feature_debug_gemma_vision_backend_label": {
+    "description": "Gemma visionBackend ラベル"
+  },
   "screen_feature_debug_generate_error_label": "generate error",
   "@screen_feature_debug_generate_error_label": {
     "description": "生成例外ラベル"

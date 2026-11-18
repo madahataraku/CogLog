@@ -9,6 +9,8 @@ import 'gemma_meter_readiness.dart';
 ///   status: 'available',
 ///   reason: 'ready',
 ///   message: 'ok',
+///   backend: 'gpu',
+///   visionBackend: 'cpu',
 /// );
 /// ```
 final class GemmaMeterAvailabilitySnapshot {
@@ -28,6 +30,8 @@ final class GemmaMeterAvailabilitySnapshot {
     required this.status,
     required this.reason,
     required this.message,
+    this.backend = '',
+    this.visionBackend = '',
   });
 
   /// アプリが使う準備状態。
@@ -41,4 +45,10 @@ final class GemmaMeterAvailabilitySnapshot {
 
   /// 人間が読める説明。
   final String message;
+
+  /// LiteRT-LM の main executor backend（例: `gpu` / `cpu`）。未設定は空。
+  final String backend;
+
+  /// LiteRT-LM の vision executor backend（例: `gpu` / `cpu`）。未設定は空。
+  final String visionBackend;
 }

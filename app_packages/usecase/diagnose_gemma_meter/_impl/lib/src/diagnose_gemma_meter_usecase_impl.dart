@@ -71,7 +71,9 @@ final class DiagnoseGemmaMeterUsecaseImpl implements DiagnoseGemmaMeterUsecase {
       message:
           'readiness=${snapshot.readiness.name}; '
           'status=${snapshot.status}; reason=${snapshot.reason}; '
-          'message=${snapshot.message}'
+          'message=${snapshot.message}; '
+          'backend=${snapshot.backend}; '
+          'visionBackend=${snapshot.visionBackend}'
           '${availabilityError == null ? '' : '; error=$availabilityError'}',
     );
 
@@ -109,7 +111,12 @@ final class DiagnoseGemmaMeterUsecaseImpl implements DiagnoseGemmaMeterUsecase {
         message: 'prepare probe failed: $prepareError',
       );
     } finally {
-      await prepareSubscription?.cancel();
+      // 完了済み購読の cancel Future を await すると、Flutter Widget テストの
+      // fake async で後続 Future が完了しなくなる。onCancel は呼び出し時に走る。
+      final subscription = prepareSubscription;
+      if (subscription != null) {
+        unawaited(subscription.cancel());
+      }
     }
 
     if (!probeGenerate) {

@@ -66,6 +66,8 @@ final class DebugStateToEntityDelegate {
       gemmaStatus: dash(gemmaSnapshot?.status),
       gemmaReason: dash(gemmaSnapshot?.reason),
       gemmaMessage: dash(gemmaSnapshot?.message),
+      gemmaBackend: dash(gemmaSnapshot?.backend),
+      gemmaVisionBackend: dash(gemmaSnapshot?.visionBackend),
       gemmaAvailabilityError: dash(gemma?.availabilityError),
       gemmaCanGenerate: gemma?.canGenerate,
       gemmaProbeOutputLength: gemma?.probeOutputLength?.toString() ?? '-',

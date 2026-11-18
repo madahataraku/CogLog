@@ -22,6 +22,8 @@
 ///   gemmaStatus: '-',
 ///   gemmaReason: '-',
 ///   gemmaMessage: '-',
+///   gemmaBackend: '-',
+///   gemmaVisionBackend: '-',
 ///   gemmaAvailabilityError: '-',
 ///   gemmaCanGenerate: null,
 ///   gemmaProbeOutputLength: '-',
@@ -55,6 +57,8 @@ final class DebugScreenEntity {
   ///   gemmaStatus: 'available',
   ///   gemmaReason: 'ready',
   ///   gemmaMessage: 'ok',
+  ///   gemmaBackend: 'gpu',
+  ///   gemmaVisionBackend: 'cpu',
   ///   gemmaAvailabilityError: '-',
   ///   gemmaCanGenerate: true,
   ///   gemmaProbeOutputLength: '2',
@@ -83,6 +87,8 @@ final class DebugScreenEntity {
     required this.gemmaStatus,
     required this.gemmaReason,
     required this.gemmaMessage,
+    required this.gemmaBackend,
+    required this.gemmaVisionBackend,
     required this.gemmaAvailabilityError,
     required this.gemmaCanGenerate,
     required this.gemmaProbeOutputLength,
@@ -143,6 +149,12 @@ final class DebugScreenEntity {
 
   /// Gemma の message。空・未取得は `'-'`。
   final String gemmaMessage;
+
+  /// Gemma の LiteRT-LM main backend（例: `gpu` / `cpu`）。空・未取得は `'-'`。
+  final String gemmaBackend;
+
+  /// Gemma の LiteRT-LM visionBackend（例: `gpu` / `cpu`）。空・未取得は `'-'`。
+  final String gemmaVisionBackend;
 
   /// Gemma 利用可否例外。無ければ `'-'`。
   final String gemmaAvailabilityError;

@@ -70,6 +70,8 @@ final class PluginGemmaMeterVision implements GemmaMeterVision {
         status: availability.status,
         reason: availability.reason,
         message: availability.message,
+        backend: availability.backend,
+        visionBackend: availability.visionBackend,
       );
     } on Object catch (error) {
       return GemmaMeterAvailabilitySnapshot(

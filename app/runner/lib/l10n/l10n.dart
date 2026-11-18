@@ -799,6 +799,18 @@ abstract class L10n {
   /// **'ログを消去'**
   String get screen_feature_debug_clear_logs;
 
+  /// Gemma main backend ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'backend'**
+  String get screen_feature_debug_gemma_backend_label;
+
+  /// Gemma visionBackend ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'visionBackend'**
+  String get screen_feature_debug_gemma_vision_backend_label;
+
   /// 生成例外ラベル
   ///
   /// In ja, this message translates to:

@@ -392,6 +392,12 @@ class L10nJa extends L10n {
   String get screen_feature_debug_clear_logs => 'ログを消去';
 
   @override
+  String get screen_feature_debug_gemma_backend_label => 'backend';
+
+  @override
+  String get screen_feature_debug_gemma_vision_backend_label => 'visionBackend';
+
+  @override
   String get screen_feature_debug_generate_error_label => 'generate error';
 
   @override
