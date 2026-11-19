@@ -1480,13 +1480,13 @@ abstract class L10n {
   /// 説明
   ///
   /// In ja, this message translates to:
-  /// **'1週間のうち何日目標を達成したいか（1〜7。空で未設定）。連続達成や自動更新の休み日の上限にも使います'**
+  /// **'1週間のうち、運動を行う目標日数を設定してください。ホーム画面で今週の残り日数を表示するとともに、連続達成記録や目標の自動更新の判定にも用います。'**
   String get screen_feature_goal_settings_weekly_days_description;
 
-  /// 週間目標達成日数の欄
+  /// 週間の目標運動日数の欄
   ///
   /// In ja, this message translates to:
-  /// **'週間の目標達成日数'**
+  /// **'週間の目標運動日数'**
   String get screen_feature_goal_settings_weekly_days_label;
 
   /// 単位
@@ -1494,6 +1494,12 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'日'**
   String get screen_feature_goal_settings_weekly_days_unit;
+
+  /// 週間の目標運動日数の未設定
+  ///
+  /// In ja, this message translates to:
+  /// **'設定しない'**
+  String get screen_feature_goal_settings_weekly_days_unset;
 
   /// ボトムナビ
   ///
@@ -2019,7 +2025,7 @@ abstract class L10n {
   /// 誘導
   ///
   /// In ja, this message translates to:
-  /// **'目標設定で週間の目標達成日数と一日あたりの目標を設定しましょう'**
+  /// **'目標設定で週間の目標運動日数と一日あたりの目標を設定しましょう'**
   String get screen_feature_top_weekly_achievement_guidance;
 
   /// 達成日数比

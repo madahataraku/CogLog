@@ -10,7 +10,7 @@ import '../viewmodel/delegate/on_save_delegate.dart';
 import '../viewmodel/goal_settings_screen_view_model.dart';
 import 'goal_settings_screen_providers.dart';
 
-/// 運動時間・カロリー・距離・自動更新の入力と保存。
+/// 運動時間・カロリー・距離・週間の目標運動日数・自動更新の入力と保存。
 ///
 /// Example:
 /// ```dart
@@ -40,7 +40,7 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
     final secondsController = useTextEditingController();
     final caloriesController = useTextEditingController();
     final distanceController = useTextEditingController();
-    final weeklyDaysController = useTextEditingController();
+    final weeklyAchievementDays = useState(entity.weeklyAchievementDays);
     final autoUpdateEnabled = useState(entity.autoUpdateEnabled);
     final autoUpdateLevel = useState(entity.autoUpdateLevel);
     final saving = useState(false);
@@ -55,7 +55,7 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
         secondsController.text = entity.seconds;
         caloriesController.text = entity.calories;
         distanceController.text = entity.distance;
-        weeklyDaysController.text = entity.weeklyAchievementDays;
+        weeklyAchievementDays.value = entity.weeklyAchievementDays;
         autoUpdateEnabled.value = entity.autoUpdateEnabled;
         autoUpdateLevel.value = entity.autoUpdateLevel;
         return null;
@@ -138,16 +138,29 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
               ),
               enabled: entity.loaded && !saving.value,
             ),
-            FTextField(
-              control: .managed(controller: weeklyDaysController),
+            FSelect<String>(
+              enabled: entity.loaded && !saving.value,
               label: Text(
                 strings.screen_feature_goal_settings_weekly_days_label,
               ),
               description: Text(
                 strings.screen_feature_goal_settings_weekly_days_description,
               ),
-              keyboardType: TextInputType.number,
-              enabled: entity.loaded && !saving.value,
+              control: .lifted(
+                value: weeklyAchievementDays.value,
+                onChange: (days) {
+                  if (days == null ||
+                      days == weeklyAchievementDays.value ||
+                      saving.value) {
+                    return;
+                  }
+                  weeklyAchievementDays.value = days;
+                },
+              ),
+              items: {
+                strings.screen_feature_goal_settings_weekly_days_unset: '',
+                for (var day = 1; day <= 7; day++) '$day': '$day',
+              },
             ),
             FSwitch(
               label: Text(
@@ -203,7 +216,8 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
                               seconds: secondsController.text,
                               calories: caloriesController.text,
                               distance: distanceController.text,
-                              weeklyAchievementDays: weeklyDaysController.text,
+                              weeklyAchievementDays:
+                                  weeklyAchievementDays.value,
                               autoUpdateEnabled: autoUpdateEnabled.value,
                               autoUpdateLevel: autoUpdateLevel.value,
                             );

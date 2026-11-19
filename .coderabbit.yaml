@@ -27,8 +27,8 @@ reviews:
   auto_approvals:
     enabled: true
   auto_review:
-    # main はデフォルトブランチのため常に対象。base_branches はそれ以外を追加する。
-    enabled: true
+    # 自動レビューは無効。必要なら @coderabbitai review で手動起動する。
+    enabled: false
     auto_incremental_review: true
     # レビュー済みコミットがこの数に達すると自動レビューを止める。0 で無効。頻繁な push では 1 か 2 に下げる。
     auto_pause_after_reviewed_commits: 5
