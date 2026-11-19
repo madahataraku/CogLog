@@ -60,11 +60,22 @@ abstract interface class HealthWorkoutWriter {
 
   /// [externalId] のサイクリングを削除する。成功時 true、失敗は false。
   ///
+  /// [start] / [end] は Android で距離・カロリーの付随レコードを同じ時間窓で消すために渡す。
+  /// iOS はワークアウト UUID だけで足りるが、呼び出しは常に時間窓を渡す。
+  ///
   /// Example:
   /// ```dart
-  /// await writer.deleteCycling(externalId: 'health-1');
+  /// await writer.deleteCycling(
+  ///   externalId: 'health-1',
+  ///   start: DateTime.timestamp(),
+  ///   end: DateTime.timestamp(),
+  /// );
   /// ```
-  Future<bool> deleteCycling({required String externalId});
+  Future<bool> deleteCycling({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  });
 }
 
 /// ヘルス書き込みの注入点。未接続のときは失敗する。

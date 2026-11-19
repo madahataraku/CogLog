@@ -26,6 +26,13 @@ void main() {
       ),
       isNull,
     );
-    expect(await writer.deleteCycling(externalId: 'x'), isFalse);
+    expect(
+      await writer.deleteCycling(
+        externalId: 'x',
+        start: DateTime.utc(2026, 11, 8),
+        end: DateTime.utc(2026, 11, 8, 1),
+      ),
+      isFalse,
+    );
   });
 }

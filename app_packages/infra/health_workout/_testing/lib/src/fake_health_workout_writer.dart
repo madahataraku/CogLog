@@ -117,18 +117,26 @@ final class FakeHealthWorkoutWriter implements HealthWorkoutWriter {
     return nextUpdateExternalId ?? externalId;
   }
 
-  /// [succeed] を返し、[externalId] を記録する。
+  /// [succeed] を返し、[externalId] と時間窓を記録する。
   ///
   /// Example:
   /// ```dart
   /// await FakeHealthWorkoutWriter().deleteCycling(
   ///   externalId: 'fake-health-1',
+  ///   start: DateTime.timestamp(),
+  ///   end: DateTime.timestamp(),
   /// );
   /// ```
   @override
-  Future<bool> deleteCycling({required String externalId}) async {
+  Future<bool> deleteCycling({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
     deleteCallCount += 1;
     lastExternalId = externalId;
+    lastStart = start;
+    lastEnd = end;
     return succeed;
   }
 }

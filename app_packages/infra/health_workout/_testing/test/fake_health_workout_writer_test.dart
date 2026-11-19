@@ -74,7 +74,16 @@ void main() {
 
   test('deleteCycling は externalId を記録し succeed を返す', () async {
     final writer = FakeHealthWorkoutWriter();
-    expect(await writer.deleteCycling(externalId: 'fake-health-9'), isTrue);
+    final start = DateTime.utc(2026, 1, 1);
+    final end = start.add(const Duration(minutes: 30));
+    expect(
+      await writer.deleteCycling(
+        externalId: 'fake-health-9',
+        start: start,
+        end: end,
+      ),
+      isTrue,
+    );
     expect(writer.deleteCallCount, 1);
     expect(writer.lastExternalId, 'fake-health-9');
   });
@@ -92,6 +101,13 @@ void main() {
       ),
       isNull,
     );
-    expect(await writer.deleteCycling(externalId: 'x'), isFalse);
+    expect(
+      await writer.deleteCycling(
+        externalId: 'x',
+        start: DateTime.utc(2026, 11, 8),
+        end: DateTime.utc(2026, 11, 8, 1),
+      ),
+      isFalse,
+    );
   });
 }

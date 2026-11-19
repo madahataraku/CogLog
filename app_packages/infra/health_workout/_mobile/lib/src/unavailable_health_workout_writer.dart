@@ -67,8 +67,14 @@ final class UnavailableHealthWorkoutWriter implements HealthWorkoutWriter {
   /// ```dart
   /// await const UnavailableHealthWorkoutWriter().deleteCycling(
   ///   externalId: 'health-1',
+  ///   start: DateTime.timestamp(),
+  ///   end: DateTime.timestamp(),
   /// );
   /// ```
   @override
-  Future<bool> deleteCycling({required String externalId}) async => false;
+  Future<bool> deleteCycling({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  }) async => false;
 }

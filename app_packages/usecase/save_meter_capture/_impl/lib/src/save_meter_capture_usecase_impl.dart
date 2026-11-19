@@ -213,7 +213,13 @@ final class SaveMeterCaptureUsecaseImpl implements SaveMeterCaptureUsecase {
       }
     }
     try {
-      await health.deleteCycling(externalId: externalId);
+      final start = history.recordedAt;
+      final end = history.recordedAt.add(history.duration);
+      await health.deleteCycling(
+        externalId: externalId,
+        start: start,
+        end: end,
+      );
     } on Object {
       // 孤児削除の失敗でもローカル保存 success を維持する。
     }

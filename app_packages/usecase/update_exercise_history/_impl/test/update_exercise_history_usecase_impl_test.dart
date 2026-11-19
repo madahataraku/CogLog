@@ -106,7 +106,11 @@ final class _ThrowingHealth implements HealthWorkoutWriter {
   }
 
   @override
-  Future<bool> deleteCycling({required String externalId}) async => false;
+  Future<bool> deleteCycling({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  }) async => false;
 }
 
 void main() {
@@ -278,6 +282,9 @@ void main() {
     expect(result.history!.healthWorkoutId, 'health-new');
     expect(health.deleteCallCount, 1);
     expect(health.lastExternalId, 'health-1');
+    // 旧時間窓（existing）で消す。更新後の request 時間ではない。
+    expect(health.lastStart, existing.recordedAt);
+    expect(health.lastEnd, existing.recordedAt.add(existing.duration));
   });
 
   test('health update 例外でも success', () async {

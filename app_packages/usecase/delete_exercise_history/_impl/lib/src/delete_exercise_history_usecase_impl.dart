@@ -76,11 +76,19 @@ final class DeleteExerciseHistoryUsecaseImpl
     DeleteExerciseHistoryRequest request,
   ) async {
     try {
+      // 削除前に時間窓を取り、Android 付随レコード削除に使う。
+      final existing = await histories.findById(request.id);
       await histories.delete(request.id);
 
-      final healthId = request.healthWorkoutId;
-      if (healthId != null) {
-        await _deleteHealth(healthId);
+      if (existing != null) {
+        final healthId = existing.healthWorkoutId ?? request.healthWorkoutId;
+        if (healthId != null) {
+          await _deleteHealth(
+            externalId: healthId,
+            start: existing.recordedAt,
+            end: existing.recordedAt.add(existing.duration),
+          );
+        }
       }
 
       final now = DateTime.now();
@@ -126,11 +134,23 @@ final class DeleteExerciseHistoryUsecaseImpl
   ///
   /// Example:
   /// ```dart
-  /// await _deleteHealth('health-1');
+  /// await _deleteHealth(
+  ///   externalId: 'health-1',
+  ///   start: DateTime.timestamp(),
+  ///   end: DateTime.timestamp(),
+  /// );
   /// ```
-  Future<void> _deleteHealth(String externalId) async {
+  Future<void> _deleteHealth({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
     try {
-      await health.deleteCycling(externalId: externalId);
+      await health.deleteCycling(
+        externalId: externalId,
+        start: start,
+        end: end,
+      );
     } on Object {
       // ヘルス失敗でも CogLog 側の削除 success を維持する。
     }

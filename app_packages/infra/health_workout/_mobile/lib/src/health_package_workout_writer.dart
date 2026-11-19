@@ -200,24 +200,58 @@ final class HealthPackageWorkoutWriter implements HealthWorkoutWriter {
 
   /// [externalId] のサイクリングを消す。成功時 true。
   ///
+  /// Android では距離・カロリーが別レコードのため、[start]〜[end] の時間窓でも消す。
+  ///
   /// Example:
   /// ```dart
-  /// await HealthPackageWorkoutWriter().deleteCycling(externalId: 'health-1');
+  /// await HealthPackageWorkoutWriter().deleteCycling(
+  ///   externalId: 'health-1',
+  ///   start: DateTime.timestamp(),
+  ///   end: DateTime.timestamp(),
+  /// );
   /// ```
   @override
-  Future<bool> deleteCycling({required String externalId}) async {
+  Future<bool> deleteCycling({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
     try {
       await _ensureConfigured();
       if (!await _ensureHealthConnectOnAndroid()) {
         return false;
       }
-      return await _health.deleteByUUID(
+      final workoutDeleted = await _health.deleteByUUID(
         uuid: externalId,
         type: HealthDataType.WORKOUT,
       );
+      if (Platform.isAndroid) {
+        await _deleteAndroidCompanionRecords(start: start, end: end);
+      }
+      return workoutDeleted;
     } on Object {
       // 削除失敗を例外にせず false を返し、ローカル削除 success を維持する。
       return false;
+    }
+  }
+
+  /// Android の付随距離・カロリーを時間窓で消す（自アプリ分のみ）。
+  Future<void> _deleteAndroidCompanionRecords({
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    for (final type in const [
+      HealthDataType.DISTANCE_DELTA,
+      HealthDataType.TOTAL_CALORIES_BURNED,
+    ]) {
+      if (!_health.isDataTypeAvailable(type)) {
+        continue;
+      }
+      try {
+        await _health.delete(type: type, startTime: start, endTime: end);
+      } on Object {
+        // 付随削除の失敗でワークアウト削除結果を覆さない。
+      }
     }
   }
 }

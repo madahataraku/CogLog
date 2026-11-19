@@ -133,7 +133,14 @@ final class UpdateExerciseHistoryUsecaseImpl
           history = await _attachHealthWorkoutId(history, newId);
           if (history.healthWorkoutId == newId) {
             try {
-              await health.deleteCycling(externalId: healthId);
+              // 旧時間窓で付随距離・カロリーも消す（Android HC）。
+              final oldStart = existing.recordedAt;
+              final oldEnd = existing.recordedAt.add(existing.duration);
+              await health.deleteCycling(
+                externalId: healthId,
+                start: oldStart,
+                end: oldEnd,
+              );
             } on Object {
               // 旧レコード削除失敗でもローカル更新 success を維持する（一時的な重複を許す）。
             }
@@ -258,7 +265,13 @@ final class UpdateExerciseHistoryUsecaseImpl
       }
     }
     try {
-      await health.deleteCycling(externalId: externalId);
+      final start = history.recordedAt;
+      final end = history.recordedAt.add(history.duration);
+      await health.deleteCycling(
+        externalId: externalId,
+        start: start,
+        end: end,
+      );
     } on Object {
       // 孤児削除の失敗でもローカル更新 success を維持する。
     }
