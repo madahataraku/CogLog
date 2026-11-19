@@ -18,9 +18,9 @@ import 'meter_reading_progress_dialog.dart';
 final class MeterReadingProgressLauncher {
   const MeterReadingProgressLauncher._();
 
-  /// [barrierDismissible] は false。pop はこの Launcher 内だけが行う。
+  /// [barrierDismissible] は false。[useRootNavigator] は true（ボトムナビも遮る）。
   ///
-  /// [untilDismiss] が完了するか [onCancel] が成功すると Route を閉じる。
+  /// [untilDismiss] が完了するか [onCancel] が成功すると、自身の Route だけを外す。
   ///
   /// Example:
   /// ```dart
@@ -37,6 +37,7 @@ final class MeterReadingProgressLauncher {
   }) {
     return showFDialog<void>(
       context: context,
+      useRootNavigator: true,
       barrierDismissible: false,
       builder: (context, style, animation) {
         return _MeterReadingProgressRoute(
@@ -113,7 +114,12 @@ final class _MeterReadingProgressRouteState
       return;
     }
     _finishing = true;
-    Navigator.of(context).pop();
+    // 最上位が誘導など別 Route でも、自身の DialogRoute だけを外す。
+    final route = ModalRoute.of(context);
+    if (route == null) {
+      return;
+    }
+    Navigator.of(context).removeRoute(route);
   }
 
   /// 中止コールバックのあと Route を閉じる。

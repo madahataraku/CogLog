@@ -43,6 +43,11 @@ class MeterCaptureScreen extends HookConsumerWidget {
     final reading = ref.watch(
       MeterCaptureScreenProviders.state.select((state) => state.reading),
     );
+    final cameraSessionGeneration = ref.watch(
+      MeterCaptureScreenProviders.state.select(
+        (state) => state.cameraSessionGeneration,
+      ),
+    );
     final selected = (ShellTabIndexScope.maybeOf(context) ?? -1) == 1;
     final lifecycle = useAppLifecycleState();
 
@@ -58,12 +63,13 @@ class MeterCaptureScreen extends HookConsumerWidget {
         return null;
       }
       if (step == MeterCaptureStep.photo) {
+        // 読み取り中止で step が photo のまま世代だけ進む場合も再開する。
         unawaited(viewModel.onEnterCamera());
       } else {
         unawaited(viewModel.onAppPaused());
       }
       return null;
-    }, [viewModel, selected, lifecycle, step]);
+    }, [viewModel, selected, lifecycle, step, cameraSessionGeneration]);
 
     useEffect(() {
       if (!reading) {

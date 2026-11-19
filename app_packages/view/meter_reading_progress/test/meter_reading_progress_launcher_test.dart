@@ -195,4 +195,43 @@ void main() {
     expect(find.text('読み取り中…'), findsNothing);
     expect(cancelCount, 0);
   });
+
+  testWidgets('中止後の遅延完了でも背面画面を残す', (tester) async {
+    final dismiss = Completer<void>();
+    var cancelCount = 0;
+
+    await tester.pumpWidget(
+      _wrap(
+        Builder(
+          builder: (context) {
+            return FButton(
+              onPress: () {
+                unawaited(
+                  MeterReadingProgressLauncher.show(
+                    context,
+                    onCancel: () async {
+                      cancelCount++;
+                    },
+                    untilDismiss: dismiss.future,
+                  ),
+                );
+              },
+              child: const Text('open'),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await _pumpFrames(tester);
+    await tester.tap(find.text('読み取りを中止'));
+    await _pumpDismissed(tester);
+    expect(find.text('読み取り中…'), findsNothing);
+    expect(cancelCount, 1);
+
+    dismiss.complete();
+    await _pumpDismissed(tester);
+    expect(cancelCount, 1);
+    expect(find.text('open'), findsOneWidget);
+  });
 }

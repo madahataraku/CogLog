@@ -83,10 +83,10 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 ## 読み取り中モーダル
 
 - Forui の `showFDialog` を使う。
-- `barrierDismissible` は `false`（外側タップでは閉じない）。ダイアログ障壁によりボトムナビ操作も受け付けない。
+- `barrierDismissible` は `false`（外側タップでは閉じない）。`useRootNavigator: true` でルート Navigator に載せ、ダイアログ障壁によりボトムナビ操作も受け付けない。
 - 内容は不定スピナー、読み取り中文言、目立たない中止ボタン（`FButton` の `secondary`）。確定進捗ゲージと％は出さない。
 - ダイアログ内容の外周に 8 論理ピクセルの余白を置く。
-- DialogRoute の完了（pop）は `MeterReadingProgressLauncher` 内だけが行う。画面から `Navigator` を直接呼ばない。
+- DialogRoute の完了は `MeterReadingProgressLauncher` 内だけが行い、自身の Route のみを外す（最上位が別ダイアログでも誤って閉じない）。画面から `Navigator` を直接呼ばない。
 - プラットフォームの戻る／pop は中止と同じ（Dialog 内 `PopScope`）。読み取り中は運動履歴編集の破棄確認を出さない。
 - プレビュー上オーバーレイや画面内インラインの読み取り中表示は出さない。
 - 背面へ移っても読み取りは継続し、前面復帰後もモーダルを維持する。
