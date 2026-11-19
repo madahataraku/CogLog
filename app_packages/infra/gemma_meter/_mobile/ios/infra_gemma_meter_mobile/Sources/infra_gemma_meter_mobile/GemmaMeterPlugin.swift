@@ -307,8 +307,14 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
   /// Resolves [modelRevision] (e.g. `main`) to a commit SHA for this prepare.
   private func resolvePinnedRevision() async throws -> String {
+    let encodedRevision =
+      Self.modelRevision.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+      ?? Self.modelRevision
     guard !Self.modelRepo.isEmpty,
-      let url = URL(string: "https://huggingface.co/api/models/\(Self.modelRepo)")
+      let url = URL(
+        string:
+          "https://huggingface.co/api/models/\(Self.modelRepo)/revision/\(encodedRevision)"
+      )
     else {
       throw PrepareError.generic("Model manifest repo is missing.")
     }
