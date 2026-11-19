@@ -14,28 +14,33 @@ import CoreMLLLM
 /// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let modelFolderName = "gemma4-e2b"
-  private static let modelRepo = "smdesai/gemma-4-E2B-coreml"
-  private static let modelRevision = "main"
-  /// ~2.9 GB lean bundle + headroom for compile scratch.
-  private static let minFreeBytes: Int64 = 3_500_000_000
-  /// Sum of [downloadFiles] estimated sizes (HF `main` as of verification).
-  private static let estimatedDownloadBytes: Int64 = 2_890_323_517
   private static let configuredBackend = "ane"
   private static let configuredVisionBackend = "ane"
 
-  /// Relative paths required for monolithic + vision (no `chunk1`).
-  private static let downloadFiles: [(path: String, estimatedSize: Int64)] = [
-    ("hf_model/config.json", 4_954),
-    ("hf_model/tokenizer.json", 32_169_626),
-    ("hf_model/tokenizer_config.json", 2_068),
-    ("model.mlpackage/Data/com.apple.CoreML/model.mlmodel", 1_381_053),
-    ("model.mlpackage/Data/com.apple.CoreML/weights/weight.bin", 2_518_622_912),
-    ("model.mlpackage/Manifest.json", 617),
-    ("model_config.json", 401),
-    ("vision.mlpackage/Data/com.apple.CoreML/model.mlmodel", 592_021),
-    ("vision.mlpackage/Data/com.apple.CoreML/weights/weight.bin", 337_549_248),
-    ("vision.mlpackage/Manifest.json", 617),
-  ]
+  private static let manifest: DownloadManifest = {
+    do {
+      return try DownloadManifest.load()
+    } catch {
+      // Fail closed with an empty manifest; prepare will error clearly.
+      return DownloadManifest(repo: "", revision: "main", files: [])
+    }
+  }()
+
+  private static var modelRepo: String { manifest.repo }
+  private static var modelRevision: String { manifest.revision }
+  private static var downloadFiles: [(path: String, estimatedSize: Int64)] {
+    manifest.files.map { ($0.path, $0.estimatedSize) }
+  }
+
+  /// Sum of lean-bundle file sizes from the shared manifest.
+  private static var estimatedDownloadBytes: Int64 {
+    downloadFiles.reduce(0) { $0 + $1.estimatedSize }
+  }
+
+  /// Download payload plus room for `MLModel.compileModel` outputs (~1x).
+  private static var minFreeBytes: Int64 {
+    estimatedDownloadBytes * 2 + 500_000_000
+  }
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
@@ -281,8 +286,14 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
     defer { progressTask.cancel() }
     do {
+      // Pin every file in this prepare to one commit so a moving branch
+      // cannot mix revisions mid-download.
+      let pinnedRevision = try await resolvePinnedRevision()
       for file in Self.downloadFiles {
-        try await downloadRemoteFile(relativePath: file.path)
+        try await downloadRemoteFile(
+          relativePath: file.path,
+          revision: pinnedRevision
+        )
       }
     } catch {
       try? removeIncompleteModelDirectory()
@@ -294,8 +305,34 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
   }
 
+  /// Resolves [modelRevision] (e.g. `main`) to a commit SHA for this prepare.
+  private func resolvePinnedRevision() async throws -> String {
+    guard !Self.modelRepo.isEmpty,
+      let url = URL(string: "https://huggingface.co/api/models/\(Self.modelRepo)")
+    else {
+      throw PrepareError.generic("Model manifest repo is missing.")
+    }
+    let (data, response): (Data, URLResponse)
+    do {
+      (data, response) = try await URLSession.shared.data(from: url)
+    } catch {
+      throw PrepareError.network(Self.safeMessage(error))
+    }
+    if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+      throw PrepareError.network("Model revision HTTP \(http.statusCode).")
+    }
+    guard
+      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+      let sha = json["sha"] as? String,
+      !sha.isEmpty
+    else {
+      throw PrepareError.network("Model revision SHA missing.")
+    }
+    return sha
+  }
+
   /// Downloads one HF resolve path into the model directory.
-  private func downloadRemoteFile(relativePath: String) async throws {
+  private func downloadRemoteFile(relativePath: String, revision: String) async throws {
     guard let directory = modelDirectoryURL() else {
       throw PrepareError.generic("Documents directory is unavailable.")
     }
@@ -303,8 +340,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       .split(separator: "/")
       .map { $0.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? String($0) }
       .joined(separator: "/")
+    let encodedRevision =
+      revision.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? revision
     let urlString =
-      "https://huggingface.co/\(Self.modelRepo)/resolve/\(Self.modelRevision)/\(encodedPath)"
+      "https://huggingface.co/\(Self.modelRepo)/resolve/\(encodedRevision)/\(encodedPath)"
     guard let url = URL(string: urlString) else {
       throw PrepareError.generic("Invalid model URL for \(relativePath).")
     }
@@ -571,6 +610,48 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       return String(describing: type(of: error))
     }
     return String(raw.prefix(200))
+  }
+
+  private struct DownloadManifestFile: Decodable {
+    let path: String
+    let estimatedSize: Int64
+  }
+
+  private struct DownloadManifest: Decodable {
+    let repo: String
+    let revision: String
+    let files: [DownloadManifestFile]
+
+    static func load() throws -> DownloadManifest {
+      guard let url = Self.manifestJSONURL() else {
+        throw PrepareError.generic("iOS monolithic download manifest is missing.")
+      }
+      let data = try Data(contentsOf: url)
+      return try JSONDecoder().decode(DownloadManifest.self, from: data)
+    }
+
+    private static func manifestJSONURL() -> URL? {
+      let name = "ios_monolithic_download_manifest"
+      let pluginBundle = Bundle(for: GemmaMeterPlugin.self)
+      if let url = pluginBundle.url(forResource: name, withExtension: "json") {
+        return url
+      }
+      if let bundleURL = pluginBundle.url(
+        forResource: "infra_gemma_meter_mobile_manifest",
+        withExtension: "bundle"
+      ),
+        let resourceBundle = Bundle(url: bundleURL),
+        let url = resourceBundle.url(forResource: name, withExtension: "json")
+      {
+        return url
+      }
+      #if SWIFT_PACKAGE
+      if let url = Bundle.module.url(forResource: name, withExtension: "json") {
+        return url
+      }
+      #endif
+      return nil
+    }
   }
 
   private enum PrepareError: LocalizedError {
