@@ -104,8 +104,12 @@ Gemma E2B 経路は CoreMLLLM（Swift Package `https://github.com/john-rocky/Cor
 アプリの Xcode / Flutter SPM 側で依存を解決する（`infra_gemma_meter_mobile` の
 README・podspec コメントを参照）。CoreMLLLM と Android 用 LiteRT-LM を
 OSS ライセンス一覧（`extraOssLicenses`）の対象に含める。
-モデルはアプリ同梱せず、Hugging Face `mlboydaisuke/gemma-4-E2B-coreml`
-（当面の既定リビジョン `n1024`、認証不要）からダウンロードする。版は運用追従
+モデルはアプリ同梱せず、Hugging Face から必要ファイルだけダウンロードする。
+当面の検証用既定は `smdesai/gemma-4-E2B-coreml`（`main`、認証不要）の
+monolithic 構成（`model.mlpackage`・`vision.mlpackage`・`hf_model`・
+`model_config.json`。おおよそ 2.9 GB）。chunk 分割バンドルや
+`vision_video` / `audio` / PLE 別ファイルは取得しない（CoreMLLLM が
+`chunk1` 無しのとき monolithic 経路を選ぶ前提）。版は運用追従
 （ピン留めしない）。実行 computeUnits は `.cpuAndNeuralEngine`（ANE）。
 デバッグ表示の backend / visionBackend は `ane` とする。
 

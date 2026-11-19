@@ -7,25 +7,58 @@ import CoreMLLLM
 
 /// Flutter bridge for Core ML Gemma E2B meter reading on iOS.
 ///
-/// Model files download into Documents/Models/`gemma4-e2b` via CoreMLLLM's
-/// `ModelDownloader` (Hugging Face `mlboydaisuke/gemma-4-E2B-coreml`).
+/// Downloads a lean monolithic bundle (text `model.mlpackage` + still-image
+/// `vision.mlpackage` + tokenizer) into Documents/Models/`gemma4-e2b` from
+/// Hugging Face `smdesai/gemma-4-E2B-coreml`. Chunked / video / audio / PLE
+/// sidecars are omitted so CoreMLLLM takes the monolithic load path.
 /// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
-  private static let minFreeBytes: Int64 = 6 * 1024 * 1024 * 1024
-  /// Multimodal gemma4-e2b advertised size (ModelInfo.size ≈ 5.4 GB).
-  /// Used when ModelDownloader.progress stays at 0 so the dialog gauge
-  /// still advances from on-disk bytes.
-  private static let estimatedDownloadBytes: Int64 = 5_400_000_000
+  private static let modelFolderName = "gemma4-e2b"
+  private static let modelRepo = "smdesai/gemma-4-E2B-coreml"
+  private static let modelRevision = "main"
+  /// ~2.9 GB lean bundle + headroom for compile scratch.
+  private static let minFreeBytes: Int64 = 3_500_000_000
+  /// Sum of [downloadFiles] estimated sizes (HF `main` as of verification).
+  private static let estimatedDownloadBytes: Int64 = 2_890_323_517
   private static let configuredBackend = "ane"
   private static let configuredVisionBackend = "ane"
+
+  /// Relative paths required for monolithic + vision (no `chunk1`).
+  private static let downloadFiles: [(path: String, estimatedSize: Int64)] = [
+    ("hf_model/config.json", 4_954),
+    ("hf_model/tokenizer.json", 32_169_626),
+    ("hf_model/tokenizer_config.json", 2_068),
+    ("model.mlpackage/Data/com.apple.CoreML/model.mlmodel", 1_381_053),
+    ("model.mlpackage/Data/com.apple.CoreML/weights/weight.bin", 2_518_622_912),
+    ("model.mlpackage/Manifest.json", 617),
+    ("model_config.json", 401),
+    ("vision.mlpackage/Data/com.apple.CoreML/model.mlmodel", 592_021),
+    ("vision.mlpackage/Data/com.apple.CoreML/weights/weight.bin", 337_549_248),
+    ("vision.mlpackage/Manifest.json", 617),
+  ]
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
   private var preparing = false
   private var lastEmittedProgressBucket = -1
+  private let downloadBytesLock = NSLock()
+  private var downloadedBytesValue: Int64 = 0
   #if canImport(CoreMLLLM)
   private var llm: CoreMLLLM?
   #endif
+
+  private var downloadedBytes: Int64 {
+    get {
+      downloadBytesLock.lock()
+      defer { downloadBytesLock.unlock() }
+      return downloadedBytesValue
+    }
+    set {
+      downloadBytesLock.lock()
+      downloadedBytesValue = newValue
+      downloadBytesLock.unlock()
+    }
+  }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let messenger = registrar.messenger()
@@ -217,52 +250,40 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   private func downloadIfNeeded() async throws {
-    UserDefaults.standard.set(true, forKey: ModelDownloader.includeMultimodalKey)
-    let downloader = ModelDownloader.shared
-    let model = ModelDownloader.ModelInfo.gemma4e2b
     if hasCompleteModelBundle() {
       emitProgress(1)
       return
     }
-    // Partial/corrupt installs must not stay "ready".
+    // Partial/corrupt/chunked installs must not stay "ready".
     try removeIncompleteModelDirectory()
     try ensureModelsDirectoryExcludedFromBackup()
     try ensureFreeSpace()
     lastEmittedProgressBucket = -1
+    downloadedBytes = 0
     let progressTask = Task { [weak self] in
       while !Task.isCancelled {
-        // Read downloader state on the main queue (where didWriteData
-        // updates it). Walk the model directory off-main so large
-        // trees do not stall UI / URLSession callbacks.
-        let snapshot: (Double, URL?) = await withCheckedContinuation { continuation in
-          DispatchQueue.main.async {
-            guard let self else {
-              continuation.resume(returning: (0, nil))
-              return
-            }
-            let reported = ModelDownloader.shared.progress
-            let fromStatus = Self.progressFraction(
-              fromStatus: ModelDownloader.shared.status
-            )
-            let fromDownloader = max(reported, fromStatus ?? 0)
-            continuation.resume(returning: (fromDownloader, self.modelDirectoryURL()))
-          }
-        }
-        let fromDisk: Double
-        if let directory = snapshot.1 {
-          let done = Self.allocatedByteCount(at: directory)
-          fromDisk = Double(done) / Double(max(Self.estimatedDownloadBytes, 1))
+        guard let self else { return }
+        let done = self.downloadedBytes
+        let fromDisk: Int64
+        if let directory = self.modelDirectoryURL() {
+          fromDisk = Self.allocatedByteCount(at: directory)
         } else {
           fromDisk = 0
         }
-        let fraction = min(max(snapshot.0, fromDisk), 0.99)
-        self?.emitProgressBucketed(fraction)
+        let bytes = max(done, fromDisk)
+        let fraction = min(
+          Double(bytes) / Double(max(Self.estimatedDownloadBytes, 1)),
+          0.99
+        )
+        self.emitProgressBucketed(fraction)
         try? await Task.sleep(nanoseconds: 200_000_000)
       }
     }
     defer { progressTask.cancel() }
     do {
-      _ = try await downloader.download(model)
+      for file in Self.downloadFiles {
+        try await downloadRemoteFile(relativePath: file.path)
+      }
     } catch {
       try? removeIncompleteModelDirectory()
       throw error
@@ -273,23 +294,84 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
   }
 
-  /// Parses ModelDownloader status strings like `"1234 / 5400 MB"`.
-  private static func progressFraction(fromStatus status: String) -> Double? {
-    guard status.hasSuffix("MB") else { return nil }
-    let trimmed = status
-      .replacingOccurrences(of: "MB", with: "")
-      .trimmingCharacters(in: .whitespacesAndNewlines)
-    let parts = trimmed.split(separator: "/").map {
-      $0.trimmingCharacters(in: .whitespacesAndNewlines)
+  /// Downloads one HF resolve path into the model directory.
+  private func downloadRemoteFile(relativePath: String) async throws {
+    guard let directory = modelDirectoryURL() else {
+      throw PrepareError.generic("Documents directory is unavailable.")
     }
-    guard parts.count == 2,
-      let done = Double(parts[0]),
-      let total = Double(parts[1]),
-      total > 0
-    else {
-      return nil
+    let encodedPath = relativePath
+      .split(separator: "/")
+      .map { $0.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? String($0) }
+      .joined(separator: "/")
+    let urlString =
+      "https://huggingface.co/\(Self.modelRepo)/resolve/\(Self.modelRevision)/\(encodedPath)"
+    guard let url = URL(string: urlString) else {
+      throw PrepareError.generic("Invalid model URL for \(relativePath).")
     }
-    return done / total
+    let destination = directory.appendingPathComponent(relativePath)
+    try FileManager.default.createDirectory(
+      at: destination.deletingLastPathComponent(),
+      withIntermediateDirectories: true
+    )
+    let baseDownloaded = downloadedBytes
+    let estimatedForFile =
+      Self.downloadFiles.first(where: { $0.path == relativePath })?.estimatedSize ?? 0
+    do {
+      let fileBytes: Int64 = try await withCheckedThrowingContinuation { continuation in
+        final class ObservationBox {
+          var observation: NSKeyValueObservation?
+        }
+        let box = ObservationBox()
+        let task = URLSession.shared.downloadTask(with: url) { location, response, error in
+          box.observation?.invalidate()
+          box.observation = nil
+          if let error {
+            continuation.resume(
+              throwing: PrepareError.network(Self.safeMessage(error))
+            )
+            return
+          }
+          guard let location else {
+            continuation.resume(
+              throwing: PrepareError.network("Empty download for \(relativePath).")
+            )
+            return
+          }
+          if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            continuation.resume(
+              throwing: PrepareError.network(
+                "Model download HTTP \(http.statusCode) for \(relativePath)."
+              )
+            )
+            return
+          }
+          do {
+            if FileManager.default.fileExists(atPath: destination.path) {
+              try FileManager.default.removeItem(at: destination)
+            }
+            try FileManager.default.moveItem(at: location, to: destination)
+            let size =
+              (try? FileManager.default.attributesOfItem(atPath: destination.path)[.size]
+                as? NSNumber)?.int64Value ?? 0
+            continuation.resume(returning: size)
+          } catch {
+            continuation.resume(throwing: error)
+          }
+        }
+        // Drive gauge while the large weight.bin files transfer.
+        box.observation = task.progress.observe(\.fractionCompleted) { [weak self] progress, _ in
+          guard let self else { return }
+          let inFlight = Int64(Double(max(estimatedForFile, 1)) * progress.fractionCompleted)
+          self.downloadedBytes = baseDownloaded + inFlight
+        }
+        task.resume()
+      }
+      downloadedBytes = baseDownloaded + max(fileBytes, 0)
+    } catch let prepare as PrepareError {
+      throw prepare
+    } catch {
+      throw PrepareError.network(Self.safeMessage(error))
+    }
   }
 
   private static func allocatedByteCount(at directory: URL) -> Int64 {
@@ -328,24 +410,18 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     hasCompleteModelBundle()
   }
 
-  /// Required files for multimodal Gemma 4 E2B Core ML (n1024 / 4-chunk layout).
-  private static let requiredRelativePaths: [String] = [
-    "model_config.json",
-    "embed_tokens_q8.bin",
-    "embed_tokens_scales.bin",
-    "embed_tokens_per_layer_q8.bin",
-    "embed_tokens_per_layer_scales.bin",
-    "hf_model/tokenizer.json",
-    "chunk1.mlmodelc/weights/weight.bin",
-    "chunk2.mlmodelc/weights/weight.bin",
-    "chunk3.mlmodelc/weights/weight.bin",
-    "chunk4.mlmodelc/weights/weight.bin",
-    "vision.mlmodelc/weights/weight.bin",
-  ]
+  /// Required files for lean monolithic + vision (CoreMLLLM monolithic path).
+  private static let requiredRelativePaths: [String] = downloadFiles.map(\.path)
 
   private func hasCompleteModelBundle() -> Bool {
     guard let directory = modelDirectoryURL() else { return false }
     let fm = FileManager.default
+    // chunk1 would force CoreMLLLM onto ChunkedEngine; treat as incomplete.
+    if fm.fileExists(atPath: directory.appendingPathComponent("chunk1.mlmodelc").path)
+      || fm.fileExists(atPath: directory.appendingPathComponent("chunk1.mlpackage").path)
+    {
+      return false
+    }
     for relative in Self.requiredRelativePaths {
       let url = directory.appendingPathComponent(relative)
       guard fm.fileExists(atPath: url.path) else { return false }
@@ -365,10 +441,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   private func modelDirectoryURL() -> URL? {
-    modelsRootURL()?.appendingPathComponent(
-      ModelDownloader.ModelInfo.gemma4e2b.folderName,
-      isDirectory: true
-    )
+    modelsRootURL()?.appendingPathComponent(Self.modelFolderName, isDirectory: true)
   }
 
   private func removeIncompleteModelDirectory() throws {
