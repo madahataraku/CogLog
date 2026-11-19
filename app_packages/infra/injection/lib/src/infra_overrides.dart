@@ -92,9 +92,18 @@ List<Override> infraOverrides({
       log: ref.watch(appLogStoreProvider),
     ),
   ),
-  healthWorkoutWriterProvider.overrideWith(
-    (ref) => const UnavailableHealthWorkoutWriter(),
-  ),
+  healthWorkoutWriterProvider.overrideWith((ref) {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return HealthPackageWorkoutWriter();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableHealthWorkoutWriter();
+    }
+  }),
   healthBodyMetricsSourceProvider.overrideWith((ref) {
     final injected = healthBodyMetricsSource;
     if (injected != null) {
