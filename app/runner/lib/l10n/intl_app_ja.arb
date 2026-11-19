@@ -774,10 +774,6 @@
   "@screen_feature_exercise_history_edit_pick_library": {
     "description": "ライブラリ再選択"
   },
-  "screen_feature_exercise_history_edit_reading": "読み取り中…",
-  "@screen_feature_exercise_history_edit_reading": {
-    "description": "読み取り待機"
-  },
   "screen_feature_exercise_history_edit_recorded_at": "運動した日時",
   "@screen_feature_exercise_history_edit_recorded_at": {
     "description": "運動した日時"
@@ -955,17 +951,21 @@
   "@screen_feature_goal_settings_unset_hint": {
     "description": "未設定の説明"
   },
-  "screen_feature_goal_settings_weekly_days_description": "1週間のうち何日目標を達成したいか（1〜7。空で未設定）。連続達成や自動更新の休み日の上限にも使います",
+  "screen_feature_goal_settings_weekly_days_description": "1週間のうち、運動を行う目標日数を設定してください。ホーム画面で今週の残り日数を表示するとともに、連続達成記録や目標の自動更新の判定にも用います。",
   "@screen_feature_goal_settings_weekly_days_description": {
     "description": "説明"
   },
-  "screen_feature_goal_settings_weekly_days_label": "週間の目標達成日数",
+  "screen_feature_goal_settings_weekly_days_label": "週間の目標運動日数",
   "@screen_feature_goal_settings_weekly_days_label": {
-    "description": "週間目標達成日数の欄"
+    "description": "週間の目標運動日数の欄"
   },
   "screen_feature_goal_settings_weekly_days_unit": "日",
   "@screen_feature_goal_settings_weekly_days_unit": {
     "description": "単位"
+  },
+  "screen_feature_goal_settings_weekly_days_unset": "設定しない",
+  "@screen_feature_goal_settings_weekly_days_unset": {
+    "description": "週間の目標運動日数の未設定"
   },
   "screen_feature_main_nav_exercise_history": "運動履歴",
   "@screen_feature_main_nav_exercise_history": {
@@ -1080,10 +1080,6 @@
   "screen_feature_meter_capture_read_success": "エアロバイクのメーター内容を読み取りました。",
   "@screen_feature_meter_capture_read_success": {
     "description": "自動読み取り完全時の成功"
-  },
-  "screen_feature_meter_capture_reading": "読み取り中…",
-  "@screen_feature_meter_capture_reading": {
-    "description": "読み取り待機"
   },
   "screen_feature_meter_capture_recorded_at": "運動した日時",
   "@screen_feature_meter_capture_recorded_at": {
@@ -1374,7 +1370,7 @@
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
   },
-  "screen_feature_top_weekly_achievement_guidance": "目標設定で週間の目標達成日数と一日あたりの目標を設定しましょう",
+  "screen_feature_top_weekly_achievement_guidance": "目標設定で週間の目標運動日数と一日あたりの目標を設定しましょう",
   "@screen_feature_top_weekly_achievement_guidance": {
     "description": "誘導"
   },
@@ -1512,6 +1508,14 @@
   "screen_feature_trends_unit_percent": "%",
   "@screen_feature_trends_unit_percent": {
     "description": "単位"
+  },
+  "view_meter_reading_progress_cancel": "読み取りを中止",
+  "@view_meter_reading_progress_cancel": {
+    "description": "読み取り中止"
+  },
+  "view_meter_reading_progress_reading": "読み取り中…",
+  "@view_meter_reading_progress_reading": {
+    "description": "読み取り待機"
   },
   "view_model_download_guidance_body": "ワンポイントアドバイス等に使うモデルが端末にありません。準備を開始できます。準備中もアプリは利用できます。",
   "@view_model_download_guidance_body": {

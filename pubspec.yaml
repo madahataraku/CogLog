@@ -83,6 +83,7 @@ workspace:
   - app_packages/screen/feature/top
   - app_packages/view/confirm_dialog
   - app_packages/view/model_download_guidance
+  - app_packages/view/meter_reading_progress
   - app_packages/screen/injection
   - app_packages/screen/navigation
   - app_packages/screen/navigation/_go_router

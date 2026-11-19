@@ -7,7 +7,9 @@ import 'package:screen_feature_meter_capture/src/viewmodel/can_submit_meter_capt
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/meter_capture_state_to_entity_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_back_to_step1_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_cancel_meter_reading_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_capture_photo_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_evaluate_model_download_guidance_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_field_changed_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_read_meter_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_save_meter_capture_delegate.dart';
@@ -695,6 +697,64 @@ void main() {
 
     expect(state.state.averageSpeedKmh, 30);
     expect(state.state.averageSpeedFromPanel, isFalse);
+  });
+
+  test('読み取り中止で世代が進み下書きが消える', () async {
+    await state.updateWithLock((_, emitter) async {
+      await emitter.emit(
+        const MeterCaptureScreenState(
+          step: MeterCaptureStep.edit,
+          reading: true,
+          distanceKm: 1,
+          pendingModelDownloadGuidance: true,
+          cameraSessionGeneration: 3,
+        ),
+      );
+    });
+    await OnCancelMeterReadingDelegate(state: state).execute();
+    expect(state.state.reading, isFalse);
+    expect(state.state.step, MeterCaptureStep.photo);
+    expect(state.state.distanceKm, isNull);
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.cameraSessionGeneration, 4);
+  });
+
+  test('中止後の遅延読み取り結果は適用しない', () async {
+    final gate = Completer<void>();
+    final future = OnReadMeterDelegate(
+      state: state,
+      readMeterPanelUsecase: _Read(
+        const ReadMeterPanelResult(
+          values: MeterReadingValues(distanceKm: 5),
+          averageSpeedFromPanel: false,
+        ),
+        gate: gate,
+      ),
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+    ).execute(photoBytes: Uint8List(0));
+
+    await Future<void>.delayed(Duration.zero);
+    expect(state.state.reading, isTrue);
+    await OnCancelMeterReadingDelegate(state: state).execute();
+    expect(state.state.step, MeterCaptureStep.photo);
+    expect(state.state.distanceKm, isNull);
+
+    gate.complete();
+    await future;
+    expect(state.state.step, MeterCaptureStep.photo);
+    expect(state.state.distanceKm, isNull);
+    expect(state.state.reading, isFalse);
+  });
+
+  test('誘導評価は古い世代なら pending を立てない', () async {
+    final session = OnDeviceLlmGuidanceSession();
+    await OnEvaluateModelDownloadGuidanceDelegate(
+      state: state,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(shouldShow: true),
+      guidanceSession: session,
+    ).execute(expectedGeneration: 99);
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
   });
 
   test('acknowledge 後は pending false かつ hasPresented', () async {

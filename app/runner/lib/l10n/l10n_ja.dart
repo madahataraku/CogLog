@@ -628,9 +628,6 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_edit_pick_library => 'ライブラリから選ぶ';
 
   @override
-  String get screen_feature_exercise_history_edit_reading => '読み取り中…';
-
-  @override
   String get screen_feature_exercise_history_edit_recorded_at => '運動した日時';
 
   @override
@@ -763,13 +760,16 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_goal_settings_weekly_days_description =>
-      '1週間のうち何日目標を達成したいか（1〜7。空で未設定）。連続達成や自動更新の休み日の上限にも使います';
+      '1週間のうち、運動を行う目標日数を設定してください。ホーム画面で今週の残り日数を表示するとともに、連続達成記録や目標の自動更新の判定にも用います。';
 
   @override
-  String get screen_feature_goal_settings_weekly_days_label => '週間の目標達成日数';
+  String get screen_feature_goal_settings_weekly_days_label => '週間の目標運動日数';
 
   @override
   String get screen_feature_goal_settings_weekly_days_unit => '日';
+
+  @override
+  String get screen_feature_goal_settings_weekly_days_unset => '設定しない';
 
   @override
   String get screen_feature_main_nav_exercise_history => '運動履歴';
@@ -859,9 +859,6 @@ class L10nJa extends L10n {
   @override
   String get screen_feature_meter_capture_read_success =>
       'エアロバイクのメーター内容を読み取りました。';
-
-  @override
-  String get screen_feature_meter_capture_reading => '読み取り中…';
 
   @override
   String get screen_feature_meter_capture_recorded_at => '運動した日時';
@@ -1089,7 +1086,7 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_weekly_achievement_guidance =>
-      '目標設定で週間の目標達成日数と一日あたりの目標を設定しましょう';
+      '目標設定で週間の目標運動日数と一日あたりの目標を設定しましょう';
 
   @override
   String screen_feature_top_weekly_achievement_ratio(String n, String m) {
@@ -1185,6 +1182,12 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_unit_percent => '%';
+
+  @override
+  String get view_meter_reading_progress_cancel => '読み取りを中止';
+
+  @override
+  String get view_meter_reading_progress_reading => '読み取り中…';
 
   @override
   String get view_model_download_guidance_body =>

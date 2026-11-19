@@ -684,9 +684,6 @@ class L10nEn extends L10n {
       'Choose from library';
 
   @override
-  String get screen_feature_exercise_history_edit_reading => 'Reading…';
-
-  @override
   String get screen_feature_exercise_history_edit_recorded_at =>
       'Exercise date and time';
 
@@ -828,14 +825,17 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_goal_settings_weekly_days_description =>
-      'How many days per week to meet daily goals (1–7; empty = unset). Also sets rest-day allowance for streaks and auto-update';
+      'Set how many days per week you plan to exercise. Home shows remaining days this week; the value is also used for consecutive achievement and goal auto-update.';
 
   @override
   String get screen_feature_goal_settings_weekly_days_label =>
-      'Weekly goal days';
+      'Weekly target exercise days';
 
   @override
   String get screen_feature_goal_settings_weekly_days_unit => 'days';
+
+  @override
+  String get screen_feature_goal_settings_weekly_days_unset => 'Not set';
 
   @override
   String get screen_feature_main_nav_exercise_history => 'Exercise history';
@@ -928,9 +928,6 @@ class L10nEn extends L10n {
   @override
   String get screen_feature_meter_capture_read_success =>
       'Read the exercise bike meter.';
-
-  @override
-  String get screen_feature_meter_capture_reading => 'Reading…';
 
   @override
   String get screen_feature_meter_capture_recorded_at =>
@@ -1162,7 +1159,7 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_weekly_achievement_guidance =>
-      'Set weekly goal days and daily goals in Goals';
+      'Set weekly target exercise days and daily goals in Goals';
 
   @override
   String screen_feature_top_weekly_achievement_ratio(String n, String m) {
@@ -1264,6 +1261,12 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_unit_percent => '%';
+
+  @override
+  String get view_meter_reading_progress_cancel => 'Cancel reading';
+
+  @override
+  String get view_meter_reading_progress_reading => 'Reading…';
 
   @override
   String get view_model_download_guidance_body =>

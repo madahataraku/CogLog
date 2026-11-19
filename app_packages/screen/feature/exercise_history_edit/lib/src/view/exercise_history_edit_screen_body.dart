@@ -217,13 +217,6 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
                         strings
                             .screen_feature_exercise_history_edit_photo_error,
                       ),
-                    if (state.reading) ...[
-                      const Center(child: FCircularProgress()),
-                      Text(
-                        strings.screen_feature_exercise_history_edit_reading,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
                     if (entity.showHandEntryGuidance)
                       Text(
                         strings

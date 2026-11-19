@@ -816,10 +816,6 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_edit_pick_library;
       },
-      'screen_feature_exercise_history_edit_reading': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_edit_reading;
-      },
       'screen_feature_exercise_history_edit_recorded_at': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_edit_recorded_at;
@@ -1004,6 +1000,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_goal_settings_weekly_days_unit;
       },
+      'screen_feature_goal_settings_weekly_days_unset': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_weekly_days_unset;
+      },
       'screen_feature_main_nav_exercise_history': (source) {
         // No Placeholders
         return l10n.screen_feature_main_nav_exercise_history;
@@ -1119,10 +1119,6 @@ final class L10nHelper {
       'screen_feature_meter_capture_read_success': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_read_success;
-      },
-      'screen_feature_meter_capture_reading': (source) {
-        // No Placeholders
-        return l10n.screen_feature_meter_capture_reading;
       },
       'screen_feature_meter_capture_recorded_at': (source) {
         // No Placeholders
@@ -1530,6 +1526,14 @@ final class L10nHelper {
       'screen_feature_trends_unit_percent': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_unit_percent;
+      },
+      'view_meter_reading_progress_cancel': (source) {
+        // No Placeholders
+        return l10n.view_meter_reading_progress_cancel;
+      },
+      'view_meter_reading_progress_reading': (source) {
+        // No Placeholders
+        return l10n.view_meter_reading_progress_reading;
       },
       'view_model_download_guidance_body': (source) {
         // No Placeholders

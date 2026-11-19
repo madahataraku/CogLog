@@ -17,6 +17,7 @@ import 'delegate/meter_capture_state_to_entity_delegate.dart';
 import 'delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'delegate/on_apply_camera_status_delegate.dart';
 import 'delegate/on_back_to_step1_delegate.dart';
+import 'delegate/on_cancel_meter_reading_delegate.dart';
 import 'delegate/on_capture_photo_delegate.dart';
 import 'delegate/on_field_changed_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';

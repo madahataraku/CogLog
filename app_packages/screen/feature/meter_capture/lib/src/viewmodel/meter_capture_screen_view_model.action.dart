@@ -154,6 +154,16 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
     await OnBackToStep1Delegate(state: state).execute();
   }
 
+  /// 読み取りを中止し、下書きを破棄してカメラ画面へ戻る。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onCancelReading();
+  /// ```
+  Future<void> onCancelReading() {
+    return OnCancelMeterReadingDelegate(state: state).execute();
+  }
+
   /// 走行距離を更新する。
   ///
   /// Example:
