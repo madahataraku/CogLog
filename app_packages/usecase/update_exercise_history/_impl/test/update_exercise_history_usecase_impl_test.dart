@@ -93,7 +93,7 @@ final class _ThrowingHealth implements HealthWorkoutWriter {
   }) async => null;
 
   @override
-  Future<bool> updateCycling({
+  Future<String?> updateCycling({
     required String externalId,
     required DateTime start,
     required DateTime end,
@@ -106,7 +106,11 @@ final class _ThrowingHealth implements HealthWorkoutWriter {
   }
 
   @override
-  Future<bool> deleteCycling({required String externalId}) async => false;
+  Future<bool> deleteCycling({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  }) async => false;
 }
 
 void main() {
@@ -256,6 +260,31 @@ void main() {
     expect(health.updateCallCount, 1);
     expect(health.lastExternalId, 'health-1');
     expect(result.history!.healthWorkoutId, 'health-1');
+  });
+
+  test('update が新 ID を返したら Result.history に付け旧 ID を消す', () async {
+    final histories = MemoryExerciseHistoryRepository();
+    final existing = await seed(histories, healthWorkoutId: 'health-1');
+    final health = FakeHealthWorkoutWriter(nextUpdateExternalId: 'health-new');
+    final evaluate = _FakeEvaluate();
+    final achievements = _FakeEvaluateAchievements();
+    final sync = _FakeSync();
+
+    final result = await UpdateExerciseHistoryUsecaseImpl(
+      histories: histories,
+      health: health,
+      evaluateAutoUpdate: evaluate,
+      evaluateAchievements: achievements,
+      syncReminder: sync,
+    ).execute(requestFor(existing));
+
+    expect(result.outcome, UpdateExerciseHistoryOutcome.success);
+    expect(result.history!.healthWorkoutId, 'health-new');
+    expect(health.deleteCallCount, 1);
+    expect(health.lastExternalId, 'health-1');
+    // 旧時間窓（existing）で消す。更新後の request 時間ではない。
+    expect(health.lastStart, existing.recordedAt);
+    expect(health.lastEnd, existing.recordedAt.add(existing.duration));
   });
 
   test('health update 例外でも success', () async {

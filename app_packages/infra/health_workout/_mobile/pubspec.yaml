@@ -1,5 +1,5 @@
 name: infra_health_workout_mobile
-description: Unavailable health workout writer for CogLog mobile.
+description: health package-backed workout writer for CogLog mobile.
 publish_to: none
 resolution: workspace
 version: 0.1.0+1
@@ -8,8 +8,13 @@ environment:
   sdk: ^3.13.7
 
 dependencies:
+  flutter:
+    sdk: flutter
+  health: any
   infra_health_workout: any
 
 dev_dependencies:
   flutter_lints: any
+  flutter_test:
+    sdk: flutter
   test: any

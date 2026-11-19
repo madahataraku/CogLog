@@ -66,17 +66,21 @@ final class _ThrowingDeleteHealth implements HealthWorkoutWriter {
   }) async => null;
 
   @override
-  Future<bool> updateCycling({
+  Future<String?> updateCycling({
     required String externalId,
     required DateTime start,
     required DateTime end,
     required double distanceKm,
     required Duration duration,
     required double caloriesKcal,
-  }) async => false;
+  }) async => null;
 
   @override
-  Future<bool> deleteCycling({required String externalId}) async {
+  Future<bool> deleteCycling({
+    required String externalId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
     deleteCallCount += 1;
     throw StateError('health delete failed');
   }
@@ -128,6 +132,11 @@ void main() {
     expect(await histories.list(), isEmpty);
     expect(health.deleteCallCount, 1);
     expect(health.lastExternalId, 'health-1');
+    expect(health.lastStart, DateTime.utc(2026, 11, 8, 10, 1));
+    expect(
+      health.lastEnd,
+      DateTime.utc(2026, 11, 8, 10, 1).add(const Duration(minutes: 20)),
+    );
     expect(evaluate.callCount, 1);
     expect(achievements.callCount, 1);
     expect(sync.callCount, 1);

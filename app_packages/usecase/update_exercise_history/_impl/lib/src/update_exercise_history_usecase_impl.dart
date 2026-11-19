@@ -122,8 +122,30 @@ final class UpdateExerciseHistoryUsecaseImpl
       );
 
       final healthId = existing.healthWorkoutId;
+      var history = updated;
       if (healthId != null) {
-        await _updateHealth(request: request, externalId: healthId);
+        final newId = await _updateHealth(
+          request: request,
+          externalId: healthId,
+        );
+        if (newId != null && newId != healthId) {
+          // 新 ID 付与が成功してから旧ヘルスを消す（付与失敗時は旧を残す）。
+          history = await _attachHealthWorkoutId(history, newId);
+          if (history.healthWorkoutId == newId) {
+            try {
+              // 旧時間窓で付随距離・カロリーも消す（Android HC）。
+              final oldStart = existing.recordedAt;
+              final oldEnd = existing.recordedAt.add(existing.duration);
+              await health.deleteCycling(
+                externalId: healthId,
+                start: oldStart,
+                end: oldEnd,
+              );
+            } on Object {
+              // 旧レコード削除失敗でもローカル更新 success を維持する（一時的な重複を許す）。
+            }
+          }
+        }
       }
 
       final now = DateTime.now();
@@ -155,7 +177,7 @@ final class UpdateExerciseHistoryUsecaseImpl
 
       return UpdateExerciseHistoryResult(
         outcome: UpdateExerciseHistoryOutcome.success,
-        history: updated,
+        history: history,
         recordedLocalDayChanged: !_sameLocalDay(
           existing.recordedAt,
           request.recordedAt,
@@ -194,20 +216,20 @@ final class UpdateExerciseHistoryUsecaseImpl
     return true;
   }
 
-  /// ヘルスを更新し、失敗や例外は握りつぶす。
+  /// ヘルスを更新し、失敗や例外は null にする。
   ///
   /// Example:
   /// ```dart
   /// await _updateHealth(request: request, externalId: 'health-1');
   /// ```
-  Future<void> _updateHealth({
+  Future<String?> _updateHealth({
     required UpdateExerciseHistoryRequest request,
     required String externalId,
   }) async {
     try {
       final start = request.recordedAt;
       final end = request.recordedAt.add(request.duration);
-      await health.updateCycling(
+      return await health.updateCycling(
         externalId: externalId,
         start: start,
         end: end,
@@ -216,8 +238,44 @@ final class UpdateExerciseHistoryUsecaseImpl
         caloriesKcal: request.caloriesKcal,
       );
     } on Object {
-      // ヘルス失敗でも CogLog 側の更新 success を維持する。
+      // ヘルス更新失敗でも CogLog 側の更新 success を維持する。
+      return null;
     }
+  }
+
+  /// [history] に [externalId] を付ける。失敗時は再試行し、なお失敗ならヘルスを消す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _attachHealthWorkoutId(history, 'fake-health-1');
+  /// ```
+  Future<ExerciseHistory> _attachHealthWorkoutId(
+    ExerciseHistory history,
+    String externalId,
+  ) async {
+    const maxAttempts = 3;
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        return await histories.attachHealthWorkoutId(
+          id: history.id,
+          healthWorkoutId: externalId,
+        );
+      } on Object {
+        // 付与失敗で更新済みの履歴を saveFailed にしない。再試行する。
+      }
+    }
+    try {
+      final start = history.recordedAt;
+      final end = history.recordedAt.add(history.duration);
+      await health.deleteCycling(
+        externalId: externalId,
+        start: start,
+        end: end,
+      );
+    } on Object {
+      // 孤児削除の失敗でもローカル更新 success を維持する。
+    }
+    return history;
   }
 
   /// 現地暦日が同じか。
