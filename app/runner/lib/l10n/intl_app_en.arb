@@ -774,10 +774,6 @@
   "@screen_feature_exercise_history_edit_pick_library": {
     "description": "ライブラリ再選択"
   },
-  "screen_feature_exercise_history_edit_reading": "Reading…",
-  "@screen_feature_exercise_history_edit_reading": {
-    "description": "読み取り待機"
-  },
   "screen_feature_exercise_history_edit_recorded_at": "Exercise date and time",
   "@screen_feature_exercise_history_edit_recorded_at": {
     "description": "運動した日時"
@@ -1084,10 +1080,6 @@
   "screen_feature_meter_capture_read_success": "Read the exercise bike meter.",
   "@screen_feature_meter_capture_read_success": {
     "description": "自動読み取り完全時の成功"
-  },
-  "screen_feature_meter_capture_reading": "Reading…",
-  "@screen_feature_meter_capture_reading": {
-    "description": "読み取り待機"
   },
   "screen_feature_meter_capture_recorded_at": "Exercise date and time",
   "@screen_feature_meter_capture_recorded_at": {
@@ -1516,6 +1508,14 @@
   "screen_feature_trends_unit_percent": "%",
   "@screen_feature_trends_unit_percent": {
     "description": "単位"
+  },
+  "view_meter_reading_progress_cancel": "Cancel reading",
+  "@view_meter_reading_progress_cancel": {
+    "description": "読み取り中止"
+  },
+  "view_meter_reading_progress_reading": "Reading…",
+  "@view_meter_reading_progress_reading": {
+    "description": "読み取り待機"
   },
   "view_model_download_guidance_body": "The on-device model for tips is not on this device yet. You can start preparing it. You can keep using the app meanwhile.",
   "@view_model_download_guidance_body": {

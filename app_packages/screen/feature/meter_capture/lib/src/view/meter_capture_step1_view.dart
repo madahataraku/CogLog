@@ -118,7 +118,7 @@ class MeterCaptureStep1View extends ConsumerWidget {
     );
   }
 
-  /// 読み取り中オーバーレイと [MeterCaptureCameraUi] ごとのプレビュー領域を作る。
+  /// [MeterCaptureCameraUi] ごとのプレビュー領域を作る。
   ///
   /// Example:
   /// ```dart
@@ -128,31 +128,6 @@ class MeterCaptureStep1View extends ConsumerWidget {
     BuildContext context,
     MeterCaptureScreenViewModel viewModel,
   ) {
-    if (state.reading) {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          if (state.cameraUi == MeterCaptureCameraUi.ready)
-            MeterCaptureCameraPreview(
-              aspectRatio: state.previewAspectRatio,
-              preview: viewModel.buildCameraPreview(),
-              debugPlaceholder: debugPlaceholder,
-            ),
-          const ColoredBox(color: Color(0x66000000)),
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 12,
-              children: [
-                const FCircularProgress(),
-                Text(strings.screen_feature_meter_capture_reading),
-              ],
-            ),
-          ),
-        ],
-      );
-    }
-
     return switch (state.cameraUi) {
       MeterCaptureCameraUi.ready => MeterCaptureCameraPreview(
         aspectRatio: state.previewAspectRatio,

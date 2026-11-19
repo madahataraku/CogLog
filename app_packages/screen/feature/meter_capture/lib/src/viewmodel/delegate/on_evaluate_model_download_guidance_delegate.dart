@@ -13,7 +13,7 @@ import '../state/meter_capture_screen_state.dart';
 ///   state: state,
 ///   evaluateOnDeviceLlmGuidanceUsecase: evaluate,
 ///   guidanceSession: session,
-/// ).execute();
+/// ).execute(expectedGeneration: 0);
 /// ```
 @internal
 final class OnEvaluateModelDownloadGuidanceDelegate {
@@ -44,11 +44,13 @@ final class OnEvaluateModelDownloadGuidanceDelegate {
 
   /// 未提示かつ誘導対象なら [MeterCaptureScreenState.pendingModelDownloadGuidance] を true にする。
   ///
+  /// [expectedGeneration] と現世代が一致しないときは pending を立てない（中止後の遅延評価）。
+  ///
   /// Example:
   /// ```dart
-  /// await delegate.execute();
+  /// await delegate.execute(expectedGeneration: 1);
   /// ```
-  Future<void> execute() async {
+  Future<void> execute({required int expectedGeneration}) async {
     if (!guidanceSession.shouldShow) {
       return;
     }
@@ -58,6 +60,9 @@ final class OnEvaluateModelDownloadGuidanceDelegate {
     }
     await state.updateWithLock((current, emitter) async {
       if (!guidanceSession.shouldShow) {
+        return;
+      }
+      if (current.cameraSessionGeneration != expectedGeneration) {
         return;
       }
       await emitter.emit(current.copyWith(pendingModelDownloadGuidance: true));

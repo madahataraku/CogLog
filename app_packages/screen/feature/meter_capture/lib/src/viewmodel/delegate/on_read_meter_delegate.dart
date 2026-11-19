@@ -87,7 +87,7 @@ final class OnReadMeterDelegate {
       state: state,
       evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
       guidanceSession: guidanceSession,
-    ).execute();
+    ).execute(expectedGeneration: generation);
 
     ReadMeterPanelResult result;
     try {
