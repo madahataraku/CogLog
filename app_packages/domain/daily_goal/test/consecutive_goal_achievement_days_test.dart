@@ -140,15 +140,49 @@ void main() {
           id: id,
         ),
     ];
+    for (final evalDay in [13, 14, 15, 16]) {
+      expect(
+        ConsecutiveGoalAchievementDays.of(
+          histories,
+          goal,
+          DateTime(2026, 11, evalDay, 15),
+          null,
+          weeklyAchievementDays: 5,
+        ),
+        5,
+        reason: 'eval 11/$evalDay',
+      );
+    }
+  });
+
+  test('未達成の終わった週でも直近の達成日は数える', () {
+    // m=7。土〜月だけ達成。月曜評価で土日も数え 3。
+    final histories = [
+      ride(
+        recordedAt: DateTime(2026, 11, 7, 10),
+        caloriesKcal: 100,
+        id: '11111111-1111-4111-8111-111111111111',
+      ),
+      ride(
+        recordedAt: DateTime(2026, 11, 8, 10),
+        caloriesKcal: 100,
+        id: '22222222-2222-4222-8222-222222222222',
+      ),
+      ride(
+        recordedAt: DateTime(2026, 11, 9, 10),
+        caloriesKcal: 100,
+        id: '33333333-3333-4333-8333-333333333333',
+      ),
+    ];
     expect(
       ConsecutiveGoalAchievementDays.of(
         histories,
         goal,
-        DateTime(2026, 11, 13, 15),
+        DateTime(2026, 11, 9, 15),
         null,
-        weeklyAchievementDays: 5,
+        weeklyAchievementDays: 7,
       ),
-      5,
+      3,
     );
   });
 

@@ -72,18 +72,13 @@ final class ConsecutiveGoalAchievementDays {
         weekStart.month,
         weekStart.day + 6,
       );
-
-      if (weekEnd.isBefore(today)) {
-        final weekAchieves = _countAchievedInRange(
-          histories,
-          goal,
-          weekStart,
-          weekEnd,
-        );
-        if (weekAchieves < m) {
-          break;
-        }
-      }
+      final weekFinished = weekEnd.isBefore(today);
+      final weekAchieves = weekFinished
+          ? _countAchievedInRange(histories, goal, weekStart, weekEnd)
+          : null;
+      // 終わった週が m 未達でも、その週内の達成は数えてから週境界で止める。
+      final incompleteFinishedWeek =
+          weekFinished && weekAchieves != null && weekAchieves < m;
 
       if (_achievedOn(histories, goal, cursor)) {
         count += 1;
@@ -95,10 +90,18 @@ final class ConsecutiveGoalAchievementDays {
           weekStart,
           dayBefore,
         );
-        final remainingInclusive = weekEnd.difference(cursor).inDays + 1;
+        // 暦日差（DST で経過時間が 24h 未満でも日数を落とさない）。
+        final remainingInclusive =
+            DateTime.utc(weekEnd.year, weekEnd.month, weekEnd.day)
+                .difference(DateTime.utc(cursor.year, cursor.month, cursor.day))
+                .inDays +
+            1;
+        // 達成済みの終わった週は遡りを続けられるよう maxPossible で切らない。
         final maxPossible = pastAchieves + remainingInclusive;
-        if (maxPossible < m) {
-          break;
+        if (!weekFinished || incompleteFinishedWeek) {
+          if (maxPossible < m) {
+            break;
+          }
         }
         final skips = skipsByWeekStart[weekStart] ?? 0;
         if (skips + 1 > restBudget) {
@@ -106,7 +109,11 @@ final class ConsecutiveGoalAchievementDays {
         }
         skipsByWeekStart[weekStart] = skips + 1;
       }
-      cursor = DateTime(cursor.year, cursor.month, cursor.day - 1);
+      final next = DateTime(cursor.year, cursor.month, cursor.day - 1);
+      if (incompleteFinishedWeek && next.isBefore(weekStart)) {
+        break;
+      }
+      cursor = next;
     }
     return count;
   }

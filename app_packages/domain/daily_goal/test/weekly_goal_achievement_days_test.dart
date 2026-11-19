@@ -61,4 +61,44 @@ void main() {
       2,
     );
   });
+
+  test('countInWeek は空履歴で 0', () {
+    expect(
+      WeeklyGoalAchievementDays.countInWeek(
+        const [],
+        goal,
+        DateTime(2026, 11, 11),
+      ),
+      0,
+    );
+  });
+
+  test('countInWeek は週外の達成を数えない', () {
+    // 2026-11-09 は月曜始まり週の月。前週日 11/8 と翌週月 11/16 は除外。
+    final histories = [
+      ride(
+        recordedAt: DateTime(2026, 11, 8, 10),
+        caloriesKcal: 100,
+        id: '11111111-1111-4111-8111-111111111111',
+      ),
+      ride(
+        recordedAt: DateTime(2026, 11, 10, 10),
+        caloriesKcal: 100,
+        id: '22222222-2222-4222-8222-222222222222',
+      ),
+      ride(
+        recordedAt: DateTime(2026, 11, 16, 10),
+        caloriesKcal: 100,
+        id: '33333333-3333-4333-8333-333333333333',
+      ),
+    ];
+    expect(
+      WeeklyGoalAchievementDays.countInWeek(
+        histories,
+        goal,
+        DateTime(2026, 11, 11),
+      ),
+      1,
+    );
+  });
 }
