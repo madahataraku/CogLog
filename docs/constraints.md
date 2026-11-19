@@ -146,6 +146,18 @@ Flutter の版は App Distribution と同じく `3.47.9`（stable）に固定す
 
 これらのチェックをマージ条件にするため、Ruleset `mainブランチ` の required status checks に、上表のジョブ名 `Format`・`Analyze`・`Test` を入れる（シャード名は入れない）。設定場所は **Settings → Rules → mainブランチ** である。ワークフローを一度 `main` へマージして実行実績が出てから、チェック名を選べる。
 
+## Codacy Code Scanning（SARIF）
+
+`.github/workflows/codacy-analysis.yml` は、`main` 向けの `pull_request` と `main` への `push` で Codacy Analysis CLI を回し、結果を SARIF として GitHub Code Scanning へアップロードする。Codacy GitHub App のステータスチェック「Codacy Static Code Analysis」とは別経路である。
+
+| ジョブ名 | 内容 |
+| --- | --- |
+| Codacy Security Scan | CLI で SARIF を生成し、`github/codeql-action/upload-sarif` で Code Scanning へ載せる。`category` は `codacy` |
+
+Permissions は `contents: read`・`actions: read`・`security-events: write`。秘密情報や Environment は使わない。外部 Action はコミット SHA にピン留めする。
+
+Ruleset `mainブランチ` の Required code scanning tools に `codacy` を入れる場合、待ち状態を解消するには本ワークフローの実行結果が Code Scanning に載っている必要がある。SARIF 上の `tool.driver.name` は CLI が出力する名前（例: `Semgrep (reported by Codacy)`）になるため、Ruleset のツール名は初回アップロード後に Security → Code scanning で確認し、必要なら実際の名前へ合わせる。
+
 ## Daily チェック
 
 `.github/workflows/daily-checks.yml` は、`main` に対して日次で Analyze と全パッケージテストを実行する。秘密情報や Environment は使わない。トリガーは `schedule`（毎日 17:00 UTC = 翌 02:00 JST）と、手動の `workflow_dispatch` である。checkout の `ref` は常に `main` とする。

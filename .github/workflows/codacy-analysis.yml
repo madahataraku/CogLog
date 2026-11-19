@@ -1,0 +1,59 @@
+# Codacy Analysis CLI の結果を SARIF として GitHub Code Scanning へ載せる。
+# Ruleset「mainブランチ」の Required code scanning tools（codacy）が、
+# Codacy App のチェックとは別に Code Scanning 結果を待つためのワークフロー。
+# 手順・ツール名の突き合わせは docs/constraints.md を参照。
+name: Codacy Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  actions: read
+  # upload-sarif が Code Scanning へ書くために必要
+  security-events: write
+
+concurrency:
+  group: codacy-security-scan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  codacy-security-scan:
+    name: Codacy Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@562ee3e92b8e92df8b67e0a5ff8aa8e261919c08 # codacy/codacy-analysis-cli-action@v4.4.7
+        with:
+          output: results.sarif
+          format: sarif
+          # 非セキュリティ指摘の severity を Code Scanning 向けに寄せる
+          gh-code-scanning-compat: true
+          # SARIF 生成を優先し、PR 拒否は GitHub 側の閾値に委ねる
+          max-allowed-issues: 2147483647
+
+      # 2025-07 以降、同一 category の複数 runs は拒否される。
+      # Codacy はツールごとに run を出すため automationDetails.id で振り分ける。
+      - name: Disambiguate SARIF runs
+        run: |
+          set -euo pipefail
+          jq '.runs |= map(. + {automationDetails: {id: (.tool.driver.name + "/")}})' \
+            results.sarif > results-fixed.sarif
+          mv results-fixed.sarif results.sarif
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@9418214df1f2c4b8128c770156c409013b07d6b9 # github/codeql-action/upload-sarif@v3.39.3
+        with:
+          sarif_file: results.sarif
+          category: codacy
