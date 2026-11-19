@@ -109,7 +109,7 @@ mixin class L10nStringsMixin {
         'screen_feature_goal_settings_weekly_days_description',
       );
 
-  /// 週間目標達成日数の欄
+  /// 週間の目標運動日数の欄
   String get screen_feature_goal_settings_weekly_days_label =>
       LocalizeStringDelegate.get(
         'screen_feature_goal_settings_weekly_days_label',
@@ -119,5 +119,11 @@ mixin class L10nStringsMixin {
   String get screen_feature_goal_settings_weekly_days_unit =>
       LocalizeStringDelegate.get(
         'screen_feature_goal_settings_weekly_days_unit',
+      );
+
+  /// 週間の目標運動日数の未設定
+  String get screen_feature_goal_settings_weekly_days_unset =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_weekly_days_unset',
       );
 }
