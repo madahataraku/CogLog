@@ -156,7 +156,7 @@ Flutter の版は App Distribution と同じく `3.47.9`（stable）に固定す
 
 Permissions は `contents: read`・`actions: read`・`security-events: write`。秘密情報や Environment は使わない。外部 Action はコミット SHA にピン留めする。
 
-Ruleset `mainブランチ` の Required code scanning tools に `codacy` を入れる場合、待ち状態を解消するには本ワークフローの実行結果が Code Scanning に載っている必要がある。SARIF 上の `tool.driver.name` は CLI が出力する名前（例: `Semgrep (reported by Codacy)`）になるため、Ruleset のツール名は初回アップロード後に Security → Code scanning で確認し、必要なら実際の名前へ合わせる。
+Ruleset `mainブランチ` の Required code scanning tools に `codacy` を入れる場合、待ち状態を解消するには本ワークフローの実行結果が Code Scanning に載っている必要がある。CLI が出す `tool.driver.name`（例: `Semgrep (reported by Codacy)`）は、アップロード前に `codacy` へ揃える（Ruleset の識別子と一致させるため）。元ツール名は `automationDetails.id` に残し、同一 category の複数 runs 衝突を避ける。
 
 ## Daily チェック
 

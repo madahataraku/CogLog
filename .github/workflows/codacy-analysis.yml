@@ -43,13 +43,19 @@ jobs:
           # SARIF 生成を優先し、PR 拒否は GitHub 側の閾値に委ねる
           max-allowed-issues: 2147483647
 
-      # 2025-07 以降、同一 category の複数 runs は拒否される。
-      # Codacy はツールごとに run を出すため automationDetails.id で振り分ける。
-      - name: Disambiguate SARIF runs
+      # Ruleset の必須ツール名は `codacy`（SARIF の tool.driver.name）。
+      # CLI は「Semgrep (reported by Codacy)」等になるため名前を揃える。
+      # 2025-07 以降の同一 category 複数 runs 拒否は、元ツール名の id で振り分ける。
+      - name: Normalize SARIF tool name for Ruleset
         run: |
           set -euo pipefail
-          jq '.runs |= map(. + {automationDetails: {id: (.tool.driver.name + "/")}})' \
-            results.sarif > results-fixed.sarif
+          jq '
+            .runs |= map(
+              (.tool.driver.name) as $orig
+              | .automationDetails = {id: ($orig + "/")}
+              | .tool.driver.name = "codacy"
+            )
+          ' results.sarif > results-fixed.sarif
           mv results-fixed.sarif results.sarif
 
       - name: Upload SARIF results
