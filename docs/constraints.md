@@ -112,10 +112,14 @@ monolithic 構成（`model.mlpackage`・`vision.mlpackage`・`hf_model`・
 （`MLModel.compileModel` 用）を要求する。chunk 分割バンドルや
 `vision_video` / `audio` / PLE 別ファイルは取得しない（CoreMLLLM が
 `chunk1` 無しのとき monolithic 経路を選ぶ前提）。版は運用追従
-（アプリに特定 SHA を埋め込まない）。実行 computeUnits は
-`.cpuAndNeuralEngine`（ANE）。デバッグ表示の backend / visionBackend は `ane`
-とする。取得ファイル一覧は
+（アプリに特定 SHA を埋め込まない）。実行 computeUnits はまず
+`.cpuAndNeuralEngine`（ANE）を試し、実行計画の構築に失敗したとき
+（`model.mil` / execution plan 系。stateful KV などが ANE 非対応のとき）は
+`.cpuAndGPU` へフォールバックする。デバッグ表示の backend は実際に載った方
+（`ane` または `gpu`）。lean の `vision.mlpackage` は CoreMLLLM 側が
+GPU 経路のため visionBackend は `gpu`。取得ファイル一覧は
 `ios_monolithic_download_manifest.json` を Swift と Dart テストで共有する。
+prepare 完了時にロードを試し、フォールバック結果を確定する。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 

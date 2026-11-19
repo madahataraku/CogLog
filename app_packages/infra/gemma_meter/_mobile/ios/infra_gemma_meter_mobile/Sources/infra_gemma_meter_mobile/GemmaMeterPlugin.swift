@@ -14,8 +14,10 @@ import CoreMLLLM
 /// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let modelFolderName = "gemma4-e2b"
-  private static let configuredBackend = "ane"
-  private static let configuredVisionBackend = "ane"
+  /// Preferred text backend label before a successful load probe.
+  private static let preferredBackend = "ane"
+  /// Lean `vision.mlpackage` is selected on CoreMLLLM's GPU path.
+  private static let configuredVisionBackend = "gpu"
 
   private static let manifest: DownloadManifest = {
     do {
@@ -48,6 +50,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private var lastEmittedProgressBucket = -1
   private let downloadBytesLock = NSLock()
   private var downloadedBytesValue: Int64 = 0
+  /// Last successful main-model compute path (`ane` or `gpu`).
+  private var activeBackend = GemmaMeterPlugin.preferredBackend
   #if canImport(CoreMLLLM)
   private var llm: CoreMLLLM?
   #endif
@@ -132,7 +136,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         "status": "modelNotDownloaded",
         "reason": "missingFile",
         "message": "Gemma meter Core ML model is not downloaded.",
-        "backend": Self.configuredBackend,
+        "backend": activeBackend,
         "visionBackend": Self.configuredVisionBackend,
       ]
     }
@@ -140,7 +144,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       "status": "ready",
       "reason": "ready",
       "message": "Gemma meter Core ML model is ready.",
-      "backend": Self.configuredBackend,
+      "backend": activeBackend,
       "visionBackend": Self.configuredVisionBackend,
     ]
     #else
@@ -149,7 +153,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       "reason": "missingDependency",
       "message":
         "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM.",
-      "backend": Self.configuredBackend,
+      "backend": Self.preferredBackend,
       "visionBackend": Self.configuredVisionBackend,
     ]
     #endif
@@ -174,6 +178,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     do {
       try awaitSync {
         try await self.downloadIfNeeded()
+        // Warm-load so ANE→GPU fallback is settled before the first read.
+        _ = try await self.loadLLMIfNeeded()
       }
       try excludeDownloadedModelFromBackup()
       emitProgress(1)
@@ -235,6 +241,13 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   private func ensureLLM() throws -> CoreMLLLM {
+    try awaitSync {
+      try await self.loadLLMIfNeeded()
+    }
+  }
+
+  /// Loads the monolithic bundle, preferring ANE and falling back to GPU.
+  private func loadLLMIfNeeded() async throws -> CoreMLLLM {
     if let llm {
       return llm
     }
@@ -247,11 +260,39 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
       )
     }
-    let created = try awaitSync {
-      try await CoreMLLLM.load(from: directory, computeUnits: .cpuAndNeuralEngine)
-    }
+    let (created, backend) = try await Self.loadWithComputeUnitFallback(from: directory)
     llm = created
+    activeBackend = backend
     return created
+  }
+
+  /// Tries `.cpuAndNeuralEngine`, then `.cpuAndGPU` on execution-plan failures.
+  private static func loadWithComputeUnitFallback(from directory: URL) async throws -> (
+    CoreMLLLM, String
+  ) {
+    do {
+      let model = try await CoreMLLLM.load(
+        from: directory,
+        computeUnits: .cpuAndNeuralEngine
+      )
+      return (model, "ane")
+    } catch {
+      guard isNeuralEnginePlanFailure(error) else { throw error }
+      let model = try await CoreMLLLM.load(
+        from: directory,
+        computeUnits: .cpuAndGPU
+      )
+      return (model, "gpu")
+    }
+  }
+
+  /// True when Core ML rejected the ANE execution plan (often stateful KV).
+  private static func isNeuralEnginePlanFailure(_ error: Error) -> Bool {
+    let message = safeMessage(error).lowercased()
+    return message.contains("execution plan")
+      || message.contains("model.mil")
+      || message.contains("error code: -14")
+      || message.contains("code=-14")
   }
 
   private func downloadIfNeeded() async throws {
