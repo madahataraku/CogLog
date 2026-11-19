@@ -51,9 +51,16 @@ class MeterCaptureScreen extends HookConsumerWidget {
     final selected = (ShellTabIndexScope.maybeOf(context) ?? -1) == 1;
     final lifecycle = useAppLifecycleState();
 
+    // 離脱は selected 変化時のみ。世代更新を依存に含めると離脱が再帰する。
     useEffect(() {
       if (!selected) {
         unawaited(viewModel.onLeaveMeterTab());
+      }
+      return null;
+    }, [viewModel, selected]);
+
+    useEffect(() {
+      if (!selected) {
         return null;
       }
       final paused =
