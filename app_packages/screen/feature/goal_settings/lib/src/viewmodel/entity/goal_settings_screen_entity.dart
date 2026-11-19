@@ -13,6 +13,7 @@ import 'package:domain_daily_goal/domain_daily_goal.dart';
 ///   seconds: '',
 ///   calories: '',
 ///   distance: '',
+///   weeklyAchievementDays: '',
 ///   autoUpdateEnabled: false,
 ///   autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
 /// );
@@ -29,6 +30,7 @@ final class GoalSettingsScreenEntity {
   ///   seconds: '0',
   ///   calories: '0.0',
   ///   distance: '0.0',
+  ///   weeklyAchievementDays: '3',
   ///   autoUpdateEnabled: false,
   ///   autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
   /// );
@@ -40,6 +42,7 @@ final class GoalSettingsScreenEntity {
     required this.seconds,
     required this.calories,
     required this.distance,
+    required this.weeklyAchievementDays,
     required this.autoUpdateEnabled,
     required this.autoUpdateLevel,
   });
@@ -61,6 +64,9 @@ final class GoalSettingsScreenEntity {
 
   /// 走行距離（km）。
   final String distance;
+
+  /// 週間目標達成日数。未設定は空。
+  final String weeklyAchievementDays;
 
   /// 目標の自動更新が有効か。
   final bool autoUpdateEnabled;

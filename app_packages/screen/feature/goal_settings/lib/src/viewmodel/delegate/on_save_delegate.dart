@@ -238,6 +238,7 @@ final class OnSaveDelegate {
     required String seconds,
     required String calories,
     required String distance,
+    required String weeklyAchievementDays,
     required bool autoUpdateEnabled,
     required DailyGoalAutoUpdateLevel autoUpdateLevel,
     required DateTime now,
@@ -255,7 +256,8 @@ final class OnSaveDelegate {
         calories: calories,
         distance: distance,
       );
-      if (goal == null) {
+      final weekly = _parseWeeklyAchievementDays(weeklyAchievementDays);
+      if (goal == null || !weekly.ok) {
         outcome = GoalSettingsSaveOutcome.invalidInput;
         return;
       }
@@ -265,6 +267,7 @@ final class OnSaveDelegate {
             goal: goal,
             autoUpdateEnabled: autoUpdateEnabled,
             autoUpdateLevel: autoUpdateLevel,
+            weeklyAchievementDays: weekly.value,
             now: now,
           ),
         );
@@ -274,6 +277,7 @@ final class OnSaveDelegate {
             goal: result.goal,
             autoUpdateEnabled: result.autoUpdate.enabled,
             autoUpdateLevel: result.autoUpdate.level,
+            weeklyAchievementDays: result.autoUpdate.weeklyAchievementDays,
           ),
         );
         outcome = GoalSettingsSaveOutcome.success;
@@ -283,5 +287,18 @@ final class OnSaveDelegate {
       }
     });
     return outcome;
+  }
+
+  /// 空は未設定。1〜7 以外は失敗。
+  static ({int? value, bool ok}) _parseWeeklyAchievementDays(String raw) {
+    final t = raw.trim();
+    if (t.isEmpty) {
+      return (value: null, ok: true);
+    }
+    final v = int.tryParse(t);
+    if (v == null || !WeeklyGoalAchievementDays.isValidSetting(v)) {
+      return (value: null, ok: false);
+    }
+    return (value: v, ok: true);
   }
 }

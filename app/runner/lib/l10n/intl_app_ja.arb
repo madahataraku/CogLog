@@ -955,6 +955,18 @@
   "@screen_feature_goal_settings_unset_hint": {
     "description": "未設定の説明"
   },
+  "screen_feature_goal_settings_weekly_days_description": "1週間のうち何日目標を達成したいか（1〜7。空で未設定）。連続達成や自動更新の休み日の上限にも使います",
+  "@screen_feature_goal_settings_weekly_days_description": {
+    "description": "説明"
+  },
+  "screen_feature_goal_settings_weekly_days_label": "週間の目標達成日数",
+  "@screen_feature_goal_settings_weekly_days_label": {
+    "description": "週間目標達成日数の欄"
+  },
+  "screen_feature_goal_settings_weekly_days_unit": "日",
+  "@screen_feature_goal_settings_weekly_days_unit": {
+    "description": "単位"
+  },
   "screen_feature_main_nav_exercise_history": "運動履歴",
   "@screen_feature_main_nav_exercise_history": {
     "description": "ボトムナビ"
@@ -1361,6 +1373,41 @@
   "screen_feature_top_unset_prompt": "目標設定で一日あたりの目標を設定しましょう",
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
+  },
+  "screen_feature_top_weekly_achievement_guidance": "目標設定で週間の目標達成日数と一日あたりの目標を設定しましょう",
+  "@screen_feature_top_weekly_achievement_guidance": {
+    "description": "誘導"
+  },
+  "screen_feature_top_weekly_achievement_ratio": "{n}/{m}",
+  "@screen_feature_top_weekly_achievement_ratio": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      }
+    },
+    "description": "達成日数比"
+  },
+  "screen_feature_top_weekly_achievement_semantics": "今週の目標達成は{n}日、目標は{m}日、残り{remaining}日",
+  "@screen_feature_top_weekly_achievement_semantics": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      },
+      "remaining": {
+        "type": "String"
+      }
+    },
+    "description": "semantics"
+  },
+  "screen_feature_top_weekly_achievement_title": "今週の目標達成日数",
+  "@screen_feature_top_weekly_achievement_title": {
+    "description": "週間達成見出し"
   },
   "screen_feature_trends_chart_placeholder": "読み込み中",
   "@screen_feature_trends_chart_placeholder": {

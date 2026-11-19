@@ -37,6 +37,7 @@ extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
     required String seconds,
     required String calories,
     required String distance,
+    required String weeklyAchievementDays,
     required bool autoUpdateEnabled,
     required DailyGoalAutoUpdateLevel autoUpdateLevel,
   }) {
@@ -50,6 +51,7 @@ extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
       seconds: seconds,
       calories: calories,
       distance: distance,
+      weeklyAchievementDays: weeklyAchievementDays,
       autoUpdateEnabled: autoUpdateEnabled,
       autoUpdateLevel: autoUpdateLevel,
       now: DateTime.now(),

@@ -762,6 +762,16 @@ class L10nJa extends L10n {
   String get screen_feature_goal_settings_unset_hint => '未設定の欄は空のまま保存できます';
 
   @override
+  String get screen_feature_goal_settings_weekly_days_description =>
+      '1週間のうち何日目標を達成したいか（1〜7。空で未設定）。連続達成や自動更新の休み日の上限にも使います';
+
+  @override
+  String get screen_feature_goal_settings_weekly_days_label => '週間の目標達成日数';
+
+  @override
+  String get screen_feature_goal_settings_weekly_days_unit => '日';
+
+  @override
   String get screen_feature_main_nav_exercise_history => '運動履歴';
 
   @override
@@ -1076,6 +1086,27 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';
+
+  @override
+  String get screen_feature_top_weekly_achievement_guidance =>
+      '目標設定で週間の目標達成日数と一日あたりの目標を設定しましょう';
+
+  @override
+  String screen_feature_top_weekly_achievement_ratio(String n, String m) {
+    return '$n/$m';
+  }
+
+  @override
+  String screen_feature_top_weekly_achievement_semantics(
+    String n,
+    String m,
+    String remaining,
+  ) {
+    return '今週の目標達成は$n日、目標は$m日、残り$remaining日';
+  }
+
+  @override
+  String get screen_feature_top_weekly_achievement_title => '今週の目標達成日数';
 
   @override
   String get screen_feature_trends_chart_placeholder => '読み込み中';

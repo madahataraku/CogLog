@@ -992,6 +992,18 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_goal_settings_unset_hint;
       },
+      'screen_feature_goal_settings_weekly_days_description': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_weekly_days_description;
+      },
+      'screen_feature_goal_settings_weekly_days_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_weekly_days_label;
+      },
+      'screen_feature_goal_settings_weekly_days_unit': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_weekly_days_unit;
+      },
       'screen_feature_main_nav_exercise_history': (source) {
         // No Placeholders
         return l10n.screen_feature_main_nav_exercise_history;
@@ -1382,6 +1394,38 @@ final class L10nHelper {
       'screen_feature_top_unset_prompt': (source) {
         // No Placeholders
         return l10n.screen_feature_top_unset_prompt;
+      },
+      'screen_feature_top_weekly_achievement_guidance': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_weekly_achievement_guidance;
+      },
+      'screen_feature_top_weekly_achievement_ratio': (source) {
+        // Has Placeholders
+        var index = 0;
+        String n = source.arguments[index];
+        index++;
+        String m = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_weekly_achievement_ratio(n, m);
+      },
+      'screen_feature_top_weekly_achievement_semantics': (source) {
+        // Has Placeholders
+        var index = 0;
+        String n = source.arguments[index];
+        index++;
+        String m = source.arguments[index];
+        index++;
+        String remaining = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_weekly_achievement_semantics(
+          n,
+          m,
+          remaining,
+        );
+      },
+      'screen_feature_top_weekly_achievement_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_weekly_achievement_title;
       },
       'screen_feature_trends_chart_placeholder': (source) {
         // No Placeholders

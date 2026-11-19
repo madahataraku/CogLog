@@ -40,6 +40,7 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
     final secondsController = useTextEditingController();
     final caloriesController = useTextEditingController();
     final distanceController = useTextEditingController();
+    final weeklyDaysController = useTextEditingController();
     final autoUpdateEnabled = useState(entity.autoUpdateEnabled);
     final autoUpdateLevel = useState(entity.autoUpdateLevel);
     final saving = useState(false);
@@ -54,6 +55,7 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
         secondsController.text = entity.seconds;
         caloriesController.text = entity.calories;
         distanceController.text = entity.distance;
+        weeklyDaysController.text = entity.weeklyAchievementDays;
         autoUpdateEnabled.value = entity.autoUpdateEnabled;
         autoUpdateLevel.value = entity.autoUpdateLevel;
         return null;
@@ -65,6 +67,7 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
         entity.seconds,
         entity.calories,
         entity.distance,
+        entity.weeklyAchievementDays,
         entity.autoUpdateEnabled,
         entity.autoUpdateLevel,
       ],
@@ -135,6 +138,17 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
               ),
               enabled: entity.loaded && !saving.value,
             ),
+            FTextField(
+              control: .managed(controller: weeklyDaysController),
+              label: Text(
+                strings.screen_feature_goal_settings_weekly_days_label,
+              ),
+              description: Text(
+                strings.screen_feature_goal_settings_weekly_days_description,
+              ),
+              keyboardType: TextInputType.number,
+              enabled: entity.loaded && !saving.value,
+            ),
             FSwitch(
               label: Text(
                 strings.screen_feature_goal_settings_auto_update_enabled,
@@ -189,6 +203,7 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
                               seconds: secondsController.text,
                               calories: caloriesController.text,
                               distance: distanceController.text,
+                              weeklyAchievementDays: weeklyDaysController.text,
                               autoUpdateEnabled: autoUpdateEnabled.value,
                               autoUpdateLevel: autoUpdateLevel.value,
                             );

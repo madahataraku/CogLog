@@ -93,6 +93,7 @@ void main() {
         goal: DailyGoal.unset,
         autoUpdateEnabled: false,
         autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+        weeklyAchievementDays: null,
       ),
     );
     final save = _Save();
@@ -103,6 +104,7 @@ void main() {
           seconds: '',
           calories: '',
           distance: '',
+          weeklyAchievementDays: '',
           autoUpdateEnabled: true,
           autoUpdateLevel: DailyGoalAutoUpdateLevel.slow,
           now: now,
@@ -130,6 +132,7 @@ void main() {
         goal: DailyGoal.unset,
         autoUpdateEnabled: false,
         autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+        weeklyAchievementDays: null,
       ),
     );
     final save = _Save();
@@ -139,6 +142,7 @@ void main() {
       seconds: '0',
       calories: '0',
       distance: '0',
+      weeklyAchievementDays: '',
       autoUpdateEnabled: false,
       autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
       now: now,
@@ -158,6 +162,7 @@ void main() {
         goal: DailyGoal.unset,
         autoUpdateEnabled: false,
         autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+        weeklyAchievementDays: null,
       ),
     );
     final save = _Save();
@@ -167,6 +172,7 @@ void main() {
       seconds: '5',
       calories: '',
       distance: '',
+      weeklyAchievementDays: '',
       autoUpdateEnabled: false,
       autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
       now: now,
@@ -189,6 +195,7 @@ void main() {
         goal: before,
         autoUpdateEnabled: true,
         autoUpdateLevel: DailyGoalAutoUpdateLevel.slow,
+        weeklyAchievementDays: null,
       ),
     );
     final save = _Save();
@@ -199,6 +206,7 @@ void main() {
           seconds: '',
           calories: '10',
           distance: '1',
+          weeklyAchievementDays: '',
           autoUpdateEnabled: false,
           autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
           now: now,
@@ -217,6 +225,7 @@ void main() {
           seconds: '',
           calories: '-1',
           distance: '',
+          weeklyAchievementDays: '',
           autoUpdateEnabled: false,
           autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
           now: now,
@@ -232,6 +241,7 @@ void main() {
           seconds: '',
           calories: 'NaN',
           distance: 'Infinity',
+          weeklyAchievementDays: '',
           autoUpdateEnabled: false,
           autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
           now: now,
@@ -249,6 +259,7 @@ void main() {
           seconds: '0',
           calories: '1',
           distance: '1',
+          weeklyAchievementDays: '',
           autoUpdateEnabled: true,
           autoUpdateLevel: DailyGoalAutoUpdateLevel.challenging,
           now: now,
@@ -270,6 +281,7 @@ void main() {
         goal: before,
         autoUpdateEnabled: false,
         autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+        weeklyAchievementDays: null,
       ),
     );
     final save = _Save(error: StateError('fail'));
@@ -280,6 +292,7 @@ void main() {
           seconds: '0',
           calories: '1',
           distance: '1',
+          weeklyAchievementDays: '',
           autoUpdateEnabled: true,
           autoUpdateLevel: DailyGoalAutoUpdateLevel.slow,
           now: now,
@@ -387,6 +400,7 @@ void main() {
         ),
         autoUpdateEnabled: true,
         autoUpdateLevel: DailyGoalAutoUpdateLevel.challenging,
+        weeklyAchievementDays: null,
       ),
     );
     expect(zeros.hours, '0');

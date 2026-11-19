@@ -102,4 +102,22 @@ mixin class L10nStringsMixin {
   /// 未設定の説明
   String get screen_feature_goal_settings_unset_hint =>
       LocalizeStringDelegate.get('screen_feature_goal_settings_unset_hint');
+
+  /// 説明
+  String get screen_feature_goal_settings_weekly_days_description =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_weekly_days_description',
+      );
+
+  /// 週間目標達成日数の欄
+  String get screen_feature_goal_settings_weekly_days_label =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_weekly_days_label',
+      );
+
+  /// 単位
+  String get screen_feature_goal_settings_weekly_days_unit =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_weekly_days_unit',
+      );
 }

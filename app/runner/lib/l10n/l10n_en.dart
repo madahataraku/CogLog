@@ -827,6 +827,17 @@ class L10nEn extends L10n {
       'Leave fields empty to keep them unset';
 
   @override
+  String get screen_feature_goal_settings_weekly_days_description =>
+      'How many days per week to meet daily goals (1–7; empty = unset). Also sets rest-day allowance for streaks and auto-update';
+
+  @override
+  String get screen_feature_goal_settings_weekly_days_label =>
+      'Weekly goal days';
+
+  @override
+  String get screen_feature_goal_settings_weekly_days_unit => 'days';
+
+  @override
   String get screen_feature_main_nav_exercise_history => 'Exercise history';
 
   @override
@@ -1148,6 +1159,28 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
+
+  @override
+  String get screen_feature_top_weekly_achievement_guidance =>
+      'Set weekly goal days and daily goals in Goals';
+
+  @override
+  String screen_feature_top_weekly_achievement_ratio(String n, String m) {
+    return '$n/$m';
+  }
+
+  @override
+  String screen_feature_top_weekly_achievement_semantics(
+    String n,
+    String m,
+    String remaining,
+  ) {
+    return 'This week $n of $m goal days; $remaining remaining';
+  }
+
+  @override
+  String get screen_feature_top_weekly_achievement_title =>
+      'Goal days this week';
 
   @override
   String get screen_feature_trends_chart_placeholder => 'Loading';
