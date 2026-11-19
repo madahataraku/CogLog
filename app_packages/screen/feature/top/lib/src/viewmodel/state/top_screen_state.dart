@@ -29,6 +29,9 @@ final class TopScreenState {
     required this.pendingModelDownloadGuidance,
     required this.pendingGemmaMeterGuidance,
     required this.hasNewAchievements,
+    required this.weeklyAchievementDays,
+    required this.weekGoalAchievementDayCount,
+    required this.showWeeklyGoalGuidance,
   });
 
   /// まだ読み込んでいない状態。指標は消費カロリー。
@@ -44,6 +47,9 @@ final class TopScreenState {
     pendingModelDownloadGuidance: false,
     pendingGemmaMeterGuidance: false,
     hasNewAchievements: false,
+    weeklyAchievementDays: null,
+    weekGoalAchievementDayCount: 0,
+    showWeeklyGoalGuidance: true,
   );
 
   /// 読み込みが成功したあとに true。
@@ -79,6 +85,15 @@ final class TopScreenState {
   /// ホーム trophy に新規ドットを出すとき true。
   final bool hasNewAchievements;
 
+  /// 週間目標達成日数。未設定は null。
+  final int? weeklyAchievementDays;
+
+  /// 今週の目標達成日数。
+  final int weekGoalAchievementDayCount;
+
+  /// 週間ゲージの代わりに設定誘導を出すとき true。
+  final bool showWeeklyGoalGuidance;
+
   /// 指定した項目だけ差し替えた [TopScreenState] を返す。
   ///
   /// 未指定の項目は現在値を保つ。
@@ -99,6 +114,10 @@ final class TopScreenState {
     bool? pendingModelDownloadGuidance,
     bool? pendingGemmaMeterGuidance,
     bool? hasNewAchievements,
+    int? weeklyAchievementDays,
+    bool clearWeeklyAchievementDays = false,
+    int? weekGoalAchievementDayCount,
+    bool? showWeeklyGoalGuidance,
   }) {
     return TopScreenState(
       loaded: loaded ?? this.loaded,
@@ -114,6 +133,13 @@ final class TopScreenState {
       pendingGemmaMeterGuidance:
           pendingGemmaMeterGuidance ?? this.pendingGemmaMeterGuidance,
       hasNewAchievements: hasNewAchievements ?? this.hasNewAchievements,
+      weeklyAchievementDays: clearWeeklyAchievementDays
+          ? null
+          : (weeklyAchievementDays ?? this.weeklyAchievementDays),
+      weekGoalAchievementDayCount:
+          weekGoalAchievementDayCount ?? this.weekGoalAchievementDayCount,
+      showWeeklyGoalGuidance:
+          showWeeklyGoalGuidance ?? this.showWeeklyGoalGuidance,
     );
   }
 }

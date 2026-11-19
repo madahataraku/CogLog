@@ -138,6 +138,9 @@ final class OnInitializeDelegate {
           pendingModelDownloadGuidance: false,
           pendingGemmaMeterGuidance: false,
           hasNewAchievements: result.hasNewAchievements,
+          weeklyAchievementDays: result.weeklyAchievementDays,
+          weekGoalAchievementDayCount: result.weekGoalAchievementDayCount,
+          showWeeklyGoalGuidance: result.showWeeklyGoalGuidance,
         ),
       );
     });

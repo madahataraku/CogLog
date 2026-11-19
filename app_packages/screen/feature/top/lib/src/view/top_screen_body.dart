@@ -11,6 +11,7 @@ import '../viewmodel/top_screen_view_model.dart';
 import 'advice_speech_panel.dart';
 import 'goal_achievement_ring.dart';
 import 'top_screen_providers.dart';
+import 'weekly_goal_achievement_bar.dart';
 
 /// 期間の合計と指標の切り替え、吹き出し付きアドバイス、目標達成率。
 @internal
@@ -167,6 +168,26 @@ class TopScreenBody extends HookConsumerWidget {
                   ),
                 ),
               ],
+            ),
+            WeeklyGoalAchievementBar(
+              title: strings.screen_feature_top_weekly_achievement_title,
+              showGuidance: entity.showWeeklyGoalGuidance,
+              guidanceText:
+                  strings.screen_feature_top_weekly_achievement_guidance,
+              ratioText: entity.weeklyAchievementDays == null
+                  ? ''
+                  : strings.screen_feature_top_weekly_achievement_ratio(
+                      n: '${entity.weekGoalAchievementDayCount}',
+                      m: '${entity.weeklyAchievementDays}',
+                    ),
+              progress: entity.weeklyProgress,
+              semanticsLabel: entity.weeklyAchievementDays == null
+                  ? ''
+                  : strings.screen_feature_top_weekly_achievement_semantics(
+                      n: '${entity.weekGoalAchievementDayCount}',
+                      m: '${entity.weeklyAchievementDays}',
+                      remaining: '${entity.weeklyRemaining}',
+                    ),
             ),
           ],
         ),

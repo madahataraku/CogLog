@@ -73,6 +73,9 @@ final class _LoadTop implements LoadTopScreenUsecase {
       consecutiveGoalAchievementDays: 0,
       daysSincePreviousExerciseDay: null,
       hasNewAchievements: hasNew,
+      weeklyAchievementDays: null,
+      weekGoalAchievementDayCount: 0,
+      showWeeklyGoalGuidance: true,
     );
   }
 }
