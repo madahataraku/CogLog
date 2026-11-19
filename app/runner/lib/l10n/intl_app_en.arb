@@ -1513,6 +1513,14 @@
   "@screen_feature_trends_unit_percent": {
     "description": "単位"
   },
+  "view_meter_reading_progress_cancel": "Cancel reading",
+  "@view_meter_reading_progress_cancel": {
+    "description": "読み取り中止"
+  },
+  "view_meter_reading_progress_reading": "Reading…",
+  "@view_meter_reading_progress_reading": {
+    "description": "読み取り待機"
+  },
   "view_model_download_guidance_body": "The on-device model for tips is not on this device yet. You can start preparing it. You can keep using the app meanwhile.",
   "@view_model_download_guidance_body": {
     "description": "誘導本文"

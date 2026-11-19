@@ -1187,6 +1187,12 @@ class L10nJa extends L10n {
   String get screen_feature_trends_unit_percent => '%';
 
   @override
+  String get view_meter_reading_progress_cancel => '読み取りを中止';
+
+  @override
+  String get view_meter_reading_progress_reading => '読み取り中…';
+
+  @override
   String get view_model_download_guidance_body =>
       'ワンポイントアドバイス等に使うモデルが端末にありません。準備を開始できます。準備中もアプリは利用できます。';
 

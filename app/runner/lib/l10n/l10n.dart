@@ -2200,6 +2200,18 @@ abstract class L10n {
   /// **'%'**
   String get screen_feature_trends_unit_percent;
 
+  /// 読み取り中止
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取りを中止'**
+  String get view_meter_reading_progress_cancel;
+
+  /// 読み取り待機
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取り中…'**
+  String get view_meter_reading_progress_reading;
+
   /// 誘導本文
   ///
   /// In ja, this message translates to:

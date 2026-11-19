@@ -1266,6 +1266,12 @@ class L10nEn extends L10n {
   String get screen_feature_trends_unit_percent => '%';
 
   @override
+  String get view_meter_reading_progress_cancel => 'Cancel reading';
+
+  @override
+  String get view_meter_reading_progress_reading => 'Reading…';
+
+  @override
   String get view_model_download_guidance_body =>
       'The on-device model for tips is not on this device yet. You can start preparing it. You can keep using the app meanwhile.';
 

@@ -1531,6 +1531,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_trends_unit_percent;
       },
+      'view_meter_reading_progress_cancel': (source) {
+        // No Placeholders
+        return l10n.view_meter_reading_progress_cancel;
+      },
+      'view_meter_reading_progress_reading': (source) {
+        // No Placeholders
+        return l10n.view_meter_reading_progress_reading;
+      },
       'view_model_download_guidance_body': (source) {
         // No Placeholders
         return l10n.view_model_download_guidance_body;
