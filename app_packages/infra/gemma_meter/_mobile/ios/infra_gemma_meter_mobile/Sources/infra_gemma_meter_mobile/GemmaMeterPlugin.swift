@@ -1,3 +1,4 @@
+import CoreML
 import Flutter
 import Foundation
 import UIKit
@@ -14,10 +15,10 @@ import CoreMLLLM
 /// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let modelFolderName = "gemma4-e2b"
-  /// Preferred text backend label before a successful load probe.
-  private static let preferredBackend = "ane"
   /// Lean `vision.mlpackage` is selected on CoreMLLLM's GPU path.
   private static let configuredVisionBackend = "gpu"
+  private static let persistedBackendKey = "gemmaMeter.activeBackend"
+  private static let loadSucceededKey = "gemmaMeter.loadSucceeded"
 
   private static let manifest: DownloadManifest = {
     do {
@@ -50,8 +51,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private var lastEmittedProgressBucket = -1
   private let downloadBytesLock = NSLock()
   private var downloadedBytesValue: Int64 = 0
-  /// Last successful main-model compute path (`ane` or `gpu`).
-  private var activeBackend = GemmaMeterPlugin.preferredBackend
+  /// Last successful main-model compute path (`ane` or `gpu`); empty until load.
+  private var activeBackend = ""
   #if canImport(CoreMLLLM)
   private var llm: CoreMLLLM?
   #endif
@@ -136,15 +137,30 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         "status": "modelNotDownloaded",
         "reason": "missingFile",
         "message": "Gemma meter Core ML model is not downloaded.",
-        "backend": activeBackend,
+        "backend": "",
+        "visionBackend": Self.configuredVisionBackend,
+      ]
+    }
+    // Ready only after a successful load (this process or persisted).
+    let loadedThisProcess = llm != nil
+    let loadSucceededPreviously = UserDefaults.standard.bool(forKey: Self.loadSucceededKey)
+    let backend = loadedThisProcess
+      ? activeBackend
+      : (UserDefaults.standard.string(forKey: Self.persistedBackendKey) ?? "")
+    if loadedThisProcess || loadSucceededPreviously {
+      return [
+        "status": "ready",
+        "reason": "ready",
+        "message": "Gemma meter Core ML model is ready.",
+        "backend": backend,
         "visionBackend": Self.configuredVisionBackend,
       ]
     }
     return [
-      "status": "ready",
-      "reason": "ready",
-      "message": "Gemma meter Core ML model is ready.",
-      "backend": activeBackend,
+      "status": "unavailable",
+      "reason": "loadFailed",
+      "message": "Gemma meter Core ML model is on disk but has not loaded successfully.",
+      "backend": "",
       "visionBackend": Self.configuredVisionBackend,
     ]
     #else
@@ -153,7 +169,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       "reason": "missingDependency",
       "message":
         "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM.",
-      "backend": Self.preferredBackend,
+      "backend": "",
       "visionBackend": Self.configuredVisionBackend,
     ]
     #endif
@@ -190,6 +206,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       }
     } catch {
       preparing = false
+      markLoadFailed()
       let code = Self.mapPrepareCode(error)
       let message = Self.safeMessage(error)
       DispatchQueue.main.async {
@@ -260,39 +277,105 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
       )
     }
-    let (created, backend) = try await Self.loadWithComputeUnitFallback(from: directory)
-    llm = created
-    activeBackend = backend
-    return created
+    do {
+      let preferred = UserDefaults.standard.string(forKey: Self.persistedBackendKey)
+      let (created, backend) = try await Self.loadWithComputeUnitFallback(
+        from: directory,
+        preferredBackend: preferred
+      )
+      llm = created
+      activeBackend = backend
+      UserDefaults.standard.set(backend, forKey: Self.persistedBackendKey)
+      UserDefaults.standard.set(true, forKey: Self.loadSucceededKey)
+      return created
+    } catch {
+      markLoadFailed()
+      throw error
+    }
   }
 
-  /// Tries `.cpuAndNeuralEngine`, then `.cpuAndGPU` on execution-plan failures.
-  private static func loadWithComputeUnitFallback(from directory: URL) async throws -> (
-    CoreMLLLM, String
-  ) {
-    do {
-      let model = try await CoreMLLLM.load(
-        from: directory,
-        computeUnits: .cpuAndNeuralEngine
-      )
-      return (model, "ane")
-    } catch {
-      guard isNeuralEnginePlanFailure(error) else { throw error }
-      let model = try await CoreMLLLM.load(
-        from: directory,
-        computeUnits: .cpuAndGPU
-      )
-      return (model, "gpu")
+  private func markLoadFailed() {
+    llm = nil
+    activeBackend = ""
+    UserDefaults.standard.set(false, forKey: Self.loadSucceededKey)
+  }
+
+  /// Tries ANE then GPU (or GPU first when that was last successful).
+  private static func loadWithComputeUnitFallback(
+    from directory: URL,
+    preferredBackend: String?
+  ) async throws -> (CoreMLLLM, String) {
+    let order: [(MLComputeUnits, String)] =
+      preferredBackend == "gpu"
+      ? [(.cpuAndGPU, "gpu"), (.cpuAndNeuralEngine, "ane")]
+      : [(.cpuAndNeuralEngine, "ane"), (.cpuAndGPU, "gpu")]
+    var lastError: Error?
+    for (units, label) in order {
+      do {
+        let model = try await CoreMLLLM.load(from: directory, computeUnits: units)
+        return (model, label)
+      } catch {
+        lastError = error
+        // Only continue to GPU when ANE failed with an execution-plan style error.
+        if label == "ane", isNeuralEnginePlanFailure(error) {
+          continue
+        }
+        // Preferred GPU failed: still try ANE once before giving up.
+        if label == "gpu", preferredBackend == "gpu" {
+          continue
+        }
+        throw error
+      }
     }
+    throw lastError
+      ?? NSError(
+        domain: "GemmaMeter",
+        code: 4,
+        userInfo: [NSLocalizedDescriptionKey: "Gemma Core ML load failed."]
+      )
   }
 
   /// True when Core ML rejected the ANE execution plan (often stateful KV).
   private static func isNeuralEnginePlanFailure(_ error: Error) -> Bool {
-    let message = safeMessage(error).lowercased()
-    return message.contains("execution plan")
-      || message.contains("model.mil")
-      || message.contains("error code: -14")
-      || message.contains("code=-14")
+    var current: Error? = error
+    for _ in 0..<8 {
+      guard let err = current else { return false }
+      let ns = err as NSError
+      if ns.code == -14 {
+        return true
+      }
+      let domain = ns.domain.lowercased()
+      let text = planFailureHaystack(ns)
+      if domain.contains("coreml"), matchesExecutionPlanText(text) {
+        return true
+      }
+      if matchesExecutionPlanText(text) {
+        return true
+      }
+      current = ns.userInfo[NSUnderlyingErrorKey] as? Error
+    }
+    return false
+  }
+
+  private static func planFailureHaystack(_ error: NSError) -> String {
+    var parts: [String] = [
+      error.localizedDescription,
+      error.localizedFailureReason ?? "",
+      String(describing: error.userInfo),
+    ]
+    if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError {
+      parts.append(underlying.localizedDescription)
+      parts.append(String(describing: underlying.userInfo))
+    }
+    return parts.joined(separator: " ").lowercased()
+  }
+
+  private static func matchesExecutionPlanText(_ text: String) -> Bool {
+    text.contains("execution plan")
+      || text.contains("model.mil")
+      || text.contains("error code: -14")
+      || text.contains("code=-14")
+      || text.contains("code = -14")
   }
 
   private func downloadIfNeeded() async throws {
@@ -536,6 +619,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       return
     }
     try fm.removeItem(at: modelDir)
+    markLoadFailed()
+    UserDefaults.standard.removeObject(forKey: Self.persistedBackendKey)
   }
 
   private func ensureModelsDirectoryExcludedFromBackup() throws {
