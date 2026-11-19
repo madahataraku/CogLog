@@ -29,10 +29,12 @@ is true.
 CocoaPods still compiles the same Sources as a fallback. Without CoreMLLLM on
 the pod target, availability stays `unavailable` until SPM is used.
 
-Models are **not** bundled. `ModelDownloader` fetches Hugging Face
-`mlboydaisuke/gemma-4-E2B-coreml` (default revision `n1024`, multimodal
-encoders included) into `Documents/Models/gemma4-e2b/`. The `Models` tree is
-marked excluded from OS backup after prepare.
+Models are **not** bundled. The plugin downloads a lean monolithic set from
+Hugging Face `smdesai/gemma-4-E2B-coreml` (`main`): `model.mlpackage`,
+`vision.mlpackage`, `hf_model/`, and `model_config.json` (~2.9 GB) into
+`Documents/Models/gemma4-e2b/`. Chunked layouts / `vision_video` / `audio` /
+PLE sidecars are not fetched (so CoreMLLLM uses the monolithic load path).
+The `Models` tree is marked excluded from OS backup after prepare.
 
 Debug availability reports `backend=ane` and `visionBackend=ane`
 (`MLComputeUnits.cpuAndNeuralEngine`).

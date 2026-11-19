@@ -1,0 +1,16 @@
+{
+  "repo": "smdesai/gemma-4-E2B-coreml",
+  "revision": "main",
+  "files": [
+    {"path": "hf_model/config.json", "estimatedSize": 4954},
+    {"path": "hf_model/tokenizer.json", "estimatedSize": 32169626},
+    {"path": "hf_model/tokenizer_config.json", "estimatedSize": 2068},
+    {"path": "model.mlpackage/Data/com.apple.CoreML/model.mlmodel", "estimatedSize": 1381053},
+    {"path": "model.mlpackage/Data/com.apple.CoreML/weights/weight.bin", "estimatedSize": 2518622912},
+    {"path": "model.mlpackage/Manifest.json", "estimatedSize": 617},
+    {"path": "model_config.json", "estimatedSize": 401},
+    {"path": "vision.mlpackage/Data/com.apple.CoreML/model.mlmodel", "estimatedSize": 592021},
+    {"path": "vision.mlpackage/Data/com.apple.CoreML/weights/weight.bin", "estimatedSize": 337549248},
+    {"path": "vision.mlpackage/Manifest.json", "estimatedSize": 617}
+  ]
+}

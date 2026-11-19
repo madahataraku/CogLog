@@ -20,6 +20,9 @@ Pod::Spec.new do |s|
   s.resource_bundles = {
     'infra_gemma_meter_mobile_privacy' => [
       'infra_gemma_meter_mobile/Sources/infra_gemma_meter_mobile/PrivacyInfo.xcprivacy',
-    ]
+    ],
+    'infra_gemma_meter_mobile_manifest' => [
+      'infra_gemma_meter_mobile/Sources/infra_gemma_meter_mobile/ios_monolithic_download_manifest.json',
+    ],
   }
 end
