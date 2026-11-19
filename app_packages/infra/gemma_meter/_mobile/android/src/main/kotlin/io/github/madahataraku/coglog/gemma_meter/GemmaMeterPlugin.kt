@@ -168,11 +168,16 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     if (!parent.exists() && !parent.mkdirs()) {
       throw IOException("Could not create model directory.")
     }
+    val partial = File(parent, "${target.name}.partial")
+    // Interrupted downloads leave a truncated-on-open .partial; reclaim it
+    // before free-space checks so a retry is not rejected as insufficient.
+    if (partial.exists() && !partial.delete()) {
+      throw IOException("Could not clear leftover partial model download.")
+    }
     val free = parent.usableSpace
     if (free in 1 until MIN_FREE_BYTES) {
       throw InsufficientStorageException("Not enough free space for Gemma model.")
     }
-    val partial = File(parent, "${target.name}.partial")
     try {
       val connection = (URL(MODEL_URL).openConnection() as HttpURLConnection).apply {
         connectTimeout = 30_000
