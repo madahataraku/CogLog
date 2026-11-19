@@ -951,17 +951,21 @@
   "@screen_feature_goal_settings_unset_hint": {
     "description": "未設定の説明"
   },
-  "screen_feature_goal_settings_weekly_days_description": "How many days per week to meet daily goals (1–7; empty = unset). Also sets rest-day allowance for streaks and auto-update",
+  "screen_feature_goal_settings_weekly_days_description": "Set how many days per week you plan to exercise. Home shows remaining days this week; the value is also used for consecutive achievement and goal auto-update.",
   "@screen_feature_goal_settings_weekly_days_description": {
     "description": "説明"
   },
-  "screen_feature_goal_settings_weekly_days_label": "Weekly goal days",
+  "screen_feature_goal_settings_weekly_days_label": "Weekly target exercise days",
   "@screen_feature_goal_settings_weekly_days_label": {
-    "description": "週間目標達成日数の欄"
+    "description": "週間の目標運動日数の欄"
   },
   "screen_feature_goal_settings_weekly_days_unit": "days",
   "@screen_feature_goal_settings_weekly_days_unit": {
     "description": "単位"
+  },
+  "screen_feature_goal_settings_weekly_days_unset": "Not set",
+  "@screen_feature_goal_settings_weekly_days_unset": {
+    "description": "週間の目標運動日数の未設定"
   },
   "screen_feature_main_nav_exercise_history": "Exercise history",
   "@screen_feature_main_nav_exercise_history": {
@@ -1366,7 +1370,7 @@
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
   },
-  "screen_feature_top_weekly_achievement_guidance": "Set weekly goal days and daily goals in Goals",
+  "screen_feature_top_weekly_achievement_guidance": "Set weekly target exercise days and daily goals in Goals",
   "@screen_feature_top_weekly_achievement_guidance": {
     "description": "誘導"
   },
