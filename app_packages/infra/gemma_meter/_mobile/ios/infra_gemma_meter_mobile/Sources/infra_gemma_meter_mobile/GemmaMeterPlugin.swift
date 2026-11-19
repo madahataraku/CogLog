@@ -12,12 +12,17 @@ import CoreMLLLM
 /// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let minFreeBytes: Int64 = 6 * 1024 * 1024 * 1024
+  /// Multimodal gemma4-e2b advertised size (ModelInfo.size ≈ 5.4 GB).
+  /// Used when ModelDownloader.progress stays at 0 so the dialog gauge
+  /// still advances from on-disk bytes.
+  private static let estimatedDownloadBytes: Int64 = 5_400_000_000
   private static let configuredBackend = "ane"
   private static let configuredVisionBackend = "ane"
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
   private var preparing = false
+  private var lastEmittedProgressBucket = -1
   #if canImport(CoreMLLLM)
   private var llm: CoreMLLLM?
   #endif
@@ -223,10 +228,35 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     try removeIncompleteModelDirectory()
     try ensureModelsDirectoryExcludedFromBackup()
     try ensureFreeSpace()
+    lastEmittedProgressBucket = -1
     let progressTask = Task { [weak self] in
       while !Task.isCancelled {
-        let value = await MainActor.run { ModelDownloader.shared.progress }
-        self?.emitProgress(min(max(value, 0), 0.99))
+        // Read downloader state on the main queue (where didWriteData
+        // updates it). Walk the model directory off-main so large
+        // trees do not stall UI / URLSession callbacks.
+        let snapshot: (Double, URL?) = await withCheckedContinuation { continuation in
+          DispatchQueue.main.async {
+            guard let self else {
+              continuation.resume(returning: (0, nil))
+              return
+            }
+            let reported = ModelDownloader.shared.progress
+            let fromStatus = Self.progressFraction(
+              fromStatus: ModelDownloader.shared.status
+            )
+            let fromDownloader = max(reported, fromStatus ?? 0)
+            continuation.resume(returning: (fromDownloader, self.modelDirectoryURL()))
+          }
+        }
+        let fromDisk: Double
+        if let directory = snapshot.1 {
+          let done = Self.allocatedByteCount(at: directory)
+          fromDisk = Double(done) / Double(max(Self.estimatedDownloadBytes, 1))
+        } else {
+          fromDisk = 0
+        }
+        let fraction = min(max(snapshot.0, fromDisk), 0.99)
+        self?.emitProgressBucketed(fraction)
         try? await Task.sleep(nanoseconds: 200_000_000)
       }
     }
@@ -241,6 +271,57 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       try? removeIncompleteModelDirectory()
       throw PrepareError.generic("Gemma Core ML download finished without required files.")
     }
+  }
+
+  /// Parses ModelDownloader status strings like `"1234 / 5400 MB"`.
+  private static func progressFraction(fromStatus status: String) -> Double? {
+    guard status.hasSuffix("MB") else { return nil }
+    let trimmed = status
+      .replacingOccurrences(of: "MB", with: "")
+      .trimmingCharacters(in: .whitespacesAndNewlines)
+    let parts = trimmed.split(separator: "/").map {
+      $0.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    guard parts.count == 2,
+      let done = Double(parts[0]),
+      let total = Double(parts[1]),
+      total > 0
+    else {
+      return nil
+    }
+    return done / total
+  }
+
+  private static func allocatedByteCount(at directory: URL) -> Int64 {
+    let fm = FileManager.default
+    guard
+      let enumerator = fm.enumerator(
+        at: directory,
+        includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey],
+        options: [.skipsHiddenFiles]
+      )
+    else {
+      return 0
+    }
+    var total: Int64 = 0
+    for case let fileURL as URL in enumerator {
+      guard
+        let values = try? fileURL.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey]),
+        values.isRegularFile == true
+      else {
+        continue
+      }
+      total += Int64(values.fileSize ?? 0)
+    }
+    return total
+  }
+
+  /// Emits at most once per whole-percent bucket (matches Android).
+  private func emitProgressBucketed(_ value: Double) {
+    let bucket = Int((value * 100).rounded(.down))
+    guard bucket != lastEmittedProgressBucket else { return }
+    lastEmittedProgressBucket = bucket
+    emitProgress(value)
   }
 
   private func isModelDownloaded() -> Bool {
