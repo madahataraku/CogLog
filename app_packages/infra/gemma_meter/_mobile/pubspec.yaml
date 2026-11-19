@@ -1,5 +1,5 @@
 name: infra_gemma_meter_mobile
-description: Mobile GemmaMeterVision backed by LiteRT-LM (Gemma E2B).
+description: Mobile GemmaMeterVision (Android LiteRT-LM, iOS Core ML Gemma E2B).
 publish_to: none
 resolution: workspace
 version: 0.1.0+1

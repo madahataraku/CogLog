@@ -1,28 +1,25 @@
 import Flutter
 import Foundation
 import UIKit
-#if canImport(LiteRTLM)
-import LiteRTLM
+#if canImport(CoreMLLLM)
+import CoreMLLLM
 #endif
 
-/// Flutter bridge for LiteRT-LM Gemma E2B meter reading.
+/// Flutter bridge for Core ML Gemma E2B meter reading on iOS.
 ///
-/// Model files are stored under Application Support/`gemma_meter` with
-/// `NSURLIsExcludedFromBackupKey` so OS backup excludes them.
+/// Model files download into Documents/Models/`gemma4-e2b` via CoreMLLLM's
+/// `ModelDownloader` (Hugging Face `mlboydaisuke/gemma-4-E2B-coreml`).
+/// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
-  private static let modelDirName = "gemma_meter"
-  private static let modelFileName = "gemma-4-E2B-it.litertlm"
-  /// litert-community Gemma 4 E2B (ungated). models.litert.dev 3n mirror is 404;
-  /// google/gemma-3n-… is gated (401).
-  private static let modelURLString =
-    "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
-  private static let minFreeBytes: Int64 = 200 * 1024 * 1024
+  private static let minFreeBytes: Int64 = 6 * 1024 * 1024 * 1024
+  private static let configuredBackend = "ane"
+  private static let configuredVisionBackend = "ane"
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
   private var preparing = false
-  #if canImport(LiteRTLM)
-  private var engine: Engine?
+  #if canImport(CoreMLLLM)
+  private var llm: CoreMLLLM?
   #endif
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -85,45 +82,30 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
   }
 
-  /// Configured LiteRT-LM backends (main Metal GPU, vision CPU).
-  private static let configuredBackend = "gpu"
-  private static let configuredVisionBackend = "cpu"
-
   private func availabilityMap() -> [String: String] {
-    #if canImport(LiteRTLM)
-    guard let model = try? modelFileURL(), FileManager.default.fileExists(atPath: model.path) else {
+    #if canImport(CoreMLLLM)
+    guard isModelDownloaded() else {
       return [
         "status": "modelNotDownloaded",
         "reason": "missingFile",
-        "message": "Gemma meter model is not downloaded.",
+        "message": "Gemma meter Core ML model is not downloaded.",
         "backend": Self.configuredBackend,
         "visionBackend": Self.configuredVisionBackend,
       ]
     }
-    do {
-      try ensureEngine(modelPath: model.path)
-      return [
-        "status": "ready",
-        "reason": "ready",
-        "message": "Gemma meter model is ready.",
-        "backend": Self.configuredBackend,
-        "visionBackend": Self.configuredVisionBackend,
-      ]
-    } catch {
-      return [
-        "status": "unavailable",
-        "reason": "initializeFailed",
-        "message": "Gemma meter model failed to initialize.",
-        "backend": Self.configuredBackend,
-        "visionBackend": Self.configuredVisionBackend,
-      ]
-    }
+    return [
+      "status": "ready",
+      "reason": "ready",
+      "message": "Gemma meter Core ML model is ready.",
+      "backend": Self.configuredBackend,
+      "visionBackend": Self.configuredVisionBackend,
+    ]
     #else
     return [
       "status": "unavailable",
-      "reason": "liteRtlmMissing",
+      "reason": "missingDependency",
       "message":
-        "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.19.0.",
+        "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM.",
       "backend": Self.configuredBackend,
       "visionBackend": Self.configuredVisionBackend,
     ]
@@ -131,36 +113,46 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   private func prepareModel(result: @escaping FlutterResult) {
-    #if canImport(LiteRTLM)
+    #if canImport(CoreMLLLM)
     if preparing {
-      DispatchQueue.main.async { result(nil) }
+      DispatchQueue.main.async {
+        result(
+          FlutterError(
+            code: "generic",
+            message: "Gemma meter prepare is already running.",
+            details: nil
+          )
+        )
+      }
       return
     }
     preparing = true
-    defer { preparing = false }
+    emitProgress(0)
     do {
-      let target = try modelFileURL()
-      if !FileManager.default.fileExists(atPath: target.path) {
-        try downloadModel(to: target)
+      try awaitSync {
+        try await self.downloadIfNeeded()
       }
-      emitProgress(1.0)
-      try ensureEngine(modelPath: target.path)
+      try excludeDownloadedModelFromBackup()
+      emitProgress(1)
+      preparing = false
       DispatchQueue.main.async {
         self.prepareEvents?(FlutterEndOfEventStream)
         result(nil)
       }
     } catch {
+      preparing = false
       let code = Self.mapPrepareCode(error)
+      let message = Self.safeMessage(error)
       DispatchQueue.main.async {
         self.prepareEvents?(
-          FlutterError(code: code, message: Self.safeMessage(error), details: nil)
+          FlutterError(code: code, message: message, details: nil)
         )
-        result(FlutterError(code: code, message: Self.safeMessage(error), details: nil))
+        result(FlutterError(code: code, message: message, details: nil))
       }
     }
     #else
     let message =
-      "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.19.0."
+      "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM."
     DispatchQueue.main.async {
       self.prepareEvents?(
         FlutterError(code: "generic", message: message, details: nil)
@@ -170,58 +162,170 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     #endif
   }
 
-  #if canImport(LiteRTLM)
+  #if canImport(CoreMLLLM)
   private func generate(prompt: String, imageBytes: Data, requireReady: Bool) throws -> String {
-    _ = requireReady
-    let model = try modelFileURL()
-    guard FileManager.default.fileExists(atPath: model.path) else {
+    if requireReady && !isModelDownloaded() {
       throw NSError(
         domain: "GemmaMeter",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma meter model is not downloaded."]
+        userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
       )
     }
-    try ensureEngine(modelPath: model.path)
-    guard let engine else {
+    if !isModelDownloaded() {
       throw NSError(
         domain: "GemmaMeter",
-        code: 2,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma meter engine is unavailable."]
+        code: 1,
+        userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
       )
     }
-    // Official multimodal samples use imageFile; write bytes to a temp path.
-    let tempImage = FileManager.default.temporaryDirectory
-      .appendingPathComponent(UUID().uuidString)
-      .appendingPathExtension("img")
-    try imageBytes.write(to: tempImage)
-    defer { try? FileManager.default.removeItem(at: tempImage) }
-    let conversation = try awaitSync { try await engine.createConversation() }
-    let message = Message(contents: [
-      Content.imageFile(tempImage.path),
-      Content.text(prompt),
-    ])
-    let response = try awaitSync { try await conversation.sendMessage(message) }
-    return response.toString
+    let loaded = try ensureLLM()
+    guard let cgImage = Self.cgImage(from: imageBytes) else {
+      throw NSError(
+        domain: "GemmaMeter",
+        code: 5,
+        userInfo: [NSLocalizedDescriptionKey: "Image bytes could not be decoded."]
+      )
+    }
+    return try awaitSync {
+      try await loaded.generate(prompt, image: cgImage, maxTokens: 256)
+    }
   }
 
-  private func ensureEngine(modelPath: String) throws {
-    if engine != nil { return }
-    let cacheDir = (modelPath as NSString).deletingLastPathComponent + "/cache"
-    try FileManager.default.createDirectory(
-      atPath: cacheDir,
-      withIntermediateDirectories: true
+  private func ensureLLM() throws -> CoreMLLLM {
+    if let llm {
+      return llm
+    }
+    guard let directory = modelDirectoryURL(),
+      FileManager.default.fileExists(atPath: directory.path)
+    else {
+      throw NSError(
+        domain: "GemmaMeter",
+        code: 1,
+        userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
+      )
+    }
+    let created = try awaitSync {
+      try await CoreMLLLM.load(from: directory, computeUnits: .cpuAndNeuralEngine)
+    }
+    llm = created
+    return created
+  }
+
+  private func downloadIfNeeded() async throws {
+    UserDefaults.standard.set(true, forKey: ModelDownloader.includeMultimodalKey)
+    let downloader = ModelDownloader.shared
+    let model = ModelDownloader.ModelInfo.gemma4e2b
+    if hasCompleteModelBundle() {
+      emitProgress(1)
+      return
+    }
+    // Partial/corrupt installs must not stay "ready".
+    try removeIncompleteModelDirectory()
+    try ensureModelsDirectoryExcludedFromBackup()
+    try ensureFreeSpace()
+    let progressTask = Task { [weak self] in
+      while !Task.isCancelled {
+        let value = await MainActor.run { ModelDownloader.shared.progress }
+        self?.emitProgress(min(max(value, 0), 0.99))
+        try? await Task.sleep(nanoseconds: 200_000_000)
+      }
+    }
+    defer { progressTask.cancel() }
+    do {
+      _ = try await downloader.download(model)
+    } catch {
+      try? removeIncompleteModelDirectory()
+      throw error
+    }
+    guard hasCompleteModelBundle() else {
+      try? removeIncompleteModelDirectory()
+      throw PrepareError.generic("Gemma Core ML download finished without required files.")
+    }
+  }
+
+  private func isModelDownloaded() -> Bool {
+    hasCompleteModelBundle()
+  }
+
+  /// Required files for multimodal Gemma 4 E2B Core ML (n1024 / 4-chunk layout).
+  private static let requiredRelativePaths: [String] = [
+    "model_config.json",
+    "embed_tokens_q8.bin",
+    "embed_tokens_scales.bin",
+    "embed_tokens_per_layer_q8.bin",
+    "embed_tokens_per_layer_scales.bin",
+    "hf_model/tokenizer.json",
+    "chunk1.mlmodelc/weights/weight.bin",
+    "chunk2.mlmodelc/weights/weight.bin",
+    "chunk3.mlmodelc/weights/weight.bin",
+    "chunk4.mlmodelc/weights/weight.bin",
+    "vision.mlmodelc/weights/weight.bin",
+  ]
+
+  private func hasCompleteModelBundle() -> Bool {
+    guard let directory = modelDirectoryURL() else { return false }
+    let fm = FileManager.default
+    for relative in Self.requiredRelativePaths {
+      let url = directory.appendingPathComponent(relative)
+      guard fm.fileExists(atPath: url.path) else { return false }
+      if let attrs = try? fm.attributesOfItem(atPath: url.path),
+        let size = attrs[.size] as? NSNumber,
+        size.int64Value <= 0
+      {
+        return false
+      }
+    }
+    return true
+  }
+
+  private func modelsRootURL() -> URL? {
+    FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+      .appendingPathComponent("Models", isDirectory: true)
+  }
+
+  private func modelDirectoryURL() -> URL? {
+    modelsRootURL()?.appendingPathComponent(
+      ModelDownloader.ModelInfo.gemma4e2b.folderName,
+      isDirectory: true
     )
-    // LiteRT-LM multimodal guidance: main on Metal GPU, vision on CPU.
-    // visionBackend: .gpu fails prepare on iOS (STABLEHLO_COMPOSITE / Metal).
-    let config = try EngineConfig(
-      modelPath: modelPath,
-      backend: .gpu,
-      visionBackend: .cpu(),
-      cacheDir: cacheDir
-    )
-    let created = Engine(engineConfig: config)
-    try awaitSync { try await created.initialize() }
-    engine = created
+  }
+
+  private func removeIncompleteModelDirectory() throws {
+    let fm = FileManager.default
+    guard let modelDir = modelDirectoryURL(), fm.fileExists(atPath: modelDir.path) else {
+      return
+    }
+    try fm.removeItem(at: modelDir)
+  }
+
+  private func ensureModelsDirectoryExcludedFromBackup() throws {
+    let fm = FileManager.default
+    guard let modelsRoot = modelsRootURL() else {
+      throw PrepareError.generic("Documents directory is unavailable.")
+    }
+    try fm.createDirectory(at: modelsRoot, withIntermediateDirectories: true)
+    try excludeFromBackup(modelsRoot)
+    if let modelDir = modelDirectoryURL() {
+      try fm.createDirectory(at: modelDir, withIntermediateDirectories: true)
+      try excludeFromBackup(modelDir)
+    }
+  }
+
+  private func excludeDownloadedModelFromBackup() throws {
+    try ensureModelsDirectoryExcludedFromBackup()
+  }
+
+  private func ensureFreeSpace() throws {
+    guard
+      let modelsRoot = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    else {
+      throw PrepareError.generic("Documents directory is unavailable.")
+    }
+    let attrs = try FileManager.default.attributesOfFileSystem(forPath: modelsRoot.path)
+    let free = (attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0
+    if free > 0 && free < Self.minFreeBytes {
+      throw PrepareError.insufficientStorage
+    }
   }
 
   private func awaitSync<T>(_ body: @escaping () async throws -> T) throws -> T {
@@ -253,6 +357,11 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private final class ResultBox<T>: @unchecked Sendable {
     var value: Result<T, Error>?
   }
+
+  private static func cgImage(from data: Data) -> CGImage? {
+    guard let image = UIImage(data: data) else { return nil }
+    return image.cgImage
+  }
   #else
   private func generate(prompt: String, imageBytes: Data, requireReady: Bool) throws -> String {
     throw NSError(
@@ -260,91 +369,11 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       code: 4,
       userInfo: [
         NSLocalizedDescriptionKey:
-          "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM from 0.19.0."
+          "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM."
       ]
     )
   }
   #endif
-
-  private func downloadModel(to target: URL) throws {
-    let fm = FileManager.default
-    let parent = target.deletingLastPathComponent()
-    try fm.createDirectory(at: parent, withIntermediateDirectories: true)
-    try excludeFromBackup(parent)
-
-    let attrs = try fm.attributesOfFileSystem(forPath: parent.path)
-    let free = (attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0
-    if free > 0 && free < Self.minFreeBytes {
-      throw PrepareError.insufficientStorage
-    }
-
-    guard let remote = URL(string: Self.modelURLString) else {
-      throw PrepareError.network("Invalid model URL.")
-    }
-    let partial = parent.appendingPathComponent(Self.modelFileName + ".partial")
-    if fm.fileExists(atPath: partial.path) {
-      try? fm.removeItem(at: partial)
-    }
-
-    let semaphore = DispatchSemaphore(value: 0)
-    var downloadError: Error?
-    let session = URLSession(
-      configuration: .default,
-      delegate: ProgressDelegate { [weak self] progress in
-        self?.emitProgress(min(progress, 0.99))
-      },
-      delegateQueue: nil
-    )
-    let task = session.downloadTask(with: remote) { tempURL, response, error in
-      defer { semaphore.signal() }
-      if let error {
-        downloadError = PrepareError.network(error.localizedDescription)
-        return
-      }
-      guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-        downloadError = PrepareError.network("Model download HTTP failure.")
-        return
-      }
-      guard let tempURL else {
-        downloadError = PrepareError.network("Model download produced no file.")
-        return
-      }
-      do {
-        if fm.fileExists(atPath: partial.path) {
-          try fm.removeItem(at: partial)
-        }
-        try fm.moveItem(at: tempURL, to: partial)
-        if fm.fileExists(atPath: target.path) {
-          try fm.removeItem(at: target)
-        }
-        try fm.moveItem(at: partial, to: target)
-        var values = URLResourceValues()
-        values.isExcludedFromBackup = true
-        var mutableTarget = target
-        try mutableTarget.setResourceValues(values)
-      } catch {
-        downloadError = error
-      }
-    }
-    task.resume()
-    semaphore.wait()
-    session.finishTasksAndInvalidate()
-    if let downloadError {
-      try? fm.removeItem(at: partial)
-      throw downloadError
-    }
-  }
-
-  private func modelFileURL() throws -> URL {
-    let bases = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-    guard let base = bases.first else {
-      throw PrepareError.generic("Application Support is unavailable.")
-    }
-    let dir = base.appendingPathComponent(Self.modelDirName, isDirectory: true)
-    try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-    try excludeFromBackup(dir)
-    return dir.appendingPathComponent(Self.modelFileName)
-  }
 
   private func excludeFromBackup(_ url: URL) throws {
     var values = URLResourceValues()
@@ -372,6 +401,13 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     if ns.domain == NSURLErrorDomain {
       return "network"
     }
+    let message = ns.localizedDescription.lowercased()
+    if message.contains("space") || message.contains("storage") {
+      return "insufficientStorage"
+    }
+    if message.contains("network") || message.contains("offline") || message.contains("http") {
+      return "network"
+    }
     return "generic"
   }
 
@@ -391,39 +427,12 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     var errorDescription: String? {
       switch self {
       case .insufficientStorage:
-        return "Not enough free space for Gemma model."
+        return "Not enough free space for Gemma Core ML model."
       case .network(let message):
         return message
       case .generic(let message):
         return message
       }
     }
-  }
-}
-
-private final class ProgressDelegate: NSObject, URLSessionDownloadDelegate {
-  private let onProgress: (Double) -> Void
-
-  init(onProgress: @escaping (Double) -> Void) {
-    self.onProgress = onProgress
-  }
-
-  func urlSession(
-    _ session: URLSession,
-    downloadTask: URLSessionDownloadTask,
-    didWriteData bytesWritten: Int64,
-    totalBytesWritten: Int64,
-    totalBytesExpectedToWrite: Int64
-  ) {
-    guard totalBytesExpectedToWrite > 0 else { return }
-    onProgress(Double(totalBytesWritten) / Double(totalBytesExpectedToWrite))
-  }
-
-  func urlSession(
-    _ session: URLSession,
-    downloadTask: URLSessionDownloadTask,
-    didFinishDownloadingTo location: URL
-  ) {
-    // Completion handled in the download task callback.
   }
 }
