@@ -185,8 +185,10 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
         if (code !in 200..299) {
           throw NetworkException("Model download HTTP $code.")
         }
-        val total = connection.contentLengthLong.takeIf { it > 0 } ?: -1L
-        if (total > 0 && parent.usableSpace in 1 until total) {
+        // HF redirect hops can omit or under-report Content-Length; fall back
+        // so the guidance dialog gauge still advances with bytes read.
+        val total = resolveDownloadTotalBytes(connection)
+        if (parent.usableSpace in 1 until total) {
           throw InsufficientStorageException("Not enough free space for Gemma model.")
         }
         connection.inputStream.use { input ->
@@ -199,13 +201,11 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
               if (read < 0) break
               output.write(buffer, 0, read)
               readTotal += read
-              if (total > 0) {
-                val progress = (readTotal.toDouble() / total.toDouble()).coerceIn(0.0, 0.99)
-                val bucket = (progress * 100).toInt()
-                if (bucket != lastEmitted) {
-                  lastEmitted = bucket
-                  emitProgress(progress)
-                }
+              val progress = (readTotal.toDouble() / total.toDouble()).coerceIn(0.0, 0.99)
+              val bucket = (progress * 100).toInt()
+              if (bucket != lastEmitted) {
+                lastEmitted = bucket
+                emitProgress(progress)
               }
             }
             output.flush()
@@ -294,6 +294,27 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     runOnMain { prepareEvents?.success(value) }
   }
 
+  /**
+   * Prefer a plausible Content-Length; otherwise [ESTIMATED_MODEL_BYTES].
+   *
+   * Hugging Face may leave Content-Length unset after redirects, or expose only
+   * the tiny redirect body size. Either case would freeze the UI at 0% or jump
+   * to ~100% after the first kilobyte.
+   */
+  private fun resolveDownloadTotalBytes(connection: HttpURLConnection): Long {
+    val contentLength = connection.contentLengthLong
+    if (contentLength >= MIN_PLAUSIBLE_MODEL_BYTES) {
+      return contentLength
+    }
+    val linked =
+      connection.getHeaderField("x-linked-size")?.toLongOrNull()
+        ?: connection.getHeaderField("X-Linked-Size")?.toLongOrNull()
+    if (linked != null && linked >= MIN_PLAUSIBLE_MODEL_BYTES) {
+      return linked
+    }
+    return ESTIMATED_MODEL_BYTES
+  }
+
   private fun runOnMain(block: () -> Unit) {
     val context = appContext
     if (context == null) {
@@ -332,5 +353,9 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     private const val MODEL_URL =
       "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
     private const val MIN_FREE_BYTES = 200L * 1024L * 1024L
+    /** Current litert-community E2B `.litertlm` payload (~2.59 GB). */
+    private const val ESTIMATED_MODEL_BYTES = 2_588_147_712L
+    /** Reject tiny redirect-body Content-Length values as the download total. */
+    private const val MIN_PLAUSIBLE_MODEL_BYTES = 100L * 1024L * 1024L
   }
 }
