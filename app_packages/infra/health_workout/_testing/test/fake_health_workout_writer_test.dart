@@ -39,7 +39,7 @@ void main() {
     );
   });
 
-  test('updateCycling は externalId を記録し succeed を返す', () async {
+  test('updateCycling は externalId を記録し同一 ID を返す', () async {
     final writer = FakeHealthWorkoutWriter();
     expect(
       await writer.updateCycling(
@@ -50,11 +50,26 @@ void main() {
         duration: const Duration(minutes: 2),
         caloriesKcal: 20,
       ),
-      isTrue,
+      'fake-health-1',
     );
     expect(writer.updateCallCount, 1);
     expect(writer.lastExternalId, 'fake-health-1');
     expect(writer.lastDistanceKm, 2);
+  });
+
+  test('nextUpdateExternalId があればそれを返す', () async {
+    final writer = FakeHealthWorkoutWriter(nextUpdateExternalId: 'new-9');
+    expect(
+      await writer.updateCycling(
+        externalId: 'fake-health-1',
+        start: DateTime.utc(2026, 11, 8),
+        end: DateTime.utc(2026, 11, 8, 1),
+        distanceKm: 1,
+        duration: const Duration(minutes: 1),
+        caloriesKcal: 1,
+      ),
+      'new-9',
+    );
   });
 
   test('deleteCycling は externalId を記録し succeed を返す', () async {
@@ -64,7 +79,7 @@ void main() {
     expect(writer.lastExternalId, 'fake-health-9');
   });
 
-  test('succeed false で update/delete は false', () async {
+  test('succeed false で update は null / delete は false', () async {
     final writer = FakeHealthWorkoutWriter(succeed: false);
     expect(
       await writer.updateCycling(
@@ -75,7 +90,7 @@ void main() {
         duration: const Duration(minutes: 1),
         caloriesKcal: 1,
       ),
-      isFalse,
+      isNull,
     );
     expect(await writer.deleteCycling(externalId: 'x'), isFalse);
   });

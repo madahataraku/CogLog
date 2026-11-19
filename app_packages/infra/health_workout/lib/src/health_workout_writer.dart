@@ -33,7 +33,7 @@ abstract interface class HealthWorkoutWriter {
     required double caloriesKcal,
   });
 
-  /// [externalId] のサイクリングを更新する。成功時 true、失敗は false。
+  /// [externalId] のサイクリングを更新する。成功時は新しい外部 ID、失敗は null。
   ///
   /// Example:
   /// ```dart
@@ -46,7 +46,7 @@ abstract interface class HealthWorkoutWriter {
   ///   caloriesKcal: 1,
   /// );
   /// ```
-  Future<bool> updateCycling({
+  Future<String?> updateCycling({
     required String externalId,
     required DateTime start,
     required DateTime end,

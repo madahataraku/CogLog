@@ -13,7 +13,7 @@ void main() {
     expect(id, isNull);
   });
 
-  test('updateCycling / deleteCycling は常に false', () async {
+  test('updateCycling は常に null / deleteCycling は常に false', () async {
     const writer = UnavailableHealthWorkoutWriter();
     expect(
       await writer.updateCycling(
@@ -24,7 +24,7 @@ void main() {
         duration: const Duration(minutes: 1),
         caloriesKcal: 1,
       ),
-      isFalse,
+      isNull,
     );
     expect(await writer.deleteCycling(externalId: 'x'), isFalse);
   });

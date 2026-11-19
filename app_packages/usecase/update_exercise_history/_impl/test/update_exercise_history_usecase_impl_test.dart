@@ -93,7 +93,7 @@ final class _ThrowingHealth implements HealthWorkoutWriter {
   }) async => null;
 
   @override
-  Future<bool> updateCycling({
+  Future<String?> updateCycling({
     required String externalId,
     required DateTime start,
     required DateTime end,

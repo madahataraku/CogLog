@@ -66,14 +66,14 @@ final class _ThrowingDeleteHealth implements HealthWorkoutWriter {
   }) async => null;
 
   @override
-  Future<bool> updateCycling({
+  Future<String?> updateCycling({
     required String externalId,
     required DateTime start,
     required DateTime end,
     required double distanceKm,
     required Duration duration,
     required double caloriesKcal,
-  }) async => false;
+  }) async => null;
 
   @override
   Future<bool> deleteCycling({required String externalId}) async {

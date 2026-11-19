@@ -38,7 +38,7 @@ final class UnavailableHealthWorkoutWriter implements HealthWorkoutWriter {
     required double caloriesKcal,
   }) async => null;
 
-  /// 常に false を返す。例外は投げない。
+  /// 常に null を返す。例外は投げない。
   ///
   /// Example:
   /// ```dart
@@ -52,14 +52,14 @@ final class UnavailableHealthWorkoutWriter implements HealthWorkoutWriter {
   /// );
   /// ```
   @override
-  Future<bool> updateCycling({
+  Future<String?> updateCycling({
     required String externalId,
     required DateTime start,
     required DateTime end,
     required double distanceKm,
     required Duration duration,
     required double caloriesKcal,
-  }) async => false;
+  }) async => null;
 
   /// 常に false を返す。例外は投げない。
   ///

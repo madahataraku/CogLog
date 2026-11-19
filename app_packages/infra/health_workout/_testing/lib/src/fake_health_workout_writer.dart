@@ -9,14 +9,19 @@ import 'package:infra_health_workout/infra_health_workout.dart';
 final class FakeHealthWorkoutWriter implements HealthWorkoutWriter {
   /// [succeed] で戻り値を切り替える。
   ///
+  /// [nextUpdateExternalId] を渡すと、更新成功時にその ID を返す。
+  ///
   /// Example:
   /// ```dart
   /// FakeHealthWorkoutWriter();
   /// ```
-  FakeHealthWorkoutWriter({this.succeed = true});
+  FakeHealthWorkoutWriter({this.succeed = true, this.nextUpdateExternalId});
 
   /// [writeCycling] / [updateCycling] / [deleteCycling] の成否。
   bool succeed;
+
+  /// 更新成功時に返す外部 ID。null なら引数の [externalId] を返す。
+  final String? nextUpdateExternalId;
 
   /// [writeCycling] が呼ばれた回数。
   int writeCallCount = 0;
@@ -77,7 +82,7 @@ final class FakeHealthWorkoutWriter implements HealthWorkoutWriter {
     return 'fake-health-$writeCallCount';
   }
 
-  /// [succeed] を返し、[externalId] と計測値を記録する。
+  /// 成功時は [nextUpdateExternalId] または [externalId]、失敗時は null。
   ///
   /// Example:
   /// ```dart
@@ -91,7 +96,7 @@ final class FakeHealthWorkoutWriter implements HealthWorkoutWriter {
   /// );
   /// ```
   @override
-  Future<bool> updateCycling({
+  Future<String?> updateCycling({
     required String externalId,
     required DateTime start,
     required DateTime end,
@@ -106,7 +111,10 @@ final class FakeHealthWorkoutWriter implements HealthWorkoutWriter {
     lastDistanceKm = distanceKm;
     lastDuration = duration;
     lastCaloriesKcal = caloriesKcal;
-    return succeed;
+    if (!succeed) {
+      return null;
+    }
+    return nextUpdateExternalId ?? externalId;
   }
 
   /// [succeed] を返し、[externalId] を記録する。
