@@ -11,6 +11,7 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_update_exercise_history/usecase_update_exercise_history.dart';
 
 import 'delegate/exercise_history_edit_state_to_entity_delegate.dart';
+import 'delegate/on_cancel_edit_reading_delegate.dart';
 import 'delegate/on_discard_delegate.dart';
 import 'delegate/on_field_changed_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';

@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 
+import 'edit_reading_restore_snapshot.dart';
+
 /// 運動履歴編集画面の作業中状態。
 ///
 /// Example:
@@ -45,6 +47,7 @@ final class ExerciseHistoryEditScreenState {
     required this.permissionDeniedKind,
     required this.photoSessionGeneration,
     required this.fieldsSyncGeneration,
+    this.readingRestoreSnapshot,
   });
 
   /// まだ読んでいない状態。
@@ -82,6 +85,7 @@ final class ExerciseHistoryEditScreenState {
         permissionDeniedKind: null,
         photoSessionGeneration: 0,
         fieldsSyncGeneration: 0,
+        readingRestoreSnapshot: null,
       );
 
   /// 対象の運動履歴 ID。
@@ -172,6 +176,9 @@ final class ExerciseHistoryEditScreenState {
   /// 入力欄を Entity の値へ明示同期する世代。初期読込と写真再読取完了で増やす。
   final int fieldsSyncGeneration;
 
+  /// 読み取り中止時に戻す再アップロード開始前の値。無ければ null。
+  final EditReadingRestoreSnapshot? readingRestoreSnapshot;
+
   /// 一部だけ差し替えた新しい状態を返す。
   ///
   /// Example:
@@ -218,6 +225,8 @@ final class ExerciseHistoryEditScreenState {
     bool clearPermissionDeniedKind = false,
     int? photoSessionGeneration,
     int? fieldsSyncGeneration,
+    EditReadingRestoreSnapshot? readingRestoreSnapshot,
+    bool clearReadingRestoreSnapshot = false,
   }) => ExerciseHistoryEditScreenState(
     id: id ?? this.id,
     loading: loading ?? this.loading,
@@ -265,5 +274,8 @@ final class ExerciseHistoryEditScreenState {
     photoSessionGeneration:
         photoSessionGeneration ?? this.photoSessionGeneration,
     fieldsSyncGeneration: fieldsSyncGeneration ?? this.fieldsSyncGeneration,
+    readingRestoreSnapshot: clearReadingRestoreSnapshot
+        ? null
+        : (readingRestoreSnapshot ?? this.readingRestoreSnapshot),
   );
 }

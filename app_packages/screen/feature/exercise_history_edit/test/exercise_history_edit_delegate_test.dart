@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:domain_exercise_history/domain_exercise_history.dart';
@@ -6,6 +7,7 @@ import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_exercise_history_edit/src/viewmodel/can_submit_exercise_history_edit.dart';
 import 'package:screen_feature_exercise_history_edit/src/viewmodel/delegate/obtain_and_read_edit_photo.dart';
+import 'package:screen_feature_exercise_history_edit/src/viewmodel/delegate/on_cancel_edit_reading_delegate.dart';
 import 'package:screen_feature_exercise_history_edit/src/viewmodel/delegate/on_field_changed_delegate.dart';
 import 'package:screen_feature_exercise_history_edit/src/viewmodel/delegate/on_initialize_delegate.dart';
 import 'package:screen_feature_exercise_history_edit/src/viewmodel/delegate/on_save_delegate.dart';
@@ -84,6 +86,27 @@ final class _Read implements ReadMeterPanelUsecase {
         ),
         averageSpeedFromPanel: false,
       );
+}
+
+final class _DeferredRead implements ReadMeterPanelUsecase {
+  _DeferredRead(this.gate);
+
+  final Completer<void> gate;
+  var calls = 0;
+
+  @override
+  Future<ReadMeterPanelResult> execute(ReadMeterPanelRequest request) async {
+    calls += 1;
+    await gate.future;
+    return const ReadMeterPanelResult(
+      values: MeterReadingValues(
+        distanceKm: 9,
+        duration: Duration(minutes: 90),
+        caloriesKcal: 99,
+      ),
+      averageSpeedFromPanel: false,
+    );
+  }
 }
 
 final class _Nav implements ScreenNavigation {
@@ -372,5 +395,97 @@ void main() {
     expect(state.state.recordedAt, oldAt);
     expect(state.state.recordedAtManuallySet, isTrue);
     expect(state.state.capturedAt, newCapturedAt);
+  });
+
+  test('読み取り中止で再アップロード前へ復元する', () async {
+    final oldAt = DateTime(2026, 5, 1, 10);
+    final gate = Completer<void>();
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          photoPath: 'old.jpg',
+          recordedAt: oldAt,
+          recordedAtManuallySet: true,
+          creationStartedAt: oldAt,
+          capturedAt: oldAt,
+          distanceKm: 1,
+          duration: const Duration(minutes: 10),
+          caloriesKcal: 10,
+          averageSpeedKmh: 6,
+          dirty: false,
+        ),
+      );
+    });
+
+    final future = obtainAndReadEditPhoto(
+      state: state,
+      obtainMeterPhotoUsecase: _Obtain(
+        ObtainMeterPhotoSuccess(
+          bytes: Uint8List.fromList([9]),
+          capturedAt: DateTime(2026, 5, 2, 15),
+        ),
+      ),
+      readMeterPanelUsecase: _DeferredRead(gate),
+      source: ObtainMeterPhotoSource.library,
+    );
+
+    await Future<void>.delayed(Duration.zero);
+    expect(state.state.reading, isTrue);
+    expect(state.state.readingRestoreSnapshot, isNotNull);
+    final genBeforeCancel = state.state.photoSessionGeneration;
+
+    await OnCancelEditReadingDelegate(state: state).execute();
+    expect(state.state.reading, isFalse);
+    expect(state.state.readingRestoreSnapshot, isNull);
+    expect(state.state.photoPath, 'old.jpg');
+    expect(state.state.distanceKm, 1);
+    expect(state.state.duration, const Duration(minutes: 10));
+    expect(state.state.caloriesKcal, 10);
+    expect(state.state.averageSpeedKmh, 6);
+    expect(state.state.recordedAt, oldAt);
+    expect(state.state.recordedAtManuallySet, isTrue);
+    expect(state.state.dirty, isFalse);
+    expect(state.state.photoSessionGeneration, genBeforeCancel + 1);
+
+    gate.complete();
+    await future;
+    expect(state.state.distanceKm, 1);
+    expect(state.state.caloriesKcal, 10);
+    expect(state.state.reading, isFalse);
+  });
+
+  test('ピッカー取消ではスナップショットを載せない', () async {
+    final oldAt = DateTime(2026, 5, 1, 10);
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          recordedAt: oldAt,
+          capturedAt: oldAt,
+          creationStartedAt: oldAt,
+          distanceKm: 1,
+          duration: const Duration(minutes: 10),
+          caloriesKcal: 10,
+          averageSpeedKmh: 6,
+        ),
+      );
+    });
+
+    await obtainAndReadEditPhoto(
+      state: state,
+      obtainMeterPhotoUsecase: _Obtain(const ObtainMeterPhotoCancelled()),
+      readMeterPanelUsecase: _Read(),
+      source: ObtainMeterPhotoSource.camera,
+    );
+
+    expect(state.state.reading, isFalse);
+    expect(state.state.readingRestoreSnapshot, isNull);
+    expect(state.state.distanceKm, 1);
+  });
+
+  test('スナップショット無しの中止は no-op', () async {
+    final gen = state.state.photoSessionGeneration;
+    await OnCancelEditReadingDelegate(state: state).execute();
+    expect(state.state.photoSessionGeneration, gen);
+    expect(state.state.reading, isFalse);
   });
 }

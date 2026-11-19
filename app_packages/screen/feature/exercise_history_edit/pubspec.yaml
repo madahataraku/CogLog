@@ -29,6 +29,7 @@ dependencies:
   usecase_read_meter_panel: any
   usecase_update_exercise_history: any
   view_confirm_dialog: any
+  view_meter_reading_progress: any
 
 dev_dependencies:
   foundation_resources: any
