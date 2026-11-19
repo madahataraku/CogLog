@@ -29,6 +29,18 @@ final class HealthPackageWorkoutWriter implements HealthWorkoutWriter {
     HealthDataType.TOTAL_CALORIES_BURNED,
   ];
 
+  /// プラグイン構成・HC 可用性・WRITE 権限を一度に整える。
+  ///
+  /// 書き込み可能なら true。未導入・部分許可・例外は false。
+  Future<bool> _prepareForWrite() async {
+    await _ensureConfigured();
+    if (!await _ensureHealthConnectOnAndroid()) {
+      return false;
+    }
+    await _requestWritePermission();
+    return _hasAllWritePermissions();
+  }
+
   /// プラグインを一度だけ構成する。
   Future<void> _ensureConfigured() async {
     if (_configured) {
@@ -88,6 +100,24 @@ final class HealthPackageWorkoutWriter implements HealthWorkoutWriter {
     return allWritePermissionsGranted(grantedByType);
   }
 
+  /// 準備済み前提でサイクリングを書き、成功時は外部 ID を返す。
+  Future<String?> _writeCyclingAfterPrepare({
+    required DateTime start,
+    required DateTime end,
+    required double distanceKm,
+    required double caloriesKcal,
+  }) async {
+    final uuid = await _health.writeWorkoutDataUUID(
+      activityType: HealthWorkoutActivityType.BIKING,
+      start: start,
+      end: end,
+      totalEnergyBurned: caloriesKcalToInt(caloriesKcal),
+      totalDistance: distanceKmToMeters(distanceKm),
+      recordingMethod: RecordingMethod.manual,
+    );
+    return isValidWorkoutUuid(uuid) ? uuid : null;
+  }
+
   /// サイクリングを書き、成功時は外部 ID を返す。
   ///
   /// Example:
@@ -109,30 +139,24 @@ final class HealthPackageWorkoutWriter implements HealthWorkoutWriter {
     required double caloriesKcal,
   }) async {
     try {
-      await _ensureConfigured();
-      if (!await _ensureHealthConnectOnAndroid()) {
+      if (!await _prepareForWrite()) {
         return null;
       }
-      await _requestWritePermission();
-      if (!await _hasAllWritePermissions()) {
-        return null;
-      }
-      final uuid = await _health.writeWorkoutDataUUID(
-        activityType: HealthWorkoutActivityType.BIKING,
+      return await _writeCyclingAfterPrepare(
         start: start,
         end: end,
-        totalEnergyBurned: caloriesKcalToInt(caloriesKcal),
-        totalDistance: distanceKmToMeters(distanceKm),
-        recordingMethod: RecordingMethod.manual,
+        distanceKm: distanceKm,
+        caloriesKcal: caloriesKcal,
       );
-      return isValidWorkoutUuid(uuid) ? uuid : null;
     } on Object {
       // 権限拒否・プラグイン例外でも呼び出し元へ投げず失敗（null）とする。
       return null;
     }
   }
 
-  /// 既存 ID を消しつつ書き直し、新しい外部 ID を返す。
+  /// 新しいサイクリングを先に書き、外部 ID を返す（旧レコードは消さない）。
+  ///
+  /// 旧 ID の削除は呼び出し側が、ローカルへの新 ID 付与成功後に行う。
   ///
   /// Example:
   /// ```dart
@@ -155,24 +179,17 @@ final class HealthPackageWorkoutWriter implements HealthWorkoutWriter {
     required double caloriesKcal,
   }) async {
     try {
-      await _ensureConfigured();
-      if (!await _ensureHealthConnectOnAndroid()) {
+      // externalId は呼び出し側が旧削除に使う。空なら更新対象が無いので失敗。
+      if (externalId.isEmpty) {
         return null;
       }
-      await _requestWritePermission();
-      try {
-        await _health.deleteByUUID(
-          uuid: externalId,
-          type: HealthDataType.WORKOUT,
-        );
-      } on Object {
-        // 旧レコード欠落・削除失敗でも新規書き込みを試し、ローカル更新を止めない。
+      if (!await _prepareForWrite()) {
+        return null;
       }
-      return await writeCycling(
+      return await _writeCyclingAfterPrepare(
         start: start,
         end: end,
         distanceKm: distanceKm,
-        duration: duration,
         caloriesKcal: caloriesKcal,
       );
     } on Object {

@@ -258,7 +258,7 @@ void main() {
     expect(result.history!.healthWorkoutId, 'health-1');
   });
 
-  test('update が新 ID を返したら Result.history に付ける', () async {
+  test('update が新 ID を返したら Result.history に付け旧 ID を消す', () async {
     final histories = MemoryExerciseHistoryRepository();
     final existing = await seed(histories, healthWorkoutId: 'health-1');
     final health = FakeHealthWorkoutWriter(nextUpdateExternalId: 'health-new');
@@ -276,6 +276,8 @@ void main() {
 
     expect(result.outcome, UpdateExerciseHistoryOutcome.success);
     expect(result.history!.healthWorkoutId, 'health-new');
+    expect(health.deleteCallCount, 1);
+    expect(health.lastExternalId, 'health-1');
   });
 
   test('health update 例外でも success', () async {

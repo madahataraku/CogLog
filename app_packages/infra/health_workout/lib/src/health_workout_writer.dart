@@ -33,7 +33,10 @@ abstract interface class HealthWorkoutWriter {
     required double caloriesKcal,
   });
 
-  /// [externalId] のサイクリングを更新する。成功時は新しい外部 ID、失敗は null。
+  /// [externalId] に対応するサイクリングを更新する。成功時は新しい外部 ID、失敗は null。
+  ///
+  /// 実装は旧レコードを消さず新規書き込みだけ行い、呼び出し側が新 ID 付与後に
+  /// [deleteCycling] で旧 ID を消す。
   ///
   /// Example:
   /// ```dart

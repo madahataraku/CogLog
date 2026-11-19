@@ -129,7 +129,15 @@ final class UpdateExerciseHistoryUsecaseImpl
           externalId: healthId,
         );
         if (newId != null && newId != healthId) {
+          // 新 ID 付与が成功してから旧ヘルスを消す（付与失敗時は旧を残す）。
           history = await _attachHealthWorkoutId(history, newId);
+          if (history.healthWorkoutId == newId) {
+            try {
+              await health.deleteCycling(externalId: healthId);
+            } on Object {
+              // 旧レコード削除失敗でもローカル更新 success を維持する（一時的な重複を許す）。
+            }
+          }
         }
       }
 
