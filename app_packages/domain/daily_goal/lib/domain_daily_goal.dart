@@ -17,3 +17,4 @@ export 'src/daily_goal_day_achievement.dart';
 export 'src/goal_achievement.dart';
 export 'src/goal_metric_achievement.dart';
 export 'src/goal_metric_status.dart';
+export 'src/weekly_goal_achievement_days.dart';
