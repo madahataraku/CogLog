@@ -26,8 +26,14 @@ void main() {
     expect(total / 1e9, closeTo(2.89, 0.01));
 
     final paths = iosMonolithicDownloadFiles.map((e) => e.$1).toList();
-    expect(paths, contains('model.mlpackage/Data/com.apple.CoreML/weights/weight.bin'));
-    expect(paths, contains('vision.mlpackage/Data/com.apple.CoreML/weights/weight.bin'));
+    expect(
+      paths,
+      contains('model.mlpackage/Data/com.apple.CoreML/weights/weight.bin'),
+    );
+    expect(
+      paths,
+      contains('vision.mlpackage/Data/com.apple.CoreML/weights/weight.bin'),
+    );
     expect(paths, contains('hf_model/tokenizer.json'));
 
     for (final path in paths) {
