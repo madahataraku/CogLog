@@ -61,6 +61,8 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
     final all = await histories.list();
     final metric = await metrics.read() ?? PeriodTotalMetric.calories;
     final goal = await goals.read();
+    final settings = await goals.readAutoUpdateSettings();
+    final weeklyDays = settings.weeklyAchievementDays;
     final now = request.now;
     final todayWindow = PeriodWindow.today(now);
     final todayHistories = [
@@ -68,6 +70,11 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
         if (todayWindow.contains(history.recordedAt)) history,
     ];
     final hasNew = await newIndicator.execute(now: request.now);
+    final hasPositiveGoal = _hasPositiveDailyGoal(goal);
+    final showWeeklyGuidance = weeklyDays == null || !hasPositiveGoal;
+    final weekCount = showWeeklyGuidance
+        ? 0
+        : WeeklyGoalAchievementDays.countInWeek(all, goal, now);
     return LoadTopScreenResult(
       metric: metric,
       today: PeriodAggregate.of(all, todayWindow),
@@ -81,9 +88,30 @@ final class LoadTopScreenUsecaseImpl implements LoadTopScreenUsecase {
         goal,
         now,
         null,
+        weeklyAchievementDays: weeklyDays,
       ),
       daysSincePreviousExerciseDay: DaysSincePreviousExerciseDay.of(all, now),
       hasNewAchievements: hasNew,
+      weeklyAchievementDays: weeklyDays,
+      weekGoalAchievementDayCount: weekCount,
+      showWeeklyGoalGuidance: showWeeklyGuidance,
     );
+  }
+
+  /// 設定済みかつ正の一日あたり目標が 1 つでもあれば true。
+  static bool _hasPositiveDailyGoal(DailyGoal goal) {
+    final duration = goal.duration;
+    if (duration != null && duration > Duration.zero) {
+      return true;
+    }
+    final calories = goal.caloriesKcal;
+    if (calories != null && calories > 0) {
+      return true;
+    }
+    final distance = goal.distanceKm;
+    if (distance != null && distance > 0) {
+      return true;
+    }
+    return false;
   }
 }

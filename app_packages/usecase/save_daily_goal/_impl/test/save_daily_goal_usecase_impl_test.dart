@@ -15,6 +15,7 @@ SaveDailyGoalRequest request({
     goal: goal,
     autoUpdateEnabled: enabled,
     autoUpdateLevel: level,
+    weeklyAchievementDays: null,
     now: now ?? DateTime(2026, 11, 5),
   );
 }

@@ -97,6 +97,7 @@ void main() {
         enabledOnLocalDate: DateTime(2026, 11, 5),
         streakEpochLocalDate: DateTime(2026, 11, 6),
         lastAppliedLocalDate: DateTime(2026, 11, 5),
+        weeklyAchievementDays: 3,
       ),
     );
 
@@ -106,6 +107,27 @@ void main() {
     expect(settings.enabledOnLocalDate, DateTime(2026, 11, 5));
     expect(settings.streakEpochLocalDate, DateTime(2026, 11, 6));
     expect(settings.lastAppliedLocalDate, DateTime(2026, 11, 5));
+    expect(settings.weeklyAchievementDays, 3);
+  });
+
+  test('週間目標達成日数の欠落は null、範囲外は null', () async {
+    SharedPreferences.setMockInitialValues({
+      'daily_goal_weekly_achievement_days': 8,
+    });
+    final preferences = await SharedPreferences.getInstance();
+    final repository = SharedPreferencesDailyGoalRepository(preferences);
+    expect(
+      (await repository.readAutoUpdateSettings()).weeklyAchievementDays,
+      isNull,
+    );
+
+    SharedPreferences.setMockInitialValues({});
+    final empty = await SharedPreferences.getInstance();
+    final emptyRepo = SharedPreferencesDailyGoalRepository(empty);
+    expect(
+      (await emptyRepo.readAutoUpdateSettings()).weeklyAchievementDays,
+      isNull,
+    );
   });
 
   test('目標と自動更新設定をまとめて書いて読める', () async {

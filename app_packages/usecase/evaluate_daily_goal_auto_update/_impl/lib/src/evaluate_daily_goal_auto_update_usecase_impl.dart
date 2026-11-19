@@ -70,6 +70,7 @@ final class EvaluateDailyGoalAutoUpdateUsecaseImpl
         oldGoal,
         request.now,
         settings.countFromLocalDate,
+        weeklyAchievementDays: settings.weeklyAchievementDays,
       );
       if (consecutive < 3) {
         return const EvaluateDailyGoalAutoUpdateResult(applied: false);
