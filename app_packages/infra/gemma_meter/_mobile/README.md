@@ -36,5 +36,7 @@ Hugging Face `smdesai/gemma-4-E2B-coreml` (`main`): `model.mlpackage`,
 PLE sidecars are not fetched (so CoreMLLLM uses the monolithic load path).
 The `Models` tree is marked excluded from OS backup after prepare.
 
-Debug availability reports `backend=ane` and `visionBackend=ane`
-(`MLComputeUnits.cpuAndNeuralEngine`).
+Debug availability reports the compute units that actually loaded:
+`backend=ane` or `backend=gpu` (ANE first, then `.cpuAndGPU` if the
+Neural Engine execution plan fails), and `visionBackend=gpu` for the
+lean `vision.mlpackage` path.
