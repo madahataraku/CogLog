@@ -60,7 +60,14 @@ final class SaveDailyGoalUsecaseImpl implements SaveDailyGoalUsecase {
       next = next.copyWith(enabled: request.autoUpdateEnabled);
     }
 
-    if (!previousGoal.sameAs(request.goal)) {
+    final weekly = request.weeklyAchievementDays;
+    next = weekly == null
+        ? next.copyWith(clearWeeklyAchievementDays: true)
+        : next.copyWith(weeklyAchievementDays: weekly);
+
+    final weeklyChanged =
+        previousSettings.weeklyAchievementDays != request.weeklyAchievementDays;
+    if (!previousGoal.sameAs(request.goal) || weeklyChanged) {
       next = next.copyWith(streakEpochLocalDate: today);
     }
 

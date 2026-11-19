@@ -27,6 +27,7 @@ final class SaveDailyGoalRequest {
     required this.goal,
     required this.autoUpdateEnabled,
     required this.autoUpdateLevel,
+    required this.weeklyAchievementDays,
     required this.now,
   });
 
@@ -38,6 +39,9 @@ final class SaveDailyGoalRequest {
 
   /// 自動更新レベル。
   final DailyGoalAutoUpdateLevel autoUpdateLevel;
+
+  /// 週間目標達成日数。null は未設定。1〜7。
+  final int? weeklyAchievementDays;
 
   /// 日付判定の基準時刻。
   final DateTime now;

@@ -28,6 +28,12 @@ final class TopScreenStateToEntityDelegate {
   /// ```
   TopScreenEntity execute(TopScreenState state) {
     final achievement = GoalAchievement.of(state.goal, state.today);
+    final m = state.weeklyAchievementDays;
+    final n = state.weekGoalAchievementDayCount;
+    final progress = (m == null || m <= 0)
+        ? 0.0
+        : (n / m).clamp(0.0, 1.0).toDouble();
+    final remaining = (m == null) ? 0 : (m - n < 0 ? 0 : m - n);
     return TopScreenEntity(
       metric: state.metric,
       todayText: PeriodTotalText.of(
@@ -44,6 +50,11 @@ final class TopScreenStateToEntityDelegate {
       pendingModelDownloadGuidance: state.pendingModelDownloadGuidance,
       pendingGemmaMeterGuidance: state.pendingGemmaMeterGuidance,
       hasNewAchievements: state.hasNewAchievements,
+      showWeeklyGoalGuidance: state.showWeeklyGoalGuidance,
+      weeklyAchievementDays: m,
+      weekGoalAchievementDayCount: n,
+      weeklyProgress: progress,
+      weeklyRemaining: remaining,
       duration: _ring(
         achievement: achievement.duration,
         actualText: PeriodTotalText.duration(state.today.duration),

@@ -17,6 +17,11 @@ import 'top_goal_ring_entity.dart';
 ///   pendingModelDownloadGuidance: false,
 ///   pendingGemmaMeterGuidance: false,
 ///   hasNewAchievements: false,
+///   showWeeklyGoalGuidance: true,
+///   weeklyAchievementDays: null,
+///   weekGoalAchievementDayCount: 0,
+///   weeklyProgress: 0,
+///   weeklyRemaining: 0,
 ///   duration: const TopGoalRingEntity(
 ///     status: GoalMetricStatus.unset,
 ///     lap1: 0,
@@ -44,7 +49,7 @@ import 'top_goal_ring_entity.dart';
 /// );
 /// ```
 final class TopScreenEntity {
-  /// 指標・期間表記・アドバイス本文とトーン・誘導予約・新規有無・3 指標の達成を持つ。
+  /// 指標・期間表記・アドバイス・誘導・新規有無・週間達成・3 指標の達成を持つ。
   ///
   /// Example:
   /// ```dart
@@ -58,6 +63,11 @@ final class TopScreenEntity {
   ///   pendingModelDownloadGuidance: false,
   ///   pendingGemmaMeterGuidance: false,
   ///   hasNewAchievements: false,
+  ///   showWeeklyGoalGuidance: false,
+  ///   weeklyAchievementDays: 5,
+  ///   weekGoalAchievementDayCount: 2,
+  ///   weeklyProgress: 0.4,
+  ///   weeklyRemaining: 3,
   ///   duration: ring,
   ///   calories: ring,
   ///   distance: ring,
@@ -73,6 +83,11 @@ final class TopScreenEntity {
     required this.pendingModelDownloadGuidance,
     required this.pendingGemmaMeterGuidance,
     required this.hasNewAchievements,
+    required this.showWeeklyGoalGuidance,
+    required this.weeklyAchievementDays,
+    required this.weekGoalAchievementDayCount,
+    required this.weeklyProgress,
+    required this.weeklyRemaining,
     required this.duration,
     required this.calories,
     required this.distance,
@@ -104,6 +119,21 @@ final class TopScreenEntity {
 
   /// trophy に新規ドットを出すとき true。
   final bool hasNewAchievements;
+
+  /// 週間ゲージの代わりに設定誘導を出すとき true。
+  final bool showWeeklyGoalGuidance;
+
+  /// 週間目標達成日数。誘導時は null。
+  final int? weeklyAchievementDays;
+
+  /// 今週の目標達成日数。
+  final int weekGoalAchievementDayCount;
+
+  /// ゲージ進捗 0〜1。
+  final double weeklyProgress;
+
+  /// 残り達成日数。
+  final int weeklyRemaining;
 
   /// 運動時間の達成リング。
   final TopGoalRingEntity duration;

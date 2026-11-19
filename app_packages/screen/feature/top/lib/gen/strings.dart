@@ -231,4 +231,33 @@ mixin class L10nStringsMixin {
   /// 目標未設定時の設定促進
   String get screen_feature_top_unset_prompt =>
       LocalizeStringDelegate.get('screen_feature_top_unset_prompt');
+
+  /// 誘導
+  String get screen_feature_top_weekly_achievement_guidance =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_weekly_achievement_guidance',
+      );
+
+  /// 達成日数比
+  String screen_feature_top_weekly_achievement_ratio({
+    required String n,
+    required String m,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_top_weekly_achievement_ratio',
+    arguments: [n, m],
+  );
+
+  /// semantics
+  String screen_feature_top_weekly_achievement_semantics({
+    required String n,
+    required String m,
+    required String remaining,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_top_weekly_achievement_semantics',
+    arguments: [n, m, remaining],
+  );
+
+  /// 週間達成見出し
+  String get screen_feature_top_weekly_achievement_title =>
+      LocalizeStringDelegate.get('screen_feature_top_weekly_achievement_title');
 }

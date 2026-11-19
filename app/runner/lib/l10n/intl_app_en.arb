@@ -955,6 +955,18 @@
   "@screen_feature_goal_settings_unset_hint": {
     "description": "未設定の説明"
   },
+  "screen_feature_goal_settings_weekly_days_description": "How many days per week to meet daily goals (1–7; empty = unset). Also sets rest-day allowance for streaks and auto-update",
+  "@screen_feature_goal_settings_weekly_days_description": {
+    "description": "説明"
+  },
+  "screen_feature_goal_settings_weekly_days_label": "Weekly goal days",
+  "@screen_feature_goal_settings_weekly_days_label": {
+    "description": "週間目標達成日数の欄"
+  },
+  "screen_feature_goal_settings_weekly_days_unit": "days",
+  "@screen_feature_goal_settings_weekly_days_unit": {
+    "description": "単位"
+  },
   "screen_feature_main_nav_exercise_history": "Exercise history",
   "@screen_feature_main_nav_exercise_history": {
     "description": "ボトムナビ"
@@ -1361,6 +1373,41 @@
   "screen_feature_top_unset_prompt": "Set a daily goal in Goals",
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
+  },
+  "screen_feature_top_weekly_achievement_guidance": "Set weekly goal days and daily goals in Goals",
+  "@screen_feature_top_weekly_achievement_guidance": {
+    "description": "誘導"
+  },
+  "screen_feature_top_weekly_achievement_ratio": "{n}/{m}",
+  "@screen_feature_top_weekly_achievement_ratio": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      }
+    },
+    "description": "達成日数比"
+  },
+  "screen_feature_top_weekly_achievement_semantics": "This week {n} of {m} goal days; {remaining} remaining",
+  "@screen_feature_top_weekly_achievement_semantics": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      },
+      "remaining": {
+        "type": "String"
+      }
+    },
+    "description": "semantics"
+  },
+  "screen_feature_top_weekly_achievement_title": "Goal days this week",
+  "@screen_feature_top_weekly_achievement_title": {
+    "description": "週間達成見出し"
   },
   "screen_feature_trends_chart_placeholder": "Loading",
   "@screen_feature_trends_chart_placeholder": {

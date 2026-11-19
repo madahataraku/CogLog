@@ -8,6 +8,9 @@ calories_label,消費カロリー,Calories,一日あたり消費カロリーの�
 calories_unit,kcal,kcal,消費カロリーの単位
 distance_label,走行距離,Distance,一日あたり走行距離の欄
 distance_unit,km,km,走行距離の単位
+weekly_days_label,週間の目標達成日数,Weekly goal days,週間目標達成日数の欄
+weekly_days_description,1週間のうち何日目標を達成したいか（1〜7。空で未設定）。連続達成や自動更新の休み日の上限にも使います,How many days per week to meet daily goals (1–7; empty = unset). Also sets rest-day allowance for streaks and auto-update,説明
+weekly_days_unit,日,days,単位
 auto_update_enabled,目標の自動更新,Auto-update goals,自動更新の有効／無効
 auto_update_description,連続して目標を達成すると、レベルに応じて目標を上方修正します,Raises goals by level after consecutive achievements,自動更新の説明
 auto_update_level,自動更新レベル,Auto-update level,自動更新レベルの欄

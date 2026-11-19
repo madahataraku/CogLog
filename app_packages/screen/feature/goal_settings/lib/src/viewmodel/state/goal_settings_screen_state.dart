@@ -9,7 +9,7 @@ import 'package:domain_daily_goal/domain_daily_goal.dart';
 /// GoalSettingsScreenState.initial;
 /// ```
 final class GoalSettingsScreenState {
-  /// 読み込み済みフラグ・[goal]・自動更新の UI 値を持つ。
+  /// 読み込み済みフラグ・[goal]・自動更新・週間目標の UI 値を持つ。
   ///
   /// Example:
   /// ```dart
@@ -20,6 +20,7 @@ final class GoalSettingsScreenState {
     required this.goal,
     required this.autoUpdateEnabled,
     required this.autoUpdateLevel,
+    required this.weeklyAchievementDays,
   });
 
   /// まだ読み込んでいない状態。目標は未設定、自動更新は初期値。
@@ -28,6 +29,7 @@ final class GoalSettingsScreenState {
     goal: DailyGoal.unset,
     autoUpdateEnabled: false,
     autoUpdateLevel: DailyGoalAutoUpdateLevel.normal,
+    weeklyAchievementDays: null,
   );
 
   /// 読み込みが成功したあとに true。
@@ -41,4 +43,7 @@ final class GoalSettingsScreenState {
 
   /// 自動更新レベル。
   final DailyGoalAutoUpdateLevel autoUpdateLevel;
+
+  /// 週間目標達成日数。null は未設定。
+  final int? weeklyAchievementDays;
 }

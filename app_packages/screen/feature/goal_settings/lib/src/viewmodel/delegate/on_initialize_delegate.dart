@@ -50,6 +50,7 @@ final class OnInitializeDelegate {
           goal: result.goal,
           autoUpdateEnabled: result.autoUpdate.enabled,
           autoUpdateLevel: result.autoUpdate.level,
+          weeklyAchievementDays: result.autoUpdate.weeklyAchievementDays,
         ),
       );
     });

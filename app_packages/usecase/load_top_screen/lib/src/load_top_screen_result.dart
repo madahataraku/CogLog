@@ -18,10 +18,13 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 ///   consecutiveGoalAchievementDays: 0,
 ///   daysSincePreviousExerciseDay: null,
 ///   hasNewAchievements: false,
+///   weeklyAchievementDays: 5,
+///   weekGoalAchievementDayCount: 2,
+///   showWeeklyGoalGuidance: false,
 /// );
 /// ```
 final class LoadTopScreenResult {
-  /// 指標・期間・目標・本日履歴・連続運動日数・連続目標達成日数・運動空白日数・新規有無を持つ。
+  /// 指標・期間・目標・本日履歴・連続運動日数・連続目標達成日数・運動空白日数・新規有無・週間達成を持つ。
   ///
   /// Example:
   /// ```dart
@@ -36,6 +39,9 @@ final class LoadTopScreenResult {
   ///   consecutiveGoalAchievementDays: 0,
   ///   daysSincePreviousExerciseDay: null,
   ///   hasNewAchievements: false,
+  ///   weeklyAchievementDays: 5,
+  ///   weekGoalAchievementDayCount: 2,
+  ///   showWeeklyGoalGuidance: false,
   /// );
   /// ```
   const LoadTopScreenResult({
@@ -49,6 +55,9 @@ final class LoadTopScreenResult {
     required this.consecutiveGoalAchievementDays,
     required this.daysSincePreviousExerciseDay,
     required this.hasNewAchievements,
+    required this.weeklyAchievementDays,
+    required this.weekGoalAchievementDayCount,
+    required this.showWeeklyGoalGuidance,
   });
 
   /// 表示する指標。保存が無いときは消費カロリー。
@@ -81,6 +90,15 @@ final class LoadTopScreenResult {
   /// 新規アチーブメントが 1 件以上あるとき true。
   final bool hasNewAchievements;
 
+  /// 週間目標達成日数。未設定は null。
+  final int? weeklyAchievementDays;
+
+  /// 今週の目標達成日数。誘導表示時は 0。
+  final int weekGoalAchievementDayCount;
+
+  /// 週間ゲージの代わりに設定誘導を出すとき true。
+  final bool showWeeklyGoalGuidance;
+
   /// 指標だけを差し替える。他の値は変えない。
   ///
   /// Example:
@@ -99,5 +117,8 @@ final class LoadTopScreenResult {
         consecutiveGoalAchievementDays: consecutiveGoalAchievementDays,
         daysSincePreviousExerciseDay: daysSincePreviousExerciseDay,
         hasNewAchievements: hasNewAchievements,
+        weeklyAchievementDays: weeklyAchievementDays,
+        weekGoalAchievementDayCount: weekGoalAchievementDayCount,
+        showWeeklyGoalGuidance: showWeeklyGoalGuidance,
       );
 }

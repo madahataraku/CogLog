@@ -29,6 +29,7 @@ final class GoalSettingsStateToEntityDelegate {
   GoalSettingsScreenEntity execute(GoalSettingsScreenState state) {
     final goal = state.goal;
     final duration = goal.duration;
+    final weekly = state.weeklyAchievementDays;
     return GoalSettingsScreenEntity(
       loaded: state.loaded,
       hours: duration == null ? '' : '${duration.inHours}',
@@ -36,6 +37,7 @@ final class GoalSettingsStateToEntityDelegate {
       seconds: duration == null ? '' : '${duration.inSeconds.remainder(60)}',
       calories: _optionalNumber(goal.caloriesKcal),
       distance: _optionalNumber(goal.distanceKm),
+      weeklyAchievementDays: weekly == null ? '' : '$weekly',
       autoUpdateEnabled: state.autoUpdateEnabled,
       autoUpdateLevel: state.autoUpdateLevel,
     );

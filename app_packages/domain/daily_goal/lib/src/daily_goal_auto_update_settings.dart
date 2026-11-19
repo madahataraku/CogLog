@@ -24,9 +24,10 @@ final class DailyGoalAutoUpdateSettings {
     this.enabledOnLocalDate,
     this.streakEpochLocalDate,
     this.lastAppliedLocalDate,
+    this.weeklyAchievementDays,
   });
 
-  /// 無効・ふつう・日付なし。
+  /// 無効・ふつう・日付なし・週間目標未設定。
   static const defaults = DailyGoalAutoUpdateSettings(
     enabled: false,
     level: DailyGoalAutoUpdateLevel.normal,
@@ -46,6 +47,9 @@ final class DailyGoalAutoUpdateSettings {
 
   /// 直近で上方修正した現地日付。同一日の再適用防止に使う。
   final DateTime? lastAppliedLocalDate;
+
+  /// 週間目標達成日数。1〜7。null は未設定。
+  final int? weeklyAchievementDays;
 
   /// 連続達成の数え始め（enabledOn と streakEpoch の遅い方）。
   ///
@@ -77,9 +81,11 @@ final class DailyGoalAutoUpdateSettings {
     DateTime? enabledOnLocalDate,
     DateTime? streakEpochLocalDate,
     DateTime? lastAppliedLocalDate,
+    int? weeklyAchievementDays,
     bool clearEnabledOnLocalDate = false,
     bool clearStreakEpochLocalDate = false,
     bool clearLastAppliedLocalDate = false,
+    bool clearWeeklyAchievementDays = false,
   }) {
     return DailyGoalAutoUpdateSettings(
       enabled: enabled ?? this.enabled,
@@ -93,6 +99,9 @@ final class DailyGoalAutoUpdateSettings {
       lastAppliedLocalDate: clearLastAppliedLocalDate
           ? null
           : (lastAppliedLocalDate ?? this.lastAppliedLocalDate),
+      weeklyAchievementDays: clearWeeklyAchievementDays
+          ? null
+          : (weeklyAchievementDays ?? this.weeklyAchievementDays),
     );
   }
 }

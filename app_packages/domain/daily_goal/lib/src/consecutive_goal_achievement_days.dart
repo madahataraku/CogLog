@@ -18,9 +18,11 @@ final class ConsecutiveGoalAchievementDays {
   /// 計算用の名前空間。
   const ConsecutiveGoalAchievementDays._();
 
-  /// [now] の現地日付を起点に、目標達成した日が何日連続しているかを返す。
+  /// [now] の現地日付を起点に、目標達成した日が何日分続くかを返す。
   ///
-  /// 本日未達成なら 0。[countFromLocalDate] より前の日は数えない。
+  /// [weeklyAchievementDays] が null のときは暦日連続（本日未達成なら 0）。
+  /// 1〜7 のときは達成日の個数を数え、週あたり最大 `7 - m` 日の未達成をスキップできる。
+  /// [countFromLocalDate] より前の日は数えない。
   ///
   /// Example:
   /// ```dart
@@ -29,14 +31,16 @@ final class ConsecutiveGoalAchievementDays {
   ///   const DailyGoal(caloriesKcal: 100),
   ///   DateTime(2026, 11, 5),
   ///   null,
+  ///   weeklyAchievementDays: 5,
   /// );
   /// ```
   static int of(
     List<ExerciseHistory> histories,
     DailyGoal goal,
     DateTime now,
-    DateTime? countFromLocalDate,
-  ) {
+    DateTime? countFromLocalDate, {
+    int? weeklyAchievementDays,
+  }) {
     final local = now.toLocal();
     final today = DateTime(local.year, local.month, local.day);
     final countFrom = countFromLocalDate == null
@@ -49,6 +53,77 @@ final class ConsecutiveGoalAchievementDays {
     if (countFrom != null && today.isBefore(countFrom)) {
       return 0;
     }
+    final m = weeklyAchievementDays;
+    if (m == null) {
+      return _ofCalendarConsecutive(histories, goal, today, countFrom);
+    }
+    final restBudget = 7 - m;
+    var count = 0;
+    var cursor = today;
+    final skipsByWeekStart = <DateTime, int>{};
+
+    while (true) {
+      if (countFrom != null && cursor.isBefore(countFrom)) {
+        break;
+      }
+      final weekStart = _weekStartMonday(cursor);
+      final weekEnd = DateTime(
+        weekStart.year,
+        weekStart.month,
+        weekStart.day + 6,
+      );
+      final weekFinished = weekEnd.isBefore(today);
+      final weekAchieves = weekFinished
+          ? _countAchievedInRange(histories, goal, weekStart, weekEnd)
+          : null;
+      // 終わった週が m 未達でも、その週内の達成は数えてから週境界で止める。
+      final incompleteFinishedWeek =
+          weekFinished && weekAchieves != null && weekAchieves < m;
+
+      if (_achievedOn(histories, goal, cursor)) {
+        count += 1;
+      } else {
+        final dayBefore = DateTime(cursor.year, cursor.month, cursor.day - 1);
+        final pastAchieves = _countAchievedInRange(
+          histories,
+          goal,
+          weekStart,
+          dayBefore,
+        );
+        // 暦日差（DST で経過時間が 24h 未満でも日数を落とさない）。
+        final remainingInclusive =
+            DateTime.utc(weekEnd.year, weekEnd.month, weekEnd.day)
+                .difference(DateTime.utc(cursor.year, cursor.month, cursor.day))
+                .inDays +
+            1;
+        // 達成済みの終わった週は遡りを続けられるよう maxPossible で切らない。
+        final maxPossible = pastAchieves + remainingInclusive;
+        if (!weekFinished || incompleteFinishedWeek) {
+          if (maxPossible < m) {
+            break;
+          }
+        }
+        final skips = skipsByWeekStart[weekStart] ?? 0;
+        if (skips + 1 > restBudget) {
+          break;
+        }
+        skipsByWeekStart[weekStart] = skips + 1;
+      }
+      final next = DateTime(cursor.year, cursor.month, cursor.day - 1);
+      if (incompleteFinishedWeek && next.isBefore(weekStart)) {
+        break;
+      }
+      cursor = next;
+    }
+    return count;
+  }
+
+  static int _ofCalendarConsecutive(
+    List<ExerciseHistory> histories,
+    DailyGoal goal,
+    DateTime today,
+    DateTime? countFrom,
+  ) {
     if (!_achievedOn(histories, goal, today)) {
       return 0;
     }
@@ -65,6 +140,33 @@ final class ConsecutiveGoalAchievementDays {
       cursor = DateTime(cursor.year, cursor.month, cursor.day - 1);
     }
     return count;
+  }
+
+  /// [start]〜[end] 両端 inclusive。end が start より前なら 0。
+  static int _countAchievedInRange(
+    List<ExerciseHistory> histories,
+    DailyGoal goal,
+    DateTime start,
+    DateTime end,
+  ) {
+    final s = DateTime(start.year, start.month, start.day);
+    final e = DateTime(end.year, end.month, end.day);
+    if (e.isBefore(s)) {
+      return 0;
+    }
+    var n = 0;
+    for (var d = s; !d.isAfter(e); d = DateTime(d.year, d.month, d.day + 1)) {
+      if (_achievedOn(histories, goal, d)) {
+        n += 1;
+      }
+    }
+    return n;
+  }
+
+  static DateTime _weekStartMonday(DateTime day) {
+    final date = DateTime(day.year, day.month, day.day);
+    final mondayOffset = (date.weekday - DateTime.monday) % 7;
+    return DateTime(date.year, date.month, date.day - mondayOffset);
   }
 
   static bool _achievedOn(

@@ -1477,6 +1477,24 @@ abstract class L10n {
   /// **'未設定の欄は空のまま保存できます'**
   String get screen_feature_goal_settings_unset_hint;
 
+  /// 説明
+  ///
+  /// In ja, this message translates to:
+  /// **'1週間のうち何日目標を達成したいか（1〜7。空で未設定）。連続達成や自動更新の休み日の上限にも使います'**
+  String get screen_feature_goal_settings_weekly_days_description;
+
+  /// 週間目標達成日数の欄
+  ///
+  /// In ja, this message translates to:
+  /// **'週間の目標達成日数'**
+  String get screen_feature_goal_settings_weekly_days_label;
+
+  /// 単位
+  ///
+  /// In ja, this message translates to:
+  /// **'日'**
+  String get screen_feature_goal_settings_weekly_days_unit;
+
   /// ボトムナビ
   ///
   /// In ja, this message translates to:
@@ -1997,6 +2015,34 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標設定で一日あたりの目標を設定しましょう'**
   String get screen_feature_top_unset_prompt;
+
+  /// 誘導
+  ///
+  /// In ja, this message translates to:
+  /// **'目標設定で週間の目標達成日数と一日あたりの目標を設定しましょう'**
+  String get screen_feature_top_weekly_achievement_guidance;
+
+  /// 達成日数比
+  ///
+  /// In ja, this message translates to:
+  /// **'{n}/{m}'**
+  String screen_feature_top_weekly_achievement_ratio(String n, String m);
+
+  /// semantics
+  ///
+  /// In ja, this message translates to:
+  /// **'今週の目標達成は{n}日、目標は{m}日、残り{remaining}日'**
+  String screen_feature_top_weekly_achievement_semantics(
+    String n,
+    String m,
+    String remaining,
+  );
+
+  /// 週間達成見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'今週の目標達成日数'**
+  String get screen_feature_top_weekly_achievement_title;
 
   /// グラフ領域のロード中表示
   ///

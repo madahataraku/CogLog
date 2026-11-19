@@ -134,6 +134,9 @@ const _loadResult = LoadTopScreenResult(
   consecutiveGoalAchievementDays: 0,
   daysSincePreviousExerciseDay: null,
   hasNewAchievements: false,
+  weeklyAchievementDays: null,
+  weekGoalAchievementDayCount: 0,
+  showWeeklyGoalGuidance: true,
 );
 
 Future<void> _runInitialize({
@@ -322,6 +325,9 @@ void main() {
         pendingModelDownloadGuidance: true,
         pendingGemmaMeterGuidance: false,
         hasNewAchievements: true,
+        weeklyAchievementDays: null,
+        weekGoalAchievementDayCount: 0,
+        showWeeklyGoalGuidance: true,
       ),
     );
     final session = OnDeviceLlmGuidanceSession();
@@ -348,6 +354,9 @@ void main() {
         pendingModelDownloadGuidance: false,
         pendingGemmaMeterGuidance: true,
         hasNewAchievements: true,
+        weeklyAchievementDays: null,
+        weekGoalAchievementDayCount: 0,
+        showWeeklyGoalGuidance: true,
       ),
     );
     final session = GemmaMeterGuidanceSession();
@@ -390,6 +399,9 @@ void main() {
         pendingModelDownloadGuidance: false,
         pendingGemmaMeterGuidance: false,
         hasNewAchievements: false,
+        weeklyAchievementDays: null,
+        weekGoalAchievementDayCount: 0,
+        showWeeklyGoalGuidance: true,
       ),
     );
     final save = _Save();
@@ -420,6 +432,9 @@ void main() {
         pendingModelDownloadGuidance: false,
         pendingGemmaMeterGuidance: false,
         hasNewAchievements: false,
+        weeklyAchievementDays: null,
+        weekGoalAchievementDayCount: 0,
+        showWeeklyGoalGuidance: true,
       ),
     );
     await expectLater(
@@ -453,6 +468,9 @@ void main() {
         pendingModelDownloadGuidance: false,
         pendingGemmaMeterGuidance: false,
         hasNewAchievements: false,
+        weeklyAchievementDays: null,
+        weekGoalAchievementDayCount: 0,
+        showWeeklyGoalGuidance: true,
       ),
     );
     expect(entity.todayText, '1.3');
@@ -483,6 +501,9 @@ void main() {
         pendingModelDownloadGuidance: false,
         pendingGemmaMeterGuidance: false,
         hasNewAchievements: false,
+        weeklyAchievementDays: null,
+        weekGoalAchievementDayCount: 0,
+        showWeeklyGoalGuidance: true,
       ),
     );
     expect(entity.calories.percentText, '150%');
@@ -515,6 +536,9 @@ void main() {
         pendingModelDownloadGuidance: false,
         pendingGemmaMeterGuidance: false,
         hasNewAchievements: false,
+        weeklyAchievementDays: null,
+        weekGoalAchievementDayCount: 0,
+        showWeeklyGoalGuidance: true,
       ),
     );
     expect(entity.duration.percentText, '0%');

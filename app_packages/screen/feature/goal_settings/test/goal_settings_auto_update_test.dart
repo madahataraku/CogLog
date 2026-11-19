@@ -36,6 +36,7 @@ void main() {
       goal: nextGoal,
       autoUpdateEnabled: enabled,
       autoUpdateLevel: level,
+      weeklyAchievementDays: null,
       now: at ?? now,
     ),
   );

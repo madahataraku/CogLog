@@ -44,6 +44,9 @@ final class SharedPreferencesDailyGoalRepository
   static const _autoUpdateLastAppliedKey =
       'daily_goal_auto_update_last_applied';
 
+  /// 週間目標達成日数（1〜7）。
+  static const _weeklyAchievementDaysKey = 'daily_goal_weekly_achievement_days';
+
   /// 読み書き先。
   final SharedPreferences _preferences;
 
@@ -119,6 +122,9 @@ final class SharedPreferencesDailyGoalRepository
       lastAppliedLocalDate: _parseDate(
         _preferences.getString(_autoUpdateLastAppliedKey),
       ),
+      weeklyAchievementDays: _parseWeeklyAchievementDays(
+        _preferences.getInt(_weeklyAchievementDaysKey),
+      ),
     );
   }
 
@@ -137,6 +143,12 @@ final class SharedPreferencesDailyGoalRepository
     await _writeDate(_autoUpdateEnabledOnKey, settings.enabledOnLocalDate);
     await _writeDate(_autoUpdateStreakEpochKey, settings.streakEpochLocalDate);
     await _writeDate(_autoUpdateLastAppliedKey, settings.lastAppliedLocalDate);
+    final weekly = settings.weeklyAchievementDays;
+    if (weekly == null) {
+      await _remove(_weeklyAchievementDaysKey);
+    } else {
+      await _setInt(_weeklyAchievementDaysKey, weekly);
+    }
   }
 
   /// 目標と自動更新設定をまとめて書く。失敗時は変更前へ戻す。
@@ -195,6 +207,19 @@ final class SharedPreferencesDailyGoalRepository
       'challenging' => DailyGoalAutoUpdateLevel.challenging,
       _ => DailyGoalAutoUpdateLevel.normal,
     };
+  }
+
+  /// 1〜7 以外は未設定として扱う。
+  ///
+  /// Example:
+  /// ```dart
+  /// SharedPreferencesDailyGoalRepository._parseWeeklyAchievementDays(3);
+  /// ```
+  static int? _parseWeeklyAchievementDays(int? raw) {
+    if (raw == null || raw < 1 || raw > 7) {
+      return null;
+    }
+    return raw;
   }
 
   /// レベルを prefs 用の文字列にする。
