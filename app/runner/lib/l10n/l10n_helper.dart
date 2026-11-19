@@ -1004,6 +1004,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_goal_settings_weekly_days_unit;
       },
+      'screen_feature_goal_settings_weekly_days_unset': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_weekly_days_unset;
+      },
       'screen_feature_main_nav_exercise_history': (source) {
         // No Placeholders
         return l10n.screen_feature_main_nav_exercise_history;

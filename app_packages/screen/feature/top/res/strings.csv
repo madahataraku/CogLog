@@ -42,7 +42,7 @@ achievement_title,目標達成率,Goal progress,目標達成率セクション�
 unset_prompt,目標設定で一日あたりの目標を設定しましょう,Set a daily goal in Goals,目標未設定時の設定促進
 weekly_achievement_title,今週の目標達成日数,Goal days this week,週間達成見出し
 weekly_achievement_ratio,{n}/{m},{n}/{m},達成日数比
-weekly_achievement_guidance,目標設定で週間の目標達成日数と一日あたりの目標を設定しましょう,Set weekly goal days and daily goals in Goals,誘導
+weekly_achievement_guidance,目標設定で週間の目標運動日数と一日あたりの目標を設定しましょう,Set weekly target exercise days and daily goals in Goals,誘導
 weekly_achievement_semantics,今週の目標達成は{n}日、目標は{m}日、残り{remaining}日,This week {n} of {m} goal days; {remaining} remaining,semantics
 actual_label,実績,Actual,実績のラベル
 goal_label,目標,Goal,目標のラベル
