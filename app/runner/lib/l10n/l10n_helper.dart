@@ -816,10 +816,6 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_edit_pick_library;
       },
-      'screen_feature_exercise_history_edit_reading': (source) {
-        // No Placeholders
-        return l10n.screen_feature_exercise_history_edit_reading;
-      },
       'screen_feature_exercise_history_edit_recorded_at': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_edit_recorded_at;
@@ -1119,10 +1115,6 @@ final class L10nHelper {
       'screen_feature_meter_capture_read_success': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_read_success;
-      },
-      'screen_feature_meter_capture_reading': (source) {
-        // No Placeholders
-        return l10n.screen_feature_meter_capture_reading;
       },
       'screen_feature_meter_capture_recorded_at': (source) {
         // No Placeholders

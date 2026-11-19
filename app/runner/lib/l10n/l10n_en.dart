@@ -684,9 +684,6 @@ class L10nEn extends L10n {
       'Choose from library';
 
   @override
-  String get screen_feature_exercise_history_edit_reading => 'Reading…';
-
-  @override
   String get screen_feature_exercise_history_edit_recorded_at =>
       'Exercise date and time';
 
@@ -928,9 +925,6 @@ class L10nEn extends L10n {
   @override
   String get screen_feature_meter_capture_read_success =>
       'Read the exercise bike meter.';
-
-  @override
-  String get screen_feature_meter_capture_reading => 'Reading…';
 
   @override
   String get screen_feature_meter_capture_recorded_at =>

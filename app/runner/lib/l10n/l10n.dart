@@ -1234,12 +1234,6 @@ abstract class L10n {
   /// **'ライブラリから選ぶ'**
   String get screen_feature_exercise_history_edit_pick_library;
 
-  /// 読み取り待機
-  ///
-  /// In ja, this message translates to:
-  /// **'読み取り中…'**
-  String get screen_feature_exercise_history_edit_reading;
-
   /// 運動した日時
   ///
   /// In ja, this message translates to:
@@ -1643,12 +1637,6 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'エアロバイクのメーター内容を読み取りました。'**
   String get screen_feature_meter_capture_read_success;
-
-  /// 読み取り待機
-  ///
-  /// In ja, this message translates to:
-  /// **'読み取り中…'**
-  String get screen_feature_meter_capture_reading;
 
   /// 運動した日時（旧・記録日時）
   ///

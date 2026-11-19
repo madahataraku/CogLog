@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:screen_navigation/screen_navigation.dart';
+import 'package:view_meter_reading_progress/view_meter_reading_progress.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../viewmodel/meter_capture_screen_view_model.dart';
@@ -26,7 +27,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
   /// ```
   const MeterCaptureScreen({super.key});
 
-  /// タブ選択とライフサイクルに合わせてカメラを開始／停止し、誘導予約をダイアログへ渡す。
+  /// タブ選択とライフサイクルに合わせてカメラを開始／停止し、誘導・読み取りモーダルを出す。
   ///
   /// Example:
   /// ```dart
@@ -38,6 +39,9 @@ class MeterCaptureScreen extends HookConsumerWidget {
     final entity = ref.watch(MeterCaptureScreenProviders.entity);
     final step = ref.watch(
       MeterCaptureScreenProviders.state.select((state) => state.step),
+    );
+    final reading = ref.watch(
+      MeterCaptureScreenProviders.state.select((state) => state.reading),
     );
     final selected = (ShellTabIndexScope.maybeOf(context) ?? -1) == 1;
     final lifecycle = useAppLifecycleState();
@@ -62,7 +66,29 @@ class MeterCaptureScreen extends HookConsumerWidget {
     }, [viewModel, selected, lifecycle, step]);
 
     useEffect(() {
-      if (!entity.pendingModelDownloadGuidance) {
+      if (!reading) {
+        return null;
+      }
+      final dismiss = Completer<void>();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!context.mounted) {
+          return;
+        }
+        await MeterReadingProgressLauncher.show(
+          context,
+          onCancel: viewModel.onCancelReading,
+          untilDismiss: dismiss.future,
+        );
+      });
+      return () {
+        if (!dismiss.isCompleted) {
+          dismiss.complete();
+        }
+      };
+    }, [reading, viewModel]);
+
+    useEffect(() {
+      if (!entity.pendingModelDownloadGuidance || reading) {
         return null;
       }
       // 予約時点で同期的に提示済みにし、再入とのレースを防ぐ。
@@ -77,7 +103,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
         );
       });
       return null;
-    }, [entity.pendingModelDownloadGuidance, viewModel]);
+    }, [entity.pendingModelDownloadGuidance, reading, viewModel]);
 
     return const MeterCaptureScreenBody();
   }

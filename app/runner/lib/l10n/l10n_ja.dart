@@ -628,9 +628,6 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_edit_pick_library => 'ライブラリから選ぶ';
 
   @override
-  String get screen_feature_exercise_history_edit_reading => '読み取り中…';
-
-  @override
   String get screen_feature_exercise_history_edit_recorded_at => '運動した日時';
 
   @override
@@ -859,9 +856,6 @@ class L10nJa extends L10n {
   @override
   String get screen_feature_meter_capture_read_success =>
       'エアロバイクのメーター内容を読み取りました。';
-
-  @override
-  String get screen_feature_meter_capture_reading => '読み取り中…';
 
   @override
   String get screen_feature_meter_capture_recorded_at => '運動した日時';

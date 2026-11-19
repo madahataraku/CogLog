@@ -193,13 +193,6 @@ class MeterCaptureStep2View extends HookConsumerWidget {
             aspectRatio: 4 / 3,
             child: Image.memory(photoBytes, fit: BoxFit.cover),
           ),
-        if (state.reading) ...[
-          const Center(child: FCircularProgress()),
-          Text(
-            strings.screen_feature_meter_capture_reading,
-            textAlign: TextAlign.center,
-          ),
-        ],
         if (entity.showReadSuccessMessage)
           Text(
             strings.screen_feature_meter_capture_read_success,
