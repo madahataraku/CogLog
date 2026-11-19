@@ -66,6 +66,16 @@ extension ExerciseHistoryEditScreenViewModelActions
     return OnFieldChangedDelegate(state: state).updateRecordedAt(value);
   }
 
+  /// 読み取りを中止し、再アップロード開始前へ戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onCancelReading();
+  /// ```
+  Future<void> onCancelReading() {
+    return OnCancelEditReadingDelegate(state: state).execute();
+  }
+
   /// カメラで写真を撮り直す。
   ///
   /// Example:
