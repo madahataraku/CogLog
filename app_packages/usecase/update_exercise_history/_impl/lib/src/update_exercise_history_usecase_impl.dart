@@ -122,8 +122,15 @@ final class UpdateExerciseHistoryUsecaseImpl
       );
 
       final healthId = existing.healthWorkoutId;
+      var history = updated;
       if (healthId != null) {
-        await _updateHealth(request: request, externalId: healthId);
+        final newId = await _updateHealth(
+          request: request,
+          externalId: healthId,
+        );
+        if (newId != null && newId != healthId) {
+          history = await _attachHealthWorkoutId(history, newId);
+        }
       }
 
       final now = DateTime.now();
@@ -155,7 +162,7 @@ final class UpdateExerciseHistoryUsecaseImpl
 
       return UpdateExerciseHistoryResult(
         outcome: UpdateExerciseHistoryOutcome.success,
-        history: updated,
+        history: history,
         recordedLocalDayChanged: !_sameLocalDay(
           existing.recordedAt,
           request.recordedAt,
@@ -194,20 +201,20 @@ final class UpdateExerciseHistoryUsecaseImpl
     return true;
   }
 
-  /// ヘルスを更新し、失敗や例外は握りつぶす。
+  /// ヘルスを更新し、失敗や例外は null にする。
   ///
   /// Example:
   /// ```dart
   /// await _updateHealth(request: request, externalId: 'health-1');
   /// ```
-  Future<void> _updateHealth({
+  Future<String?> _updateHealth({
     required UpdateExerciseHistoryRequest request,
     required String externalId,
   }) async {
     try {
       final start = request.recordedAt;
       final end = request.recordedAt.add(request.duration);
-      await health.updateCycling(
+      return await health.updateCycling(
         externalId: externalId,
         start: start,
         end: end,
@@ -216,8 +223,38 @@ final class UpdateExerciseHistoryUsecaseImpl
         caloriesKcal: request.caloriesKcal,
       );
     } on Object {
-      // ヘルス失敗でも CogLog 側の更新 success を維持する。
+      // ヘルス更新失敗でも CogLog 側の更新 success を維持する。
+      return null;
     }
+  }
+
+  /// [history] に [externalId] を付ける。失敗時は再試行し、なお失敗ならヘルスを消す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await _attachHealthWorkoutId(history, 'fake-health-1');
+  /// ```
+  Future<ExerciseHistory> _attachHealthWorkoutId(
+    ExerciseHistory history,
+    String externalId,
+  ) async {
+    const maxAttempts = 3;
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        return await histories.attachHealthWorkoutId(
+          id: history.id,
+          healthWorkoutId: externalId,
+        );
+      } on Object {
+        // 付与失敗で更新済みの履歴を saveFailed にしない。再試行する。
+      }
+    }
+    try {
+      await health.deleteCycling(externalId: externalId);
+    } on Object {
+      // 孤児削除の失敗でもローカル更新 success を維持する。
+    }
+    return history;
   }
 
   /// 現地暦日が同じか。

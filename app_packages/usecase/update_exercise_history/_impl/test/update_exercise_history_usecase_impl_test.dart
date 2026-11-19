@@ -258,6 +258,26 @@ void main() {
     expect(result.history!.healthWorkoutId, 'health-1');
   });
 
+  test('update が新 ID を返したら Result.history に付ける', () async {
+    final histories = MemoryExerciseHistoryRepository();
+    final existing = await seed(histories, healthWorkoutId: 'health-1');
+    final health = FakeHealthWorkoutWriter(nextUpdateExternalId: 'health-new');
+    final evaluate = _FakeEvaluate();
+    final achievements = _FakeEvaluateAchievements();
+    final sync = _FakeSync();
+
+    final result = await UpdateExerciseHistoryUsecaseImpl(
+      histories: histories,
+      health: health,
+      evaluateAutoUpdate: evaluate,
+      evaluateAchievements: achievements,
+      syncReminder: sync,
+    ).execute(requestFor(existing));
+
+    expect(result.outcome, UpdateExerciseHistoryOutcome.success);
+    expect(result.history!.healthWorkoutId, 'health-new');
+  });
+
   test('health update 例外でも success', () async {
     final histories = MemoryExerciseHistoryRepository();
     final existing = await seed(histories, healthWorkoutId: 'health-1');
