@@ -34,6 +34,7 @@ dependencies:
 dev_dependencies:
   data_repository_exercise_history_testing: any
   domain_exercise_history: any
+  domain_trends: any
   flutter_test:
     sdk: flutter
   flutter_lints: any
@@ -45,6 +46,7 @@ dev_dependencies:
   screen_feature_main: any
   screen_feature_top: any
   usecase_generate_top_advice_impl: any
+  usecase_load_trends: any
 
 
 flutter:
