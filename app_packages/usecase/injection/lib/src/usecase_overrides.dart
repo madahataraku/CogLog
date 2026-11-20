@@ -82,6 +82,7 @@ import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_remind
 /// ヘルス身体許可リクエストを上書きする。
 ///
 /// [adviceTemplatePicker] を渡すと定型選択を差し替える（Golden 用）。
+/// [loadTrends] を渡すと推移読込を差し替える（Golden で日時固定するときなど）。
 ///
 /// Example:
 /// ```dart
@@ -89,6 +90,7 @@ import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_remind
 /// ```
 List<Override> usecaseOverrides({
   AdviceTemplatePicker? adviceTemplatePicker,
+  LoadTrendsUsecase? loadTrends,
 }) => [
   LoadTopScreenUsecase.provider.overrideWith(
     (ref) => LoadTopScreenUsecaseImpl(
@@ -99,10 +101,12 @@ List<Override> usecaseOverrides({
     ),
   ),
   LoadTrendsUsecase.provider.overrideWith(
-    (ref) => LoadTrendsUsecaseImpl(
-      histories: ref.watch(exerciseHistoryRepositoryProvider),
-      health: ref.watch(healthBodyMetricsSourceProvider),
-    ),
+    (ref) =>
+        loadTrends ??
+        LoadTrendsUsecaseImpl(
+          histories: ref.watch(exerciseHistoryRepositoryProvider),
+          health: ref.watch(healthBodyMetricsSourceProvider),
+        ),
   ),
   RequestHealthBodyPermissionUsecase.provider.overrideWith(
     (ref) => RequestHealthBodyPermissionUsecaseImpl(
