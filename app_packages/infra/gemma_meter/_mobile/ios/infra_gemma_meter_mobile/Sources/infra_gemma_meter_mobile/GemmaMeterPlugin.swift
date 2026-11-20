@@ -318,6 +318,14 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         let model = try await CoreMLLLM.load(from: directory, computeUnits: units)
         return (model, label)
       } catch {
+        // Cancellation must not kick off a second backend load.
+        if error is CancellationError {
+          throw error
+        }
+        let ns = error as NSError
+        if ns.domain == NSURLErrorDomain, ns.code == NSURLErrorCancelled {
+          throw error
+        }
         lastError = error
         // Try the other backend once before giving up.
         continue
@@ -804,11 +812,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     if message.contains("space") || message.contains("storage") || message.contains("disk full") {
       return "insufficientStorage"
     }
-    // Do not match the substring "http" inside "https://" in unrelated errors
-    // (warm-load / Core ML failures were mislabeled as network after download).
+    // Do not match "http" inside "https://" or bare "timed out" (Core ML load
+    // timeouts are not network). Real URL failures use NSURLErrorDomain above.
     if message.contains("network connection")
       || message.contains("offline")
-      || message.contains("timed out")
       || message.contains("internet connection")
     {
       return "network"
