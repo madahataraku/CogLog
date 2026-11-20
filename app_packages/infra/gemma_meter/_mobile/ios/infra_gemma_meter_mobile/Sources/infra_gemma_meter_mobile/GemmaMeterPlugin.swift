@@ -1,74 +1,43 @@
-import CoreML
 import Flutter
 import Foundation
-import UIKit
-#if canImport(CoreMLLLM)
-import CoreMLLLM
+#if canImport(LiteRTLM)
+import LiteRTLM
 #endif
 
-/// Flutter bridge for Core ML Gemma E2B meter reading on iOS.
+/// Flutter bridge for LiteRT-LM Gemma E2B meter reading on iOS.
 ///
-/// Downloads the CoreMLLLM chunk layout into Documents/Models/`gemma4-e2b`
-/// from Hugging Face `mlboydaisuke/gemma-4-E2B-coreml` (`n1024`): SWA
-/// `chunk{1..4}`, hardlinked `prefill_chunk{1..4}` weights, PLE / embeds /
-/// RoPE, still-image `vision.mlmodelc`. `vision_video` / `audio` are omitted.
-/// The model directory is excluded from OS backup.
+/// Downloads the same ungated Hugging Face `litert-community` `.litertlm`
+/// used on Android into Documents/Models/`gemma_meter/`, excluded from OS
+/// backup. Engine: main GPU, vision GPU, speculative decoding (MTP) on.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
-  private static let modelFolderName = "gemma4-e2b"
-  /// Shipping still-image `vision.mlmodelc` (no `vision.ane.*`) uses CoreMLLLM's GPU path.
-  private static let configuredVisionBackend = "gpu"
-  private static let persistedBackendKey = "gemmaMeter.activeBackend"
-  private static let loadSucceededKey = "gemmaMeter.loadSucceeded"
-
-  private static let manifest: DownloadManifest = {
-    do {
-      return try DownloadManifest.load()
-    } catch {
-      // Fail closed with an empty manifest; prepare will error clearly.
-      return DownloadManifest(repo: "", revision: "n1024", files: [])
-    }
-  }()
-
-  private static var modelRepo: String { manifest.repo }
-  private static var modelRevision: String { manifest.revision }
-  private static var downloadFiles: [DownloadManifestFile] { manifest.files }
-
-  /// Sum of bundle file sizes from the shared manifest.
-  private static var estimatedDownloadBytes: Int64 {
-    downloadFiles.reduce(0) { $0 + $1.estimatedSize }
-  }
-
-  /// Precompiled `.mlmodelc` needs the download total, one URLSession temp
-  /// file (largest entry), and a small margin — not a second full copy.
+  private static let modelFolderName = "gemma_meter"
+  private static let modelFileName = "gemma-4-E2B-it.litertlm"
+  private static let modelURL =
+    "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
+  /// Current litert-community E2B `.litertlm` payload (~2.59 GB).
+  private static let estimatedModelBytes: Int64 = 2_588_147_712
+  /// Reject truncated / redirect-body downloads as complete artifacts.
+  private static let minPlausibleModelBytes: Int64 = 100 * 1024 * 1024
+  /// Legacy CoreMLLLM chunk tree (pre LiteRT-LM migration).
+  private static let legacyCoreMLFolderName = "gemma4-e2b"
+  /// URLSession peak ≈ one model copy in tmp/Documents + LiteRT cache margin.
   private static var minFreeBytes: Int64 {
-    let largest = downloadFiles.map(\.estimatedSize).max() ?? 0
-    return estimatedDownloadBytes + largest + 500_000_000
+    estimatedModelBytes + 500_000_000
   }
+
+  private static let configuredBackend = "gpu"
+  private static let configuredVisionBackend = "gpu"
+  /// On-disk artifact generation (not initialize success). Bump to force refresh.
+  private static let engineStampKey = "gemmaMeter.engineStamp"
+  private static let engineStampValue = "litert-mtp-gpu-v1"
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
   private var preparing = false
   private var lastEmittedProgressBucket = -1
-  private let downloadBytesLock = NSLock()
-  private var downloadedBytesValue: Int64 = 0
-  /// Last successful main-model compute path (`ane` or `gpu`); empty until load.
-  private var activeBackend = ""
-  #if canImport(CoreMLLLM)
-  private var llm: CoreMLLLM?
+  #if canImport(LiteRTLM)
+  private var engine: Engine?
   #endif
-
-  private var downloadedBytes: Int64 {
-    get {
-      downloadBytesLock.lock()
-      defer { downloadBytesLock.unlock() }
-      return downloadedBytesValue
-    }
-    set {
-      downloadBytesLock.lock()
-      downloadedBytesValue = newValue
-      downloadBytesLock.unlock()
-    }
-  }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let messenger = registrar.messenger()
@@ -130,53 +99,51 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
   }
 
+  private func configuredBackendFields() -> [String: String] {
+    [
+      "backend": Self.configuredBackend,
+      "visionBackend": Self.configuredVisionBackend,
+    ]
+  }
+
   private func availabilityMap() -> [String: String] {
-    #if canImport(CoreMLLLM)
+    #if canImport(LiteRTLM)
+    // Best-effort: reclaim the old CoreMLLLM tree so both models are not kept.
+    removeLegacyCoreMLModelIfPresent()
     guard isModelDownloaded() else {
       return [
         "status": "modelNotDownloaded",
         "reason": "missingFile",
-        "message": "Gemma meter Core ML model is not downloaded.",
-        "backend": "",
-        "visionBackend": Self.configuredVisionBackend,
-      ]
+        "message": "Gemma meter model is not downloaded.",
+      ].merging(configuredBackendFields()) { _, new in new }
     }
-    // Ready only after a successful load (this process or persisted).
-    let loadedThisProcess = llm != nil
-    let loadSucceededPreviously = UserDefaults.standard.bool(forKey: Self.loadSucceededKey)
-    let backend = loadedThisProcess
-      ? activeBackend
-      : (UserDefaults.standard.string(forKey: Self.persistedBackendKey) ?? "")
-    if loadedThisProcess || loadSucceededPreviously {
+    // Mirror Android: ready only after Engine.initialize() succeeds this process.
+    do {
+      _ = try ensureEngine()
       return [
         "status": "ready",
         "reason": "ready",
-        "message": "Gemma meter Core ML model is ready.",
-        "backend": backend,
-        "visionBackend": Self.configuredVisionBackend,
-      ]
+        "message": "Gemma meter model is ready.",
+      ].merging(configuredBackendFields()) { _, new in new }
+    } catch {
+      return [
+        "status": "unavailable",
+        "reason": "initializeFailed",
+        "message": "Gemma meter model failed to initialize.",
+      ].merging(configuredBackendFields()) { _, new in new }
     }
-    return [
-      "status": "unavailable",
-      "reason": "loadFailed",
-      "message": "Gemma meter Core ML model is on disk but has not loaded successfully.",
-      "backend": "",
-      "visionBackend": Self.configuredVisionBackend,
-    ]
     #else
     return [
       "status": "unavailable",
       "reason": "missingDependency",
       "message":
-        "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM.",
-      "backend": "",
-      "visionBackend": Self.configuredVisionBackend,
-    ]
+        "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM.",
+    ].merging(configuredBackendFields()) { _, new in new }
     #endif
   }
 
   private func prepareModel(result: @escaping FlutterResult) {
-    #if canImport(CoreMLLLM)
+    #if canImport(LiteRTLM)
     if preparing {
       DispatchQueue.main.async {
         result(
@@ -192,12 +159,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     preparing = true
     emitProgress(0)
     do {
-      try awaitSync {
-        try await self.downloadIfNeeded()
-        // Warm-load so ANE→GPU fallback is settled before the first read.
-        _ = try await self.loadLLMIfNeeded()
-      }
+      removeLegacyCoreMLModelIfPresent()
+      try downloadIfNeeded()
       try excludeDownloadedModelFromBackup()
+      _ = try ensureEngine()
       emitProgress(1)
       preparing = false
       DispatchQueue.main.async {
@@ -206,7 +171,13 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       }
     } catch {
       preparing = false
-      markLoadFailed()
+      // Keep a plausible on-disk artifact across device-specific init failures;
+      // only reclaim truncated / clearly invalid files for retry.
+      if isModelDownloaded() {
+        markLoadFailed()
+      } else {
+        try? removeIncompleteModel()
+      }
       let code = Self.mapPrepareCode(error)
       let message = Self.safeMessage(error)
       DispatchQueue.main.async {
@@ -218,7 +189,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
     #else
     let message =
-      "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM."
+      "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM."
     DispatchQueue.main.async {
       self.prepareEvents?(
         FlutterError(code: "generic", message: message, details: nil)
@@ -228,321 +199,164 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     #endif
   }
 
-  #if canImport(CoreMLLLM)
+  #if canImport(LiteRTLM)
   private func generate(prompt: String, imageBytes: Data, requireReady: Bool) throws -> String {
-    if requireReady && !isModelDownloaded() {
-      throw NSError(
-        domain: "GemmaMeter",
-        code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
-      )
-    }
     if !isModelDownloaded() {
       throw NSError(
         domain: "GemmaMeter",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
+        userInfo: [NSLocalizedDescriptionKey: "Gemma meter model is not downloaded."]
       )
     }
-    let loaded = try ensureLLM()
-    guard let cgImage = Self.cgImage(from: imageBytes) else {
-      throw NSError(
-        domain: "GemmaMeter",
-        code: 5,
-        userInfo: [NSLocalizedDescriptionKey: "Image bytes could not be decoded."]
-      )
+    if requireReady {
+      // Mirror Android: require a successful initialize path.
+      _ = try ensureEngine()
     }
+    let active = try ensureEngine()
     return try awaitSync {
-      try await loaded.generate(prompt, image: cgImage, maxTokens: 256)
+      // Engine is an actor; createConversation must be awaited.
+      let conversation = try await active.createConversation()
+      let response = try await conversation.sendMessage(
+        Message(of: .imageData(imageBytes), .text(prompt))
+      )
+      return response.toString
     }
   }
 
-  private func ensureLLM() throws -> CoreMLLLM {
-    try awaitSync {
-      try await self.loadLLMIfNeeded()
+  private func ensureEngine() throws -> Engine {
+    if let engine {
+      return engine
     }
-  }
-
-  /// Loads the chunked bundle, preferring ANE and falling back to GPU.
-  private func loadLLMIfNeeded() async throws -> CoreMLLLM {
-    if let llm {
-      return llm
-    }
-    guard let directory = modelDirectoryURL(),
-      FileManager.default.fileExists(atPath: directory.path)
+    guard let model = modelFileURL(),
+      FileManager.default.fileExists(atPath: model.path)
     else {
       throw NSError(
         domain: "GemmaMeter",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma meter Core ML model is not downloaded."]
+        userInfo: [NSLocalizedDescriptionKey: "Gemma meter model is not downloaded."]
       )
     }
+    let cacheDir = model.deletingLastPathComponent().appendingPathComponent(
+      "cache",
+      isDirectory: true
+    )
+    try FileManager.default.createDirectory(at: cacheDir, withIntermediateDirectories: true)
+    let config = try EngineConfig(
+      modelPath: model.path,
+      backend: .gpu,
+      visionBackend: .gpu,
+      cacheDir: cacheDir.path,
+      speculativeDecodingConfig: SpeculativeDecodingConfig(mode: .on)
+    )
+    let created = Engine(engineConfig: config)
     do {
-      let preferred = UserDefaults.standard.string(forKey: Self.persistedBackendKey)
-      let (created, backend) = try await Self.loadWithComputeUnitFallback(
-        from: directory,
-        preferredBackend: preferred
-      )
-      llm = created
-      activeBackend = backend
-      UserDefaults.standard.set(backend, forKey: Self.persistedBackendKey)
-      UserDefaults.standard.set(true, forKey: Self.loadSucceededKey)
-      return created
+      // Engine is an actor; initialize must be awaited from outside.
+      try awaitSync {
+        try await created.initialize()
+      }
     } catch {
       markLoadFailed()
+      // Reclaim truncated or container-corrupt artifacts so prepare can re-fetch.
+      // Keep a plausible file when failure looks device/backend-specific (GPU).
+      if !isModelDownloaded() || Self.isLikelyCorruptModelError(error) {
+        try? removeIncompleteModel()
+        clearEngineStamp()
+      }
       throw error
     }
+    engine = created
+    return created
   }
 
   private func markLoadFailed() {
-    llm = nil
-    activeBackend = ""
-    UserDefaults.standard.set(false, forKey: Self.loadSucceededKey)
+    engine = nil
   }
 
-  /// Tries ANE then GPU (or GPU first when that was last successful).
-  private static func loadWithComputeUnitFallback(
-    from directory: URL,
-    preferredBackend: String?
-  ) async throws -> (CoreMLLLM, String) {
-    let order: [(MLComputeUnits, String)] =
-      preferredBackend == "gpu"
-      ? [(.cpuAndGPU, "gpu"), (.cpuAndNeuralEngine, "ane")]
-      : [(.cpuAndNeuralEngine, "ane"), (.cpuAndGPU, "gpu")]
-    var lastError: Error?
-    for (units, label) in order {
-      do {
-        let model = try await CoreMLLLM.load(from: directory, computeUnits: units)
-        return (model, label)
-      } catch {
-        lastError = error
-        // Only continue to GPU when ANE failed with an execution-plan style error.
-        if label == "ane", isNeuralEnginePlanFailure(error) {
-          continue
-        }
-        // Preferred GPU failed: still try ANE once before giving up.
-        if label == "gpu", preferredBackend == "gpu" {
-          continue
-        }
-        throw error
+  private func downloadIfNeeded() throws {
+    if isModelDownloaded() {
+      if isEngineStampCurrent() {
+        // Current-generation artifact may be reused even after a prior GPU init miss.
+        emitProgress(1)
+        return
       }
+      // Pre-generation / stamp-mismatched artifacts must be refreshed once.
+      try removeIncompleteModel()
     }
-    throw lastError
-      ?? NSError(
-        domain: "GemmaMeter",
-        code: 4,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma Core ML load failed."]
-      )
-  }
-
-  /// True when Core ML rejected the ANE execution plan (often stateful KV).
-  private static func isNeuralEnginePlanFailure(_ error: Error) -> Bool {
-    var current: Error? = error
-    for _ in 0..<8 {
-      guard let err = current else { return false }
-      let ns = err as NSError
-      if ns.code == -14 {
-        return true
-      }
-      let domain = ns.domain.lowercased()
-      let text = planFailureHaystack(ns)
-      if domain.contains("coreml"), matchesExecutionPlanText(text) {
-        return true
-      }
-      if matchesExecutionPlanText(text) {
-        return true
-      }
-      current = ns.userInfo[NSUnderlyingErrorKey] as? Error
-    }
-    return false
-  }
-
-  private static func planFailureHaystack(_ error: NSError) -> String {
-    var parts: [String] = [
-      error.localizedDescription,
-      error.localizedFailureReason ?? "",
-      String(describing: error.userInfo),
-    ]
-    if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError {
-      parts.append(underlying.localizedDescription)
-      parts.append(String(describing: underlying.userInfo))
-    }
-    return parts.joined(separator: " ").lowercased()
-  }
-
-  private static func matchesExecutionPlanText(_ text: String) -> Bool {
-    text.contains("execution plan")
-      || text.contains("model.mil")
-      || text.contains("error code: -14")
-      || text.contains("code=-14")
-      || text.contains("code = -14")
-  }
-
-  private func downloadIfNeeded() async throws {
-    if hasCompleteModelBundle() {
-      emitProgress(1)
-      return
-    }
-    // Partial/corrupt installs must not stay "ready".
-    try removeIncompleteModelDirectory()
-    try ensureModelsDirectoryExcludedFromBackup()
+    // Incomplete / undersized leftovers must not block a fresh download.
+    try removeIncompleteModel()
+    try ensureModelDirectoryExcludedFromBackup()
     try ensureFreeSpace()
     lastEmittedProgressBucket = -1
-    downloadedBytes = 0
-    let progressTask = Task { [weak self] in
-      while !Task.isCancelled {
-        guard let self else { return }
-        let done = self.downloadedBytes
-        let fromDisk: Int64
-        if let directory = self.modelDirectoryURL() {
-          fromDisk = Self.allocatedByteCount(at: directory)
-        } else {
-          fromDisk = 0
-        }
-        let bytes = max(done, fromDisk)
-        let fraction = min(
-          Double(bytes) / Double(max(Self.estimatedDownloadBytes, 1)),
-          0.99
-        )
-        self.emitProgressBucketed(fraction)
-        try? await Task.sleep(nanoseconds: 200_000_000)
-      }
-    }
-    defer { progressTask.cancel() }
     do {
-      // Pin every file in this prepare to one commit so a moving branch
-      // cannot mix revisions mid-download.
-      let pinnedRevision = try await resolvePinnedRevision()
-      for file in Self.downloadFiles {
-        try await downloadRemoteFile(
-          remotePath: file.remotePath ?? file.path,
-          localPath: file.path,
-          estimatedSize: file.estimatedSize,
-          revision: pinnedRevision
-        )
-      }
-      try Self.linkPrefillWeights(in: self.modelDirectoryURL())
+      try downloadModelFile()
     } catch {
-      try? removeIncompleteModelDirectory()
+      try? removeIncompleteModel()
       throw error
     }
-    guard hasCompleteModelBundle() else {
-      try? removeIncompleteModelDirectory()
-      throw PrepareError.generic("Gemma Core ML download finished without required files.")
+    guard isModelDownloaded() else {
+      try? removeIncompleteModel()
+      throw PrepareError.generic("Gemma meter download finished without a valid model file.")
     }
+    // Stamp means "artifact generation current", independent of initialize().
+    markEngineStampCurrent()
   }
 
-  /// Hardlinks decode `chunk{i}` weights into `prefill_chunk{i}` (CoreMLLLM legacy).
-  /// Copy fallback is intentionally omitted so prepare fails closed on ~2× disk use.
-  private static func linkPrefillWeights(in directory: URL?) throws {
-    guard let directory else {
-      throw PrepareError.generic("Documents directory is unavailable.")
-    }
-    let fm = FileManager.default
-    for i in 1...4 {
-      let src = directory
-        .appendingPathComponent("chunk\(i).mlmodelc/weights/weight.bin")
-      let dstDir = directory
-        .appendingPathComponent("prefill_chunk\(i).mlmodelc/weights", isDirectory: true)
-      let dst = dstDir.appendingPathComponent("weight.bin")
-      guard fm.fileExists(atPath: src.path) else {
-        throw PrepareError.generic("Missing decode weight for prefill hardlink: chunk\(i).")
-      }
-      try fm.createDirectory(at: dstDir, withIntermediateDirectories: true)
-      if fm.fileExists(atPath: dst.path) {
-        try fm.removeItem(at: dst)
-      }
-      do {
-        try fm.linkItem(at: src, to: dst)
-      } catch {
-        throw PrepareError.generic(
-          "Prefill hardlink failed for chunk\(i): \(Self.safeMessage(error))"
-        )
-      }
-      guard Self.shareSameInode(src, dst) else {
-        throw PrepareError.generic(
-          "Prefill weight for chunk\(i) is not a hardlink to decode weights."
-        )
-      }
-    }
+  private func isEngineStampCurrent() -> Bool {
+    UserDefaults.standard.string(forKey: Self.engineStampKey) == Self.engineStampValue
   }
 
-  /// True when both paths refer to the same inode (hardlink).
-  private static func shareSameInode(_ a: URL, _ b: URL) -> Bool {
-    let fm = FileManager.default
-    guard
-      let aAttrs = try? fm.attributesOfItem(atPath: a.path),
-      let bAttrs = try? fm.attributesOfItem(atPath: b.path),
-      let aInode = aAttrs[.systemFileNumber] as? NSNumber,
-      let bInode = bAttrs[.systemFileNumber] as? NSNumber
-    else {
+  private func markEngineStampCurrent() {
+    UserDefaults.standard.set(Self.engineStampValue, forKey: Self.engineStampKey)
+  }
+
+  private func clearEngineStamp() {
+    UserDefaults.standard.removeObject(forKey: Self.engineStampKey)
+  }
+
+  /// True when initialize failed because the on-disk container looks unusable.
+  private static func isLikelyCorruptModelError(_ error: Error) -> Bool {
+    let text = safeMessage(error).lowercased()
+    if isLikelyBackendError(text) {
       return false
     }
-    return aInode == bInode
+    return text.contains("corrupt")
+      || text.contains("invalid")
+      || text.contains("loader")
+      || text.contains("parse")
+      || text.contains("format")
+      || text.contains("header")
+      || text.contains("truncated")
+      || text.contains("not a valid")
+      || text.contains("speculative")
+      || text.contains("drafter")
+      || text.contains("mtp")
   }
 
-  /// Resolves [modelRevision] (e.g. `main`) to a commit SHA for this prepare.
-  private func resolvePinnedRevision() async throws -> String {
-    let encodedRevision =
-      Self.modelRevision.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
-      ?? Self.modelRevision
-    guard !Self.modelRepo.isEmpty,
-      let url = URL(
-        string:
-          "https://huggingface.co/api/models/\(Self.modelRepo)/revision/\(encodedRevision)"
-      )
-    else {
-      throw PrepareError.generic("Model manifest repo is missing.")
-    }
-    let (data, response): (Data, URLResponse)
-    do {
-      (data, response) = try await URLSession.shared.data(from: url)
-    } catch {
-      throw PrepareError.network(Self.safeMessage(error))
-    }
-    if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-      throw PrepareError.network("Model revision HTTP \(http.statusCode).")
-    }
-    guard
-      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-      let sha = json["sha"] as? String,
-      !sha.isEmpty
-    else {
-      throw PrepareError.network("Model revision SHA missing.")
-    }
-    return sha
+  private static func isLikelyBackendError(_ text: String) -> Bool {
+    text.contains("gpu")
+      || text.contains("metal")
+      || text.contains("opencl")
+      || text.contains("delegate")
+      || text.contains("backend")
   }
 
-  /// Downloads one HF resolve path into the model directory.
-  private func downloadRemoteFile(
-    remotePath: String,
-    localPath: String,
-    estimatedSize: Int64,
-    revision: String
-  ) async throws {
+  private func downloadModelFile() throws {
     guard let directory = modelDirectoryURL() else {
       throw PrepareError.generic("Documents directory is unavailable.")
     }
-    let encodedPath = remotePath
-      .split(separator: "/")
-      .map { $0.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? String($0) }
-      .joined(separator: "/")
-    let encodedRevision =
-      revision.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? revision
-    let urlString =
-      "https://huggingface.co/\(Self.modelRepo)/resolve/\(encodedRevision)/\(encodedPath)"
-    guard let url = URL(string: urlString) else {
-      throw PrepareError.generic("Invalid model URL for \(remotePath).")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    guard let url = URL(string: Self.modelURL) else {
+      throw PrepareError.generic("Invalid model URL.")
     }
-    let destination = directory.appendingPathComponent(localPath)
-    try FileManager.default.createDirectory(
-      at: destination.deletingLastPathComponent(),
-      withIntermediateDirectories: true
-    )
-    let baseDownloaded = downloadedBytes
-    let estimatedForFile = estimatedSize
-    do {
-      let fileBytes: Int64 = try await withCheckedThrowingContinuation { continuation in
+    let destination = directory.appendingPathComponent(Self.modelFileName)
+    let partial = directory.appendingPathComponent("\(Self.modelFileName).partial")
+    let fm = FileManager.default
+    if fm.fileExists(atPath: partial.path) {
+      try fm.removeItem(at: partial)
+    }
+
+    try awaitSync {
+      try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
         final class ObservationBox {
           var observation: NSKeyValueObservation?
         }
@@ -551,79 +365,55 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
           box.observation?.invalidate()
           box.observation = nil
           if let error {
-            continuation.resume(
-              throwing: PrepareError.network(Self.safeMessage(error))
-            )
+            continuation.resume(throwing: PrepareError.network(Self.safeMessage(error)))
             return
           }
           guard let location else {
-            continuation.resume(
-              throwing: PrepareError.network("Empty download for \(remotePath).")
-            )
+            continuation.resume(throwing: PrepareError.network("Empty model download."))
             return
           }
           if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             continuation.resume(
-              throwing: PrepareError.network(
-                "Model download HTTP \(http.statusCode) for \(remotePath)."
-              )
+              throwing: PrepareError.network("Model download HTTP \(http.statusCode).")
             )
             return
           }
           do {
-            if FileManager.default.fileExists(atPath: destination.path) {
-              try FileManager.default.removeItem(at: destination)
+            if fm.fileExists(atPath: partial.path) {
+              try fm.removeItem(at: partial)
             }
-            try FileManager.default.moveItem(at: location, to: destination)
+            try fm.moveItem(at: location, to: partial)
             let size =
-              (try? FileManager.default.attributesOfItem(atPath: destination.path)[.size]
-                as? NSNumber)?.int64Value ?? 0
-            continuation.resume(returning: size)
+              (try? fm.attributesOfItem(atPath: partial.path)[.size] as? NSNumber)?
+              .int64Value ?? 0
+            if size < Self.minPlausibleModelBytes {
+              try? fm.removeItem(at: partial)
+              continuation.resume(
+                throwing: PrepareError.network(
+                  "Model download finished with an implausibly small file."
+                )
+              )
+              return
+            }
+            if fm.fileExists(atPath: destination.path) {
+              try fm.removeItem(at: destination)
+            }
+            try fm.moveItem(at: partial, to: destination)
+            continuation.resume(returning: ())
           } catch {
             continuation.resume(throwing: error)
           }
         }
-        // Drive gauge while the large weight.bin files transfer.
         box.observation = task.progress.observe(\.fractionCompleted) { [weak self] progress, _ in
           guard let self else { return }
-          let inFlight = Int64(Double(max(estimatedForFile, 1)) * progress.fractionCompleted)
-          self.downloadedBytes = baseDownloaded + inFlight
+          let capped = min(max(progress.fractionCompleted, 0), 0.99)
+          self.emitProgressBucketed(capped)
         }
         task.resume()
       }
-      downloadedBytes = baseDownloaded + max(fileBytes, 0)
-    } catch let prepare as PrepareError {
-      throw prepare
-    } catch {
-      throw PrepareError.network(Self.safeMessage(error))
     }
   }
 
-  private static func allocatedByteCount(at directory: URL) -> Int64 {
-    let fm = FileManager.default
-    guard
-      let enumerator = fm.enumerator(
-        at: directory,
-        includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey],
-        options: [.skipsHiddenFiles]
-      )
-    else {
-      return 0
-    }
-    var total: Int64 = 0
-    for case let fileURL as URL in enumerator {
-      guard
-        let values = try? fileURL.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey]),
-        values.isRegularFile == true
-      else {
-        continue
-      }
-      total += Int64(values.fileSize ?? 0)
-    }
-    return total
-  }
-
-  /// Emits at most once per whole-percent bucket (matches Android).
   private func emitProgressBucketed(_ value: Double) {
     let bucket = Int((value * 100).rounded(.down))
     guard bucket != lastEmittedProgressBucket else { return }
@@ -632,45 +422,12 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   private func isModelDownloaded() -> Bool {
-    hasCompleteModelBundle()
-  }
-
-  /// Manifest paths plus hardlinked prefill weights required for ChunkedEngine.
-  private static var requiredRelativePaths: [String] {
-    var paths = downloadFiles.map(\.path)
-    for i in 1...4 {
-      paths.append("prefill_chunk\(i).mlmodelc/weights/weight.bin")
-    }
-    return paths
-  }
-
-  private func hasCompleteModelBundle() -> Bool {
-    guard let directory = modelDirectoryURL() else { return false }
-    let fm = FileManager.default
-    // Chunked SWA path requires chunk1 (and peers) for CoreMLLLM ChunkedEngine.
-    guard fm.fileExists(atPath: directory.appendingPathComponent("chunk1.mlmodelc").path)
-    else {
-      return false
-    }
-    for relative in Self.requiredRelativePaths {
-      let url = directory.appendingPathComponent(relative)
-      guard fm.fileExists(atPath: url.path) else { return false }
-      if let attrs = try? fm.attributesOfItem(atPath: url.path),
-        let size = attrs[.size] as? NSNumber,
-        size.int64Value <= 0
-      {
-        return false
-      }
-    }
-    // Prefill weights must share inodes with decode (no silent ~2× copies).
-    for i in 1...4 {
-      let decode = directory
-        .appendingPathComponent("chunk\(i).mlmodelc/weights/weight.bin")
-      let prefill = directory
-        .appendingPathComponent("prefill_chunk\(i).mlmodelc/weights/weight.bin")
-      guard Self.shareSameInode(decode, prefill) else { return false }
-    }
-    return true
+    guard let model = modelFileURL() else { return false }
+    guard FileManager.default.fileExists(atPath: model.path) else { return false }
+    let size =
+      (try? FileManager.default.attributesOfItem(atPath: model.path)[.size] as? NSNumber)?
+      .int64Value ?? 0
+    return size >= Self.minPlausibleModelBytes
   }
 
   private func modelsRootURL() -> URL? {
@@ -682,17 +439,40 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     modelsRootURL()?.appendingPathComponent(Self.modelFolderName, isDirectory: true)
   }
 
-  private func removeIncompleteModelDirectory() throws {
+  private func modelFileURL() -> URL? {
+    modelDirectoryURL()?.appendingPathComponent(Self.modelFileName)
+  }
+
+  private func legacyCoreMLDirectoryURL() -> URL? {
+    modelsRootURL()?.appendingPathComponent(Self.legacyCoreMLFolderName, isDirectory: true)
+  }
+
+  /// Deletes Documents/Models/gemma4-e2b from the CoreMLLLM era if still present.
+  private func removeLegacyCoreMLModelIfPresent() {
+    let fm = FileManager.default
+    guard let legacy = legacyCoreMLDirectoryURL(), fm.fileExists(atPath: legacy.path) else {
+      return
+    }
+    try? fm.removeItem(at: legacy)
+    // Drop CoreML-era readiness prefs so they cannot resurrect as ready.
+    UserDefaults.standard.removeObject(forKey: "gemmaMeter.loadSucceeded")
+    UserDefaults.standard.removeObject(forKey: "gemmaMeter.activeBackend")
+    UserDefaults.standard.removeObject(forKey: "gemmaMeter.litertLoadSucceeded")
+  }
+
+  private func removeIncompleteModel() throws {
     let fm = FileManager.default
     guard let modelDir = modelDirectoryURL(), fm.fileExists(atPath: modelDir.path) else {
+      markLoadFailed()
+      clearEngineStamp()
       return
     }
     try fm.removeItem(at: modelDir)
     markLoadFailed()
-    UserDefaults.standard.removeObject(forKey: Self.persistedBackendKey)
+    clearEngineStamp()
   }
 
-  private func ensureModelsDirectoryExcludedFromBackup() throws {
+  private func ensureModelDirectoryExcludedFromBackup() throws {
     let fm = FileManager.default
     guard let modelsRoot = modelsRootURL() else {
       throw PrepareError.generic("Documents directory is unavailable.")
@@ -706,7 +486,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   private func excludeDownloadedModelFromBackup() throws {
-    try ensureModelsDirectoryExcludedFromBackup()
+    try ensureModelDirectoryExcludedFromBackup()
   }
 
   private func ensureFreeSpace() throws {
@@ -722,10 +502,6 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   /// Best-effort free space for a user-started download.
-  ///
-  /// Settings「空き容量」は opportunistic 寄りで、古い `systemFreeSize` だけだと
-  /// 低く出ることがある。重要／機会的／従来値のうち最大を使い、明示 prepare を
-  /// 過大に拒否しない。
   private static func availableBytes(at url: URL) -> Int64 {
     var candidates: [Int64] = []
     let keys: Set<URLResourceKey> = [
@@ -785,10 +561,6 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     var value: Result<T, Error>?
   }
 
-  private static func cgImage(from data: Data) -> CGImage? {
-    guard let image = UIImage(data: data) else { return nil }
-    return image.cgImage
-  }
   #else
   private func generate(prompt: String, imageBytes: Data, requireReady: Bool) throws -> String {
     throw NSError(
@@ -796,7 +568,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       code: 4,
       userInfo: [
         NSLocalizedDescriptionKey:
-          "CoreMLLLM Swift package is not linked. Add https://github.com/john-rocky/CoreML-LLM."
+          "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM."
       ]
     )
   }
@@ -832,7 +604,11 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     if message.contains("space") || message.contains("storage") {
       return "insufficientStorage"
     }
-    if message.contains("network") || message.contains("offline") || message.contains("http") {
+    // Avoid classifying bare "timed out" or incidental "http" as network
+    // (prepare may fail after a finished download during warm-load).
+    if message.contains("network") || message.contains("offline")
+      || message.contains("http ") || message.contains("http:")
+    {
       return "network"
     }
     return "generic"
@@ -846,51 +622,6 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     return String(raw.prefix(200))
   }
 
-  private struct DownloadManifestFile: Decodable {
-    /// Local path under Documents/Models/gemma4-e2b/.
-    let path: String
-    /// HF path when different from [path] (e.g. `swa/chunk1...`).
-    let remotePath: String?
-    let estimatedSize: Int64
-  }
-
-  private struct DownloadManifest: Decodable {
-    let repo: String
-    let revision: String
-    let files: [DownloadManifestFile]
-
-    static func load() throws -> DownloadManifest {
-      guard let url = Self.manifestJSONURL() else {
-        throw PrepareError.generic("iOS download manifest is missing.")
-      }
-      let data = try Data(contentsOf: url)
-      return try JSONDecoder().decode(DownloadManifest.self, from: data)
-    }
-
-    private static func manifestJSONURL() -> URL? {
-      let name = "ios_monolithic_download_manifest"
-      let pluginBundle = Bundle(for: GemmaMeterPlugin.self)
-      if let url = pluginBundle.url(forResource: name, withExtension: "json") {
-        return url
-      }
-      if let bundleURL = pluginBundle.url(
-        forResource: "infra_gemma_meter_mobile_manifest",
-        withExtension: "bundle"
-      ),
-        let resourceBundle = Bundle(url: bundleURL),
-        let url = resourceBundle.url(forResource: name, withExtension: "json")
-      {
-        return url
-      }
-      #if SWIFT_PACKAGE
-      if let url = Bundle.module.url(forResource: name, withExtension: "json") {
-        return url
-      }
-      #endif
-      return nil
-    }
-  }
-
   private enum PrepareError: LocalizedError {
     case insufficientStorage
     case network(String)
@@ -899,7 +630,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     var errorDescription: String? {
       switch self {
       case .insufficientStorage:
-        return "Not enough free space for Gemma Core ML model."
+        return "Not enough free space for Gemma model."
       case .network(let message):
         return message
       case .generic(let message):

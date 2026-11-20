@@ -13,19 +13,18 @@ let package = Package(
   ],
   dependencies: [
     .package(name: "FlutterFramework", path: "../FlutterFramework"),
-    // Core ML Gemma E2B runtime (ANE). Chunked n1024 + vision from HF.
-    .package(url: "https://github.com/john-rocky/CoreML-LLM", branch: "main"),
+    // LiteRT-LM Gemma E2B runtime (GPU main/vision + MTP). Same .litertlm as Android.
+    .package(url: "https://github.com/google-ai-edge/LiteRT-LM", from: "0.19.1"),
   ],
   targets: [
     .target(
       name: "infra_gemma_meter_mobile",
       dependencies: [
         .product(name: "FlutterFramework", package: "FlutterFramework"),
-        .product(name: "CoreMLLLM", package: "CoreML-LLM"),
+        .product(name: "LiteRTLM", package: "LiteRT-LM"),
       ],
       resources: [
         .process("PrivacyInfo.xcprivacy"),
-        .copy("ios_monolithic_download_manifest.json"),
       ],
       // Keep plugin sources on Swift 5 language mode under tools 6.0.
       swiftSettings: [
