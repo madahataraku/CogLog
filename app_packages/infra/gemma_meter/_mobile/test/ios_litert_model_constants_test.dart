@@ -2,7 +2,13 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
-/// Native iOS LiteRT-LM constants must stay aligned with Android / docs.
+/// Native iOS LiteRT-LM 定数が Android / 文書と揃っていることを検査する。
+///
+/// Example:
+/// ```bash
+/// cd app_packages/infra/gemma_meter/_mobile
+/// flutter test test/ios_litert_model_constants_test.dart
+/// ```
 void main() {
   test(
     'iOS GemmaMeterPlugin downloads the same litert-community E2B .litertlm',
@@ -28,7 +34,10 @@ void main() {
       );
       expect(source, contains('gemma-4-E2B-it.litertlm'));
       expect(source, contains('2_588_147_712'));
-      expect(source, contains('minPlausibleModelBytes'));
+      expect(
+        source,
+        contains('minPlausibleModelBytes: Int64 = 100 * 1024 * 1024'),
+      );
       expect(source, contains('legacyCoreMLFolderName = "gemma4-e2b"'));
       expect(source, contains('removeLegacyCoreMLModelIfPresent'));
       expect(source, contains('estimatedModelBytes + 500_000_000'));
@@ -39,6 +48,9 @@ void main() {
       expect(source, contains('backend: .gpu'));
       expect(source, contains('visionBackend: .gpu'));
       expect(source, contains('SpeculativeDecodingConfig(mode: .on)'));
+      expect(source, contains('engineStampValue = "litert-mtp-gpu-v1"'));
+      expect(source, contains('try await created.initialize()'));
+      expect(source, contains('try await active.createConversation()'));
       expect(source, isNot(contains('import CoreMLLLM')));
       expect(source, isNot(contains('mlboydaisuke')));
     },

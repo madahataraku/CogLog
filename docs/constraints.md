@@ -120,6 +120,9 @@ availability の `ready` は当該プロセスで `Engine.initialize()` が成�
 （prepare の warm-load または getAvailability 時の初期化を含む）。永続化した
 過去の成功だけでは ready にしない。取得後のファイルは最小妥当サイズ未満なら
 未完了扱いとし、デバイス固有の初期化失敗では妥当サイズの成果物を消さない。
+コンテナ破損や MTP 非対応と判定できる初期化失敗では成果物を消し、次回 prepare で
+再取得する。engine stamp（`litert-mtp-gpu-v1`）が無い／違う既存ファイルは
+MTP 対応のため一度だけ再取得する。
 デバッグ表示の backend / visionBackend は設定どおり `gpu` / `gpu`。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。

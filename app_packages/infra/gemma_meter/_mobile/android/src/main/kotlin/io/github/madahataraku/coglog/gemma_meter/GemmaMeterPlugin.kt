@@ -145,6 +145,14 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
         throw IOException("Application context is unavailable.")
       }
       val target = modelFile()!!
+      if (target.isFile && target.length() > 0L && !isEngineStampCurrent()) {
+        // Pre-MTP / stamp-mismatched artifacts must be refreshed once.
+        if (!target.delete()) {
+          throw IOException("Could not clear outdated Gemma model for refresh.")
+        }
+        clearEngineStamp()
+        closeEngine()
+      }
       if (!target.isFile || target.length() == 0L) {
         downloadModel(target)
       }
@@ -155,6 +163,11 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
         result.success(null)
       }
     } catch (error: Exception) {
+      if (isLikelyCorruptModelError(error)) {
+        modelFile()?.delete()
+        clearEngineStamp()
+        closeEngine()
+      }
       val code = mapPrepareCode(error)
       runOnMain {
         prepareEvents?.error(code, safeMessage(error), null)
@@ -282,6 +295,7 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     val created = Engine(config)
     created.initialize()
     engine = created
+    markEngineStampCurrent()
     return created
   }
 
@@ -349,6 +363,48 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     return raw.take(200)
   }
 
+  private fun prefs() =
+    appContext!!.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+  private fun isEngineStampCurrent(): Boolean =
+    prefs().getString(ENGINE_STAMP_KEY, null) == ENGINE_STAMP_VALUE
+
+  private fun markEngineStampCurrent() {
+    prefs().edit().putString(ENGINE_STAMP_KEY, ENGINE_STAMP_VALUE).apply()
+  }
+
+  private fun clearEngineStamp() {
+    prefs().edit().remove(ENGINE_STAMP_KEY).apply()
+  }
+
+  /**
+   * True when initialize failed because the on-disk container looks unusable
+   * (or lacks MTP). Device/backend GPU failures should return false so the
+   * downloaded artifact is kept.
+   */
+  private fun isLikelyCorruptModelError(error: Throwable): Boolean {
+    val text = safeMessage(error).lowercase()
+    if (
+      text.contains("gpu") ||
+        text.contains("opencl") ||
+        text.contains("delegate") ||
+        text.contains("backend")
+    ) {
+      return false
+    }
+    return text.contains("corrupt") ||
+      text.contains("invalid") ||
+      text.contains("loader") ||
+      text.contains("parse") ||
+      text.contains("format") ||
+      text.contains("header") ||
+      text.contains("truncated") ||
+      text.contains("not a valid") ||
+      text.contains("speculative") ||
+      text.contains("drafter") ||
+      text.contains("mtp")
+  }
+
   private class InsufficientStorageException(message: String) : IOException(message)
 
   private class NetworkException(message: String, cause: Throwable? = null) :
@@ -366,5 +422,9 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     private const val ESTIMATED_MODEL_BYTES = 2_588_147_712L
     /** Reject tiny redirect-body Content-Length values as the download total. */
     private const val MIN_PLAUSIBLE_MODEL_BYTES = 100L * 1024L * 1024L
+    private const val PREFS_NAME = "gemma_meter"
+    private const val ENGINE_STAMP_KEY = "engine_stamp"
+    /** Bumped when on-disk `.litertlm` must be refreshed (e.g. MTP-capable). */
+    private const val ENGINE_STAMP_VALUE = "litert-mtp-gpu-v1"
   }
 }

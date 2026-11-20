@@ -27,6 +27,9 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
   private static let configuredBackend = "gpu"
   private static let configuredVisionBackend = "gpu"
+  /// Bumped when on-disk `.litertlm` must be refreshed (e.g. MTP-capable build).
+  private static let engineStampKey = "gemmaMeter.engineStamp"
+  private static let engineStampValue = "litert-mtp-gpu-v1"
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
@@ -211,7 +214,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
     let active = try ensureEngine()
     return try awaitSync {
-      let conversation = try active.createConversation()
+      // Engine is an actor; createConversation must be awaited.
+      let conversation = try await active.createConversation()
       let response = try await conversation.sendMessage(
         Message(of: .imageData(imageBytes), .text(prompt))
       )
@@ -232,7 +236,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         userInfo: [NSLocalizedDescriptionKey: "Gemma meter model is not downloaded."]
       )
     }
-    let cacheDir = model.deletingLastPathComponent().appendingPathComponent("cache", isDirectory: true)
+    let cacheDir = model.deletingLastPathComponent().appendingPathComponent(
+      "cache",
+      isDirectory: true
+    )
     try FileManager.default.createDirectory(at: cacheDir, withIntermediateDirectories: true)
     let config = try EngineConfig(
       modelPath: model.path,
@@ -243,16 +250,22 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     )
     let created = Engine(engineConfig: config)
     do {
-      try created.initialize()
+      // Engine is an actor; initialize must be awaited from outside.
+      try awaitSync {
+        try await created.initialize()
+      }
     } catch {
       markLoadFailed()
-      // Truncated downloads can look "present" until initialize; reclaim those.
-      if !isModelDownloaded() {
+      // Reclaim truncated or container-corrupt artifacts so prepare can re-fetch.
+      // Keep a plausible file when failure looks device/backend-specific (GPU).
+      if !isModelDownloaded() || Self.isLikelyCorruptModelError(error) {
         try? removeIncompleteModel()
+        clearEngineStamp()
       }
       throw error
     }
     engine = created
+    markEngineStampCurrent()
     return created
   }
 
@@ -262,8 +275,12 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
   private func downloadIfNeeded() throws {
     if isModelDownloaded() {
-      emitProgress(1)
-      return
+      if isEngineStampCurrent() {
+        emitProgress(1)
+        return
+      }
+      // Pre-MTP / stamp-mismatched artifacts must be refreshed once.
+      try removeIncompleteModel()
     }
     // Incomplete / undersized leftovers must not block a fresh download.
     try removeIncompleteModel()
@@ -280,6 +297,45 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       try? removeIncompleteModel()
       throw PrepareError.generic("Gemma meter download finished without a valid model file.")
     }
+  }
+
+  private func isEngineStampCurrent() -> Bool {
+    UserDefaults.standard.string(forKey: Self.engineStampKey) == Self.engineStampValue
+  }
+
+  private func markEngineStampCurrent() {
+    UserDefaults.standard.set(Self.engineStampValue, forKey: Self.engineStampKey)
+  }
+
+  private func clearEngineStamp() {
+    UserDefaults.standard.removeObject(forKey: Self.engineStampKey)
+  }
+
+  /// True when initialize failed because the on-disk container looks unusable.
+  private static func isLikelyCorruptModelError(_ error: Error) -> Bool {
+    let text = safeMessage(error).lowercased()
+    if isLikelyBackendError(text) {
+      return false
+    }
+    return text.contains("corrupt")
+      || text.contains("invalid")
+      || text.contains("loader")
+      || text.contains("parse")
+      || text.contains("format")
+      || text.contains("header")
+      || text.contains("truncated")
+      || text.contains("not a valid")
+      || text.contains("speculative")
+      || text.contains("drafter")
+      || text.contains("mtp")
+  }
+
+  private static func isLikelyBackendError(_ text: String) -> Bool {
+    text.contains("gpu")
+      || text.contains("metal")
+      || text.contains("opencl")
+      || text.contains("delegate")
+      || text.contains("backend")
   }
 
   private func downloadModelFile() throws {
@@ -406,10 +462,12 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     let fm = FileManager.default
     guard let modelDir = modelDirectoryURL(), fm.fileExists(atPath: modelDir.path) else {
       markLoadFailed()
+      clearEngineStamp()
       return
     }
     try fm.removeItem(at: modelDir)
     markLoadFailed()
+    clearEngineStamp()
   }
 
   private func ensureModelDirectoryExcludedFromBackup() throws {
