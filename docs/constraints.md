@@ -118,11 +118,14 @@ hardlink する（CoreMLLLM `ModelDownloader` の legacy 4-chunk と同じ）。
 （`.mlmodelc` は取得済みで再コンパイル用の二重領域は見ない。prefill 重みは
 hardlink）。版は運用追従
 （アプリに特定 SHA を埋め込まない）。実行 computeUnits はまず
-`.cpuAndNeuralEngine`（ANE）を試し、実行計画の構築に失敗したとき
-（`com.apple.CoreML` の code -14、または underlying を含む execution plan /
-`model.mil` 系）は `.cpuAndGPU` へフォールバックする。成功した backend は
+`.cpuAndNeuralEngine`（ANE）を試し、失敗したら `.cpuAndGPU` を一度試す
+（iPhone 11 などでは plan -14 以外でも ANE が落ちうる）。前回成功が
+`gpu` なら GPU を先に試し、失敗時は ANE を一度試す。成功した backend は
 永続化し、次回はそちらを先に試す。デバッグ表示の backend は実際に載った方
 （`ane` または `gpu`）。未ロード時は空文字とし、既定の `ane` を装わない。
+prepare の進捗 100% は warm-load 成功後のみとし、取得済み再試行でも
+ロード前に 100% を出さない。失敗種別の network は URL／接続系に限り、
+文言中の `https://` だけでは network にしない。
 静止画 `vision.mlmodelc`（`vision.ane.*` なし）の visionBackend 表示は `gpu`
 （CoreMLLLM 既定の GPU 経路）。availability の
 `ready` はダウンロード済みだけでは足りず、少なくとも一度ロード成功していること

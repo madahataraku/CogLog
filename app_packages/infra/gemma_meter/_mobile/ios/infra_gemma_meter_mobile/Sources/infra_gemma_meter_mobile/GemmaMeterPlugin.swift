@@ -301,6 +301,9 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   /// Tries ANE then GPU (or GPU first when that was last successful).
+  ///
+  /// Any ANE load failure falls through to GPU once (A13 devices may fail
+  /// ANE for reasons other than plan -14). Preferred-GPU failures still try ANE.
   private static func loadWithComputeUnitFallback(
     from directory: URL,
     preferredBackend: String?
@@ -316,15 +319,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         return (model, label)
       } catch {
         lastError = error
-        // Only continue to GPU when ANE failed with an execution-plan style error.
-        if label == "ane", isNeuralEnginePlanFailure(error) {
-          continue
-        }
-        // Preferred GPU failed: still try ANE once before giving up.
-        if label == "gpu", preferredBackend == "gpu" {
-          continue
-        }
-        throw error
+        // Try the other backend once before giving up.
+        continue
       }
     }
     throw lastError
@@ -335,52 +331,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       )
   }
 
-  /// True when Core ML rejected the ANE execution plan (often stateful KV).
-  private static func isNeuralEnginePlanFailure(_ error: Error) -> Bool {
-    var current: Error? = error
-    for _ in 0..<8 {
-      guard let err = current else { return false }
-      let ns = err as NSError
-      if ns.code == -14 {
-        return true
-      }
-      let domain = ns.domain.lowercased()
-      let text = planFailureHaystack(ns)
-      if domain.contains("coreml"), matchesExecutionPlanText(text) {
-        return true
-      }
-      if matchesExecutionPlanText(text) {
-        return true
-      }
-      current = ns.userInfo[NSUnderlyingErrorKey] as? Error
-    }
-    return false
-  }
-
-  private static func planFailureHaystack(_ error: NSError) -> String {
-    var parts: [String] = [
-      error.localizedDescription,
-      error.localizedFailureReason ?? "",
-      String(describing: error.userInfo),
-    ]
-    if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError {
-      parts.append(underlying.localizedDescription)
-      parts.append(String(describing: underlying.userInfo))
-    }
-    return parts.joined(separator: " ").lowercased()
-  }
-
-  private static func matchesExecutionPlanText(_ text: String) -> Bool {
-    text.contains("execution plan")
-      || text.contains("model.mil")
-      || text.contains("error code: -14")
-      || text.contains("code=-14")
-      || text.contains("code = -14")
-  }
-
   private func downloadIfNeeded() async throws {
     if hasCompleteModelBundle() {
-      emitProgress(1)
+      // Files are ready; warm-load still runs after this. Do not claim 100% yet.
+      emitProgress(0.99)
       return
     }
     // Partial/corrupt installs must not stay "ready".
@@ -430,6 +384,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       try? removeIncompleteModelDirectory()
       throw PrepareError.generic("Gemma Core ML download finished without required files.")
     }
+    // Download done; warm-load follows in prepareModel. Keep UI under 100%.
+    emitProgress(0.99)
   }
 
   /// Hardlinks decode `chunk{i}` weights into `prefill_chunk{i}` (CoreMLLLM legacy).
@@ -595,8 +551,24 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     } catch let prepare as PrepareError {
       throw prepare
     } catch {
-      throw PrepareError.network(Self.safeMessage(error))
+      throw Self.classifyDownloadSideEffect(error)
     }
+  }
+
+  /// Maps post-HTTP FileManager / Cocoa errors without calling them network.
+  private static func classifyDownloadSideEffect(_ error: Error) -> Error {
+    let ns = error as NSError
+    if ns.domain == NSURLErrorDomain {
+      return PrepareError.network(safeMessage(error))
+    }
+    if ns.domain == NSCocoaErrorDomain, ns.code == NSFileWriteOutOfSpaceError {
+      return PrepareError.insufficientStorage
+    }
+    let text = ns.localizedDescription.lowercased()
+    if text.contains("space") || text.contains("storage") || text.contains("disk") {
+      return PrepareError.insufficientStorage
+    }
+    return PrepareError.generic(safeMessage(error))
   }
 
   private static func allocatedByteCount(at directory: URL) -> Int64 {
@@ -829,10 +801,16 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       return "network"
     }
     let message = ns.localizedDescription.lowercased()
-    if message.contains("space") || message.contains("storage") {
+    if message.contains("space") || message.contains("storage") || message.contains("disk full") {
       return "insufficientStorage"
     }
-    if message.contains("network") || message.contains("offline") || message.contains("http") {
+    // Do not match the substring "http" inside "https://" in unrelated errors
+    // (warm-load / Core ML failures were mislabeled as network after download).
+    if message.contains("network connection")
+      || message.contains("offline")
+      || message.contains("timed out")
+      || message.contains("internet connection")
+    {
       return "network"
     }
     return "generic"
