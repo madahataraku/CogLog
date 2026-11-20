@@ -110,12 +110,16 @@ README・podspec コメントを参照。`Runner.xcodeproj` にも LiteRTLM を�
 LiteRT-LM を OSS ライセンス一覧（`extraOssLicenses`）の対象に含める。
 モデルはアプリ同梱せず、Android と同じ Hugging Face `litert-community`
 Gemma 4 E2B の単一 `.litertlm`（おおよそ 2.59 GB）をダウンロードする。
-置き場所は Documents 配下のモデルディレクトリとし、OS バックアップから除外する。
-空き容量は推定取得量＋一時領域＋余裕を要求する。版は運用追従
+置き場所は Documents/Models/`gemma_meter/` とし、OS バックアップから除外する。
+旧 CoreMLLLM ツリー（Documents/Models/`gemma4-e2b/`）が残っていれば prepare /
+availability 時に削除する。空き容量は推定取得量＋余裕（一時／キャッシュ用、
+おおよそ 500 MB）を要求する（モデル実体の二重サイズは見ない）。版は運用追従
 （アプリに特定 SHA を埋め込まない）。Engine は main `backend: gpu`、
 `visionBackend: gpu`、`speculativeDecodingConfig.mode: on`（MTP）。
-availability の `ready` はダウンロード済みだけでは足りず、少なくとも一度
-`Engine.initialize()` が成功していること（prepare の warm-load 成功を含む）。
+availability の `ready` は当該プロセスで `Engine.initialize()` が成功していること
+（prepare の warm-load または getAvailability 時の初期化を含む）。永続化した
+過去の成功だけでは ready にしない。取得後のファイルは最小妥当サイズ未満なら
+未完了扱いとし、デバイス固有の初期化失敗では妥当サイズの成果物を消さない。
 デバッグ表示の backend / visionBackend は設定どおり `gpu` / `gpu`。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。

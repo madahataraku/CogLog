@@ -16,14 +16,17 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
   /// Current litert-community E2B `.litertlm` payload (~2.59 GB).
   private static let estimatedModelBytes: Int64 = 2_588_147_712
-  /// Download + one concurrent temp file + margin.
+  /// Reject truncated / redirect-body downloads as complete artifacts.
+  private static let minPlausibleModelBytes: Int64 = 100 * 1024 * 1024
+  /// Legacy CoreMLLLM chunk tree (pre LiteRT-LM migration).
+  private static let legacyCoreMLFolderName = "gemma4-e2b"
+  /// URLSession peak ≈ one model copy in tmp/Documents + LiteRT cache margin.
   private static var minFreeBytes: Int64 {
-    estimatedModelBytes + estimatedModelBytes + 500_000_000
+    estimatedModelBytes + 500_000_000
   }
 
   private static let configuredBackend = "gpu"
   private static let configuredVisionBackend = "gpu"
-  private static let loadSucceededKey = "gemmaMeter.litertLoadSucceeded"
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
@@ -102,6 +105,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
   private func availabilityMap() -> [String: String] {
     #if canImport(LiteRTLM)
+    // Best-effort: reclaim the old CoreMLLLM tree so both models are not kept.
+    removeLegacyCoreMLModelIfPresent()
     guard isModelDownloaded() else {
       return [
         "status": "modelNotDownloaded",
@@ -109,16 +114,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         "message": "Gemma meter model is not downloaded.",
       ].merging(configuredBackendFields()) { _, new in new }
     }
-    let loadedThisProcess = engine != nil
-    let loadSucceededPreviously = UserDefaults.standard.bool(forKey: Self.loadSucceededKey)
-    if loadedThisProcess || loadSucceededPreviously {
-      return [
-        "status": "ready",
-        "reason": "ready",
-        "message": "Gemma meter model is ready.",
-      ].merging(configuredBackendFields()) { _, new in new }
-    }
-    // On disk but not yet warm-loaded in this install; try initialize once.
+    // Mirror Android: ready only after Engine.initialize() succeeds this process.
     do {
       _ = try ensureEngine()
       return [
@@ -160,6 +156,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     preparing = true
     emitProgress(0)
     do {
+      removeLegacyCoreMLModelIfPresent()
       try downloadIfNeeded()
       try excludeDownloadedModelFromBackup()
       _ = try ensureEngine()
@@ -171,7 +168,13 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       }
     } catch {
       preparing = false
-      markLoadFailed()
+      // Keep a plausible on-disk artifact across device-specific init failures;
+      // only reclaim truncated / clearly invalid files for retry.
+      if isModelDownloaded() {
+        markLoadFailed()
+      } else {
+        try? removeIncompleteModel()
+      }
       let code = Self.mapPrepareCode(error)
       let message = Self.safeMessage(error)
       DispatchQueue.main.async {
@@ -243,16 +246,18 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       try created.initialize()
     } catch {
       markLoadFailed()
+      // Truncated downloads can look "present" until initialize; reclaim those.
+      if !isModelDownloaded() {
+        try? removeIncompleteModel()
+      }
       throw error
     }
     engine = created
-    UserDefaults.standard.set(true, forKey: Self.loadSucceededKey)
     return created
   }
 
   private func markLoadFailed() {
     engine = nil
-    UserDefaults.standard.set(false, forKey: Self.loadSucceededKey)
   }
 
   private func downloadIfNeeded() throws {
@@ -260,6 +265,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       emitProgress(1)
       return
     }
+    // Incomplete / undersized leftovers must not block a fresh download.
     try removeIncompleteModel()
     try ensureModelDirectoryExcludedFromBackup()
     try ensureFreeSpace()
@@ -272,7 +278,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
     guard isModelDownloaded() else {
       try? removeIncompleteModel()
-      throw PrepareError.generic("Gemma meter download finished without a model file.")
+      throw PrepareError.generic("Gemma meter download finished without a valid model file.")
     }
   }
 
@@ -319,6 +325,18 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
               try fm.removeItem(at: partial)
             }
             try fm.moveItem(at: location, to: partial)
+            let size =
+              (try? fm.attributesOfItem(atPath: partial.path)[.size] as? NSNumber)?
+              .int64Value ?? 0
+            if size < Self.minPlausibleModelBytes {
+              try? fm.removeItem(at: partial)
+              continuation.resume(
+                throwing: PrepareError.network(
+                  "Model download finished with an implausibly small file."
+                )
+              )
+              return
+            }
             if fm.fileExists(atPath: destination.path) {
               try fm.removeItem(at: destination)
             }
@@ -351,7 +369,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     let size =
       (try? FileManager.default.attributesOfItem(atPath: model.path)[.size] as? NSNumber)?
       .int64Value ?? 0
-    return size > 0
+    return size >= Self.minPlausibleModelBytes
   }
 
   private func modelsRootURL() -> URL? {
@@ -365,6 +383,23 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
   private func modelFileURL() -> URL? {
     modelDirectoryURL()?.appendingPathComponent(Self.modelFileName)
+  }
+
+  private func legacyCoreMLDirectoryURL() -> URL? {
+    modelsRootURL()?.appendingPathComponent(Self.legacyCoreMLFolderName, isDirectory: true)
+  }
+
+  /// Deletes Documents/Models/gemma4-e2b from the CoreMLLLM era if still present.
+  private func removeLegacyCoreMLModelIfPresent() {
+    let fm = FileManager.default
+    guard let legacy = legacyCoreMLDirectoryURL(), fm.fileExists(atPath: legacy.path) else {
+      return
+    }
+    try? fm.removeItem(at: legacy)
+    // Drop CoreML-era readiness prefs so they cannot resurrect as ready.
+    UserDefaults.standard.removeObject(forKey: "gemmaMeter.loadSucceeded")
+    UserDefaults.standard.removeObject(forKey: "gemmaMeter.activeBackend")
+    UserDefaults.standard.removeObject(forKey: "gemmaMeter.litertLoadSucceeded")
   }
 
   private func removeIncompleteModel() throws {

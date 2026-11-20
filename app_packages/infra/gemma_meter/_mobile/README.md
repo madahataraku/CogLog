@@ -31,8 +31,11 @@ the pod target, availability stays `unavailable` until SPM is used.
 
 Models are **not** bundled. The plugin downloads the same single `.litertlm`
 (~2.59 GB) as Android into `Documents/Models/gemma_meter/`. The `Models` tree
-is marked excluded from OS backup after prepare.
+is marked excluded from OS backup after prepare. Any leftover CoreMLLLM tree
+at `Documents/Models/gemma4-e2b/` is deleted on prepare / availability.
 
 Native availability reports configured backends: `backend=gpu` and
-`visionBackend=gpu` (MTP enabled at engine init). `ready` requires a
-successful `Engine.initialize()` (prepare warm-load counts).
+`visionBackend=gpu` (MTP enabled at engine init). `ready` requires
+`Engine.initialize()` success in the current process (persisted prior
+success is not enough). Undersized downloads are rejected; a plausible
+on-disk artifact is kept across device-specific init failures.

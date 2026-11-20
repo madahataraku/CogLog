@@ -26,10 +26,15 @@ void main() {
     );
     expect(source, contains('gemma-4-E2B-it.litertlm'));
     expect(source, contains('2_588_147_712'));
+    expect(source, contains('minPlausibleModelBytes'));
+    expect(source, contains('legacyCoreMLFolderName = "gemma4-e2b"'));
+    expect(source, contains('removeLegacyCoreMLModelIfPresent'));
+    expect(source, contains('estimatedModelBytes + 500_000_000'));
+    expect(source, isNot(contains('estimatedModelBytes + estimatedModelBytes')));
     expect(source, contains('backend: .gpu'));
     expect(source, contains('visionBackend: .gpu'));
     expect(source, contains('SpeculativeDecodingConfig(mode: .on)'));
-    expect(source, isNot(contains('CoreMLLLM')));
+    expect(source, isNot(contains('import CoreMLLLM')));
     expect(source, isNot(contains('mlboydaisuke')));
   });
 }
