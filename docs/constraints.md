@@ -114,7 +114,9 @@ hardlink する（CoreMLLLM `ModelDownloader` の legacy 4-chunk と同じ）。
 `swa` の RoPE、静止画 `vision.mlmodelc` と `embed_proj_weight.npy` を取る。
 `vision_video` と `audio` はメーター用途では取得しない。合計おおよそ 4.3 GB。
 取得開始時に `n1024` を 1 コミット SHA へ解決し、その SHA から全ファイルを取る。
-空き容量は取得量の約 2 倍＋余裕を要求する。版は運用追従
+空き容量は取得量＋同時に置く最大ファイル分の一時領域＋余裕を要求する
+（`.mlmodelc` は取得済みで再コンパイル用の二重領域は見ない。prefill 重みは
+hardlink）。版は運用追従
 （アプリに特定 SHA を埋め込まない）。実行 computeUnits はまず
 `.cpuAndNeuralEngine`（ANE）を試し、実行計画の構築に失敗したとき
 （`com.apple.CoreML` の code -14、または underlying を含む execution plan /

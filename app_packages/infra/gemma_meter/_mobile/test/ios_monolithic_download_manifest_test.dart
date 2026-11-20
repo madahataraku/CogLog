@@ -37,8 +37,13 @@ void main() {
     expect(total, 4305418292);
     expect(total / 1e9, closeTo(4.31, 0.01));
 
-    // Download + compile headroom used by native minFreeBytes.
-    expect(total * 2 + 500000000, greaterThan(9e9));
+    // Download + one concurrent temp (largest) + margin = native minFreeBytes.
+    final largest = files
+        .map((e) => (e['estimatedSize']! as num).toInt())
+        .reduce((a, b) => a > b ? a : b);
+    final minFree = total + largest + 500000000;
+    expect(minFree, lessThan(8e9));
+    expect(minFree, greaterThan(total));
 
     final paths = files.map((e) => e['path']! as String).toList();
     expect(paths, contains('chunk1.mlmodelc/weights/weight.bin'));

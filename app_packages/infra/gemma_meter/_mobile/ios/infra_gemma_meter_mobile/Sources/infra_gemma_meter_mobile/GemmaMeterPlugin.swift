@@ -38,9 +38,11 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     downloadFiles.reduce(0) { $0 + $1.estimatedSize }
   }
 
-  /// Download payload plus room for `MLModel.compileModel` outputs (~1x).
+  /// Precompiled `.mlmodelc` needs the download total, one URLSession temp
+  /// file (largest entry), and a small margin — not a second full copy.
   private static var minFreeBytes: Int64 {
-    estimatedDownloadBytes * 2 + 500_000_000
+    let largest = downloadFiles.map(\.estimatedSize).max() ?? 0
+    return estimatedDownloadBytes + largest + 500_000_000
   }
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
@@ -713,11 +715,44 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     else {
       throw PrepareError.generic("Documents directory is unavailable.")
     }
-    let attrs = try FileManager.default.attributesOfFileSystem(forPath: modelsRoot.path)
-    let free = (attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0
+    let free = Self.availableBytes(at: modelsRoot)
     if free > 0 && free < Self.minFreeBytes {
       throw PrepareError.insufficientStorage
     }
+  }
+
+  /// Best-effort free space for a user-started download.
+  ///
+  /// Settings「空き容量」は opportunistic 寄りで、古い `systemFreeSize` だけだと
+  /// 低く出ることがある。重要／機会的／従来値のうち最大を使い、明示 prepare を
+  /// 過大に拒否しない。
+  private static func availableBytes(at url: URL) -> Int64 {
+    var candidates: [Int64] = []
+    let keys: Set<URLResourceKey> = [
+      .volumeAvailableCapacityForImportantUsageKey,
+      .volumeAvailableCapacityForOpportunisticUsageKey,
+      .volumeAvailableCapacityKey,
+    ]
+    if let values = try? url.resourceValues(forKeys: keys) {
+      if let important = values.volumeAvailableCapacityForImportantUsage, important > 0 {
+        candidates.append(important)
+      }
+      if let opportunistic = values.volumeAvailableCapacityForOpportunisticUsage,
+        opportunistic > 0
+      {
+        candidates.append(opportunistic)
+      }
+      if let capacity = values.volumeAvailableCapacity, capacity > 0 {
+        candidates.append(Int64(capacity))
+      }
+    }
+    if let attrs = try? FileManager.default.attributesOfFileSystem(forPath: url.path),
+      let free = (attrs[.systemFreeSize] as? NSNumber)?.int64Value,
+      free > 0
+    {
+      candidates.append(free)
+    }
+    return candidates.max() ?? 0
   }
 
   private func awaitSync<T>(_ body: @escaping () async throws -> T) throws -> T {
