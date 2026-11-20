@@ -18,58 +18,60 @@ bool _isJpeg(Uint8List bytes) =>
     bytes.length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xD8;
 
 void main() {
-  test('長辺 800 横長は長辺 600 以下の JPEG になりアスペクト比を維持する', () {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('長辺 800 横長は長辺 600 以下の JPEG になりアスペクト比を維持する', () async {
     final input = _jpeg(width: 800, height: 600);
-    final out = normalizeMeterPhotoBytes(input);
+    final out = await normalizeMeterPhotoBytes(input);
     expect(_isJpeg(out), isTrue);
     final decoded = img.decodeImage(out)!;
     expect(math.max(decoded.width, decoded.height), lessThanOrEqualTo(600));
     expect(decoded.width / decoded.height, closeTo(800 / 600, 0.02));
   });
 
-  test('長辺 800 縦長は長辺 600 以下の JPEG になりアスペクト比を維持する', () {
+  test('長辺 800 縦長は長辺 600 以下の JPEG になりアスペクト比を維持する', () async {
     final input = _jpeg(width: 600, height: 800);
-    final out = normalizeMeterPhotoBytes(input);
+    final out = await normalizeMeterPhotoBytes(input);
     final decoded = img.decodeImage(out)!;
     expect(math.max(decoded.width, decoded.height), lessThanOrEqualTo(600));
     expect(decoded.height / decoded.width, closeTo(800 / 600, 0.02));
   });
 
-  test('正方形 900 は長辺 600 以下の JPEG になる', () {
-    final out = normalizeMeterPhotoBytes(_jpeg(width: 900, height: 900));
+  test('正方形 900 は長辺 600 以下の JPEG になる', () async {
+    final out = await normalizeMeterPhotoBytes(_jpeg(width: 900, height: 900));
     final decoded = img.decodeImage(out)!;
     expect(math.max(decoded.width, decoded.height), lessThanOrEqualTo(600));
     expect(_isJpeg(out), isTrue);
   });
 
-  test('長辺 601 は 600 以下になる', () {
-    final out = normalizeMeterPhotoBytes(_jpeg(width: 601, height: 400));
+  test('長辺 601 は 600 以下になる', () async {
+    final out = await normalizeMeterPhotoBytes(_jpeg(width: 601, height: 400));
     final decoded = img.decodeImage(out)!;
     expect(math.max(decoded.width, decoded.height), lessThanOrEqualTo(600));
   });
 
-  test('長辺 600 以下は拡大せず JPEG になる', () {
+  test('長辺 600 以下は拡大せず JPEG になる', () async {
     final input = _jpeg(width: 400, height: 300);
-    final out = normalizeMeterPhotoBytes(input);
+    final out = await normalizeMeterPhotoBytes(input);
     final decoded = img.decodeImage(out)!;
     expect(decoded.width, lessThanOrEqualTo(400));
     expect(decoded.height, lessThanOrEqualTo(300));
     expect(_isJpeg(out), isTrue);
   });
 
-  test('Orientation=6 の横長符号化は補正後長辺で縮小する', () {
+  test('Orientation=6 の横長符号化は補正後長辺で縮小する', () async {
     final exif = img.ExifData();
     exif.imageIfd.orientation = 6;
     final input = _jpeg(width: 800, height: 450, exif: exif);
-    final out = normalizeMeterPhotoBytes(input);
+    final out = await normalizeMeterPhotoBytes(input);
     final decoded = img.decodeImage(out)!;
     expect(math.max(decoded.width, decoded.height), lessThanOrEqualTo(600));
     expect(_isJpeg(out), isTrue);
   });
 
-  test('不正バイトは原寸を返す', () {
+  test('不正バイトは原寸を返す', () async {
     final input = Uint8List.fromList([1, 2, 3]);
-    final out = normalizeMeterPhotoBytes(input);
+    final out = await normalizeMeterPhotoBytes(input);
     expect(out, same(input));
   });
 }
