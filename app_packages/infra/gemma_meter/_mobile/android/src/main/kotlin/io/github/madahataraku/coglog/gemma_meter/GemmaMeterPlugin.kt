@@ -6,6 +6,8 @@ import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
+import com.google.ai.edge.litertlm.SpeculativeDecodingConfig
+import com.google.ai.edge.litertlm.SpeculativeDecodingMode
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -101,10 +103,10 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     }
   }
 
-  /** Configured LiteRT-LM backends (main CPU, vision GPU). */
+  /** Configured LiteRT-LM backends (main GPU, vision GPU, MTP on). */
   private fun configuredBackendFields(): Map<String, String> =
     mapOf(
-      "backend" to "cpu",
+      "backend" to "gpu",
       "visionBackend" to "gpu",
     )
 
@@ -271,9 +273,11 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     val config =
       EngineConfig(
         modelPath = model.absolutePath,
-        backend = Backend.CPU(),
+        backend = Backend.GPU(),
         visionBackend = Backend.GPU(),
         cacheDir = cacheDir?.absolutePath,
+        speculativeDecodingConfig =
+          SpeculativeDecodingConfig(mode = SpeculativeDecodingMode.ON),
       )
     val created = Engine(config)
     created.initialize()

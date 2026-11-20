@@ -1,6 +1,6 @@
 # infra_gemma_meter_mobile
 
-Flutter plugin for meter-reading Gemma E2B.
+Flutter plugin for meter-reading Gemma E2B (LiteRT-LM on Android and iOS).
 
 ## Android
 
@@ -12,32 +12,27 @@ Default model URL (ungated Hugging Face `litert-community` Gemma 4 E2B):
 
 `https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm`
 
-Engine backends (physical device): main `backend: cpu`, `visionBackend: gpu`
-(as reported by the Android plugin).
+Engine backends (physical device): main `backend: gpu`, `visionBackend: gpu`,
+and `speculativeDecodingConfig.mode: on` (MTP).
 
-## iOS / CoreMLLLM (SPM)
+## iOS / LiteRTLM (SPM)
 
 `ios/infra_gemma_meter_mobile/Package.swift` declares:
 
 - FlutterFramework (Flutter-generated path for plugin packages)
-- CoreMLLLM from `https://github.com/john-rocky/CoreML-LLM` (`branch: "main"`)
+- LiteRTLM from `https://github.com/google-ai-edge/LiteRT-LM` (`from: "0.19.1"`)
 
 Requires iOS 18+. With Flutter Swift Package Manager enabled (default on
-Flutter 3.44+), the plugin target links CoreMLLLM and `canImport(CoreMLLLM)`
-is true.
+Flutter 3.44+), the plugin target links LiteRTLM and `canImport(LiteRTLM)`
+is true. `app/ios/Runner.xcodeproj` also links LiteRTLM.
 
-CocoaPods still compiles the same Sources as a fallback. Without CoreMLLLM on
+CocoaPods still compiles the same Sources as a fallback. Without LiteRTLM on
 the pod target, availability stays `unavailable` until SPM is used.
 
-Models are **not** bundled. The plugin downloads the CoreMLLLM chunk layout
-from Hugging Face `mlboydaisuke/gemma-4-E2B-coreml` (`n1024`): SWA
-`chunk{1..4}.mlmodelc`, `prefill_chunk{1..4}` metadata (weights hardlinked
-from decode), PLE / embeds / RoPE, still-image `vision.mlmodelc`, and
-`hf_model/` (~4.3 GB) into `Documents/Models/gemma4-e2b/`. `vision_video`
-and `audio` are not fetched. The `Models` tree is marked excluded from OS
-backup after prepare.
+Models are **not** bundled. The plugin downloads the same single `.litertlm`
+(~2.59 GB) as Android into `Documents/Models/gemma_meter/`. The `Models` tree
+is marked excluded from OS backup after prepare.
 
-Debug availability reports the compute units that actually loaded:
-`backend=ane` or `backend=gpu` (ANE first, then `.cpuAndGPU` if the
-Neural Engine execution plan fails), and `visionBackend=gpu` for the
-shipping still-image `vision.mlmodelc` (CoreMLLLM GPU path; no `vision.ane.*`).
+Native availability reports configured backends: `backend=gpu` and
+`visionBackend=gpu` (MTP enabled at engine init). `ready` requires a
+successful `Engine.initialize()` (prepare warm-load counts).
