@@ -70,6 +70,9 @@ workspace:
   - app_packages/infra/oss_license_catalog
   - app_packages/infra/oss_license_catalog/_impl
   - app_packages/infra/oss_license_catalog/_testing
+  - app_packages/infra/user_file
+  - app_packages/infra/user_file/_mobile
+  - app_packages/infra/user_file/_testing
   - app_packages/screen/feature/achievement
   - app_packages/screen/feature/app_settings
   - app_packages/screen/feature/notification_settings
@@ -159,6 +162,9 @@ dependency_overrides:
   flutter_timezone: 5.1.1
   timezone: 0.11.2
   app_settings: 9.0.1
+  # 利用者ファイル保存・選択。8.x / 12.x は win32・dbus 制約で既存依存と衝突するため 13.4.0 に固定する。
+  # Android 実装は flutter.compileSdkVersion を参照する。
+  file_picker: 13.4.0
   connectivity_plus: 7.3.2
   build_runner: 2.10.4
   drift: 2.30.0
