@@ -39,9 +39,33 @@ HF_DIR="$(abs_path "${HF_DIR:-${WORK_ROOT}/hf/${HF_REPO##*/}}")"
 HOST_PYTHON="${HOST_PYTHON:-${PYTHON_BIN:-python3}}"
 SKIP_HF_DOWNLOAD="${SKIP_HF_DOWNLOAD:-0}"
 SKIP_VISION="${SKIP_VISION:-0}"
+# 1 = skip pip install -r requirements.txt (reuse an already-prepared venv / host deps)
+SKIP_DEPS="${SKIP_DEPS:-0}"
+# 1 = create venv with --system-site-packages so a host torch (e.g. conda) is visible
+VENV_SYSTEM_SITE_PACKAGES="${VENV_SYSTEM_SITE_PACKAGES:-0}"
 
 log() { printf '[gemma-coreml-build] %s\n' "$*"; }
 die() { printf '[gemma-coreml-build] ERROR: %s\n' "$*" >&2; exit 1; }
+
+# torch==2.11.0 (CoreML-LLM pin) ships macOS wheels for arm64 only — not x86_64.
+require_torch_platform() {
+  local arch
+  arch="$(uname -m)"
+  if [[ "${arch}" != "arm64" ]]; then
+    die "torch==2.11.0 has no macOS ${arch} wheel on PyPI (arm64 / Apple Silicon only). Use an Apple Silicon Mac, or set SKIP_DEPS=1 with a venv that already has torch 2.11.0."
+  fi
+}
+
+# Explain common pip failures for the pinned torch version.
+install_conversion_requirements() {
+  local reqs="$1"
+  require_torch_platform
+  log "Installing conversion requirements from ${reqs}"
+  log "Note: pip installs into the build venv; a host/conda torch is ignored unless VENV_SYSTEM_SITE_PACKAGES=1 or SKIP_DEPS=1."
+  if ! "${PYTHON_BIN}" -m pip install -r "${reqs}"; then
+    die "pip install -r ${reqs} failed. Common causes: (1) not Apple Silicon arm64, (2) Python not 3.10–3.12 for this venv, (3) PIP_INDEX_URL / extra-index pointing only at a CUDA torch index. Fix: use arm64 Python 3.10–3.12 and default PyPI, or SKIP_DEPS=1 after preparing the venv, or VENV_SYSTEM_SITE_PACKAGES=1 with host torch 2.11.0."
+  fi
+}
 
 ensure_coreml_llm_ref() {
   local dir="$1"
@@ -92,7 +116,12 @@ CONVERSION_DIR="${COREML_LLM_DIR}/conversion"
 VENV_DIR="${WORK_ROOT}/venv"
 if [[ ! -d "${VENV_DIR}" ]]; then
   log "Creating venv at ${VENV_DIR}"
-  "${HOST_PYTHON}" -m venv "${VENV_DIR}"
+  VENV_ARGS=()
+  if [[ "${VENV_SYSTEM_SITE_PACKAGES}" == "1" ]]; then
+    VENV_ARGS+=(--system-site-packages)
+    log "venv will use --system-site-packages (host torch visible)"
+  fi
+  "${HOST_PYTHON}" -m venv "${VENV_ARGS[@]}" "${VENV_DIR}"
 fi
 # shellcheck disable=SC1091
 source "${VENV_DIR}/bin/activate"
@@ -100,10 +129,21 @@ source "${VENV_DIR}/bin/activate"
 PYTHON_BIN="${VENV_DIR}/bin/python"
 [[ -x "${PYTHON_BIN}" ]] || die "venv python missing: ${PYTHON_BIN}"
 
+VENV_PY_MAJOR="$("${PYTHON_BIN}" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+VENV_ARCH="$("${PYTHON_BIN}" -c 'import platform; print(platform.machine())')"
+log "venv python=${VENV_PY_MAJOR} arch=${VENV_ARCH} (${PYTHON_BIN})"
+
 "${PYTHON_BIN}" -m pip install --upgrade pip wheel >/dev/null
-log "Installing conversion requirements"
-"${PYTHON_BIN}" -m pip install -r "${CONVERSION_DIR}/requirements.txt"
-"${PYTHON_BIN}" -m pip install scikit-learn huggingface_hub
+if [[ "${SKIP_DEPS}" == "1" ]]; then
+  log "SKIP_DEPS=1 — not running pip install -r requirements.txt"
+  if ! "${PYTHON_BIN}" -c 'import torch; assert torch.__version__.startswith("2.11."), torch.__version__'; then
+    die "SKIP_DEPS=1 but venv cannot import torch 2.11.x. Install it into this venv or use VENV_SYSTEM_SITE_PACKAGES=1 with a host torch 2.11.0."
+  fi
+  "${PYTHON_BIN}" -c 'import torch; print("torch", torch.__version__)'
+else
+  install_conversion_requirements "${CONVERSION_DIR}/requirements.txt"
+  "${PYTHON_BIN}" -m pip install scikit-learn huggingface_hub
+fi
 
 if [[ "${SKIP_HF_DOWNLOAD}" != "1" ]]; then
   log "Downloading ${HF_REPO} → ${HF_DIR}"

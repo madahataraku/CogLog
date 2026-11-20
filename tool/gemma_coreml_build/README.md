@@ -63,6 +63,8 @@ huggingface-cli login
 | `SKIP_VISION` | `0` | `1` でテキスト＋prefill のみ（既存 vision 成果物は削除し、検証も vision 不要） |
 | `HOST_PYTHON` | `python3` | venv 作成に使うホスト側 Python（依存解決後は常に venv の python） |
 | `COREML_LLM_REF` | `main` | 未取得・再利用どちらでもこの ref を fetch／checkout（失敗時は中断） |
+| `SKIP_DEPS` | `0` | `1` で `pip install -r requirements.txt` を省略（既存 venv の torch 等を使う） |
+| `VENV_SYSTEM_SITE_PACKAGES` | `0` | `1` で venv を `--system-site-packages` 作成（ホスト／conda の torch を見えるようにする。**初回作成時のみ有効**） |
 
 例:
 
@@ -137,10 +139,37 @@ Finder のファイル共有でも可。詳細は upstream `docs/USB_MODEL_SIDEL
 | 症状 | 確認 |
 | --- | --- |
 | Linux で失敗 | macOS で実行する |
+| `Could not find a version that satisfies torch==2.11.0` | 下記「torch 2.11.0」節 |
 | HF 403 | `huggingface-cli login` とライセンス同意 |
 | ANE execution plan / -14 | 本レシピは **MLState を使わない**。それでも落ちる場合は端末メモリや別要因 |
 | vision が無い | `SKIP_VISION` を切っているか、`export_still_vision_ane.py` のログを見る |
 | アプリがロードしない | 現行 CogLog は lean monolithic 専用の可能性。chunk 対応の実装が必要 |
+
+### `torch==2.11.0` が入っているのに pip が失敗する
+
+CoreML-LLM の `conversion/requirements.txt` が `torch==2.11.0` をピンしている。  
+ビルド脚本は **専用 venv**（`.cache/gemma_coreml_build/venv`）へ `pip install` する。ホストや conda に入っている torch は、その venv からは見えない。
+
+さらに PyPI の `torch==2.11.0` macOS wheel は **Apple Silicon（arm64）のみ**（Intel / x86_64 用は無い）。
+
+対処（どれか）:
+
+```bash
+# A. Apple Silicon + Python 3.10–3.12 で、既定 PyPI から入れ直す
+#    （CUDA 用 index を PIP_INDEX_URL にしていると失敗しやすい）
+uname -m   # arm64 であること
+HOST_PYTHON=/path/to/python3.12 \
+  ./tool/gemma_coreml_build/build_stateless_int4_bundle.sh
+
+# B. すでに用意した venv の依存を使う
+SKIP_DEPS=1 \
+  ./tool/gemma_coreml_build/build_stateless_int4_bundle.sh
+
+# C. ホスト／conda の torch 2.11.0 を見せる（venv を作り直す）
+rm -rf .cache/gemma_coreml_build/venv
+VENV_SYSTEM_SITE_PACKAGES=1 HOST_PYTHON="$(which python)" \
+  ./tool/gemma_coreml_build/build_stateless_int4_bundle.sh
+```
 
 ## 関連文書
 
