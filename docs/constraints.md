@@ -124,6 +124,10 @@ monolithic 構成（`model.mlpackage`・`vision.mlpackage`・`hf_model`・
 （prepare の warm-load 成功を含む）。取得ファイル一覧は
 `ios_monolithic_download_manifest.json` を Swift と Dart テストで共有する。
 
+オフラインで **stateless INT4 チャンク + prefill_b128 + ctx=1024 + 静止画 vision**
+の代替バンドルを作る手順は `docs/gemma-coreml-stateless-build.md` と
+`tool/gemma_coreml_build/` を使う（現行アプリのダウンロード既定ではない）。
+
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 
 ## Firebase

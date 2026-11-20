@@ -22,6 +22,7 @@ apm_modules/
 .ai-agent/
 .buildlog/
 .history
+.cache/
 
 # Flutter Monolith secrets.
 # `op inject` writes secrets/monolith.yaml. dart-define JSON is generated

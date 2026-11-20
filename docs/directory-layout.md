@@ -70,7 +70,11 @@ Firebase のクライアント設定は手元に置く。Git では追跡しな�
 ├── docs/
 ├── templates/
 └── tool/
+    └── gemma_coreml_build/            # iOS Gemma Core ML オフライン生成（Mac）
 ```
+
+`tool/gemma_coreml_build/` の手順は `docs/gemma-coreml-stateless-build.md` を見る。
+生成物と CoreML-LLM clone は `.cache/gemma_coreml_build/` などリポジトリ外／gitignore 対象に置く。
 
 ## パッケージの中
 
