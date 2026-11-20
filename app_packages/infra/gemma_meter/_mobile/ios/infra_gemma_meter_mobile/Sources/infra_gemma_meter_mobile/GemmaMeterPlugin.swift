@@ -15,8 +15,8 @@ import CoreMLLLM
 /// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let modelFolderName = "gemma4-e2b"
-  /// Shipping still-image `vision.mlmodelc` is ANE-oriented.
-  private static let configuredVisionBackend = "ane"
+  /// Shipping still-image `vision.mlmodelc` (no `vision.ane.*`) uses CoreMLLLM's GPU path.
+  private static let configuredVisionBackend = "gpu"
   private static let persistedBackendKey = "gemmaMeter.activeBackend"
   private static let loadSucceededKey = "gemmaMeter.loadSucceeded"
 

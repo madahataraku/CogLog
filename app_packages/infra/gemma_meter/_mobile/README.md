@@ -39,5 +39,5 @@ backup after prepare.
 
 Debug availability reports the compute units that actually loaded:
 `backend=ane` or `backend=gpu` (ANE first, then `.cpuAndGPU` if the
-Neural Engine execution plan fails), and `visionBackend=ane` for the
-shipping still-image `vision.mlmodelc`.
+Neural Engine execution plan fails), and `visionBackend=gpu` for the
+shipping still-image `vision.mlmodelc` (CoreMLLLM GPU path; no `vision.ane.*`).

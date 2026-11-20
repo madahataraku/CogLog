@@ -121,7 +121,8 @@ hardlink する（CoreMLLLM `ModelDownloader` の legacy 4-chunk と同じ）。
 `model.mil` 系）は `.cpuAndGPU` へフォールバックする。成功した backend は
 永続化し、次回はそちらを先に試す。デバッグ表示の backend は実際に載った方
 （`ane` または `gpu`）。未ロード時は空文字とし、既定の `ane` を装わない。
-静止画 `vision.mlmodelc` の visionBackend 表示は `ane`。availability の
+静止画 `vision.mlmodelc`（`vision.ane.*` なし）の visionBackend 表示は `gpu`
+（CoreMLLLM 既定の GPU 経路）。availability の
 `ready` はダウンロード済みだけでは足りず、少なくとも一度ロード成功していること
 （prepare の warm-load 成功を含む）。取得ファイル一覧は
 `ios_monolithic_download_manifest.json` を Swift と Dart テストで共有する
