@@ -163,6 +163,9 @@ final class _ThrowingAchievementRepository implements AchievementRepository {
   Future<void> mergeUnlocks(List<AchievementUnlock> unlocks) async {}
 
   @override
+  Future<void> replaceUnlocks(List<AchievementUnlock> unlocks) async {}
+
+  @override
   Future<List<AchievementUnlock>> readUnlocks() async {
     throw StateError('read failed');
   }
@@ -236,6 +239,18 @@ final class _ThrowingExerciseHistoryRepository
 
   @override
   Future<String?> photoAbsolutePath(String id) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List?> readPhotoBytes(String id) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> replaceAllPreservingIds(
+    List<ImportedExerciseHistoryEntry> entries,
+  ) {
     throw UnimplementedError();
   }
 
