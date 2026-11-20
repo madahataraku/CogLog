@@ -33,6 +33,8 @@ void main() {
     expect(source, contains('visionBackend = Backend.GPU()'));
     expect(source, contains('SpeculativeDecodingMode.ON'));
     expect(source, contains('ENGINE_STAMP_VALUE = "litert-mtp-gpu-v1"'));
+    expect(source, contains('MIN_PLAUSIBLE_MODEL_BYTES'));
+    expect(source, contains('readTotal < MIN_PLAUSIBLE_MODEL_BYTES'));
     expect(source, contains('"backend" to "gpu"'));
     expect(source, contains('"visionBackend" to "gpu"'));
     expect(source, isNot(contains('Backend.CPU()')));

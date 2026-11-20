@@ -231,10 +231,18 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
               }
             }
             output.flush()
+            if (readTotal < MIN_PLAUSIBLE_MODEL_BYTES) {
+              throw NetworkException(
+                "Model download finished with an implausibly small file.",
+              )
+            }
           }
         }
       } finally {
         connection.disconnect()
+      }
+      if (partial.length() < MIN_PLAUSIBLE_MODEL_BYTES) {
+        throw NetworkException("Model download finished with an implausibly small file.")
       }
       if (target.exists() && !target.delete()) {
         throw IOException("Could not replace existing model file.")
