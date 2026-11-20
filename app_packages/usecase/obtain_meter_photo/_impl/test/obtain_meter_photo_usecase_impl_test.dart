@@ -1,5 +1,7 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:image/image.dart' as img;
 import 'package:infra_meter_photo/infra_meter_photo.dart'
     hide MeterPhotoPermissionKind;
 import 'package:infra_meter_photo_testing/infra_meter_photo_testing.dart';
@@ -9,6 +11,7 @@ import 'package:usecase_obtain_meter_photo_impl/usecase_obtain_meter_photo_impl.
 
 void main() {
   test('カメラ成功で bytes と capturedAt を返す', () async {
+    // 非画像バイトは正規化失敗のため原寸のまま Success になる。
     final capturedAt = DateTime.utc(2026, 11, 8, 12);
     final source = FakeMeterPhotoSource(
       cameraCapture: MeterPhotoCapture(
@@ -30,6 +33,7 @@ void main() {
   });
 
   test('ライブラリ成功で bytes を返す', () async {
+    // 非画像バイトは正規化失敗のため原寸のまま Success になる。
     final source = FakeMeterPhotoSource(
       libraryCapture: MeterPhotoCapture(bytes: Uint8List.fromList([9])),
     );
@@ -80,5 +84,24 @@ void main() {
       (result as ObtainMeterPhotoPermissionDenied).kind,
       MeterPhotoPermissionKind.library,
     );
+  });
+
+  test('長辺 800 の JPEG は正規化後に長辺 600 以下で Success になる', () async {
+    final raw = img.Image(width: 800, height: 600);
+    img.fill(raw, color: img.ColorRgb8(10, 20, 30));
+    final jpeg = Uint8List.fromList(img.encodeJpg(raw, quality: 90));
+    final source = FakeMeterPhotoSource(
+      cameraCapture: MeterPhotoCapture(bytes: jpeg),
+    );
+
+    final result = await ObtainMeterPhotoUsecaseImpl(source: source).execute(
+      const ObtainMeterPhotoRequest(source: ObtainMeterPhotoSource.camera),
+    );
+
+    final success = result as ObtainMeterPhotoSuccess;
+    expect(success.bytes[0], 0xFF);
+    expect(success.bytes[1], 0xD8);
+    final decoded = img.decodeImage(success.bytes)!;
+    expect(math.max(decoded.width, decoded.height), lessThanOrEqualTo(600));
   });
 }
