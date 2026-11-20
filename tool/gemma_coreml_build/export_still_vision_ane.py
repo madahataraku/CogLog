@@ -35,11 +35,12 @@ def main() -> int:
     )
 
     print(f"Loading HF multimodal model from {args.hf_dir}")
+    # device_map は accelerate 必須。変換は CPU で足りるのでマップ無しで読む。
     hf_model = Gemma4ForConditionalGeneration.from_pretrained(
         args.hf_dir,
         dtype=torch.float16,
-        device_map="cpu",
     )
+    hf_model = hf_model.to("cpu")
     hf_model.eval()
 
     print("Saving vision weight sidecars (debug / parity)")

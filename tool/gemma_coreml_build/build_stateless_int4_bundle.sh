@@ -39,6 +39,8 @@ HF_DIR="$(abs_path "${HF_DIR:-${WORK_ROOT}/hf/${HF_REPO##*/}}")"
 HOST_PYTHON="${HOST_PYTHON:-${PYTHON_BIN:-python3}}"
 SKIP_HF_DOWNLOAD="${SKIP_HF_DOWNLOAD:-0}"
 SKIP_VISION="${SKIP_VISION:-0}"
+# 1 = skip build_gemma4_bundle.py（既存のテキスト／prefill バンドルを再利用して vision だけ再開）
+SKIP_TEXT_BUNDLE="${SKIP_TEXT_BUNDLE:-0}"
 # 1 = skip pip install -r requirements.txt (reuse an already-prepared venv / host deps)
 SKIP_DEPS="${SKIP_DEPS:-0}"
 # 1 = create venv with --system-site-packages so a host torch (e.g. conda) is visible
@@ -142,7 +144,9 @@ if [[ "${SKIP_DEPS}" == "1" ]]; then
   "${PYTHON_BIN}" -c 'import torch; print("torch", torch.__version__)'
 else
   install_conversion_requirements "${CONVERSION_DIR}/requirements.txt"
-  "${PYTHON_BIN}" -m pip install scikit-learn huggingface_hub
+  # coremltools は scikit-learn<=1.5.1 まで。無制限だと 1.9 系が入り警告・無効化される。
+  # accelerate は transformers が device_map 等を使うときに必要（vision 読込の保険）。
+  "${PYTHON_BIN}" -m pip install 'scikit-learn>=1.3,<1.6' huggingface_hub accelerate
 fi
 
 if [[ "${SKIP_HF_DOWNLOAD}" != "1" ]]; then
@@ -171,16 +175,22 @@ fi
 BUNDLE_DIR="${OUT_DIR}/bundle"
 mkdir -p "${BUNDLE_DIR}"
 
-log "Building stateless INT4 decode+prefill bundle (ctx=${CTX}, prefill=${PREFILL_SIZE})"
-(
-  cd "${CONVERSION_DIR}"
-  "${PYTHON_BIN}" build_gemma4_bundle.py \
-    --model "${MODEL_KEY}" \
-    --ctx "${CTX}" \
-    --hf-dir "${HF_DIR}" \
-    --output "${BUNDLE_DIR}" \
-    --prefill-sizes "${PREFILL_SIZE}"
-)
+if [[ "${SKIP_TEXT_BUNDLE}" == "1" ]]; then
+  [[ -d "${BUNDLE_DIR}/chunk1.mlmodelc" ]] \
+    || die "SKIP_TEXT_BUNDLE=1 but missing ${BUNDLE_DIR}/chunk1.mlmodelc"
+  log "SKIP_TEXT_BUNDLE=1 — reusing existing text/prefill bundle at ${BUNDLE_DIR}"
+else
+  log "Building stateless INT4 decode+prefill bundle (ctx=${CTX}, prefill=${PREFILL_SIZE})"
+  (
+    cd "${CONVERSION_DIR}"
+    "${PYTHON_BIN}" build_gemma4_bundle.py \
+      --model "${MODEL_KEY}" \
+      --ctx "${CTX}" \
+      --hf-dir "${HF_DIR}" \
+      --output "${BUNDLE_DIR}" \
+      --prefill-sizes "${PREFILL_SIZE}"
+  )
+fi
 
 VERIFY_ARGS=("${BUNDLE_DIR}")
 

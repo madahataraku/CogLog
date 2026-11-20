@@ -60,6 +60,7 @@ huggingface-cli login
 | `CTX` | `1024` | 最大コンテキスト |
 | `PREFILL_SIZE` | `128` | prefill バッチ長 |
 | `SKIP_HF_DOWNLOAD` | `0` | `1` で既存 `HF_DIR` を再利用 |
+| `SKIP_TEXT_BUNDLE` | `0` | `1` で既存のテキスト／prefill バンドルを再利用（vision だけ再開するとき） |
 | `SKIP_VISION` | `0` | `1` でテキスト＋prefill のみ（既存 vision 成果物は削除し、検証も vision 不要） |
 | `HOST_PYTHON` | `python3` | venv 作成に使うホスト側 Python（依存解決後は常に venv の python） |
 | `COREML_LLM_REF` | `main` | 未取得・再利用どちらでもこの ref を fetch／checkout（失敗時は中断） |
@@ -140,6 +141,9 @@ Finder のファイル共有でも可。詳細は upstream `docs/USB_MODEL_SIDEL
 | --- | --- |
 | Linux で失敗 | macOS で実行する |
 | `Could not find a version that satisfies torch==2.11.0` | 下記「torch 2.11.0」節 |
+| `requires accelerate` / vision で `from_pretrained` 失敗 | テキストは済・vision 未完了。最新脚本は `device_map` 無し。再開例: `SKIP_HF_DOWNLOAD=1 SKIP_TEXT_BUNDLE=1 ./tool/gemma_coreml_build/build_stateless_int4_bundle.sh` |
+| `scikit-learn version … not supported` | 警告。脚本は `scikit-learn>=1.3,<1.6` に制限。既存 venv は同範囲で入れ直す |
+| `Torch … has not been tested with coremltools` | 警告のみ。CoreML-LLM ピンの 2.11.0 を優先 |
 | HF 403 | `huggingface-cli login` とライセンス同意 |
 | ANE execution plan / -14 | 本レシピは **MLState を使わない**。それでも落ちる場合は端末メモリや別要因 |
 | vision が無い | `SKIP_VISION` を切っているか、`export_still_vision_ane.py` のログを見る |
