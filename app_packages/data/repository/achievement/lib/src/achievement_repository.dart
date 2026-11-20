@@ -29,6 +29,19 @@ abstract interface class AchievementRepository {
   /// ```
   Future<void> mergeUnlocks(List<AchievementUnlock> unlocks);
 
+  /// 獲得一覧を [unlocks] で完全置換する（インポート用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceUnlocks([
+  ///   AchievementUnlock(
+  ///     id: 'first_record',
+  ///     unlockedAt: DateTime.utc(2026, 11, 10),
+  ///   ),
+  /// ]);
+  /// ```
+  Future<void> replaceUnlocks(List<AchievementUnlock> unlocks);
+
   /// 最終閲覧日時を返す。未保存・破損は null。
   ///
   /// Example:

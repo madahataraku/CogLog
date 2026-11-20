@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:riverpod/riverpod.dart';
 
+import 'imported_exercise_history_entry.dart';
+
 /// 保存済みの運動履歴を読む・書く。
 ///
 /// Example:
@@ -63,6 +65,27 @@ abstract interface class ExerciseHistoryRepository {
   /// repository.photoAbsolutePath(id);
   /// ```
   Future<String?> photoAbsolutePath(String id);
+
+  /// メーターパネル写真のバイト列。ファイルが無ければ null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readPhotoBytes(id);
+  /// ```
+  Future<Uint8List?> readPhotoBytes(String id);
+
+  /// 既存をすべて消し、[entries] を運動履歴 ID 指定で入れ直す。
+  ///
+  /// [ImportedExerciseHistoryEntry.photoBytes] が null の件は画像ファイルを
+  /// 書かない（既存があれば削除する）。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceAllPreservingIds(const []);
+  /// ```
+  Future<void> replaceAllPreservingIds(
+    List<ImportedExerciseHistoryEntry> entries,
+  );
 
   /// 新規作成する。運動時間 0 は [ArgumentError]。
   ///

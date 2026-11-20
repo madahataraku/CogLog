@@ -132,6 +132,29 @@ final class SharedPreferencesAchievementRepository
     await _writeUnlocks(byId.values.toList(growable: false));
   }
 
+  /// 獲得一覧を [unlocks] で完全置換する。未知 id は捨てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceUnlocks([
+  ///   AchievementUnlock(
+  ///     id: 'first_record',
+  ///     unlockedAt: DateTime.utc(2026, 11, 10),
+  ///   ),
+  /// ]);
+  /// ```
+  @override
+  Future<void> replaceUnlocks(List<AchievementUnlock> unlocks) async {
+    final byId = <AchievementId, AchievementUnlock>{};
+    for (final unlock in unlocks) {
+      if (!_knownIds.contains(unlock.id)) {
+        continue;
+      }
+      byId[unlock.id] = unlock;
+    }
+    await _writeUnlocks(byId.values.toList(growable: false));
+  }
+
   /// JSON 1 要素を獲得記録にする。不正・未知 id は null。
   ///
   /// Example:
