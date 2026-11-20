@@ -120,6 +120,61 @@ final class MemoryExerciseHistoryRepository
     return file.path;
   }
 
+  /// 保持している写真バイトを返す。無ければ null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readPhotoBytes(id);
+  /// ```
+  @override
+  Future<Uint8List?> readPhotoBytes(String id) async {
+    final bytes = _photos[id];
+    if (bytes == null) {
+      return null;
+    }
+    return Uint8List.fromList(bytes);
+  }
+
+  /// 既存をすべて消し、[entries] を ID 指定で入れる。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceAllPreservingIds(const []);
+  /// ```
+  @override
+  Future<void> replaceAllPreservingIds(
+    List<ImportedExerciseHistoryEntry> entries,
+  ) async {
+    _items.clear();
+    _photos.clear();
+    for (final entry in entries) {
+      final history = entry.history;
+      if (history.duration.inSeconds == 0) {
+        throw ArgumentError.value(history.duration, 'duration', '0 では保存できない');
+      }
+      final photoBytes = entry.photoBytes;
+      if (photoBytes != null) {
+        _photos[history.id] = Uint8List.fromList(photoBytes);
+      }
+      _items.add(
+        ExerciseHistory(
+          id: history.id,
+          savedAt: history.savedAt.toUtc(),
+          creationStartedAt: history.creationStartedAt.toUtc(),
+          capturedAt: history.capturedAt.toUtc(),
+          recordedAt: history.recordedAt.toUtc(),
+          recordedAtManuallySet: history.recordedAtManuallySet,
+          distanceKm: history.distanceKm,
+          duration: history.duration,
+          caloriesKcal: history.caloriesKcal,
+          averageSpeedKmh: history.averageSpeedKmh,
+          photoRelativePath: 'exercise_histories/${history.id}/meter.jpg',
+          healthWorkoutId: history.healthWorkoutId,
+        ),
+      );
+    }
+  }
+
   /// 新規作成する。運動時間 0 は [ArgumentError]。
   @override
   Future<ExerciseHistory> create({

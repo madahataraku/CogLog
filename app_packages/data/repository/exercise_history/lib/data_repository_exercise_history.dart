@@ -7,3 +7,4 @@
 library;
 
 export 'src/exercise_history_repository.dart';
+export 'src/imported_exercise_history_entry.dart';

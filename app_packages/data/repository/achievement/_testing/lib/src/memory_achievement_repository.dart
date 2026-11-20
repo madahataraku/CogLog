@@ -76,4 +76,23 @@ final class MemoryAchievementRepository implements AchievementRepository {
       _byId[unlock.id] = unlock;
     }
   }
+
+  /// 獲得一覧を [unlocks] で完全置換する。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceUnlocks([
+  ///   AchievementUnlock(
+  ///     id: 'first_record',
+  ///     unlockedAt: DateTime.utc(2026, 11, 10),
+  ///   ),
+  /// ]);
+  /// ```
+  @override
+  Future<void> replaceUnlocks(List<AchievementUnlock> unlocks) async {
+    _byId.clear();
+    for (final unlock in unlocks) {
+      _byId[unlock.id] = unlock;
+    }
+  }
 }

@@ -1,0 +1,21 @@
+name: infra_cogsav
+description: CogLog .cogsav archive codec and export photo resize.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  archive: any
+  domain_achievement: any
+  domain_daily_goal: any
+  domain_exercise_history: any
+  domain_notification_settings: any
+  image: any
+  meta: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

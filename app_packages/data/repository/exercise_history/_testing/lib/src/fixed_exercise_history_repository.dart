@@ -110,6 +110,26 @@ final class FixedExerciseHistoryRepository
   @override
   Future<String?> photoAbsolutePath(String id) async => null;
 
+  /// 実ファイルを持たないため常に null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readPhotoBytes(id);
+  /// ```
+  @override
+  Future<Uint8List?> readPhotoBytes(String id) async => null;
+
+  /// 読み取り専用のため常に失敗する。
+  ///
+  /// Example:
+  /// ```dart
+  /// FixedExerciseHistoryRepository(const []).replaceAllPreservingIds(const []);
+  /// ```
+  @override
+  Future<void> replaceAllPreservingIds(
+    List<ImportedExerciseHistoryEntry> entries,
+  ) async => throw UnsupportedError('FixedExerciseHistoryRepository は読み取り専用');
+
   /// 読み取り専用のため常に失敗する。
   ///
   /// Example:
