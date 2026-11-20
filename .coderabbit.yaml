@@ -27,8 +27,9 @@ reviews:
   auto_approvals:
     enabled: true
   auto_review:
-    # 自動レビューは無効。必要なら @coderabbitai review で手動起動する。
-    enabled: false
+    # この PR で CodeRabbit を通すため一時的に有効化。レビュー後に戻す。
+    # 通常は無効で、必要なら @coderabbitai review で手動起動する。
+    enabled: true
     auto_incremental_review: true
     # レビュー済みコミットがこの数に達すると自動レビューを止める。0 で無効。頻繁な push では 1 か 2 に下げる。
     auto_pause_after_reviewed_commits: 5
