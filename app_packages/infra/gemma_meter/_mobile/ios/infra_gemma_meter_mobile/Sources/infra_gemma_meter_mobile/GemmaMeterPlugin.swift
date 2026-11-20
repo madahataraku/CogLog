@@ -431,6 +431,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   /// Hardlinks decode `chunk{i}` weights into `prefill_chunk{i}` (CoreMLLLM legacy).
+  /// Copy fallback is intentionally omitted so prepare fails closed on ~2× disk use.
   private static func linkPrefillWeights(in directory: URL?) throws {
     guard let directory else {
       throw PrepareError.generic("Documents directory is unavailable.")
@@ -452,10 +453,30 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       do {
         try fm.linkItem(at: src, to: dst)
       } catch {
-        // APFS hardlink should work in Documents; fall back to copy.
-        try fm.copyItem(at: src, to: dst)
+        throw PrepareError.generic(
+          "Prefill hardlink failed for chunk\(i): \(Self.safeMessage(error))"
+        )
+      }
+      guard Self.shareSameInode(src, dst) else {
+        throw PrepareError.generic(
+          "Prefill weight for chunk\(i) is not a hardlink to decode weights."
+        )
       }
     }
+  }
+
+  /// True when both paths refer to the same inode (hardlink).
+  private static func shareSameInode(_ a: URL, _ b: URL) -> Bool {
+    let fm = FileManager.default
+    guard
+      let aAttrs = try? fm.attributesOfItem(atPath: a.path),
+      let bAttrs = try? fm.attributesOfItem(atPath: b.path),
+      let aInode = aAttrs[.systemFileNumber] as? NSNumber,
+      let bInode = bAttrs[.systemFileNumber] as? NSNumber
+    else {
+      return false
+    }
+    return aInode == bInode
   }
 
   /// Resolves [modelRevision] (e.g. `main`) to a commit SHA for this prepare.
@@ -638,6 +659,14 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       {
         return false
       }
+    }
+    // Prefill weights must share inodes with decode (no silent ~2× copies).
+    for i in 1...4 {
+      let decode = directory
+        .appendingPathComponent("chunk\(i).mlmodelc/weights/weight.bin")
+      let prefill = directory
+        .appendingPathComponent("prefill_chunk\(i).mlmodelc/weights/weight.bin")
+      guard Self.shareSameInode(decode, prefill) else { return false }
     }
     return true
   }
