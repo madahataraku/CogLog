@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
@@ -15,7 +17,14 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_network_connectivity/infra_network_connectivity.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
+import 'package:infra_user_file/infra_user_file.dart';
 import 'package:riverpod/misc.dart';
+import 'package:usecase_export_app_data/usecase_export_app_data.dart';
+import 'package:usecase_export_app_data_impl/usecase_export_app_data_impl.dart';
+import 'package:usecase_import_app_data/usecase_import_app_data.dart';
+import 'package:usecase_import_app_data_impl/usecase_import_app_data_impl.dart';
+import 'package:usecase_recover_interrupted_import/usecase_recover_interrupted_import.dart';
+import 'package:usecase_recover_interrupted_import_impl/usecase_recover_interrupted_import_impl.dart';
 import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
 import 'package:usecase_diagnose_gemma_meter_impl/usecase_diagnose_gemma_meter_impl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
@@ -84,11 +93,14 @@ import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_remind
 /// [adviceTemplatePicker] を渡すと定型選択を差し替える（Golden 用）。
 /// [loadTrends] を渡すと推移読込を差し替える（Golden で日時固定するときなど）。
 ///
+/// [documentsDirectory] はインポート中断バックアップの格納先に使う。
+///
 /// Example:
 /// ```dart
-/// usecaseOverrides();
+/// usecaseOverrides(documentsDirectory: documents);
 /// ```
 List<Override> usecaseOverrides({
+  required Directory documentsDirectory,
   AdviceTemplatePicker? adviceTemplatePicker,
   LoadTrendsUsecase? loadTrends,
 }) => [
@@ -300,6 +312,36 @@ List<Override> usecaseOverrides({
       ),
       evaluateAchievements: ref.watch(EvaluateAchievementsUsecase.provider),
       syncReminder: ref.watch(SyncExerciseReminderUsecase.provider),
+    ),
+  ),
+  ExportAppDataUsecase.provider.overrideWith(
+    (ref) => ExportAppDataUsecaseImpl(
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+      goals: ref.watch(dailyGoalRepositoryProvider),
+      notifications: ref.watch(notificationSettingsRepositoryProvider),
+      achievements: ref.watch(achievementRepositoryProvider),
+      userFile: ref.watch(userFileGatewayProvider),
+    ),
+  ),
+  ImportAppDataUsecase.provider.overrideWith(
+    (ref) => ImportAppDataUsecaseImpl(
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+      goals: ref.watch(dailyGoalRepositoryProvider),
+      notifications: ref.watch(notificationSettingsRepositoryProvider),
+      achievements: ref.watch(achievementRepositoryProvider),
+      userFile: ref.watch(userFileGatewayProvider),
+      localNotifications: ref.watch(localNotificationGatewayProvider),
+      sync: ref.watch(SyncExerciseReminderUsecase.provider),
+      backupStore: ImportBackupStore(documentsDirectory: documentsDirectory),
+    ),
+  ),
+  RecoverInterruptedImportUsecase.provider.overrideWith(
+    (ref) => RecoverInterruptedImportUsecaseImpl(
+      backupStore: ImportBackupStore(documentsDirectory: documentsDirectory),
+      histories: ref.watch(exerciseHistoryRepositoryProvider),
+      goals: ref.watch(dailyGoalRepositoryProvider),
+      notifications: ref.watch(notificationSettingsRepositoryProvider),
+      achievements: ref.watch(achievementRepositoryProvider),
     ),
   ),
 ];

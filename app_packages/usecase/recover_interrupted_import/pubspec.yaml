@@ -1,0 +1,15 @@
+name: usecase_recover_interrupted_import
+description: Recover or discard an interrupted cogsav import backup.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

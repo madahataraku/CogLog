@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: any
   sqlite3_flutter_libs: any
   usecase_injection: any
+  usecase_recover_interrupted_import: any
   usecase_sync_exercise_reminder: any
 
 dev_dependencies:
