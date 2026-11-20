@@ -464,6 +464,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_app_settings_back_semantics;
       },
+      'screen_feature_app_settings_data_management_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_data_management_item;
+      },
       'screen_feature_app_settings_debug_item': (source) {
         // No Placeholders
         return l10n.screen_feature_app_settings_debug_item;

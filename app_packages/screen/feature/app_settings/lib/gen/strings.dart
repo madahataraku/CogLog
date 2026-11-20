@@ -13,6 +13,12 @@ mixin class L10nStringsMixin {
   String get screen_feature_app_settings_back_semantics =>
       LocalizeStringDelegate.get('screen_feature_app_settings_back_semantics');
 
+  /// データ管理画面への項目
+  String get screen_feature_app_settings_data_management_item =>
+      LocalizeStringDelegate.get(
+        'screen_feature_app_settings_data_management_item',
+      );
+
   /// デバッグ画面への項目
   String get screen_feature_app_settings_debug_item =>
       LocalizeStringDelegate.get('screen_feature_app_settings_debug_item');

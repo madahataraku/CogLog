@@ -393,6 +393,10 @@ class L10nEn extends L10n {
   String get screen_feature_app_settings_back_semantics => 'Back';
 
   @override
+  String get screen_feature_app_settings_data_management_item =>
+      'Data management';
+
+  @override
   String get screen_feature_app_settings_debug_item => 'Debug';
 
   @override

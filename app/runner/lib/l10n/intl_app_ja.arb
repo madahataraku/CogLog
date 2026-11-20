@@ -421,6 +421,10 @@
   "@screen_feature_app_settings_back_semantics": {
     "description": "戻るボタンの代替テキスト"
   },
+  "screen_feature_app_settings_data_management_item": "データ管理",
+  "@screen_feature_app_settings_data_management_item": {
+    "description": "データ管理画面への項目"
+  },
   "screen_feature_app_settings_debug_item": "デバッグ",
   "@screen_feature_app_settings_debug_item": {
     "description": "デバッグ画面への項目"
