@@ -1,16 +1,270 @@
 {
-  "repo": "smdesai/gemma-4-E2B-coreml",
-  "revision": "main",
+  "repo": "mlboydaisuke/gemma-4-E2B-coreml",
+  "revision": "n1024",
   "files": [
-    {"path": "hf_model/config.json", "estimatedSize": 4954},
-    {"path": "hf_model/tokenizer.json", "estimatedSize": 32169626},
-    {"path": "hf_model/tokenizer_config.json", "estimatedSize": 2068},
-    {"path": "model.mlpackage/Data/com.apple.CoreML/model.mlmodel", "estimatedSize": 1381053},
-    {"path": "model.mlpackage/Data/com.apple.CoreML/weights/weight.bin", "estimatedSize": 2518622912},
-    {"path": "model.mlpackage/Manifest.json", "estimatedSize": 617},
-    {"path": "model_config.json", "estimatedSize": 401},
-    {"path": "vision.mlpackage/Data/com.apple.CoreML/model.mlmodel", "estimatedSize": 592021},
-    {"path": "vision.mlpackage/Data/com.apple.CoreML/weights/weight.bin", "estimatedSize": 337549248},
-    {"path": "vision.mlpackage/Manifest.json", "estimatedSize": 617}
+    {
+      "path": "embed_tokens_per_layer_q8.bin",
+      "estimatedSize": 2348810240
+    },
+    {
+      "path": "chunk4.mlmodelc/weights/weight.bin",
+      "remotePath": "swa/chunk4.mlmodelc/weights/weight.bin",
+      "estimatedSize": 526874880
+    },
+    {
+      "path": "embed_tokens_q8.bin",
+      "estimatedSize": 402653184
+    },
+    {
+      "path": "chunk3.mlmodelc/weights/weight.bin",
+      "remotePath": "swa/chunk3.mlmodelc/weights/weight.bin",
+      "estimatedSize": 325282880
+    },
+    {
+      "path": "vision.mlmodelc/weights/weight.bin",
+      "estimatedSize": 320000000
+    },
+    {
+      "path": "chunk1.mlmodelc/weights/weight.bin",
+      "remotePath": "swa/chunk1.mlmodelc/weights/weight.bin",
+      "estimatedSize": 155436864
+    },
+    {
+      "path": "chunk2.mlmodelc/weights/weight.bin",
+      "remotePath": "swa/chunk2.mlmodelc/weights/weight.bin",
+      "estimatedSize": 133963968
+    },
+    {
+      "path": "hf_model/tokenizer.json",
+      "estimatedSize": 30000000
+    },
+    {
+      "path": "per_layer_projection.bin",
+      "estimatedSize": 27525120
+    },
+    {
+      "path": "cos_full.npy",
+      "remotePath": "swa/cos_full.npy",
+      "estimatedSize": 8388736
+    },
+    {
+      "path": "sin_full.npy",
+      "remotePath": "swa/sin_full.npy",
+      "estimatedSize": 8388736
+    },
+    {
+      "path": "embed_proj_weight.npy",
+      "estimatedSize": 4718720
+    },
+    {
+      "path": "cos_sliding.npy",
+      "remotePath": "swa/cos_sliding.npy",
+      "estimatedSize": 4194432
+    },
+    {
+      "path": "sin_sliding.npy",
+      "remotePath": "swa/sin_sliding.npy",
+      "estimatedSize": 4194432
+    },
+    {
+      "path": "embed_tokens_scales.bin",
+      "estimatedSize": 524288
+    },
+    {
+      "path": "embed_tokens_per_layer_scales.bin",
+      "estimatedSize": 524288
+    },
+    {
+      "path": "chunk1.mlmodelc/model.mil",
+      "remotePath": "swa/chunk1.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "chunk2.mlmodelc/model.mil",
+      "remotePath": "swa/chunk2.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "chunk3.mlmodelc/model.mil",
+      "remotePath": "swa/chunk3.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "chunk4.mlmodelc/model.mil",
+      "remotePath": "swa/chunk4.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "prefill_chunk1.mlmodelc/model.mil",
+      "remotePath": "prefill/chunk1.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "prefill_chunk2.mlmodelc/model.mil",
+      "remotePath": "prefill/chunk2.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "prefill_chunk3.mlmodelc/model.mil",
+      "remotePath": "prefill/chunk3.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "prefill_chunk4.mlmodelc/model.mil",
+      "remotePath": "prefill/chunk4.mlmodelc/model.mil",
+      "estimatedSize": 450000
+    },
+    {
+      "path": "vision.mlmodelc/coremldata.bin",
+      "estimatedSize": 200000
+    },
+    {
+      "path": "vision.mlmodelc/model.mil",
+      "estimatedSize": 50000
+    },
+    {
+      "path": "chunk1.mlmodelc/metadata.json",
+      "remotePath": "swa/chunk1.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "chunk2.mlmodelc/metadata.json",
+      "remotePath": "swa/chunk2.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "chunk3.mlmodelc/metadata.json",
+      "remotePath": "swa/chunk3.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "chunk4.mlmodelc/metadata.json",
+      "remotePath": "swa/chunk4.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "prefill_chunk1.mlmodelc/metadata.json",
+      "remotePath": "prefill/chunk1.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "prefill_chunk2.mlmodelc/metadata.json",
+      "remotePath": "prefill/chunk2.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "prefill_chunk3.mlmodelc/metadata.json",
+      "remotePath": "prefill/chunk3.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "prefill_chunk4.mlmodelc/metadata.json",
+      "remotePath": "prefill/chunk4.mlmodelc/metadata.json",
+      "estimatedSize": 8000
+    },
+    {
+      "path": "hf_model/tokenizer_config.json",
+      "estimatedSize": 5000
+    },
+    {
+      "path": "hf_model/config.json",
+      "estimatedSize": 5000
+    },
+    {
+      "path": "per_layer_norm_weight.bin",
+      "estimatedSize": 1024
+    },
+    {
+      "path": "chunk1.mlmodelc/coremldata.bin",
+      "remotePath": "swa/chunk1.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "chunk2.mlmodelc/coremldata.bin",
+      "remotePath": "swa/chunk2.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "chunk3.mlmodelc/coremldata.bin",
+      "remotePath": "swa/chunk3.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "chunk4.mlmodelc/coremldata.bin",
+      "remotePath": "swa/chunk4.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "prefill_chunk1.mlmodelc/coremldata.bin",
+      "remotePath": "prefill/chunk1.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "prefill_chunk2.mlmodelc/coremldata.bin",
+      "remotePath": "prefill/chunk2.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "prefill_chunk3.mlmodelc/coremldata.bin",
+      "remotePath": "prefill/chunk3.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "prefill_chunk4.mlmodelc/coremldata.bin",
+      "remotePath": "prefill/chunk4.mlmodelc/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "vision.mlmodelc/metadata.json",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "vision.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 1000
+    },
+    {
+      "path": "model_config.json",
+      "estimatedSize": 500
+    },
+    {
+      "path": "chunk1.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "swa/chunk1.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    },
+    {
+      "path": "chunk2.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "swa/chunk2.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    },
+    {
+      "path": "chunk3.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "swa/chunk3.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    },
+    {
+      "path": "chunk4.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "swa/chunk4.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    },
+    {
+      "path": "prefill_chunk1.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "prefill/chunk1.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    },
+    {
+      "path": "prefill_chunk2.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "prefill/chunk2.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    },
+    {
+      "path": "prefill_chunk3.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "prefill/chunk3.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    },
+    {
+      "path": "prefill_chunk4.mlmodelc/analytics/coremldata.bin",
+      "remotePath": "prefill/chunk4.mlmodelc/analytics/coremldata.bin",
+      "estimatedSize": 250
+    }
   ]
 }

@@ -8,14 +8,14 @@ import CoreMLLLM
 
 /// Flutter bridge for Core ML Gemma E2B meter reading on iOS.
 ///
-/// Downloads a lean monolithic bundle (text `model.mlpackage` + still-image
-/// `vision.mlpackage` + tokenizer) into Documents/Models/`gemma4-e2b` from
-/// Hugging Face `smdesai/gemma-4-E2B-coreml`. Chunked / video / audio / PLE
-/// sidecars are omitted so CoreMLLLM takes the monolithic load path.
+/// Downloads the CoreMLLLM chunk layout into Documents/Models/`gemma4-e2b`
+/// from Hugging Face `mlboydaisuke/gemma-4-E2B-coreml` (`n1024`): SWA
+/// `chunk{1..4}`, hardlinked `prefill_chunk{1..4}` weights, PLE / embeds /
+/// RoPE, still-image `vision.mlmodelc`. `vision_video` / `audio` are omitted.
 /// The model directory is excluded from OS backup.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let modelFolderName = "gemma4-e2b"
-  /// Lean `vision.mlpackage` is selected on CoreMLLLM's GPU path.
+  /// Shipping still-image `vision.mlmodelc` (no `vision.ane.*`) uses CoreMLLLM's GPU path.
   private static let configuredVisionBackend = "gpu"
   private static let persistedBackendKey = "gemmaMeter.activeBackend"
   private static let loadSucceededKey = "gemmaMeter.loadSucceeded"
@@ -25,17 +25,15 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       return try DownloadManifest.load()
     } catch {
       // Fail closed with an empty manifest; prepare will error clearly.
-      return DownloadManifest(repo: "", revision: "main", files: [])
+      return DownloadManifest(repo: "", revision: "n1024", files: [])
     }
   }()
 
   private static var modelRepo: String { manifest.repo }
   private static var modelRevision: String { manifest.revision }
-  private static var downloadFiles: [(path: String, estimatedSize: Int64)] {
-    manifest.files.map { ($0.path, $0.estimatedSize) }
-  }
+  private static var downloadFiles: [DownloadManifestFile] { manifest.files }
 
-  /// Sum of lean-bundle file sizes from the shared manifest.
+  /// Sum of bundle file sizes from the shared manifest.
   private static var estimatedDownloadBytes: Int64 {
     downloadFiles.reduce(0) { $0 + $1.estimatedSize }
   }
@@ -263,7 +261,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
   }
 
-  /// Loads the monolithic bundle, preferring ANE and falling back to GPU.
+  /// Loads the chunked bundle, preferring ANE and falling back to GPU.
   private func loadLLMIfNeeded() async throws -> CoreMLLLM {
     if let llm {
       return llm
@@ -383,7 +381,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       emitProgress(1)
       return
     }
-    // Partial/corrupt/chunked installs must not stay "ready".
+    // Partial/corrupt installs must not stay "ready".
     try removeIncompleteModelDirectory()
     try ensureModelsDirectoryExcludedFromBackup()
     try ensureFreeSpace()
@@ -415,10 +413,13 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       let pinnedRevision = try await resolvePinnedRevision()
       for file in Self.downloadFiles {
         try await downloadRemoteFile(
-          relativePath: file.path,
+          remotePath: file.remotePath ?? file.path,
+          localPath: file.path,
+          estimatedSize: file.estimatedSize,
           revision: pinnedRevision
         )
       }
+      try Self.linkPrefillWeights(in: self.modelDirectoryURL())
     } catch {
       try? removeIncompleteModelDirectory()
       throw error
@@ -427,6 +428,55 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       try? removeIncompleteModelDirectory()
       throw PrepareError.generic("Gemma Core ML download finished without required files.")
     }
+  }
+
+  /// Hardlinks decode `chunk{i}` weights into `prefill_chunk{i}` (CoreMLLLM legacy).
+  /// Copy fallback is intentionally omitted so prepare fails closed on ~2× disk use.
+  private static func linkPrefillWeights(in directory: URL?) throws {
+    guard let directory else {
+      throw PrepareError.generic("Documents directory is unavailable.")
+    }
+    let fm = FileManager.default
+    for i in 1...4 {
+      let src = directory
+        .appendingPathComponent("chunk\(i).mlmodelc/weights/weight.bin")
+      let dstDir = directory
+        .appendingPathComponent("prefill_chunk\(i).mlmodelc/weights", isDirectory: true)
+      let dst = dstDir.appendingPathComponent("weight.bin")
+      guard fm.fileExists(atPath: src.path) else {
+        throw PrepareError.generic("Missing decode weight for prefill hardlink: chunk\(i).")
+      }
+      try fm.createDirectory(at: dstDir, withIntermediateDirectories: true)
+      if fm.fileExists(atPath: dst.path) {
+        try fm.removeItem(at: dst)
+      }
+      do {
+        try fm.linkItem(at: src, to: dst)
+      } catch {
+        throw PrepareError.generic(
+          "Prefill hardlink failed for chunk\(i): \(Self.safeMessage(error))"
+        )
+      }
+      guard Self.shareSameInode(src, dst) else {
+        throw PrepareError.generic(
+          "Prefill weight for chunk\(i) is not a hardlink to decode weights."
+        )
+      }
+    }
+  }
+
+  /// True when both paths refer to the same inode (hardlink).
+  private static func shareSameInode(_ a: URL, _ b: URL) -> Bool {
+    let fm = FileManager.default
+    guard
+      let aAttrs = try? fm.attributesOfItem(atPath: a.path),
+      let bAttrs = try? fm.attributesOfItem(atPath: b.path),
+      let aInode = aAttrs[.systemFileNumber] as? NSNumber,
+      let bInode = bAttrs[.systemFileNumber] as? NSNumber
+    else {
+      return false
+    }
+    return aInode == bInode
   }
 
   /// Resolves [modelRevision] (e.g. `main`) to a commit SHA for this prepare.
@@ -462,11 +512,16 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   /// Downloads one HF resolve path into the model directory.
-  private func downloadRemoteFile(relativePath: String, revision: String) async throws {
+  private func downloadRemoteFile(
+    remotePath: String,
+    localPath: String,
+    estimatedSize: Int64,
+    revision: String
+  ) async throws {
     guard let directory = modelDirectoryURL() else {
       throw PrepareError.generic("Documents directory is unavailable.")
     }
-    let encodedPath = relativePath
+    let encodedPath = remotePath
       .split(separator: "/")
       .map { $0.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? String($0) }
       .joined(separator: "/")
@@ -475,16 +530,15 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     let urlString =
       "https://huggingface.co/\(Self.modelRepo)/resolve/\(encodedRevision)/\(encodedPath)"
     guard let url = URL(string: urlString) else {
-      throw PrepareError.generic("Invalid model URL for \(relativePath).")
+      throw PrepareError.generic("Invalid model URL for \(remotePath).")
     }
-    let destination = directory.appendingPathComponent(relativePath)
+    let destination = directory.appendingPathComponent(localPath)
     try FileManager.default.createDirectory(
       at: destination.deletingLastPathComponent(),
       withIntermediateDirectories: true
     )
     let baseDownloaded = downloadedBytes
-    let estimatedForFile =
-      Self.downloadFiles.first(where: { $0.path == relativePath })?.estimatedSize ?? 0
+    let estimatedForFile = estimatedSize
     do {
       let fileBytes: Int64 = try await withCheckedThrowingContinuation { continuation in
         final class ObservationBox {
@@ -502,14 +556,14 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
           }
           guard let location else {
             continuation.resume(
-              throwing: PrepareError.network("Empty download for \(relativePath).")
+              throwing: PrepareError.network("Empty download for \(remotePath).")
             )
             return
           }
           if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             continuation.resume(
               throwing: PrepareError.network(
-                "Model download HTTP \(http.statusCode) for \(relativePath)."
+                "Model download HTTP \(http.statusCode) for \(remotePath)."
               )
             )
             return
@@ -579,16 +633,21 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     hasCompleteModelBundle()
   }
 
-  /// Required files for lean monolithic + vision (CoreMLLLM monolithic path).
-  private static let requiredRelativePaths: [String] = downloadFiles.map(\.path)
+  /// Manifest paths plus hardlinked prefill weights required for ChunkedEngine.
+  private static var requiredRelativePaths: [String] {
+    var paths = downloadFiles.map(\.path)
+    for i in 1...4 {
+      paths.append("prefill_chunk\(i).mlmodelc/weights/weight.bin")
+    }
+    return paths
+  }
 
   private func hasCompleteModelBundle() -> Bool {
     guard let directory = modelDirectoryURL() else { return false }
     let fm = FileManager.default
-    // chunk1 would force CoreMLLLM onto ChunkedEngine; treat as incomplete.
-    if fm.fileExists(atPath: directory.appendingPathComponent("chunk1.mlmodelc").path)
-      || fm.fileExists(atPath: directory.appendingPathComponent("chunk1.mlpackage").path)
-    {
+    // Chunked SWA path requires chunk1 (and peers) for CoreMLLLM ChunkedEngine.
+    guard fm.fileExists(atPath: directory.appendingPathComponent("chunk1.mlmodelc").path)
+    else {
       return false
     }
     for relative in Self.requiredRelativePaths {
@@ -600,6 +659,14 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       {
         return false
       }
+    }
+    // Prefill weights must share inodes with decode (no silent ~2× copies).
+    for i in 1...4 {
+      let decode = directory
+        .appendingPathComponent("chunk\(i).mlmodelc/weights/weight.bin")
+      let prefill = directory
+        .appendingPathComponent("prefill_chunk\(i).mlmodelc/weights/weight.bin")
+      guard Self.shareSameInode(decode, prefill) else { return false }
     }
     return true
   }
@@ -745,7 +812,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   private struct DownloadManifestFile: Decodable {
+    /// Local path under Documents/Models/gemma4-e2b/.
     let path: String
+    /// HF path when different from [path] (e.g. `swa/chunk1...`).
+    let remotePath: String?
     let estimatedSize: Int64
   }
 
@@ -756,7 +826,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
     static func load() throws -> DownloadManifest {
       guard let url = Self.manifestJSONURL() else {
-        throw PrepareError.generic("iOS monolithic download manifest is missing.")
+        throw PrepareError.generic("iOS download manifest is missing.")
       }
       let data = try Data(contentsOf: url)
       return try JSONDecoder().decode(DownloadManifest.self, from: data)

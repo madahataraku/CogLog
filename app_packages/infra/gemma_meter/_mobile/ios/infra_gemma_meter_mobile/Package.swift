@@ -13,7 +13,7 @@ let package = Package(
   ],
   dependencies: [
     .package(name: "FlutterFramework", path: "../FlutterFramework"),
-    // Core ML Gemma E2B runtime (ANE). Lean monolithic + vision from HF.
+    // Core ML Gemma E2B runtime (ANE). Chunked n1024 + vision from HF.
     .package(url: "https://github.com/john-rocky/CoreML-LLM", branch: "main"),
   ],
   targets: [

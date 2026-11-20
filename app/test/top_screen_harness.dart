@@ -16,6 +16,7 @@ import 'package:screen_injection/screen_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
 import 'package:usecase_injection/usecase_injection.dart';
+import 'package:usecase_load_trends/usecase_load_trends.dart';
 
 import 'package:app/main.dart';
 
@@ -26,6 +27,7 @@ Future<ScreenGraph> pumpTopScreen(
   WidgetTester tester, {
   List<ExerciseHistory> histories = const [],
   SharedPreferences? preferences,
+  LoadTrendsUsecase? loadTrends,
 }) async {
   final stored = preferences ?? await _newPreferences();
   final documents = Directory.systemTemp.createTempSync('coglog_test_');
@@ -59,6 +61,7 @@ Future<ScreenGraph> pumpTopScreen(
         ),
         ...usecaseOverrides(
           adviceTemplatePicker: const FixedAdviceTemplatePicker(),
+          loadTrends: loadTrends,
         ),
         ...screenOverrides(screens),
       ],

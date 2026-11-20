@@ -105,24 +105,28 @@ Gemma E2B 経路は CoreMLLLM（Swift Package `https://github.com/john-rocky/Cor
 README・podspec コメントを参照）。CoreMLLLM と Android 用 LiteRT-LM を
 OSS ライセンス一覧（`extraOssLicenses`）の対象に含める。
 モデルはアプリ同梱せず、Hugging Face から必要ファイルだけダウンロードする。
-当面の検証用既定は `smdesai/gemma-4-E2B-coreml`（ブランチ `main`、認証不要）の
-monolithic 構成（`model.mlpackage`・`vision.mlpackage`・`hf_model`・
-`model_config.json`。おおよそ 2.9 GB）。取得開始時に `main` を 1 コミット SHA
-へ解決し、その SHA から全ファイルを取る。空き容量は取得量の約 2 倍＋余裕
-（`MLModel.compileModel` 用）を要求する。chunk 分割バンドルや
-`vision_video` / `audio` / PLE 別ファイルは取得しない（CoreMLLLM が
-`chunk1` 無しのとき monolithic 経路を選ぶ前提）。版は運用追従
+当面の検証用既定は `mlboydaisuke/gemma-4-E2B-coreml`（ブランチ `n1024`、認証不要）の
+CoreMLLLM 向け chunk 構成である。decode は `swa/chunk{1..4}.mlmodelc` を
+ローカル `chunk{1..4}.mlmodelc` へ、prefill は `prefill/chunk{1..4}` の
+メタデータを `prefill_chunk{1..4}.mlmodelc` へ取り、重みは decode から
+hardlink する（CoreMLLLM `ModelDownloader` の legacy 4-chunk と同じ）。
+あわせて root の PLE／埋め込み／`model_config.json`／`hf_model`、
+`swa` の RoPE、静止画 `vision.mlmodelc` と `embed_proj_weight.npy` を取る。
+`vision_video` と `audio` はメーター用途では取得しない。合計おおよそ 4.3 GB。
+取得開始時に `n1024` を 1 コミット SHA へ解決し、その SHA から全ファイルを取る。
+空き容量は取得量の約 2 倍＋余裕を要求する。版は運用追従
 （アプリに特定 SHA を埋め込まない）。実行 computeUnits はまず
 `.cpuAndNeuralEngine`（ANE）を試し、実行計画の構築に失敗したとき
 （`com.apple.CoreML` の code -14、または underlying を含む execution plan /
-`model.mil` 系。stateful KV などが ANE 非対応のとき）は `.cpuAndGPU` へ
-フォールバックする。成功した backend は永続化し、次回はそちらを先に試す。
-デバッグ表示の backend は実際に載った方（`ane` または `gpu`）。未ロード時は
-空文字とし、既定の `ane` を装わない。lean の `vision.mlpackage` は CoreMLLLM
-側が GPU 経路のため visionBackend は `gpu`。availability の `ready` は
-ダウンロード済みだけでは足りず、少なくとも一度ロード成功していること
+`model.mil` 系）は `.cpuAndGPU` へフォールバックする。成功した backend は
+永続化し、次回はそちらを先に試す。デバッグ表示の backend は実際に載った方
+（`ane` または `gpu`）。未ロード時は空文字とし、既定の `ane` を装わない。
+静止画 `vision.mlmodelc`（`vision.ane.*` なし）の visionBackend 表示は `gpu`
+（CoreMLLLM 既定の GPU 経路）。availability の
+`ready` はダウンロード済みだけでは足りず、少なくとも一度ロード成功していること
 （prepare の warm-load 成功を含む）。取得ファイル一覧は
-`ios_monolithic_download_manifest.json` を Swift と Dart テストで共有する。
+`ios_monolithic_download_manifest.json` を Swift と Dart テストで共有する
+（ファイル名は歴史的なもの。中身は chunk 構成）。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 
