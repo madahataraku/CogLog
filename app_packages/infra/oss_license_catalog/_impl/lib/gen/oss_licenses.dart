@@ -14,8 +14,10 @@ const thisPackage = _coglog;
 const allDependencies = <Package>[
   __fe_analyzer_shared,
   _analyzer,
+  _android_file_picker,
   _ansicolor,
   _app_settings,
+  _archive,
   _args,
   _armyknife_dartx,
   _armyknife_logger,
@@ -46,6 +48,8 @@ const allDependencies = <Package>[
   _code_assets,
   _code_builder,
   _collection,
+  _connectivity_plus,
+  _connectivity_plus_platform_interface,
   _convert,
   _coverage,
   _cross_file,
@@ -66,6 +70,11 @@ const allDependencies = <Package>[
   _ffi,
   _ffi_leak_tracker,
   _file,
+  _file_picker,
+  _file_picker_darwin,
+  _file_picker_linux,
+  _file_picker_platform_interface,
+  _file_picker_web,
   _file_selector_linux,
   _file_selector_macos,
   _file_selector_platform_interface,
@@ -101,6 +110,7 @@ const allDependencies = <Package>[
   _http,
   _http_multi_server,
   _http_parser,
+  _image,
   _image_picker,
   _image_picker_android,
   _image_picker_for_web,
@@ -135,6 +145,7 @@ const allDependencies = <Package>[
   _monolith_runner,
   _monolith_xcodegen,
   _mustache_template,
+  _nm,
   _node_preamble,
   _objective_c,
   _package_config,
@@ -152,6 +163,7 @@ const allDependencies = <Package>[
   _platform,
   _plugin_platform_interface,
   _pool,
+  _posix,
   _pub_semver,
   _pubspec_parse,
   _recase,
@@ -208,6 +220,7 @@ const allDependencies = <Package>[
   _webkit_inspection_protocol,
   _win32,
   _win32_registry,
+  _windows_file_picker,
   _xdg_directories,
   _xml,
   _yaml,
@@ -247,6 +260,13 @@ const allDependencies = <Package>[
   _infra_app_runtime_info,
   _infra_app_runtime_info_mobile,
   _infra_app_runtime_info_testing,
+  _infra_cogsav,
+  _infra_gemma_meter,
+  _infra_gemma_meter_mobile,
+  _infra_gemma_meter_testing,
+  _infra_network_connectivity,
+  _infra_network_connectivity_mobile,
+  _infra_network_connectivity_testing,
   _infra_health_body_metrics,
   _infra_health_body_metrics_mobile,
   _infra_health_body_metrics_testing,
@@ -266,9 +286,13 @@ const allDependencies = <Package>[
   _infra_oss_license_catalog,
   _infra_oss_license_catalog_impl,
   _infra_oss_license_catalog_testing,
+  _infra_user_file,
+  _infra_user_file_mobile,
+  _infra_user_file_testing,
   _screen_feature_achievement,
   _screen_feature_app_settings,
   _screen_feature_notification_settings,
+  _screen_feature_data_management,
   _screen_feature_debug,
   _screen_feature_exercise_history,
   _screen_feature_goal_settings,
@@ -279,6 +303,7 @@ const allDependencies = <Package>[
   _screen_feature_top,
   _view_confirm_dialog,
   _view_model_download_guidance,
+  _view_meter_reading_progress,
   _screen_injection,
   _screen_navigation,
   _screen_navigation_go_router,
@@ -288,6 +313,8 @@ const allDependencies = <Package>[
   _usecase_evaluate_daily_goal_auto_update_impl,
   _usecase_diagnose_on_device_llm,
   _usecase_diagnose_on_device_llm_impl,
+  _usecase_diagnose_gemma_meter,
+  _usecase_diagnose_gemma_meter_impl,
   _usecase_generate_top_advice,
   _usecase_generate_top_advice_impl,
   _usecase_injection,
@@ -319,6 +346,8 @@ const allDependencies = <Package>[
   _usecase_open_app_settings_impl,
   _usecase_on_device_llm_guidance,
   _usecase_on_device_llm_guidance_impl,
+  _usecase_gemma_meter_guidance,
+  _usecase_gemma_meter_guidance_impl,
   _usecase_read_meter_panel,
   _usecase_read_meter_panel_impl,
   _usecase_request_health_body_permission,
@@ -339,6 +368,12 @@ const allDependencies = <Package>[
   _usecase_load_notification_settings_impl,
   _usecase_save_notification_settings,
   _usecase_save_notification_settings_impl,
+  _usecase_export_app_data,
+  _usecase_export_app_data_impl,
+  _usecase_import_app_data,
+  _usecase_import_app_data_impl,
+  _usecase_recover_interrupted_import,
+  _usecase_recover_interrupted_import_impl,
   _screen_feature_exercise_history_detail,
   _screen_feature_exercise_history_edit
 ];
@@ -485,6 +520,42 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// android_file_picker 2.2.0
+const _android_file_picker = Package(
+    name: 'android_file_picker',
+    description: 'Android implementation of the file_picker plugin, supporting file picking, saving, and Storage Access Framework (SAF) URI grants.',
+    homepage: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_android',
+    repository: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_android',
+    authors: [],
+    version: '2.2.0',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('file_picker_platform_interface'), PackageRef('cross_file'), PackageRef('path')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2018 Miguel Ruivo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
   );
 
 /// ansicolor 2.0.3
@@ -735,6 +806,42 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.''',
+  );
+
+/// archive 4.0.7
+const _archive = Package(
+    name: 'archive',
+    description: 'Provides encoders and decoders for various archive and compression formats such as zip, tar, bzip2, gzip, and zlib.',
+    repository: 'https://github.com/brendan-duncan/archive',
+    authors: [],
+    version: '4.0.7',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('crypto'), PackageRef('path'), PackageRef('posix')],
+    devDependencies: [PackageRef('build_runner'), PackageRef('http'), PackageRef('lints'), PackageRef('test'), PackageRef('web')],
+    license: '''The MIT License
+
+Copyright (c) 2013-2021 Brendan Duncan.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.''',
   );
 
 /// args 2.7.0
@@ -2000,6 +2107,90 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
   );
 
+/// connectivity_plus 7.3.2
+const _connectivity_plus = Package(
+    name: 'connectivity_plus',
+    description: 'Flutter plugin for discovering the state of the network (WiFi & mobile/cellular) connectivity on Android and iOS.',
+    homepage: 'https://github.com/fluttercommunity/plus_plugins',
+    repository: 'https://github.com/fluttercommunity/plus_plugins/tree/main/packages/connectivity_plus/connectivity_plus',
+    authors: [],
+    version: '7.3.2',
+    spdxIdentifiers: ['BSD-3-Clause'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('flutter_web_plugins'), PackageRef('connectivity_plus_platform_interface'), PackageRef('web'), PackageRef('meta'), PackageRef('nm'), PackageRef('collection')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('build_runner'), PackageRef('dbus'), PackageRef('flutter_lints'), PackageRef('plugin_platform_interface'), PackageRef('test')],
+    license: '''Copyright 2017 The Chromium Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// connectivity_plus_platform_interface 2.1.0
+const _connectivity_plus_platform_interface = Package(
+    name: 'connectivity_plus_platform_interface',
+    description: 'A common platform interface for the connectivity_plus plugin.',
+    homepage: 'https://github.com/fluttercommunity/plus_plugins',
+    repository: 'https://github.com/fluttercommunity/plus_plugins/tree/main/packages/',
+    authors: [],
+    version: '2.1.0',
+    spdxIdentifiers: ['BSD-3-Clause'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('meta'), PackageRef('plugin_platform_interface')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''Copyright 2020 The Chromium Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
 /// convert 3.1.2
 const _convert = Package(
     name: 'convert',
@@ -3054,7 +3245,7 @@ const _drift = Package(
     isMarkdown: false,
     isSdk: false,
     dependencies: [PackageRef('async'), PackageRef('convert'), PackageRef('collection'), PackageRef('meta'), PackageRef('stream_channel'), PackageRef('sqlite3'), PackageRef('path'), PackageRef('stack_trace'), PackageRef('web')],
-    devDependencies: [PackageRef('analyzer'), PackageRef('drift_dev'), PackageRef('http'), PackageRef('lints'), PackageRef('uuid'), PackageRef('build_runner'), PackageRef('test'), PackageRef('shelf'), PackageRef('vm_service'), PackageRef('rxdart'), PackageRef('build_daemon'), PackageRef('fake_async')],
+    devDependencies: [PackageRef('archive'), PackageRef('analyzer'), PackageRef('drift_dev'), PackageRef('http'), PackageRef('lints'), PackageRef('uuid'), PackageRef('build_runner'), PackageRef('test'), PackageRef('shelf'), PackageRef('vm_service'), PackageRef('rxdart'), PackageRef('build_daemon'), PackageRef('fake_async')],
     license: '''MIT License
 
 Copyright (c) 2021 Simon Binder
@@ -3486,6 +3677,186 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// file_picker 13.4.0
+const _file_picker = Package(
+    name: 'file_picker',
+    description: 'A package that allows you to use a native file explorer to pick single or multiple absolute file paths, with extension filtering support.',
+    homepage: 'https://github.com/vicajilau/flutter_file_picker',
+    repository: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker',
+    authors: [],
+    version: '13.4.0',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('file_picker_platform_interface'), PackageRef('android_file_picker'), PackageRef('file_picker_darwin'), PackageRef('file_picker_linux'), PackageRef('windows_file_picker'), PackageRef('file_picker_web'), PackageRef('cross_file')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints'), PackageRef('plugin_platform_interface')],
+    license: '''MIT License
+
+Copyright (c) 2018 Miguel Ruivo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
+/// file_picker_darwin 2.5.1
+const _file_picker_darwin = Package(
+    name: 'file_picker_darwin',
+    description: 'Darwin (iOS and macOS) implementation of the file_picker plugin, supporting native file picking, saving, and directory selection.',
+    homepage: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_darwin',
+    repository: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_darwin',
+    authors: [],
+    version: '2.5.1',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('file_picker_platform_interface'), PackageRef('cross_file'), PackageRef('path')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2018 Miguel Ruivo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
+/// file_picker_linux 2.0.4
+const _file_picker_linux = Package(
+    name: 'file_picker_linux',
+    description: 'Linux implementation of the file_picker plugin using GTK3 and XDG Desktop Portals for native file and directory picking.',
+    homepage: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_linux',
+    repository: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_linux',
+    authors: [],
+    version: '2.0.4',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('file_picker_platform_interface'), PackageRef('cross_file'), PackageRef('dbus'), PackageRef('path')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2018 Miguel Ruivo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
+/// file_picker_platform_interface 4.3.0
+const _file_picker_platform_interface = Package(
+    name: 'file_picker_platform_interface',
+    description: 'A common platform interface for the file_picker plugin, defining the shared API surface and data contracts across platforms.',
+    homepage: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_platform_interface',
+    repository: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_platform_interface',
+    authors: [],
+    version: '4.3.0',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('plugin_platform_interface'), PackageRef('cross_file'), PackageRef('path')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2018 Miguel Ruivo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
+/// file_picker_web 4.2.1
+const _file_picker_web = Package(
+    name: 'file_picker_web',
+    description: 'Web platform implementation of the file_picker plugin, providing browser file selection, file streaming, and file loading.',
+    homepage: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_web',
+    repository: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_web',
+    authors: [],
+    version: '4.2.1',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('flutter_web_plugins'), PackageRef('file_picker_platform_interface'), PackageRef('cross_file'), PackageRef('meta'), PackageRef('path'), PackageRef('web')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2018 Miguel Ruivo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
   );
 
 /// file_selector_linux 0.9.4+1
@@ -5036,6 +5407,42 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// image 4.5.4
+const _image = Package(
+    name: 'image',
+    description: 'Dart Image Library provides server and web apps the ability to load, manipulate, and save images with various image file formats.',
+    homepage: 'https://github.com/brendan-duncan/image',
+    authors: [],
+    version: '4.5.4',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('archive'), PackageRef('meta'), PackageRef('xml')],
+    devDependencies: [PackageRef('build_runner'), PackageRef('http'), PackageRef('lints'), PackageRef('test'), PackageRef('web')],
+    license: '''The MIT License
+
+Copyright (c) 2013-2022 Brendan Duncan.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.''',
   );
 
 /// image_picker 1.2.0
@@ -7045,6 +7452,393 @@ Redistributions in binary form must reproduce the above copyright notice, this l
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
   );
 
+/// nm 0.6.0
+const _nm = Package(
+    name: 'nm',
+    description: 'Provides a client to connect to NetworkManager - the service that manages network connections on Linux.',
+    homepage: 'https://github.com/canonical/nm.dart',
+    authors: [],
+    version: '0.6.0',
+    spdxIdentifiers: ['MPL-2.0'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('dbus')],
+    devDependencies: [PackageRef('lints'), PackageRef('test')],
+    license: '''Mozilla Public License Version 2.0
+==================================
+
+1. Definitions
+--------------
+
+1.1. "Contributor"
+    means each individual or legal entity that creates, contributes to
+    the creation of, or owns Covered Software.
+
+1.2. "Contributor Version"
+    means the combination of the Contributions of others (if any) used
+    by a Contributor and that particular Contributor's Contribution.
+
+1.3. "Contribution"
+    means Covered Software of a particular Contributor.
+
+1.4. "Covered Software"
+    means Source Code Form to which the initial Contributor has attached
+    the notice in Exhibit A, the Executable Form of such Source Code
+    Form, and Modifications of such Source Code Form, in each case
+    including portions thereof.
+
+1.5. "Incompatible With Secondary Licenses"
+    means
+
+    (a) that the initial Contributor has attached the notice described
+        in Exhibit B to the Covered Software; or
+
+    (b) that the Covered Software was made available under the terms of
+        version 1.1 or earlier of the License, but not also under the
+        terms of a Secondary License.
+
+1.6. "Executable Form"
+    means any form of the work other than Source Code Form.
+
+1.7. "Larger Work"
+    means a work that combines Covered Software with other material, in
+    a separate file or files, that is not Covered Software.
+
+1.8. "License"
+    means this document.
+
+1.9. "Licensable"
+    means having the right to grant, to the maximum extent possible,
+    whether at the time of the initial grant or subsequently, any and
+    all of the rights conveyed by this License.
+
+1.10. "Modifications"
+    means any of the following:
+
+    (a) any file in Source Code Form that results from an addition to,
+        deletion from, or modification of the contents of Covered
+        Software; or
+
+    (b) any new file in Source Code Form that contains any Covered
+        Software.
+
+1.11. "Patent Claims" of a Contributor
+    means any patent claim(s), including without limitation, method,
+    process, and apparatus claims, in any patent Licensable by such
+    Contributor that would be infringed, but for the grant of the
+    License, by the making, using, selling, offering for sale, having
+    made, import, or transfer of either its Contributions or its
+    Contributor Version.
+
+1.12. "Secondary License"
+    means either the GNU General Public License, Version 2.0, the GNU
+    Lesser General Public License, Version 2.1, the GNU Affero General
+    Public License, Version 3.0, or any later versions of those
+    licenses.
+
+1.13. "Source Code Form"
+    means the form of the work preferred for making modifications.
+
+1.14. "You" (or "Your")
+    means an individual or a legal entity exercising rights under this
+    License. For legal entities, "You" includes any entity that
+    controls, is controlled by, or is under common control with You. For
+    purposes of this definition, "control" means (a) the power, direct
+    or indirect, to cause the direction or management of such entity,
+    whether by contract or otherwise, or (b) ownership of more than
+    fifty percent (50%) of the outstanding shares or beneficial
+    ownership of such entity.
+
+2. License Grants and Conditions
+--------------------------------
+
+2.1. Grants
+
+Each Contributor hereby grants You a world-wide, royalty-free,
+non-exclusive license:
+
+(a) under intellectual property rights (other than patent or trademark)
+    Licensable by such Contributor to use, reproduce, make available,
+    modify, display, perform, distribute, and otherwise exploit its
+    Contributions, either on an unmodified basis, with Modifications, or
+    as part of a Larger Work; and
+
+(b) under Patent Claims of such Contributor to make, use, sell, offer
+    for sale, have made, import, and otherwise transfer either its
+    Contributions or its Contributor Version.
+
+2.2. Effective Date
+
+The licenses granted in Section 2.1 with respect to any Contribution
+become effective for each Contribution on the date the Contributor first
+distributes such Contribution.
+
+2.3. Limitations on Grant Scope
+
+The licenses granted in this Section 2 are the only rights granted under
+this License. No additional rights or licenses will be implied from the
+distribution or licensing of Covered Software under this License.
+Notwithstanding Section 2.1(b) above, no patent license is granted by a
+Contributor:
+
+(a) for any code that a Contributor has removed from Covered Software;
+    or
+
+(b) for infringements caused by: (i) Your and any other third party's
+    modifications of Covered Software, or (ii) the combination of its
+    Contributions with other software (except as part of its Contributor
+    Version); or
+
+(c) under Patent Claims infringed by Covered Software in the absence of
+    its Contributions.
+
+This License does not grant any rights in the trademarks, service marks,
+or logos of any Contributor (except as may be necessary to comply with
+the notice requirements in Section 3.4).
+
+2.4. Subsequent Licenses
+
+No Contributor makes additional grants as a result of Your choice to
+distribute the Covered Software under a subsequent version of this
+License (see Section 10.2) or under the terms of a Secondary License (if
+permitted under the terms of Section 3.3).
+
+2.5. Representation
+
+Each Contributor represents that the Contributor believes its
+Contributions are its original creation(s) or it has sufficient rights
+to grant the rights to its Contributions conveyed by this License.
+
+2.6. Fair Use
+
+This License is not intended to limit any rights You have under
+applicable copyright doctrines of fair use, fair dealing, or other
+equivalents.
+
+2.7. Conditions
+
+Sections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted
+in Section 2.1.
+
+3. Responsibilities
+-------------------
+
+3.1. Distribution of Source Form
+
+All distribution of Covered Software in Source Code Form, including any
+Modifications that You create or to which You contribute, must be under
+the terms of this License. You must inform recipients that the Source
+Code Form of the Covered Software is governed by the terms of this
+License, and how they can obtain a copy of this License. You may not
+attempt to alter or restrict the recipients' rights in the Source Code
+Form.
+
+3.2. Distribution of Executable Form
+
+If You distribute Covered Software in Executable Form then:
+
+(a) such Covered Software must also be made available in Source Code
+    Form, as described in Section 3.1, and You must inform recipients of
+    the Executable Form how they can obtain a copy of such Source Code
+    Form by reasonable means in a timely manner, at a charge no more
+    than the cost of distribution to the recipient; and
+
+(b) You may distribute such Executable Form under the terms of this
+    License, or sublicense it under different terms, provided that the
+    license for the Executable Form does not attempt to limit or alter
+    the recipients' rights in the Source Code Form under this License.
+
+3.3. Distribution of a Larger Work
+
+You may create and distribute a Larger Work under terms of Your choice,
+provided that You also comply with the requirements of this License for
+the Covered Software. If the Larger Work is a combination of Covered
+Software with a work governed by one or more Secondary Licenses, and the
+Covered Software is not Incompatible With Secondary Licenses, this
+License permits You to additionally distribute such Covered Software
+under the terms of such Secondary License(s), so that the recipient of
+the Larger Work may, at their option, further distribute the Covered
+Software under the terms of either this License or such Secondary
+License(s).
+
+3.4. Notices
+
+You may not remove or alter the substance of any license notices
+(including copyright notices, patent notices, disclaimers of warranty,
+or limitations of liability) contained within the Source Code Form of
+the Covered Software, except that You may alter any license notices to
+the extent required to remedy known factual inaccuracies.
+
+3.5. Application of Additional Terms
+
+You may choose to offer, and to charge a fee for, warranty, support,
+indemnity or liability obligations to one or more recipients of Covered
+Software. However, You may do so only on Your own behalf, and not on
+behalf of any Contributor. You must make it absolutely clear that any
+such warranty, support, indemnity, or liability obligation is offered by
+You alone, and You hereby agree to indemnify every Contributor for any
+liability incurred by such Contributor as a result of warranty, support,
+indemnity or liability terms You offer. You may include additional
+disclaimers of warranty and limitations of liability specific to any
+jurisdiction.
+
+4. Inability to Comply Due to Statute or Regulation
+---------------------------------------------------
+
+If it is impossible for You to comply with any of the terms of this
+License with respect to some or all of the Covered Software due to
+statute, judicial order, or regulation then You must: (a) comply with
+the terms of this License to the maximum extent possible; and (b)
+describe the limitations and the code they affect. Such description must
+be placed in a text file included with all distributions of the Covered
+Software under this License. Except to the extent prohibited by statute
+or regulation, such description must be sufficiently detailed for a
+recipient of ordinary skill to be able to understand it.
+
+5. Termination
+--------------
+
+5.1. The rights granted under this License will terminate automatically
+if You fail to comply with any of its terms. However, if You become
+compliant, then the rights granted under this License from a particular
+Contributor are reinstated (a) provisionally, unless and until such
+Contributor explicitly and finally terminates Your grants, and (b) on an
+ongoing basis, if such Contributor fails to notify You of the
+non-compliance by some reasonable means prior to 60 days after You have
+come back into compliance. Moreover, Your grants from a particular
+Contributor are reinstated on an ongoing basis if such Contributor
+notifies You of the non-compliance by some reasonable means, this is the
+first time You have received notice of non-compliance with this License
+from such Contributor, and You become compliant prior to 30 days after
+Your receipt of the notice.
+
+5.2. If You initiate litigation against any entity by asserting a patent
+infringement claim (excluding declaratory judgment actions,
+counter-claims, and cross-claims) alleging that a Contributor Version
+directly or indirectly infringes any patent, then the rights granted to
+You by any and all Contributors for the Covered Software under Section
+2.1 of this License shall terminate.
+
+5.3. In the event of termination under Sections 5.1 or 5.2 above, all
+end user license agreements (excluding distributors and resellers) which
+have been validly granted by You or Your distributors under this License
+prior to termination shall survive termination.
+
+************************************************************************
+*                                                                      *
+*  6. Disclaimer of Warranty                                           *
+*  -------------------------                                           *
+*                                                                      *
+*  Covered Software is provided under this License on an "as is"       *
+*  basis, without warranty of any kind, either expressed, implied, or  *
+*  statutory, including, without limitation, warranties that the       *
+*  Covered Software is free of defects, merchantable, fit for a        *
+*  particular purpose or non-infringing. The entire risk as to the     *
+*  quality and performance of the Covered Software is with You.        *
+*  Should any Covered Software prove defective in any respect, You     *
+*  (not any Contributor) assume the cost of any necessary servicing,   *
+*  repair, or correction. This disclaimer of warranty constitutes an   *
+*  essential part of this License. No use of any Covered Software is   *
+*  authorized under this License except under this disclaimer.         *
+*                                                                      *
+************************************************************************
+
+************************************************************************
+*                                                                      *
+*  7. Limitation of Liability                                          *
+*  --------------------------                                          *
+*                                                                      *
+*  Under no circumstances and under no legal theory, whether tort      *
+*  (including negligence), contract, or otherwise, shall any           *
+*  Contributor, or anyone who distributes Covered Software as          *
+*  permitted above, be liable to You for any direct, indirect,         *
+*  special, incidental, or consequential damages of any character      *
+*  including, without limitation, damages for lost profits, loss of    *
+*  goodwill, work stoppage, computer failure or malfunction, or any    *
+*  and all other commercial damages or losses, even if such party      *
+*  shall have been informed of the possibility of such damages. This   *
+*  limitation of liability shall not apply to liability for death or   *
+*  personal injury resulting from such party's negligence to the       *
+*  extent applicable law prohibits such limitation. Some               *
+*  jurisdictions do not allow the exclusion or limitation of           *
+*  incidental or consequential damages, so this exclusion and          *
+*  limitation may not apply to You.                                    *
+*                                                                      *
+************************************************************************
+
+8. Litigation
+-------------
+
+Any litigation relating to this License may be brought only in the
+courts of a jurisdiction where the defendant maintains its principal
+place of business and such litigation shall be governed by laws of that
+jurisdiction, without reference to its conflict-of-law provisions.
+Nothing in this Section shall prevent a party's ability to bring
+cross-claims or counter-claims.
+
+9. Miscellaneous
+----------------
+
+This License represents the complete agreement concerning the subject
+matter hereof. If any provision of this License is held to be
+unenforceable, such provision shall be reformed only to the extent
+necessary to make it enforceable. Any law or regulation which provides
+that the language of a contract shall be construed against the drafter
+shall not be used to construe this License against a Contributor.
+
+10. Versions of the License
+---------------------------
+
+10.1. New Versions
+
+Mozilla Foundation is the license steward. Except as provided in Section
+10.3, no one other than the license steward has the right to modify or
+publish new versions of this License. Each version will be given a
+distinguishing version number.
+
+10.2. Effect of New Versions
+
+You may distribute the Covered Software under the terms of the version
+of the License under which You originally received the Covered Software,
+or under the terms of any subsequent version published by the license
+steward.
+
+10.3. Modified Versions
+
+If you create software not governed by this License, and you want to
+create a new license for such software, you may create and use a
+modified version of this License if you rename the license and remove
+any references to the name of the license steward (except to note that
+such modified license differs from this License).
+
+10.4. Distributing Source Code Form that is Incompatible With Secondary
+Licenses
+
+If You choose to distribute Source Code Form that is Incompatible With
+Secondary Licenses under the terms of this version of the License, the
+notice described in Exhibit B of this License must be attached.
+
+Exhibit A - Source Code Form License Notice
+-------------------------------------------
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+If it is not possible or desirable to put the notice in a particular
+file, then You may include the notice in a location (such as a LICENSE
+file in a relevant directory) where a recipient would be likely to look
+for such a notice.
+
+You may add additional accurate notices of copyright ownership.
+
+Exhibit B - "Incompatible With Secondary Licenses" Notice
+---------------------------------------------------------
+
+  This Source Code Form is "Incompatible With Secondary Licenses", as
+  defined by the Mozilla Public License, v. 2.0.''',
+  );
+
 /// node_preamble 2.0.2
 const _node_preamble = Package(
     name: 'node_preamble',
@@ -7744,6 +8538,41 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// posix 6.5.4
+const _posix = Package(
+    name: 'posix',
+    description: 'Exposes the POSIX api on OSx and Linux via an idomatic Dart API.',
+    homepage: 'https://github.com/onepub-dev/dart_posix',
+    authors: [],
+    version: '6.5.4',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('ffi'), PackageRef('meta'), PackageRef('path')],
+    devDependencies: [PackageRef('logging'), PackageRef('stack_trace'), PackageRef('test'), PackageRef('uuid')],
+    license: '''MIT License
+
+Copyright (c) 2020 Brett Sutton
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
   );
 
 /// pub_semver 2.2.1
@@ -40183,6 +41012,42 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
   );
 
+/// windows_file_picker 2.0.2
+const _windows_file_picker = Package(
+    name: 'windows_file_picker',
+    description: 'Windows implementation of the file_picker plugin using Win32 COM APIs for native file and directory picking.',
+    homepage: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_windows',
+    repository: 'https://github.com/vicajilau/flutter_file_picker/tree/main/packages/file_picker_windows',
+    authors: [],
+    version: '2.0.2',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('file_picker_platform_interface'), PackageRef('cross_file'), PackageRef('ffi'), PackageRef('meta'), PackageRef('path'), PackageRef('win32')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''MIT License
+
+Copyright (c) 2018 Miguel Ruivo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
 /// xdg_directories 1.1.0
 const _xdg_directories = Package(
     name: 'xdg_directories',
@@ -40222,21 +41087,21 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
   );
 
-/// xml 7.1.0
+/// xml 6.6.1
 const _xml = Package(
     name: 'xml',
-    description: 'Full-featured XML for Dart — DOM parsing, SAX streaming, XPath 3 querying, and a fluent builder API.',
-    repository: 'https://github.com/renggli/dart-xml',
+    description: 'A lightweight library for parsing, traversing, querying, transforming and building XML documents.',
+    homepage: 'https://github.com/renggli/dart-xml',
     authors: [],
-    version: '7.1.0',
+    version: '6.6.1',
     spdxIdentifiers: ['MIT'],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('args'), PackageRef('collection'), PackageRef('meta'), PackageRef('petitparser')],
-    devDependencies: [PackageRef('lints'), PackageRef('test')],
+    dependencies: [PackageRef('collection'), PackageRef('meta'), PackageRef('petitparser')],
+    devDependencies: [PackageRef('args'), PackageRef('lints'), PackageRef('test')],
     license: '''The MIT License
 
-Copyright (c) 2006-2026 Lukas Renggli.
+Copyright (c) 2006-2025 Lukas Renggli.
 All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40787,6 +41652,118 @@ const _infra_app_runtime_info_testing = Package(
     devDependencies: [PackageRef('flutter_lints')],
   );
 
+/// infra_cogsav 0.1.0+1
+const _infra_cogsav = Package(
+    name: 'infra_cogsav',
+    description: 'CogLog .cogsav archive codec and export photo resize.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('archive'), PackageRef('domain_achievement'), PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('domain_notification_settings'), PackageRef('image'), PackageRef('meta')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
+/// infra_gemma_meter 0.1.0+1
+const _infra_gemma_meter = Package(
+    name: 'infra_gemma_meter',
+    description: 'Gemma E2B meter-vision port for CogLog.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints')],
+  );
+
+/// infra_gemma_meter_mobile 0.1.0+1
+const _infra_gemma_meter_mobile = Package(
+    name: 'infra_gemma_meter_mobile',
+    description: 'Mobile GemmaMeterVision (Android / iOS LiteRT-LM Gemma E2B).',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('infra_gemma_meter'), PackageRef('meta')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('test')],
+    license: '''MIT License
+
+Copyright (c) 2026 Seena
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
+/// infra_gemma_meter_testing 0.1.0+1
+const _infra_gemma_meter_testing = Package(
+    name: 'infra_gemma_meter_testing',
+    description: 'Fake GemmaMeterVision for tests.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('infra_gemma_meter')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
+/// infra_network_connectivity 0.1.0+1
+const _infra_network_connectivity = Package(
+    name: 'infra_network_connectivity',
+    description: 'Network connectivity abstraction for CogLog.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints')],
+  );
+
+/// infra_network_connectivity_mobile 0.1.0+1
+const _infra_network_connectivity_mobile = Package(
+    name: 'infra_network_connectivity_mobile',
+    description: 'connectivity_plus-backed NetworkConnectivity for CogLog.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('connectivity_plus'), PackageRef('flutter'), PackageRef('infra_network_connectivity')],
+    devDependencies: [PackageRef('flutter_lints')],
+  );
+
+/// infra_network_connectivity_testing 0.1.0+1
+const _infra_network_connectivity_testing = Package(
+    name: 'infra_network_connectivity_testing',
+    description: 'Fake NetworkConnectivity for CogLog tests.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('infra_network_connectivity')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
 /// infra_health_body_metrics 0.1.0+1
 const _infra_health_body_metrics = Package(
     name: 'infra_health_body_metrics',
@@ -40842,14 +41819,14 @@ const _infra_health_workout = Package(
 /// infra_health_workout_mobile 0.1.0+1
 const _infra_health_workout_mobile = Package(
     name: 'infra_health_workout_mobile',
-    description: 'Unavailable health workout writer for CogLog mobile.',
+    description: 'health package-backed workout writer for CogLog mobile.',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('infra_health_workout')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+    dependencies: [PackageRef('flutter'), PackageRef('health'), PackageRef('infra_health_workout')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('test')],
   );
 
 /// infra_health_workout_testing 0.1.0+1
@@ -40874,7 +41851,7 @@ const _infra_injection = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('foundation_app_log'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_runtime_info_mobile'), PackageRef('infra_app_settings'), PackageRef('infra_app_settings_mobile'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_body_metrics_mobile'), PackageRef('infra_health_workout'), PackageRef('infra_health_workout_mobile'), PackageRef('infra_local_notification'), PackageRef('infra_local_notification_mobile'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_photo_mobile'), PackageRef('infra_meter_reading'), PackageRef('infra_meter_reading_mobile'), PackageRef('infra_on_device_llm'), PackageRef('infra_on_device_llm_mobile'), PackageRef('infra_oss_license_catalog'), PackageRef('infra_oss_license_catalog_impl'), PackageRef('riverpod')],
+    dependencies: [PackageRef('flutter'), PackageRef('foundation_app_log'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_runtime_info_mobile'), PackageRef('infra_app_settings'), PackageRef('infra_app_settings_mobile'), PackageRef('infra_gemma_meter'), PackageRef('infra_gemma_meter_mobile'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_body_metrics_mobile'), PackageRef('infra_health_workout'), PackageRef('infra_health_workout_mobile'), PackageRef('infra_local_notification'), PackageRef('infra_local_notification_mobile'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_photo_mobile'), PackageRef('infra_meter_reading'), PackageRef('infra_meter_reading_mobile'), PackageRef('infra_network_connectivity'), PackageRef('infra_network_connectivity_mobile'), PackageRef('infra_on_device_llm'), PackageRef('infra_on_device_llm_mobile'), PackageRef('infra_oss_license_catalog'), PackageRef('infra_oss_license_catalog_impl'), PackageRef('infra_user_file'), PackageRef('infra_user_file_mobile'), PackageRef('riverpod')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test')],
   );
 
@@ -40927,7 +41904,7 @@ const _infra_meter_reading = Package(
     isMarkdown: false,
     isSdk: false,
     dependencies: [PackageRef('domain_exercise_history'), PackageRef('riverpod')],
-    devDependencies: [PackageRef('flutter_lints')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
   );
 
 /// infra_meter_reading_mobile 0.1.0+1
@@ -40939,8 +41916,8 @@ const _infra_meter_reading_mobile = Package(
     spdxIdentifiers: ['MIT'],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_exercise_history'), PackageRef('foundation_app_log'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_meter_reading_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
+    dependencies: [PackageRef('domain_exercise_history'), PackageRef('foundation_app_log'), PackageRef('infra_gemma_meter'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_gemma_meter_testing'), PackageRef('infra_meter_reading_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
     license: '''MIT License
 
 Copyright (c) 2026 Seena
@@ -41076,6 +42053,45 @@ const _infra_oss_license_catalog_testing = Package(
     devDependencies: [PackageRef('flutter_lints')],
   );
 
+/// infra_user_file 0.1.0+1
+const _infra_user_file = Package(
+    name: 'infra_user_file',
+    description: 'User file save/pick gateway for CogLog data export and import.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
+/// infra_user_file_mobile 0.1.0+1
+const _infra_user_file_mobile = Package(
+    name: 'infra_user_file_mobile',
+    description: 'file_picker implementation of UserFileGateway.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('file_picker'), PackageRef('flutter'), PackageRef('infra_user_file')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test')],
+  );
+
+/// infra_user_file_testing 0.1.0+1
+const _infra_user_file_testing = Package(
+    name: 'infra_user_file_testing',
+    description: 'Fake UserFileGateway for tests.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('infra_user_file')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
 /// screen_feature_achievement 0.1.0+1
 const _screen_feature_achievement = Package(
     name: 'screen_feature_achievement',
@@ -41115,6 +42131,19 @@ const _screen_feature_notification_settings = Package(
     devDependencies: [PackageRef('data_repository_exercise_history_testing'), PackageRef('data_repository_notification_settings_testing'), PackageRef('domain_notification_settings'), PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('foundation_resources'), PackageRef('infra_local_notification_testing'), PackageRef('test'), PackageRef('usecase_load_notification_settings_impl'), PackageRef('usecase_save_notification_settings_impl'), PackageRef('usecase_sync_exercise_reminder'), PackageRef('usecase_sync_exercise_reminder_impl')],
   );
 
+/// screen_feature_data_management 0.1.0+1
+const _screen_feature_data_management = Package(
+    name: 'screen_feature_data_management',
+    description: 'CogLog data management (export / import) screen.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_export_app_data'), PackageRef('usecase_import_app_data'), PackageRef('view_confirm_dialog')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('foundation_resources'), PackageRef('test')],
+  );
+
 /// screen_feature_debug 0.1.0+1
 const _screen_feature_debug = Package(
     name: 'screen_feature_debug',
@@ -41124,8 +42153,8 @@ const _screen_feature_debug = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_app_log'), PackageRef('hooks_riverpod'), PackageRef('infra_on_device_llm'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_diagnose_on_device_llm')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('foundation_resources'), PackageRef('infra_on_device_llm_testing'), PackageRef('test'), PackageRef('usecase_diagnose_on_device_llm_impl')],
+    dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_app_log'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_diagnose_gemma_meter'), PackageRef('usecase_diagnose_on_device_llm')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('foundation_resources'), PackageRef('infra_gemma_meter'), PackageRef('infra_gemma_meter_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test'), PackageRef('usecase_diagnose_gemma_meter_impl'), PackageRef('usecase_diagnose_on_device_llm_impl')],
   );
 
 /// screen_feature_exercise_history 0.1.0+1
@@ -41150,7 +42179,7 @@ const _screen_feature_goal_settings = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_daily_goal'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_load_daily_goal'), PackageRef('usecase_save_daily_goal')],
+    dependencies: [PackageRef('domain_daily_goal'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_load_daily_goal'), PackageRef('usecase_save_daily_goal')],
     devDependencies: [PackageRef('data_repository_daily_goal_testing'), PackageRef('foundation_resources'), PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('usecase_load_daily_goal_impl'), PackageRef('usecase_save_daily_goal_impl')],
   );
 
@@ -41189,7 +42218,7 @@ const _screen_feature_meter_capture = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_achievement'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_datetime'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_feature_achievement'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_save_meter_capture'), PackageRef('view_model_download_guidance')],
+    dependencies: [PackageRef('domain_achievement'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_datetime'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_feature_achievement'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_save_meter_capture'), PackageRef('view_meter_reading_progress'), PackageRef('view_model_download_guidance')],
     devDependencies: [PackageRef('foundation_resources'), PackageRef('flutter_lints'), PackageRef('flutter_test')],
   );
 
@@ -41215,7 +42244,7 @@ const _screen_feature_top = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_save_top_screen_metric'), PackageRef('view_model_download_guidance')],
+    dependencies: [PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('hooks_riverpod'), PackageRef('infra_gemma_meter'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_gemma_meter_guidance'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_save_top_screen_metric'), PackageRef('view_model_download_guidance')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test')],
   );
 
@@ -41242,6 +42271,19 @@ const _view_model_download_guidance = Package(
     isMarkdown: false,
     isSdk: false,
     dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('material_ui')],
+  );
+
+/// view_meter_reading_progress 0.1.0+1
+const _view_meter_reading_progress = Package(
+    name: 'view_meter_reading_progress',
+    description: 'Shared dialog shown while meter panel reading is in progress.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('meta'), PackageRef('monolith_localization_runtime')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('material_ui')],
   );
 
@@ -41280,7 +42322,7 @@ const _screen_navigation_go_router = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('go_router'), PackageRef('material_ui'), PackageRef('screen_feature_achievement'), PackageRef('screen_feature_app_settings'), PackageRef('screen_feature_debug'), PackageRef('screen_feature_exercise_history'), PackageRef('screen_feature_exercise_history_detail'), PackageRef('screen_feature_exercise_history_edit'), PackageRef('screen_feature_goal_settings'), PackageRef('screen_feature_main'), PackageRef('screen_feature_meter_capture'), PackageRef('screen_feature_notification_settings'), PackageRef('screen_feature_oss_licenses'), PackageRef('screen_feature_top'), PackageRef('screen_feature_trends'), PackageRef('screen_navigation')],
+    dependencies: [PackageRef('flutter'), PackageRef('go_router'), PackageRef('material_ui'), PackageRef('screen_feature_achievement'), PackageRef('screen_feature_app_settings'), PackageRef('screen_feature_debug'), PackageRef('screen_feature_exercise_history'), PackageRef('screen_feature_exercise_history_detail'), PackageRef('screen_feature_exercise_history_edit'), PackageRef('screen_feature_goal_settings'), PackageRef('screen_feature_main'), PackageRef('screen_feature_meter_capture'), PackageRef('screen_feature_data_management'), PackageRef('screen_feature_notification_settings'), PackageRef('screen_feature_oss_licenses'), PackageRef('screen_feature_top'), PackageRef('screen_feature_trends'), PackageRef('screen_navigation')],
     devDependencies: [PackageRef('flutter_lints')],
   );
 
@@ -41362,6 +42404,32 @@ const _usecase_diagnose_on_device_llm_impl = Package(
     devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
   );
 
+/// usecase_diagnose_gemma_meter 0.1.0+1
+const _usecase_diagnose_gemma_meter = Package(
+    name: 'usecase_diagnose_gemma_meter',
+    description: 'Diagnoses Gemma meter vision readiness and image probe.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('infra_gemma_meter'), PackageRef('meta'), PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints')],
+  );
+
+/// usecase_diagnose_gemma_meter_impl 0.1.0+1
+const _usecase_diagnose_gemma_meter_impl = Package(
+    name: 'usecase_diagnose_gemma_meter_impl',
+    description: 'Implementation of Gemma meter diagnosis.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('foundation_app_log'), PackageRef('infra_gemma_meter'), PackageRef('meta'), PackageRef('usecase_diagnose_gemma_meter')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_gemma_meter_testing'), PackageRef('test')],
+  );
+
 /// usecase_generate_top_advice 0.1.0+1
 const _usecase_generate_top_advice = Package(
     name: 'usecase_generate_top_advice',
@@ -41397,7 +42465,7 @@ const _usecase_injection = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('data_repository_achievement'), PackageRef('data_repository_daily_goal'), PackageRef('data_repository_exercise_history'), PackageRef('data_repository_notification_settings'), PackageRef('data_repository_top_screen_metric'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_settings'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_workout'), PackageRef('infra_local_notification'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_reading'), PackageRef('infra_oss_license_catalog'), PackageRef('foundation_app_log'), PackageRef('infra_on_device_llm'), PackageRef('riverpod'), PackageRef('usecase_diagnose_on_device_llm'), PackageRef('usecase_diagnose_on_device_llm_impl'), PackageRef('usecase_evaluate_achievements'), PackageRef('usecase_evaluate_achievements_impl'), PackageRef('usecase_evaluate_daily_goal_auto_update'), PackageRef('usecase_evaluate_daily_goal_auto_update_impl'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_generate_top_advice_impl'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_achievements_impl'), PackageRef('usecase_load_app_runtime_info'), PackageRef('usecase_load_app_runtime_info_impl'), PackageRef('usecase_load_daily_goal'), PackageRef('usecase_load_daily_goal_impl'), PackageRef('usecase_load_exercise_history_detail'), PackageRef('usecase_load_exercise_history_detail_impl'), PackageRef('usecase_load_exercise_history_page'), PackageRef('usecase_load_exercise_history_page_impl'), PackageRef('usecase_load_exercise_history_month'), PackageRef('usecase_load_exercise_history_month_impl'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day_impl'), PackageRef('usecase_load_oss_licenses'), PackageRef('usecase_load_oss_licenses_impl'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_load_top_screen_impl'), PackageRef('usecase_load_trends'), PackageRef('usecase_load_trends_impl'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_control_meter_in_app_camera_impl'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_obtain_meter_photo_impl'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_on_device_llm_guidance_impl'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_open_app_settings_impl'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_read_meter_panel_impl'), PackageRef('usecase_request_health_body_permission'), PackageRef('usecase_request_health_body_permission_impl'), PackageRef('usecase_save_daily_goal'), PackageRef('usecase_save_daily_goal_impl'), PackageRef('usecase_save_meter_capture'), PackageRef('usecase_save_meter_capture_impl'), PackageRef('usecase_update_exercise_history'), PackageRef('usecase_update_exercise_history_impl'), PackageRef('usecase_delete_exercise_history'), PackageRef('usecase_delete_exercise_history_impl'), PackageRef('usecase_save_notification_settings'), PackageRef('usecase_save_notification_settings_impl'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_save_top_screen_metric_impl'), PackageRef('usecase_sync_exercise_reminder'), PackageRef('usecase_sync_exercise_reminder_impl'), PackageRef('usecase_load_notification_settings'), PackageRef('usecase_load_notification_settings_impl')],
+    dependencies: [PackageRef('data_repository_achievement'), PackageRef('data_repository_daily_goal'), PackageRef('data_repository_exercise_history'), PackageRef('data_repository_notification_settings'), PackageRef('data_repository_top_screen_metric'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_settings'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_workout'), PackageRef('infra_local_notification'), PackageRef('infra_gemma_meter'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_reading'), PackageRef('infra_network_connectivity'), PackageRef('infra_oss_license_catalog'), PackageRef('foundation_app_log'), PackageRef('infra_on_device_llm'), PackageRef('riverpod'), PackageRef('usecase_diagnose_on_device_llm'), PackageRef('usecase_diagnose_on_device_llm_impl'), PackageRef('usecase_diagnose_gemma_meter'), PackageRef('usecase_diagnose_gemma_meter_impl'), PackageRef('usecase_evaluate_achievements'), PackageRef('usecase_evaluate_achievements_impl'), PackageRef('usecase_evaluate_daily_goal_auto_update'), PackageRef('usecase_evaluate_daily_goal_auto_update_impl'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_generate_top_advice_impl'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_achievements_impl'), PackageRef('usecase_load_app_runtime_info'), PackageRef('usecase_load_app_runtime_info_impl'), PackageRef('usecase_load_daily_goal'), PackageRef('usecase_load_daily_goal_impl'), PackageRef('usecase_load_exercise_history_detail'), PackageRef('usecase_load_exercise_history_detail_impl'), PackageRef('usecase_load_exercise_history_page'), PackageRef('usecase_load_exercise_history_page_impl'), PackageRef('usecase_load_exercise_history_month'), PackageRef('usecase_load_exercise_history_month_impl'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day_impl'), PackageRef('usecase_load_oss_licenses'), PackageRef('usecase_load_oss_licenses_impl'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_load_top_screen_impl'), PackageRef('usecase_load_trends'), PackageRef('usecase_load_trends_impl'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_control_meter_in_app_camera_impl'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_obtain_meter_photo_impl'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_on_device_llm_guidance_impl'), PackageRef('usecase_gemma_meter_guidance'), PackageRef('usecase_gemma_meter_guidance_impl'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_open_app_settings_impl'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_read_meter_panel_impl'), PackageRef('usecase_request_health_body_permission'), PackageRef('usecase_request_health_body_permission_impl'), PackageRef('usecase_save_daily_goal'), PackageRef('usecase_save_daily_goal_impl'), PackageRef('usecase_save_meter_capture'), PackageRef('usecase_save_meter_capture_impl'), PackageRef('usecase_update_exercise_history'), PackageRef('usecase_update_exercise_history_impl'), PackageRef('usecase_delete_exercise_history'), PackageRef('usecase_delete_exercise_history_impl'), PackageRef('usecase_save_notification_settings'), PackageRef('usecase_save_notification_settings_impl'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_save_top_screen_metric_impl'), PackageRef('usecase_sync_exercise_reminder'), PackageRef('usecase_sync_exercise_reminder_impl'), PackageRef('usecase_load_notification_settings'), PackageRef('usecase_load_notification_settings_impl'), PackageRef('usecase_export_app_data'), PackageRef('usecase_export_app_data_impl'), PackageRef('usecase_import_app_data'), PackageRef('usecase_import_app_data_impl'), PackageRef('usecase_recover_interrupted_import'), PackageRef('usecase_recover_interrupted_import_impl'), PackageRef('infra_user_file')],
     devDependencies: [PackageRef('flutter_lints')],
   );
 
@@ -41765,6 +42833,32 @@ const _usecase_on_device_llm_guidance_impl = Package(
     devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
   );
 
+/// usecase_gemma_meter_guidance 0.1.0+1
+const _usecase_gemma_meter_guidance = Package(
+    name: 'usecase_gemma_meter_guidance',
+    description: 'Evaluate and prepare Gemma meter model download guidance.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints')],
+  );
+
+/// usecase_gemma_meter_guidance_impl 0.1.0+1
+const _usecase_gemma_meter_guidance_impl = Package(
+    name: 'usecase_gemma_meter_guidance_impl',
+    description: 'Gemma meter guidance usecase implementations.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('infra_gemma_meter'), PackageRef('infra_network_connectivity'), PackageRef('infra_on_device_llm'), PackageRef('usecase_gemma_meter_guidance')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_gemma_meter_testing'), PackageRef('infra_network_connectivity_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
+  );
+
 /// usecase_read_meter_panel 0.1.0+1
 const _usecase_read_meter_panel = Package(
     name: 'usecase_read_meter_panel',
@@ -42025,6 +43119,84 @@ const _usecase_save_notification_settings_impl = Package(
     devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
   );
 
+/// usecase_export_app_data 0.1.0+1
+const _usecase_export_app_data = Package(
+    name: 'usecase_export_app_data',
+    description: 'Export app data to a .cogsav archive.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
+/// usecase_export_app_data_impl 0.1.0+1
+const _usecase_export_app_data_impl = Package(
+    name: 'usecase_export_app_data_impl',
+    description: 'Export app data implementation.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('data_repository_achievement'), PackageRef('data_repository_daily_goal'), PackageRef('data_repository_exercise_history'), PackageRef('data_repository_notification_settings'), PackageRef('infra_cogsav'), PackageRef('infra_user_file'), PackageRef('usecase_export_app_data')],
+    devDependencies: [PackageRef('data_repository_achievement_testing'), PackageRef('data_repository_daily_goal_testing'), PackageRef('data_repository_exercise_history_testing'), PackageRef('data_repository_notification_settings_testing'), PackageRef('domain_achievement'), PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('domain_notification_settings'), PackageRef('flutter_lints'), PackageRef('image'), PackageRef('infra_user_file_testing'), PackageRef('test')],
+  );
+
+/// usecase_import_app_data 0.1.0+1
+const _usecase_import_app_data = Package(
+    name: 'usecase_import_app_data',
+    description: 'Import app data from a .cogsav archive.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
+/// usecase_import_app_data_impl 0.1.0+1
+const _usecase_import_app_data_impl = Package(
+    name: 'usecase_import_app_data_impl',
+    description: 'Import app data implementation with backup restore.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('data_repository_achievement'), PackageRef('data_repository_daily_goal'), PackageRef('data_repository_exercise_history'), PackageRef('data_repository_notification_settings'), PackageRef('domain_exercise_history'), PackageRef('domain_notification_settings'), PackageRef('infra_cogsav'), PackageRef('infra_local_notification'), PackageRef('infra_user_file'), PackageRef('meta'), PackageRef('usecase_import_app_data'), PackageRef('usecase_sync_exercise_reminder')],
+    devDependencies: [PackageRef('archive'), PackageRef('data_repository_achievement_testing'), PackageRef('data_repository_daily_goal_testing'), PackageRef('data_repository_exercise_history_testing'), PackageRef('data_repository_notification_settings_testing'), PackageRef('domain_achievement'), PackageRef('domain_daily_goal'), PackageRef('flutter_lints'), PackageRef('infra_local_notification_testing'), PackageRef('infra_user_file_testing'), PackageRef('test')],
+  );
+
+/// usecase_recover_interrupted_import 0.1.0+1
+const _usecase_recover_interrupted_import = Package(
+    name: 'usecase_recover_interrupted_import',
+    description: 'Recover or discard an interrupted cogsav import backup.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('riverpod')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
+  );
+
+/// usecase_recover_interrupted_import_impl 0.1.0+1
+const _usecase_recover_interrupted_import_impl = Package(
+    name: 'usecase_recover_interrupted_import_impl',
+    description: 'Recover interrupted import implementation.',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('data_repository_achievement'), PackageRef('data_repository_daily_goal'), PackageRef('data_repository_exercise_history'), PackageRef('data_repository_notification_settings'), PackageRef('usecase_import_app_data_impl'), PackageRef('usecase_recover_interrupted_import')],
+    devDependencies: [PackageRef('data_repository_achievement_testing'), PackageRef('data_repository_daily_goal_testing'), PackageRef('data_repository_exercise_history_testing'), PackageRef('data_repository_notification_settings_testing'), PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('domain_notification_settings'), PackageRef('flutter_lints'), PackageRef('infra_cogsav'), PackageRef('test')],
+  );
+
 /// screen_feature_exercise_history_detail 0.1.0+1
 const _screen_feature_exercise_history_detail = Package(
     name: 'screen_feature_exercise_history_detail',
@@ -42047,7 +43219,7 @@ const _screen_feature_exercise_history_edit = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_datetime'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_load_exercise_history_detail'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_update_exercise_history'), PackageRef('view_confirm_dialog')],
+    dependencies: [PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_datetime'), PackageRef('hooks_riverpod'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_load_exercise_history_detail'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_update_exercise_history'), PackageRef('view_confirm_dialog'), PackageRef('view_meter_reading_progress')],
     devDependencies: [PackageRef('foundation_resources'), PackageRef('flutter_lints'), PackageRef('flutter_test')],
   );
 

@@ -33,6 +33,7 @@ final class ExerciseHistoryScreenViewModel {
   /// ```
   static final provider = Provider.autoDispose<ExerciseHistoryScreenViewModel>(
     (ref) {
+      ref.watch(appDataImportRefreshProvider);
       final now = DateTime.now();
       final result = ExerciseHistoryScreenViewModel._(
         state: MutableStateStream(
@@ -49,6 +50,7 @@ final class ExerciseHistoryScreenViewModel {
       return result;
     },
     dependencies: [
+      appDataImportRefreshProvider,
       LoadExerciseHistoryMonthUsecase.provider,
       screenNavigationProvider,
     ],

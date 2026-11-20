@@ -46,6 +46,7 @@ final class TopScreenViewModel {
   /// ```
   static final provider = Provider.autoDispose<TopScreenViewModel>(
     (ref) {
+      ref.watch(appDataImportRefreshProvider);
       final result = TopScreenViewModel._(
         state: MutableStateStream(TopScreenState.initial),
         loadTopScreenUsecase: ref.watch(LoadTopScreenUsecase.provider),
@@ -78,6 +79,7 @@ final class TopScreenViewModel {
       return result;
     },
     dependencies: [
+      appDataImportRefreshProvider,
       LoadTopScreenUsecase.provider,
       SaveTopScreenMetricUsecase.provider,
       GenerateTopAdviceUsecase.provider,

@@ -31,6 +31,7 @@ final class NotificationSettingsScreenViewModel {
   static final provider =
       Provider.autoDispose<NotificationSettingsScreenViewModel>(
         (ref) {
+          ref.watch(appDataImportRefreshProvider);
           final result = NotificationSettingsScreenViewModel._(
             state: MutableStateStream(NotificationSettingsScreenState.initial),
             loadUsecase: ref.watch(LoadNotificationSettingsUsecase.provider),
@@ -44,6 +45,7 @@ final class NotificationSettingsScreenViewModel {
           return result;
         },
         dependencies: [
+          appDataImportRefreshProvider,
           LoadNotificationSettingsUsecase.provider,
           SaveNotificationSettingsUsecase.provider,
           screenNavigationProvider,

@@ -31,6 +31,7 @@ final class AchievementScreenViewModel {
   /// ```
   static final provider = Provider.autoDispose<AchievementScreenViewModel>(
     (ref) {
+      ref.watch(appDataImportRefreshProvider);
       final result = AchievementScreenViewModel._(
         state: MutableStateStream(AchievementScreenState.initial),
         loadUsecase: ref.watch(LoadAchievementsUsecase.provider),
@@ -45,6 +46,7 @@ final class AchievementScreenViewModel {
       return result;
     },
     dependencies: [
+      appDataImportRefreshProvider,
       LoadAchievementsUsecase.provider,
       MarkAchievementsViewedUsecase.provider,
       screenNavigationProvider,

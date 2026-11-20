@@ -457,6 +457,86 @@
   "@screen_feature_app_settings_version_label": {
     "description": "アプリバージョンの見出し"
   },
+  "screen_feature_data_management_back_semantics": "Back",
+  "@screen_feature_data_management_back_semantics": {
+    "description": "戻るボタンの代替テキスト"
+  },
+  "screen_feature_data_management_error_corrupt": "The file is corrupt or unreadable.",
+  "@screen_feature_data_management_error_corrupt": {
+    "description": "破損"
+  },
+  "screen_feature_data_management_error_missing_required": "Required data is missing.",
+  "@screen_feature_data_management_error_missing_required": {
+    "description": "必須欠落"
+  },
+  "screen_feature_data_management_error_permission_denied": "File access was denied.",
+  "@screen_feature_data_management_error_permission_denied": {
+    "description": "権限"
+  },
+  "screen_feature_data_management_error_storage_full": "Not enough storage.",
+  "@screen_feature_data_management_error_storage_full": {
+    "description": "容量"
+  },
+  "screen_feature_data_management_error_unexpected": "Something went wrong.",
+  "@screen_feature_data_management_error_unexpected": {
+    "description": "その他"
+  },
+  "screen_feature_data_management_error_unsupported_version": "Unsupported backup format.",
+  "@screen_feature_data_management_error_unsupported_version": {
+    "description": "非対応版"
+  },
+  "screen_feature_data_management_export_empty_message": "There are no exercise records. Settings-only file will be exported.",
+  "@screen_feature_data_management_export_empty_message": {
+    "description": "空エクスポート案内"
+  },
+  "screen_feature_data_management_export_item": "Export data",
+  "@screen_feature_data_management_export_item": {
+    "description": "エクスポート操作"
+  },
+  "screen_feature_data_management_import_confirm_body": "All exercise history and settings on this device will be replaced by the file.",
+  "@screen_feature_data_management_import_confirm_body": {
+    "description": "インポート確認本文"
+  },
+  "screen_feature_data_management_import_confirm_cancel": "Cancel",
+  "@screen_feature_data_management_import_confirm_cancel": {
+    "description": "確認の取消"
+  },
+  "screen_feature_data_management_import_confirm_ok": "Replace",
+  "@screen_feature_data_management_import_confirm_ok": {
+    "description": "確認の実行"
+  },
+  "screen_feature_data_management_import_confirm_title": "Replace all data?",
+  "@screen_feature_data_management_import_confirm_title": {
+    "description": "インポート確認タイトル"
+  },
+  "screen_feature_data_management_import_item": "Import data",
+  "@screen_feature_data_management_import_item": {
+    "description": "インポート操作"
+  },
+  "screen_feature_data_management_notification_permission_denied": "Notifications are on, but system permission is off.",
+  "@screen_feature_data_management_notification_permission_denied": {
+    "description": "許可無し案内"
+  },
+  "screen_feature_data_management_photo_missing_warning": "Some photos were missing. Histories were imported.",
+  "@screen_feature_data_management_photo_missing_warning": {
+    "description": "写真欠落警告"
+  },
+  "screen_feature_data_management_progress_working": "Working…",
+  "@screen_feature_data_management_progress_working": {
+    "description": "進捗"
+  },
+  "screen_feature_data_management_success_export": "Export finished.",
+  "@screen_feature_data_management_success_export": {
+    "description": "エクスポート成功"
+  },
+  "screen_feature_data_management_success_import": "Import finished.",
+  "@screen_feature_data_management_success_import": {
+    "description": "インポート成功"
+  },
+  "screen_feature_data_management_title": "Data management",
+  "@screen_feature_data_management_title": {
+    "description": "画面タイトル"
+  },
   "screen_feature_debug_availability_error_label": "availability error",
   "@screen_feature_debug_availability_error_label": {
     "description": "availability 例外ラベル"

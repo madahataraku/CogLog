@@ -500,6 +500,88 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_app_settings_version_label;
       },
+      'screen_feature_data_management_back_semantics': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_back_semantics;
+      },
+      'screen_feature_data_management_error_corrupt': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_error_corrupt;
+      },
+      'screen_feature_data_management_error_missing_required': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_error_missing_required;
+      },
+      'screen_feature_data_management_error_permission_denied': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_error_permission_denied;
+      },
+      'screen_feature_data_management_error_storage_full': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_error_storage_full;
+      },
+      'screen_feature_data_management_error_unexpected': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_error_unexpected;
+      },
+      'screen_feature_data_management_error_unsupported_version': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_error_unsupported_version;
+      },
+      'screen_feature_data_management_export_empty_message': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_export_empty_message;
+      },
+      'screen_feature_data_management_export_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_export_item;
+      },
+      'screen_feature_data_management_import_confirm_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_import_confirm_body;
+      },
+      'screen_feature_data_management_import_confirm_cancel': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_import_confirm_cancel;
+      },
+      'screen_feature_data_management_import_confirm_ok': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_import_confirm_ok;
+      },
+      'screen_feature_data_management_import_confirm_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_import_confirm_title;
+      },
+      'screen_feature_data_management_import_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_import_item;
+      },
+      'screen_feature_data_management_notification_permission_denied':
+          (source) {
+            // No Placeholders
+            return l10n
+                .screen_feature_data_management_notification_permission_denied;
+          },
+      'screen_feature_data_management_photo_missing_warning': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_photo_missing_warning;
+      },
+      'screen_feature_data_management_progress_working': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_progress_working;
+      },
+      'screen_feature_data_management_success_export': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_success_export;
+      },
+      'screen_feature_data_management_success_import': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_success_import;
+      },
+      'screen_feature_data_management_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_title;
+      },
       'screen_feature_debug_availability_error_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_availability_error_label;

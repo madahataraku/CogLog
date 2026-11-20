@@ -379,6 +379,76 @@ class L10nJa extends L10n {
   String get screen_feature_app_settings_version_label => 'バージョン';
 
   @override
+  String get screen_feature_data_management_back_semantics => '戻る';
+
+  @override
+  String get screen_feature_data_management_error_corrupt =>
+      'ファイルが壊れているか読めません。';
+
+  @override
+  String get screen_feature_data_management_error_missing_required =>
+      '必要なデータが足りません。';
+
+  @override
+  String get screen_feature_data_management_error_permission_denied =>
+      'ファイルへのアクセスが許可されませんでした。';
+
+  @override
+  String get screen_feature_data_management_error_storage_full =>
+      '保存先の容量が不足しています。';
+
+  @override
+  String get screen_feature_data_management_error_unexpected => '処理に失敗しました。';
+
+  @override
+  String get screen_feature_data_management_error_unsupported_version =>
+      'このアプリが対応していないファイル形式です。';
+
+  @override
+  String get screen_feature_data_management_export_empty_message =>
+      '保存する運動履歴がありません。設定のみのファイルを書き出します。';
+
+  @override
+  String get screen_feature_data_management_export_item => 'データをエクスポート';
+
+  @override
+  String get screen_feature_data_management_import_confirm_body =>
+      '現在の運動履歴と設定が、ファイルの内容ですべて置き換わります。';
+
+  @override
+  String get screen_feature_data_management_import_confirm_cancel => 'キャンセル';
+
+  @override
+  String get screen_feature_data_management_import_confirm_ok => '置き換える';
+
+  @override
+  String get screen_feature_data_management_import_confirm_title =>
+      'データを置き換えますか？';
+
+  @override
+  String get screen_feature_data_management_import_item => 'データをインポート';
+
+  @override
+  String get screen_feature_data_management_notification_permission_denied =>
+      '通知はオンですが、端末の通知許可がありません。';
+
+  @override
+  String get screen_feature_data_management_photo_missing_warning =>
+      '一部の写真が見つかりませんでした。履歴は取り込みました。';
+
+  @override
+  String get screen_feature_data_management_progress_working => '処理中…';
+
+  @override
+  String get screen_feature_data_management_success_export => 'エクスポートが完了しました。';
+
+  @override
+  String get screen_feature_data_management_success_import => 'インポートが完了しました。';
+
+  @override
+  String get screen_feature_data_management_title => 'データ管理';
+
+  @override
   String get screen_feature_debug_availability_error_label =>
       'availability error';
 

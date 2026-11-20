@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:screen_feature_achievement/screen_feature_achievement.dart';
 import 'package:screen_feature_app_settings/screen_feature_app_settings.dart';
+import 'package:screen_feature_data_management/screen_feature_data_management.dart';
 import 'package:screen_feature_debug/screen_feature_debug.dart';
 import 'package:screen_feature_exercise_history/screen_feature_exercise_history.dart';
 import 'package:screen_feature_exercise_history_detail/screen_feature_exercise_history_detail.dart';
@@ -66,6 +67,11 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
                           path: 'notification',
                           builder: (context, state) =>
                               const NotificationSettingsScreen(),
+                        ),
+                        GoRoute(
+                          path: 'data',
+                          builder: (context, state) =>
+                              const DataManagementScreen(),
                         ),
                         GoRoute(
                           path: 'licenses',

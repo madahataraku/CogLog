@@ -19,6 +19,7 @@ dependencies:
   meta: any
   monolith_localization_runtime: any
   riverpod: any
+  screen_navigation: any
   state_stream: any
   state_stream_riverpod: any
   usecase_load_daily_goal: any
