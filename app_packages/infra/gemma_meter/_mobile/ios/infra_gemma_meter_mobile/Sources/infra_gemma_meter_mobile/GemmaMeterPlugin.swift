@@ -27,7 +27,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
   private static let configuredBackend = "gpu"
   private static let configuredVisionBackend = "gpu"
-  /// Bumped when on-disk `.litertlm` must be refreshed (e.g. MTP-capable build).
+  /// On-disk artifact generation (not initialize success). Bump to force refresh.
   private static let engineStampKey = "gemmaMeter.engineStamp"
   private static let engineStampValue = "litert-mtp-gpu-v1"
 
@@ -265,7 +265,6 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       throw error
     }
     engine = created
-    markEngineStampCurrent()
     return created
   }
 
@@ -276,10 +275,11 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private func downloadIfNeeded() throws {
     if isModelDownloaded() {
       if isEngineStampCurrent() {
+        // Current-generation artifact may be reused even after a prior GPU init miss.
         emitProgress(1)
         return
       }
-      // Pre-MTP / stamp-mismatched artifacts must be refreshed once.
+      // Pre-generation / stamp-mismatched artifacts must be refreshed once.
       try removeIncompleteModel()
     }
     // Incomplete / undersized leftovers must not block a fresh download.
@@ -297,6 +297,8 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       try? removeIncompleteModel()
       throw PrepareError.generic("Gemma meter download finished without a valid model file.")
     }
+    // Stamp means "artifact generation current", independent of initialize().
+    markEngineStampCurrent()
   }
 
   private func isEngineStampCurrent() -> Bool {

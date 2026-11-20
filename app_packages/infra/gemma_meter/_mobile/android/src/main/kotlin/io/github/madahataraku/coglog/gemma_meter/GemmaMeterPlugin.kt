@@ -155,6 +155,8 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
       }
       if (!target.isFile || target.length() == 0L) {
         downloadModel(target)
+        // Stamp means artifact generation current, independent of initialize().
+        markEngineStampCurrent()
       }
       emitProgress(1.0)
       ensureEngine(target)
@@ -295,7 +297,6 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     val created = Engine(config)
     created.initialize()
     engine = created
-    markEngineStampCurrent()
     return created
   }
 
@@ -424,7 +425,7 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     private const val MIN_PLAUSIBLE_MODEL_BYTES = 100L * 1024L * 1024L
     private const val PREFS_NAME = "gemma_meter"
     private const val ENGINE_STAMP_KEY = "engine_stamp"
-    /** Bumped when on-disk `.litertlm` must be refreshed (e.g. MTP-capable). */
+    /** Artifact generation id (not initialize success). Bump to force refresh. */
     private const val ENGINE_STAMP_VALUE = "litert-mtp-gpu-v1"
   }
 }
