@@ -60,7 +60,9 @@ huggingface-cli login
 | `CTX` | `1024` | 最大コンテキスト |
 | `PREFILL_SIZE` | `128` | prefill バッチ長 |
 | `SKIP_HF_DOWNLOAD` | `0` | `1` で既存 `HF_DIR` を再利用 |
-| `SKIP_VISION` | `0` | `1` でテキスト＋prefill のみ |
+| `SKIP_VISION` | `0` | `1` でテキスト＋prefill のみ（既存 vision 成果物は削除し、検証も vision 不要） |
+| `HOST_PYTHON` | `python3` | venv 作成に使うホスト側 Python（依存解決後は常に venv の python） |
+| `COREML_LLM_REF` | `main` | 未取得・再利用どちらでもこの ref を fetch／checkout（失敗時は中断） |
 
 例:
 
@@ -77,6 +79,12 @@ CTX=1024 PREFILL_SIZE=128 \
 ```bash
 ./tool/gemma_coreml_build/verify_bundle.sh \
   .cache/gemma_coreml_build/output/gemma4-e2b-ctx1024-prefill128/bundle
+```
+
+レイアウト検査だけのスモーク:
+
+```bash
+./tool/gemma_coreml_build/test_verify_bundle.sh
 ```
 
 ### 5. 実機への載せ方（参考）
