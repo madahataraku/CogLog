@@ -22,14 +22,16 @@ import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_mobile/infra_on_device_llm_mobile.dart';
 import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 import 'package:infra_oss_license_catalog_impl/infra_oss_license_catalog_impl.dart';
+import 'package:infra_user_file/infra_user_file.dart';
+import 'package:infra_user_file_mobile/infra_user_file_mobile.dart';
 import 'package:riverpod/misc.dart';
 import 'package:riverpod/riverpod.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
 /// [onDeviceLlm] / [gemmaMeterVision] / [meterPhotoSource] /
-/// [healthBodyMetricsSource] / [networkConnectivity] を渡すと、
-/// その実装を使う（Widget テスト用）。
+/// [healthBodyMetricsSource] / [networkConnectivity] / [userFileGateway]
+/// を渡すと、その実装を使う（Widget テスト用）。
 /// [gemmaMeterVision] を省略したとき、iOS / Android では [PluginGemmaMeterVision]、
 /// それ以外では [UnavailableGemmaMeterVision] を束ねる。
 ///
@@ -43,6 +45,7 @@ List<Override> infraOverrides({
   MeterPhotoSource? meterPhotoSource,
   HealthBodyMetricsSource? healthBodyMetricsSource,
   NetworkConnectivity? networkConnectivity,
+  UserFileGateway? userFileGateway,
 }) => [
   onDeviceLlmProvider.overrideWith((ref) {
     final injected = onDeviceLlm;
@@ -140,6 +143,9 @@ List<Override> infraOverrides({
   ),
   OssLicenseCatalog.provider.overrideWith(
     (ref) => const GeneratedOssLicenseCatalog(),
+  ),
+  userFileGatewayProvider.overrideWith(
+    (ref) => userFileGateway ?? const FilePickerUserFileGateway(),
   ),
 ];
 

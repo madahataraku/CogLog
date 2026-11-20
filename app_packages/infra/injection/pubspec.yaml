@@ -33,6 +33,8 @@ dependencies:
   infra_on_device_llm_mobile: any
   infra_oss_license_catalog: any
   infra_oss_license_catalog_impl: any
+  infra_user_file: any
+  infra_user_file_mobile: any
   riverpod: any
 
 dev_dependencies:
