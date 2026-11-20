@@ -59,14 +59,36 @@ void main() {
     expect(_isJpeg(out), isTrue);
   });
 
-  test('Orientation=6 の横長符号化は補正後長辺で縮小する', () async {
+  test('Orientation=6 の横長符号化は補正後に幅 338・高さ 600 になる', () async {
+    final image = img.Image(width: 800, height: 450);
+    img.fill(image, color: img.ColorRgb8(128, 128, 128));
+    // 左上を赤、右下を青にして回転方向を検証できるようにする。
+    for (var y = 0; y < 40; y++) {
+      for (var x = 0; x < 40; x++) {
+        image.setPixelRgb(x, y, 255, 0, 0);
+      }
+    }
+    for (var y = 410; y < 450; y++) {
+      for (var x = 760; x < 800; x++) {
+        image.setPixelRgb(x, y, 0, 0, 255);
+      }
+    }
     final exif = img.ExifData();
     exif.imageIfd.orientation = 6;
-    final input = _jpeg(width: 800, height: 450, exif: exif);
+    image.exif = exif;
+    final input = Uint8List.fromList(img.encodeJpg(image, quality: 95));
+
     final out = await normalizeMeterPhotoBytes(input);
-    final decoded = img.decodeImage(out)!;
-    expect(math.max(decoded.width, decoded.height), lessThanOrEqualTo(600));
     expect(_isJpeg(out), isTrue);
+    final decoded = img.decodeImage(out)!;
+    expect(decoded.width, equals(338));
+    expect(decoded.height, equals(600));
+
+    // Orientation=6 は 90° CW。符号化左上(赤)→表示右上、符号化右下(青)→表示左下。
+    final topRight = decoded.getPixel(decoded.width - 8, 8);
+    final bottomLeft = decoded.getPixel(8, decoded.height - 8);
+    expect(topRight.r, greaterThan(topRight.b));
+    expect(bottomLeft.b, greaterThan(bottomLeft.r));
   });
 
   test('不正バイトは原寸を返す', () async {

@@ -52,6 +52,9 @@ Uint8List? _normalizeWithPackageImage(Uint8List bytes) {
 
 /// Flutter コーデックでデコードし、長辺制限後の JPEG を返す。
 ///
+/// デコード時に [ui.instantiateImageCodecWithSize] で出力サイズを指定し、
+/// 原寸 RGBA の確保を避ける。
+///
 /// Example:
 /// ```dart
 /// await _normalizeWithFlutterCodec(Uint8List(0));
@@ -59,7 +62,20 @@ Uint8List? _normalizeWithPackageImage(Uint8List bytes) {
 Future<Uint8List?> _normalizeWithFlutterCodec(Uint8List bytes) async {
   ui.Codec? codec;
   try {
-    codec = await ui.instantiateImageCodec(bytes);
+    final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+    codec = await ui.instantiateImageCodecWithSize(
+      buffer,
+      getTargetSize: (intrinsicWidth, intrinsicHeight) {
+        final target = _targetSizeForLongSideLimit(
+          intrinsicWidth,
+          intrinsicHeight,
+        );
+        if (target == null) {
+          return const ui.TargetImageSize();
+        }
+        return ui.TargetImageSize(width: target.$1, height: target.$2);
+      },
+    );
     final frame = await codec.getNextFrame();
     final uiImage = frame.image;
     try {
@@ -90,6 +106,37 @@ Future<Uint8List?> _normalizeWithFlutterCodec(Uint8List bytes) async {
   } finally {
     codec?.dispose();
   }
+}
+
+/// 表示向きの [width]×[height] から長辺上限後のサイズを返す。
+///
+/// すでに上限以下なら `null`（拡大しない）。
+///
+/// Example:
+/// ```dart
+/// _targetSizeForLongSideLimit(800, 600);
+/// ```
+(int, int)? _targetSizeForLongSideLimit(int width, int height) {
+  if (width <= 0 || height <= 0) {
+    return null;
+  }
+  final longSide = math.max(width, height);
+  if (longSide <= meterPhotoMaxLongSidePx) {
+    return null;
+  }
+  final scale = meterPhotoMaxLongSidePx / longSide;
+  var outWidth = math.max(1, (width * scale).round());
+  var outHeight = math.max(1, (height * scale).round());
+  if (math.max(outWidth, outHeight) > meterPhotoMaxLongSidePx) {
+    if (outWidth >= outHeight) {
+      outWidth = meterPhotoMaxLongSidePx;
+      outHeight = math.max(1, (height * (outWidth / width)).round());
+    } else {
+      outHeight = meterPhotoMaxLongSidePx;
+      outWidth = math.max(1, (width * (outHeight / height)).round());
+    }
+  }
+  return (outWidth, outHeight);
 }
 
 /// RGBA 画素から [img.Image] を組み立てて JPEG 正規化する。
@@ -128,24 +175,12 @@ Uint8List? _encodeRgbaJpeg({
 /// ```
 Uint8List _encodeResizedJpeg(img.Image image) {
   var output = image;
-  final longSide = math.max(output.width, output.height);
-  if (longSide > meterPhotoMaxLongSidePx) {
-    final scale = meterPhotoMaxLongSidePx / longSide;
-    var width = math.max(1, (output.width * scale).round());
-    var height = math.max(1, (output.height * scale).round());
-    if (math.max(width, height) > meterPhotoMaxLongSidePx) {
-      if (width >= height) {
-        width = meterPhotoMaxLongSidePx;
-        height = math.max(1, (output.height * (width / output.width)).round());
-      } else {
-        height = meterPhotoMaxLongSidePx;
-        width = math.max(1, (output.width * (height / output.height)).round());
-      }
-    }
+  final target = _targetSizeForLongSideLimit(output.width, output.height);
+  if (target != null) {
     output = img.copyResize(
       output,
-      width: width,
-      height: height,
+      width: target.$1,
+      height: target.$2,
       interpolation: img.Interpolation.linear,
     );
   }
