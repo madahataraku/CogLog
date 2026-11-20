@@ -9,6 +9,7 @@ import 'package:usecase_load_app_runtime_info/usecase_load_app_runtime_info.dart
 import 'delegate/app_settings_state_to_entity_delegate.dart';
 import 'delegate/on_back_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
+import 'delegate/on_open_data_management_delegate.dart';
 import 'delegate/on_open_debug_delegate.dart';
 import 'delegate/on_open_notification_settings_delegate.dart';
 import 'delegate/on_open_oss_licenses_delegate.dart';

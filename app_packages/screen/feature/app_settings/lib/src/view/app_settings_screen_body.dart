@@ -57,6 +57,12 @@ class AppSettingsScreenBody extends ConsumerWidget {
                 onPress: viewModel.onOpenNotificationSettings,
               ),
               FTile(
+                title: Text(
+                  strings.screen_feature_app_settings_data_management_item,
+                ),
+                onPress: viewModel.onOpenDataManagement,
+              ),
+              FTile(
                 title: Text(strings.screen_feature_app_settings_licenses_item),
                 onPress: viewModel.onOpenOssLicenses,
               ),

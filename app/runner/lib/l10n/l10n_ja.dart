@@ -352,6 +352,9 @@ class L10nJa extends L10n {
   String get screen_feature_app_settings_back_semantics => '戻る';
 
   @override
+  String get screen_feature_app_settings_data_management_item => 'データ管理';
+
+  @override
   String get screen_feature_app_settings_debug_item => 'デバッグ';
 
   @override

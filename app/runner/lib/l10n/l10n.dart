@@ -721,6 +721,12 @@ abstract class L10n {
   /// **'戻る'**
   String get screen_feature_app_settings_back_semantics;
 
+  /// データ管理画面への項目
+  ///
+  /// In ja, this message translates to:
+  /// **'データ管理'**
+  String get screen_feature_app_settings_data_management_item;
+
   /// デバッグ画面への項目
   ///
   /// In ja, this message translates to:
