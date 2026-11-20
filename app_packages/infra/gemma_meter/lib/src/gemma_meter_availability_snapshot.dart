@@ -49,6 +49,6 @@ final class GemmaMeterAvailabilitySnapshot {
   /// 実行 backend（例: Android LiteRT `gpu` / `cpu`、iOS Core ML `ane` / `gpu`）。未設定は空。
   final String backend;
 
-  /// Vision 実行 backend（例: Android LiteRT `gpu` / `cpu`、iOS Core ML `gpu`）。未設定は空。
+  /// Vision 実行 backend（例: Android LiteRT `gpu` / `cpu`、iOS Core ML `ane`）。未設定は空。
   final String visionBackend;
 }
