@@ -60,6 +60,7 @@ Future<ScreenGraph> pumpTopScreen(
           ),
         ),
         ...usecaseOverrides(
+          documentsDirectory: documents,
           adviceTemplatePicker: const FixedAdviceTemplatePicker(),
           loadTrends: loadTrends,
         ),

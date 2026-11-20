@@ -1,0 +1,28 @@
+name: usecase_recover_interrupted_import_impl
+description: Recover interrupted import implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_achievement: any
+  data_repository_daily_goal: any
+  data_repository_exercise_history: any
+  data_repository_notification_settings: any
+  usecase_import_app_data_impl: any
+  usecase_recover_interrupted_import: any
+
+dev_dependencies:
+  data_repository_achievement_testing: any
+  data_repository_daily_goal_testing: any
+  data_repository_exercise_history_testing: any
+  data_repository_notification_settings_testing: any
+  domain_daily_goal: any
+  domain_exercise_history: any
+  domain_notification_settings: any
+  flutter_lints: any
+  infra_cogsav: any
+  test: any

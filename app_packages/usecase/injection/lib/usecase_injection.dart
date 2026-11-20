@@ -2,7 +2,7 @@
 ///
 /// Example:
 /// ```dart
-/// usecaseOverrides();
+/// usecaseOverrides(documentsDirectory: documents);
 /// ```
 library;
 

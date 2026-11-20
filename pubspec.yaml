@@ -152,6 +152,12 @@ workspace:
   - app_packages/usecase/load_notification_settings/_impl
   - app_packages/usecase/save_notification_settings
   - app_packages/usecase/save_notification_settings/_impl
+  - app_packages/usecase/export_app_data
+  - app_packages/usecase/export_app_data/_impl
+  - app_packages/usecase/import_app_data
+  - app_packages/usecase/import_app_data/_impl
+  - app_packages/usecase/recover_interrupted_import
+  - app_packages/usecase/recover_interrupted_import/_impl
   - app_packages/screen/feature/exercise_history_detail
   - app_packages/screen/feature/exercise_history_edit
 

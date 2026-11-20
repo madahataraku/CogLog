@@ -1,0 +1,35 @@
+name: usecase_import_app_data_impl
+description: Import app data implementation with backup restore.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_achievement: any
+  data_repository_daily_goal: any
+  data_repository_exercise_history: any
+  data_repository_notification_settings: any
+  domain_exercise_history: any
+  domain_notification_settings: any
+  infra_cogsav: any
+  infra_local_notification: any
+  infra_user_file: any
+  meta: any
+  usecase_import_app_data: any
+  usecase_sync_exercise_reminder: any
+
+dev_dependencies:
+  archive: any
+  data_repository_achievement_testing: any
+  data_repository_daily_goal_testing: any
+  data_repository_exercise_history_testing: any
+  data_repository_notification_settings_testing: any
+  domain_achievement: any
+  domain_daily_goal: any
+  flutter_lints: any
+  infra_local_notification_testing: any
+  infra_user_file_testing: any
+  test: any
