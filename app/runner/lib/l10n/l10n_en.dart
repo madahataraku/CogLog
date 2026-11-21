@@ -422,6 +422,79 @@ class L10nEn extends L10n {
   String get screen_feature_app_settings_version_label => 'Version';
 
   @override
+  String get screen_feature_data_management_back_semantics => 'Back';
+
+  @override
+  String get screen_feature_data_management_error_corrupt =>
+      'The file is corrupt or unreadable.';
+
+  @override
+  String get screen_feature_data_management_error_missing_required =>
+      'Required data is missing.';
+
+  @override
+  String get screen_feature_data_management_error_permission_denied =>
+      'File access was denied.';
+
+  @override
+  String get screen_feature_data_management_error_storage_full =>
+      'Not enough storage.';
+
+  @override
+  String get screen_feature_data_management_error_unexpected =>
+      'Something went wrong.';
+
+  @override
+  String get screen_feature_data_management_error_unsupported_version =>
+      'Unsupported backup format.';
+
+  @override
+  String get screen_feature_data_management_export_empty_message =>
+      'There are no exercise records. Settings-only file will be exported.';
+
+  @override
+  String get screen_feature_data_management_export_item => 'Export data';
+
+  @override
+  String get screen_feature_data_management_import_confirm_body =>
+      'All exercise history and settings on this device will be replaced by the file.';
+
+  @override
+  String get screen_feature_data_management_import_confirm_cancel => 'Cancel';
+
+  @override
+  String get screen_feature_data_management_import_confirm_ok => 'Replace';
+
+  @override
+  String get screen_feature_data_management_import_confirm_title =>
+      'Replace all data?';
+
+  @override
+  String get screen_feature_data_management_import_item => 'Import data';
+
+  @override
+  String get screen_feature_data_management_notification_permission_denied =>
+      'Notifications are on, but system permission is off.';
+
+  @override
+  String get screen_feature_data_management_photo_missing_warning =>
+      'Some photos were missing. Histories were imported.';
+
+  @override
+  String get screen_feature_data_management_progress_working => 'Working…';
+
+  @override
+  String get screen_feature_data_management_success_export =>
+      'Export finished.';
+
+  @override
+  String get screen_feature_data_management_success_import =>
+      'Import finished.';
+
+  @override
+  String get screen_feature_data_management_title => 'Data management';
+
+  @override
   String get screen_feature_debug_availability_error_label =>
       'availability error';
 

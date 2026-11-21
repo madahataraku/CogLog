@@ -775,6 +775,126 @@ abstract class L10n {
   /// **'バージョン'**
   String get screen_feature_app_settings_version_label;
 
+  /// 戻るボタンの代替テキスト
+  ///
+  /// In ja, this message translates to:
+  /// **'戻る'**
+  String get screen_feature_data_management_back_semantics;
+
+  /// 破損
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイルが壊れているか読めません。'**
+  String get screen_feature_data_management_error_corrupt;
+
+  /// 必須欠落
+  ///
+  /// In ja, this message translates to:
+  /// **'必要なデータが足りません。'**
+  String get screen_feature_data_management_error_missing_required;
+
+  /// 権限
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイルへのアクセスが許可されませんでした。'**
+  String get screen_feature_data_management_error_permission_denied;
+
+  /// 容量
+  ///
+  /// In ja, this message translates to:
+  /// **'保存先の容量が不足しています。'**
+  String get screen_feature_data_management_error_storage_full;
+
+  /// その他
+  ///
+  /// In ja, this message translates to:
+  /// **'処理に失敗しました。'**
+  String get screen_feature_data_management_error_unexpected;
+
+  /// 非対応版
+  ///
+  /// In ja, this message translates to:
+  /// **'このアプリが対応していないファイル形式です。'**
+  String get screen_feature_data_management_error_unsupported_version;
+
+  /// 空エクスポート案内
+  ///
+  /// In ja, this message translates to:
+  /// **'保存する運動履歴がありません。設定のみのファイルを書き出します。'**
+  String get screen_feature_data_management_export_empty_message;
+
+  /// エクスポート操作
+  ///
+  /// In ja, this message translates to:
+  /// **'データをエクスポート'**
+  String get screen_feature_data_management_export_item;
+
+  /// インポート確認本文
+  ///
+  /// In ja, this message translates to:
+  /// **'現在の運動履歴と設定が、ファイルの内容ですべて置き換わります。'**
+  String get screen_feature_data_management_import_confirm_body;
+
+  /// 確認の取消
+  ///
+  /// In ja, this message translates to:
+  /// **'キャンセル'**
+  String get screen_feature_data_management_import_confirm_cancel;
+
+  /// 確認の実行
+  ///
+  /// In ja, this message translates to:
+  /// **'置き換える'**
+  String get screen_feature_data_management_import_confirm_ok;
+
+  /// インポート確認タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'データを置き換えますか？'**
+  String get screen_feature_data_management_import_confirm_title;
+
+  /// インポート操作
+  ///
+  /// In ja, this message translates to:
+  /// **'データをインポート'**
+  String get screen_feature_data_management_import_item;
+
+  /// 許可無し案内
+  ///
+  /// In ja, this message translates to:
+  /// **'通知はオンですが、端末の通知許可がありません。'**
+  String get screen_feature_data_management_notification_permission_denied;
+
+  /// 写真欠落警告
+  ///
+  /// In ja, this message translates to:
+  /// **'一部の写真が見つかりませんでした。履歴は取り込みました。'**
+  String get screen_feature_data_management_photo_missing_warning;
+
+  /// 進捗
+  ///
+  /// In ja, this message translates to:
+  /// **'処理中…'**
+  String get screen_feature_data_management_progress_working;
+
+  /// エクスポート成功
+  ///
+  /// In ja, this message translates to:
+  /// **'エクスポートが完了しました。'**
+  String get screen_feature_data_management_success_export;
+
+  /// インポート成功
+  ///
+  /// In ja, this message translates to:
+  /// **'インポートが完了しました。'**
+  String get screen_feature_data_management_success_import;
+
+  /// 画面タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'データ管理'**
+  String get screen_feature_data_management_title;
+
   /// availability 例外ラベル
   ///
   /// In ja, this message translates to:
