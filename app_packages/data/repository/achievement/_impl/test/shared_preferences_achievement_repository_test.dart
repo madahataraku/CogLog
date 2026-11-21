@@ -127,6 +127,18 @@ void main() {
     expect(await repository.readLastViewedAt(), viewedAt);
   });
 
+  test('clearLastViewedAt で未設定に戻せる', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+    await repository.writeLastViewedAt(DateTime.utc(2026, 11, 11, 9));
+
+    await repository.clearLastViewedAt();
+
+    expect(await repository.readLastViewedAt(), isNull);
+  });
+
   test('最終閲覧日時の破損文字は null', () async {
     SharedPreferences.setMockInitialValues({
       'achievement_last_viewed_at': 'not-a-date',
@@ -136,5 +148,67 @@ void main() {
     );
 
     expect(await repository.readLastViewedAt(), isNull);
+  });
+
+  test('replaceUnlocks は既存を捨てて完全置換する', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+    final first = DateTime.utc(2026, 11, 1);
+    final second = DateTime.utc(2026, 11, 10);
+
+    await repository.mergeUnlocks([
+      AchievementUnlock(id: 'first_record', unlockedAt: first),
+      AchievementUnlock(id: 'streak_3', unlockedAt: first),
+    ]);
+
+    await repository.replaceUnlocks([
+      AchievementUnlock(id: 'streak_3', unlockedAt: second),
+    ]);
+
+    final unlocks = await repository.readUnlocks();
+    expect(unlocks, hasLength(1));
+    expect(unlocks.single.id, 'streak_3');
+    expect(unlocks.single.unlockedAt, second);
+  });
+
+  test('replaceUnlocks の未知 id は保存しない', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+
+    await repository.replaceUnlocks([
+      AchievementUnlock(
+        id: 'unknown_badge',
+        unlockedAt: DateTime.utc(2026, 11, 10),
+      ),
+      AchievementUnlock(
+        id: 'first_record',
+        unlockedAt: DateTime.utc(2026, 11, 10),
+      ),
+    ]);
+
+    final unlocks = await repository.readUnlocks();
+    expect(unlocks, hasLength(1));
+    expect(unlocks.single.id, 'first_record');
+  });
+
+  test('replaceUnlocks に空を渡すと獲得が消える', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+    await repository.mergeUnlocks([
+      AchievementUnlock(
+        id: 'first_record',
+        unlockedAt: DateTime.utc(2026, 11, 10),
+      ),
+    ]);
+
+    await repository.replaceUnlocks(const []);
+
+    expect(await repository.readUnlocks(), isEmpty);
   });
 }

@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:data_database/data_database.dart';
+import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_exercise_history_impl/data_repository_exercise_history_impl.dart';
+import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -601,6 +603,148 @@ void main() {
 
     final month = await repo.listByMonth(year: 2026, month: 11);
     expect(month.map((e) => e.id), [inMonthNewer.id, inMonthOlder.id]);
+  });
+
+  test('readPhotoBytes は写真があれば返し無ければ null', () async {
+    final created = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 5),
+      capturedAt: DateTime.utc(2026, 11, 5),
+      recordedAt: DateTime.utc(2026, 11, 5),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 1),
+      caloriesKcal: 1,
+      averageSpeedKmh: 1,
+      healthWorkoutId: null,
+      photoBytes: Uint8List.fromList([9, 8, 7]),
+    );
+
+    expect(
+      await repo.readPhotoBytes(created.id),
+      Uint8List.fromList([9, 8, 7]),
+    );
+    expect(
+      await repo.readPhotoBytes('22222222-2222-4222-8222-222222222222'),
+      isNull,
+    );
+  });
+
+  test('replaceAllPreservingIds は ID を保ち写真 null はファイル非作成', () async {
+    final old = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 1),
+      capturedAt: DateTime.utc(2026, 11, 1),
+      recordedAt: DateTime.utc(2026, 11, 1),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 1),
+      caloriesKcal: 1,
+      averageSpeedKmh: 1,
+      healthWorkoutId: 'old-health',
+      photoBytes: Uint8List.fromList([1]),
+    );
+
+    const keptId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    const missingPhotoId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+    await repo.replaceAllPreservingIds([
+      ImportedExerciseHistoryEntry(
+        history: ExerciseHistory(
+          id: keptId,
+          savedAt: DateTime.utc(2026, 10, 1),
+          creationStartedAt: DateTime.utc(2026, 10, 1),
+          capturedAt: DateTime.utc(2026, 10, 1),
+          recordedAt: DateTime.utc(2026, 10, 1, 12),
+          recordedAtManuallySet: true,
+          distanceKm: 3,
+          duration: const Duration(minutes: 30),
+          caloriesKcal: 100,
+          averageSpeedKmh: 6,
+          photoRelativePath: 'exercise_histories/$keptId/meter.jpg',
+          healthWorkoutId: null,
+        ),
+        photoBytes: Uint8List.fromList([5, 6]),
+      ),
+      ImportedExerciseHistoryEntry(
+        history: ExerciseHistory(
+          id: missingPhotoId,
+          savedAt: DateTime.utc(2026, 10, 2),
+          creationStartedAt: DateTime.utc(2026, 10, 2),
+          capturedAt: DateTime.utc(2026, 10, 2),
+          recordedAt: DateTime.utc(2026, 10, 2, 12),
+          recordedAtManuallySet: false,
+          distanceKm: 2,
+          duration: const Duration(minutes: 10),
+          caloriesKcal: 50,
+          averageSpeedKmh: 5,
+          photoRelativePath: 'exercise_histories/$missingPhotoId/meter.jpg',
+          healthWorkoutId: null,
+        ),
+        photoBytes: null,
+      ),
+    ]);
+
+    final listed = await repo.list();
+    expect(listed.map((e) => e.id).toSet(), {keptId, missingPhotoId});
+    expect(listed.any((e) => e.id == old.id), isFalse);
+    expect(await repo.findById(old.id), isNull);
+
+    final withPhoto = await repo.findById(keptId);
+    expect(withPhoto!.distanceKm, 3);
+    expect(withPhoto.savedAt, DateTime.utc(2026, 10, 1));
+    expect(await repo.readPhotoBytes(keptId), Uint8List.fromList([5, 6]));
+    expect(
+      File('${docs.path}/${withPhoto.photoRelativePath}').existsSync(),
+      isTrue,
+    );
+
+    final withoutPhoto = await repo.findById(missingPhotoId);
+    expect(withoutPhoto, isNotNull);
+    expect(await repo.readPhotoBytes(missingPhotoId), isNull);
+    expect(await repo.photoAbsolutePath(missingPhotoId), isNull);
+    expect(
+      File('${docs.path}/${withoutPhoto!.photoRelativePath}').existsSync(),
+      isFalse,
+    );
+  });
+
+  test('replaceAllPreservingIds の duration 0 は既存を消さない', () async {
+    final old = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 1),
+      capturedAt: DateTime.utc(2026, 11, 1),
+      recordedAt: DateTime.utc(2026, 11, 1),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 1),
+      caloriesKcal: 1,
+      averageSpeedKmh: 1,
+      healthWorkoutId: null,
+      photoBytes: Uint8List.fromList([1]),
+    );
+
+    expect(
+      () => repo.replaceAllPreservingIds([
+        ImportedExerciseHistoryEntry(
+          history: ExerciseHistory(
+            id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+            savedAt: DateTime.utc(2026, 10, 1),
+            creationStartedAt: DateTime.utc(2026, 10, 1),
+            capturedAt: DateTime.utc(2026, 10, 1),
+            recordedAt: DateTime.utc(2026, 10, 1),
+            recordedAtManuallySet: false,
+            distanceKm: 1,
+            duration: Duration.zero,
+            caloriesKcal: 1,
+            averageSpeedKmh: 1,
+            photoRelativePath: 'exercise_histories/cccccccc-cccc-4ccc-8ccc-cccccccccccc/meter.jpg',
+            healthWorkoutId: null,
+          ),
+          photoBytes: Uint8List.fromList([2]),
+        ),
+      ]),
+      throwsA(isA<ArgumentError>()),
+    );
+
+    expect(await repo.findById(old.id), isNotNull);
+    expect(await repo.readPhotoBytes(old.id), Uint8List.fromList([1]));
   });
 }
 

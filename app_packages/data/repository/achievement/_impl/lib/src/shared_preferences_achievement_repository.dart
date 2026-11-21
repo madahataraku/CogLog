@@ -103,6 +103,27 @@ final class SharedPreferencesAchievementRepository
     }
   }
 
+  /// 最終閲覧日時キーを削除する。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.clearLastViewedAt();
+  /// ```
+  @override
+  Future<void> clearLastViewedAt() async {
+    var removed = false;
+    try {
+      removed = await _preferences.remove(_lastViewedAtKey);
+    } on Object {
+      await _preferences.reload();
+      rethrow;
+    }
+    if (!removed && _preferences.containsKey(_lastViewedAtKey)) {
+      await _preferences.reload();
+      throw StateError('$_lastViewedAtKey を削除できなかった。');
+    }
+  }
+
   /// 未所持の id だけ足して書き戻す。既存の獲得日時は維持する。
   ///
   /// Example:
@@ -125,6 +146,29 @@ final class SharedPreferencesAchievementRepository
         continue;
       }
       if (byId.containsKey(unlock.id)) {
+        continue;
+      }
+      byId[unlock.id] = unlock;
+    }
+    await _writeUnlocks(byId.values.toList(growable: false));
+  }
+
+  /// 獲得一覧を [unlocks] で完全置換する。未知 id は捨てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceUnlocks([
+  ///   AchievementUnlock(
+  ///     id: 'first_record',
+  ///     unlockedAt: DateTime.utc(2026, 11, 10),
+  ///   ),
+  /// ]);
+  /// ```
+  @override
+  Future<void> replaceUnlocks(List<AchievementUnlock> unlocks) async {
+    final byId = <AchievementId, AchievementUnlock>{};
+    for (final unlock in unlocks) {
+      if (!_knownIds.contains(unlock.id)) {
         continue;
       }
       byId[unlock.id] = unlock;

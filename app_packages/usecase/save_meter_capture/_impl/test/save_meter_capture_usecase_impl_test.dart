@@ -157,6 +157,26 @@ final class _AttachFailingHistories implements ExerciseHistoryRepository {
   @override
   Future<String?> photoAbsolutePath(String id) => _inner.photoAbsolutePath(id);
 
+  /// [_inner] へ写真バイト取得を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.readPhotoBytes(id);
+  /// ```
+  @override
+  Future<Uint8List?> readPhotoBytes(String id) => _inner.readPhotoBytes(id);
+
+  /// [_inner] へ ID 指定の全置換を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await histories.replaceAllPreservingIds(const []);
+  /// ```
+  @override
+  Future<void> replaceAllPreservingIds(
+    List<ImportedExerciseHistoryEntry> entries,
+  ) => _inner.replaceAllPreservingIds(entries);
+
   /// [_inner] へ更新を委譲する。
   ///
   /// Example:

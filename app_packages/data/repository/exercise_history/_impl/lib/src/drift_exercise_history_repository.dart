@@ -133,6 +133,109 @@ final class DriftExerciseHistoryRepository
     return file.path;
   }
 
+  /// 写真バイトを返す。ファイルが無ければ null。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.readPhotoBytes(id);
+  /// ```
+  @override
+  Future<Uint8List?> readPhotoBytes(String id) async {
+    final file = _photos.fileFor(id);
+    if (!await file.exists()) {
+      return null;
+    }
+    return file.readAsBytes();
+  }
+
+  /// 既存をすべて消し、[entries] を ID 指定で入れる。
+  ///
+  /// 削除前に全エントリを検証する。DB は 1 トランザクションで入れ替え、
+  /// 写真はステージングへ書いてから確定する。失敗時はステージングを捨て、
+  /// DB トランザクションはロールバックする（既存データと既存写真を残す）。
+  /// 写真 null はファイル非作成。運動時間 0 は [ArgumentError]。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceAllPreservingIds(const []);
+  /// ```
+  @override
+  Future<void> replaceAllPreservingIds(
+    List<ImportedExerciseHistoryEntry> entries,
+  ) async {
+    final stagedPhotoIds = <String>[];
+    try {
+      for (final entry in entries) {
+        final history = entry.history;
+        if (history.duration.inSeconds == 0) {
+          throw ArgumentError.value(history.duration, 'duration', '0 では保存できない');
+        }
+        _photos.relativePathFor(history.id);
+      }
+
+      for (final entry in entries) {
+        final photoBytes = entry.photoBytes;
+        if (photoBytes == null) {
+          continue;
+        }
+        await _photos.writeStaging(entry.history.id, photoBytes);
+        stagedPhotoIds.add(entry.history.id);
+      }
+
+      final existing = await list();
+      final keepIds = {for (final entry in entries) entry.history.id};
+
+      await _db.transaction(() async {
+        await _db.delete(_db.exerciseHistories).go();
+        for (final entry in entries) {
+          final history = entry.history;
+          final relative = _photos.relativePathFor(history.id);
+          await _db
+              .into(_db.exerciseHistories)
+              .insert(
+                ExerciseHistoriesCompanion.insert(
+                  id: history.id,
+                  savedAt: encodeUtc(history.savedAt),
+                  creationStartedAt: encodeUtc(history.creationStartedAt),
+                  capturedAt: encodeUtc(history.capturedAt),
+                  recordedAt: encodeUtc(history.recordedAt),
+                  recordedAtManuallySet: history.recordedAtManuallySet,
+                  distanceKm: history.distanceKm,
+                  durationMs: history.duration.inMilliseconds,
+                  caloriesKcal: history.caloriesKcal,
+                  averageSpeedKmh: history.averageSpeedKmh,
+                  photoRelativePath: relative,
+                  healthWorkoutId: Value(history.healthWorkoutId),
+                ),
+              );
+        }
+      });
+
+      for (final id in stagedPhotoIds) {
+        await _photos.commitStaging(id);
+      }
+      for (final entry in entries) {
+        if (entry.photoBytes == null) {
+          await _photos.deleteFor(entry.history.id);
+        }
+      }
+      for (final history in existing) {
+        if (!keepIds.contains(history.id)) {
+          await _photos.deleteFor(history.id);
+        }
+      }
+    } catch (error, stack) {
+      for (final id in stagedPhotoIds) {
+        try {
+          await _photos.discardStaging(id);
+        } catch (_) {
+          // 元の例外を優先する。
+        }
+      }
+      Error.throwWithStackTrace(error, stack);
+    }
+  }
+
   /// 写真を書いてから行を挿入する。INSERT 失敗時は写真を削除する。
   ///
   /// ID が既存行と衝突する場合は、写真を書かずに失敗する。

@@ -56,6 +56,17 @@ final class MemoryAchievementRepository implements AchievementRepository {
     _lastViewedAt = viewedAt.toUtc();
   }
 
+  /// メモリ上の最終閲覧日時を消す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.clearLastViewedAt();
+  /// ```
+  @override
+  Future<void> clearLastViewedAt() async {
+    _lastViewedAt = null;
+  }
+
   /// 未所持の id だけ足す。既存 id の獲得日時は変えない。
   ///
   /// Example:
@@ -73,6 +84,25 @@ final class MemoryAchievementRepository implements AchievementRepository {
       if (_byId.containsKey(unlock.id)) {
         continue;
       }
+      _byId[unlock.id] = unlock;
+    }
+  }
+
+  /// 獲得一覧を [unlocks] で完全置換する。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceUnlocks([
+  ///   AchievementUnlock(
+  ///     id: 'first_record',
+  ///     unlockedAt: DateTime.utc(2026, 11, 10),
+  ///   ),
+  /// ]);
+  /// ```
+  @override
+  Future<void> replaceUnlocks(List<AchievementUnlock> unlocks) async {
+    _byId.clear();
+    for (final unlock in unlocks) {
       _byId[unlock.id] = unlock;
     }
   }

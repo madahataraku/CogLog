@@ -29,6 +29,19 @@ abstract interface class AchievementRepository {
   /// ```
   Future<void> mergeUnlocks(List<AchievementUnlock> unlocks);
 
+  /// 獲得一覧を [unlocks] で完全置換する（インポート用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.replaceUnlocks([
+  ///   AchievementUnlock(
+  ///     id: 'first_record',
+  ///     unlockedAt: DateTime.utc(2026, 11, 10),
+  ///   ),
+  /// ]);
+  /// ```
+  Future<void> replaceUnlocks(List<AchievementUnlock> unlocks);
+
   /// 最終閲覧日時を返す。未保存・破損は null。
   ///
   /// Example:
@@ -44,6 +57,14 @@ abstract interface class AchievementRepository {
   /// repository.writeLastViewedAt(DateTime.utc(2026, 11, 11));
   /// ```
   Future<void> writeLastViewedAt(DateTime viewedAt);
+
+  /// 最終閲覧日時を未設定に戻す（インポートで null を反映するとき用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.clearLastViewedAt();
+  /// ```
+  Future<void> clearLastViewedAt();
 }
 
 /// アチーブメント Repository の注入点。未接続のときは失敗する。
