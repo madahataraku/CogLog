@@ -15,6 +15,9 @@ dependencies:
   infra_user_file: any
 
 dev_dependencies:
+  cross_file: any
+  file_picker_platform_interface: any
   flutter_lints: any
   flutter_test:
     sdk: flutter
+  plugin_platform_interface: any

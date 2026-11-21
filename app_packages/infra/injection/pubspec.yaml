@@ -41,3 +41,4 @@ dev_dependencies:
   flutter_lints: any
   flutter_test:
     sdk: flutter
+  infra_user_file_testing: any
