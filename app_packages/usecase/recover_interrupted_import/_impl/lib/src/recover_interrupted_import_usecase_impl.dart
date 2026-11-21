@@ -81,11 +81,7 @@ final class RecoverInterruptedImportUsecaseImpl
       await backupStore.clear();
       return RecoverInterruptedImportResult.restored;
     } on Object {
-      try {
-        await backupStore.clear();
-      } on Object {
-        // 起動継続のため clear 失敗も握りつぶす。
-      }
+      // 復元失敗時はバックアップを残し、次回起動で再試行できるようにする。
       return RecoverInterruptedImportResult.restoreFailed;
     }
   }

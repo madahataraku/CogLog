@@ -127,7 +127,8 @@ void main() {
       await failingUsecase.execute(),
       RecoverInterruptedImportResult.restoreFailed,
     );
-    expect(await backupStore.hasMarker(), isFalse);
+    // 復元失敗時は次回起動で再試行できるようバックアップを残す。
+    expect(await backupStore.hasMarker(), isTrue);
   });
 }
 

@@ -390,19 +390,44 @@ void main() {
     final unlocks = await env.achievements.readUnlocks();
     expect(unlocks.single.id, 'first_record');
   });
+
+  test('最終閲覧 null のファイルは既存の最終閲覧を消す', () async {
+    final env = build();
+    await env.achievements.writeLastViewedAt(DateTime.utc(2026, 11, 1));
+    final doc = CogsavDocument(
+      formatVersion: CogsavCodec.formatVersion,
+      exportedAt: DateTime.utc(2026, 11, 20),
+      exerciseHistories: const [],
+      dailyGoal: DailyGoal.unset,
+      dailyGoalAutoUpdate: DailyGoalAutoUpdateSettings.defaults,
+      notificationSettings: NotificationSettings.initial,
+      achievementUnlocks: const [],
+      achievementLastViewedAt: null,
+      photos: const {},
+    );
+
+    await env.usecase.applyImport(CogsavCodec.encode(doc)).drain();
+
+    expect(await env.achievements.readLastViewedAt(), isNull);
+  });
 }
 
-/// [replaceAllPreservingIds] だけ失敗させるラッパ。
+/// [replaceAllPreservingIds] を初回だけ失敗させ、復元時は通すラッパ。
 final class _FailingReplaceHistories implements ExerciseHistoryRepository {
   _FailingReplaceHistories(this._inner);
 
   final ExerciseHistoryRepository _inner;
+  int _replaceCalls = 0;
 
   @override
   Future<void> replaceAllPreservingIds(
     List<ImportedExerciseHistoryEntry> entries,
   ) async {
-    throw StateError('replace failed');
+    _replaceCalls += 1;
+    if (_replaceCalls == 1) {
+      throw StateError('replace failed');
+    }
+    return _inner.replaceAllPreservingIds(entries);
   }
 
   @override

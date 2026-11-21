@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -13,6 +14,7 @@ import 'package:meta/meta.dart';
 /// `{documents}/cogsav_import_backup/` への現行データ退避と復元。
 ///
 /// `marker.json` と `snapshot.cogsav`（現行内容の `.cogsav`）で中断復旧する。
+/// インスタンス単位で [runExclusive] によりバックアップ操作を直列化する。
 ///
 /// Example:
 /// ```dart
@@ -30,6 +32,9 @@ final class ImportBackupStore {
   /// アプリの Documents ディレクトリ。
   final Directory documentsDirectory;
 
+  /// バックアップ作成・適用・復元・削除の直列化キュー。
+  Future<void> _exclusiveTail = Future<void>.value();
+
   /// バックアップルート。
   ///
   /// Example:
@@ -42,6 +47,25 @@ final class ImportBackupStore {
   File get _markerFile => File('${backupDirectory.path}/marker.json');
 
   File get _snapshotFile => File('${backupDirectory.path}/snapshot.cogsav');
+
+  /// [action] を他の排他区間と重ならないよう実行する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await ImportBackupStore(documentsDirectory: Directory.systemTemp)
+  ///     .runExclusive(() async => null);
+  /// ```
+  Future<T> runExclusive<T>(Future<T> Function() action) {
+    final done = Completer<T>();
+    _exclusiveTail = _exclusiveTail.catchError((_) {}).then((_) async {
+      try {
+        done.complete(await action());
+      } catch (error, stack) {
+        done.completeError(error, stack);
+      }
+    });
+    return done.future;
+  }
 
   /// marker.json があるか。
   ///
@@ -157,8 +181,8 @@ final class ImportBackupStore {
   /// [document] を各 Repository へ適用する。
   ///
   /// [clearHealthWorkoutId] が true のときヘルス ID をすべて null にする。
-  /// 戻り値は写真欠落件数。最終閲覧が null のときは write を呼ばない
-  ///（Repository に消去 API が無い）。
+  /// 戻り値は写真欠落件数。最終閲覧が null のときは [AchievementRepository.clearLastViewedAt]
+  /// で未設定に戻す。
   ///
   /// Example:
   /// ```dart
@@ -218,6 +242,8 @@ final class ImportBackupStore {
     final lastViewed = document.achievementLastViewedAt;
     if (lastViewed != null) {
       await achievements.writeLastViewedAt(lastViewed);
+    } else {
+      await achievements.clearLastViewedAt();
     }
     return photoMissingCount;
   }

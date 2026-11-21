@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
@@ -180,6 +181,65 @@ void main() {
         (e) => e.error,
         'error',
         ExportAppDataError.unexpected,
+      ),
+    );
+  });
+
+  test('保存の PathAccessException は permissionDenied', () async {
+    final userFile = FakeUserFileGateway(
+      onSaveBytes:
+          ({
+            required Uint8List bytes,
+            required String fileName,
+            required String mimeType,
+          }) {
+            throw const PathAccessException(
+              '/tmp/out.cogsav',
+              OSError('denied', 13),
+            );
+          },
+    );
+    final events = await build(
+      histories: MemoryExerciseHistoryRepository(),
+      userFile: userFile,
+    ).execute().toList();
+
+    expect(
+      events.last,
+      isA<ExportAppDataFailed>().having(
+        (e) => e.error,
+        'error',
+        ExportAppDataError.permissionDenied,
+      ),
+    );
+  });
+
+  test('保存の ENOSPC は storageFull', () async {
+    final userFile = FakeUserFileGateway(
+      onSaveBytes:
+          ({
+            required Uint8List bytes,
+            required String fileName,
+            required String mimeType,
+          }) {
+            throw const FileSystemException(
+              'write',
+              '/tmp/out.cogsav',
+              OSError('No space left on device', 28),
+            );
+          },
+    );
+    final events = await build(
+      histories: MemoryExerciseHistoryRepository(),
+      userFile: userFile,
+    ).execute().toList();
+
+    expect(
+      events.last,
+      isA<ExportAppDataFailed>().having(
+        (e) => e.error,
+        'error',
+        ExportAppDataError.storageFull,
       ),
     );
   });

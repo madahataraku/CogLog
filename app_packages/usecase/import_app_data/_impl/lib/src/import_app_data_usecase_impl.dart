@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:data_repository_achievement/data_repository_achievement.dart';
@@ -106,6 +107,10 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
 
   /// 確認済みバイトを decode → バックアップ → 適用 → クリアする。
   ///
+  /// バックアップ作成からコミット／ロールバックまでは [ImportBackupStore.runExclusive]
+  /// で直列化する。購読キャンセル時も未コミットなら復元を試み、復元失敗時は
+  /// バックアップを残して次回起動復旧に委ねる。
+  ///
   /// Example:
   /// ```dart
   /// await for (final event in usecase.applyImport(Uint8List(0))) {
@@ -113,72 +118,133 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
   /// }
   /// ```
   @override
-  Stream<ImportAppDataEvent> applyImport(Uint8List bytes) async* {
-    late final CogsavDocument document;
-    try {
-      yield const ImportAppDataProgress(fraction: 0.05);
-      document = CogsavCodec.decode(bytes);
-    } on Object catch (error) {
-      yield ImportAppDataFailed(mapImportAppDataError(error));
-      return;
+  Stream<ImportAppDataEvent> applyImport(Uint8List bytes) {
+    var cancelled = false;
+    late final StreamController<ImportAppDataEvent> controller;
+    controller = StreamController<ImportAppDataEvent>(
+      onCancel: () {
+        cancelled = true;
+      },
+    );
+
+    () async {
+      late final CogsavDocument document;
+      try {
+        _addEvent(controller, const ImportAppDataProgress(fraction: 0.05));
+        document = CogsavCodec.decode(bytes);
+      } on Object catch (error) {
+        _addEvent(
+          controller,
+          ImportAppDataFailed(mapImportAppDataError(error)),
+        );
+        await controller.close();
+        return;
+      }
+
+      var backupCreated = false;
+      var committed = false;
+      try {
+        await backupStore.runExclusive(() async {
+          if (cancelled) {
+            return;
+          }
+          _addEvent(controller, const ImportAppDataProgress(fraction: 0.15));
+          await backupStore.createFromCurrent(
+            histories: histories,
+            goals: goals,
+            notifications: notifications,
+            achievements: achievements,
+          );
+          backupCreated = true;
+          if (cancelled) {
+            return;
+          }
+
+          _addEvent(controller, const ImportAppDataProgress(fraction: 0.4));
+          final photoMissingCount = await ImportBackupStore.applyDocument(
+            document: document,
+            histories: histories,
+            goals: goals,
+            notifications: notifications,
+            achievements: achievements,
+            clearHealthWorkoutId: true,
+          );
+          if (cancelled) {
+            return;
+          }
+
+          // コミット点: バックアップを消したらデータは確定。
+          await backupStore.clear();
+          committed = true;
+          _addEvent(controller, const ImportAppDataProgress(fraction: 0.85));
+
+          // 以降はコミット後。失敗してもインポート成功を返す。
+          try {
+            await sync.execute(
+              SyncExerciseReminderRequest(now: clock?.call() ?? DateTime.now()),
+            );
+          } on Object {
+            // 同期失敗は次回の再計算で回復する。
+          }
+
+          var permissionDenied = false;
+          try {
+            final written = await notifications.read();
+            final granted = await localNotifications.isPermissionGranted();
+            permissionDenied = written.enabled && !granted;
+          } on Object {
+            // 許可照会失敗は案内なしとして成功を返す。
+          }
+
+          _addEvent(
+            controller,
+            ImportAppDataSucceeded(
+              photoMissingCount: photoMissingCount,
+              notificationPermissionDenied: permissionDenied,
+            ),
+          );
+        });
+      } on Object catch (error) {
+        if (!controller.isClosed) {
+          _addEvent(
+            controller,
+            ImportAppDataFailed(mapImportAppDataError(error)),
+          );
+        }
+      } finally {
+        if (backupCreated && !committed) {
+          await _restoreKeepingBackupOnFailure();
+        }
+        if (!controller.isClosed) {
+          await controller.close();
+        }
+      }
+    }();
+
+    return controller.stream;
+  }
+
+  void _addEvent(
+    StreamController<ImportAppDataEvent> controller,
+    ImportAppDataEvent event,
+  ) {
+    if (!controller.isClosed) {
+      controller.add(event);
     }
+  }
 
+  /// 未コミット時に復元する。復元成功時だけバックアップを消す。
+  Future<void> _restoreKeepingBackupOnFailure() async {
     try {
-      yield const ImportAppDataProgress(fraction: 0.15);
-      await backupStore.createFromCurrent(
+      await backupStore.restore(
         histories: histories,
         goals: goals,
         notifications: notifications,
         achievements: achievements,
       );
-
-      yield const ImportAppDataProgress(fraction: 0.4);
-      final photoMissingCount = await ImportBackupStore.applyDocument(
-        document: document,
-        histories: histories,
-        goals: goals,
-        notifications: notifications,
-        achievements: achievements,
-        clearHealthWorkoutId: true,
-      );
-
-      // コミット点: バックアップを消したらデータは確定。
       await backupStore.clear();
-      yield const ImportAppDataProgress(fraction: 0.85);
-
-      try {
-        await sync.execute(
-          SyncExerciseReminderRequest(now: clock?.call() ?? DateTime.now()),
-        );
-      } on Object {
-        // 同期失敗は次回の再計算で回復する。インポート結果は返す。
-      }
-
-      final written = await notifications.read();
-      final granted = await localNotifications.isPermissionGranted();
-      final permissionDenied = written.enabled && !granted;
-
-      yield ImportAppDataSucceeded(
-        photoMissingCount: photoMissingCount,
-        notificationPermissionDenied: permissionDenied,
-      );
-    } on Object catch (error) {
-      try {
-        await backupStore.restore(
-          histories: histories,
-          goals: goals,
-          notifications: notifications,
-          achievements: achievements,
-        );
-      } on Object {
-        // 復元失敗でもバックアップは消し、失敗を返す。
-      }
-      try {
-        await backupStore.clear();
-      } on Object {
-        // clear 失敗は握りつぶし、元の適用エラーを返す。
-      }
-      yield ImportAppDataFailed(mapImportAppDataError(error));
+    } on Object {
+      // 復元失敗時はバックアップを残し、起動時復旧に委ねる。
     }
   }
 }
