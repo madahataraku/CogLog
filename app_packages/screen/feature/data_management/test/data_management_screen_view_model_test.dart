@@ -295,6 +295,73 @@ void main() {
     expect(viewModel.state.state.errorKind, DataManagementErrorKind.corrupt);
     expect(container.read(appDataImportRefreshProvider), 0);
   });
+
+  test('export 例外 → unexpected', () async {
+    final export = _ThrowingExport();
+    final import = _FakeImport();
+    final container = _container(export: export, import: import);
+    addTearDown(container.dispose);
+
+    final viewModel = _readAlive(container);
+    await viewModel.onExport();
+    expect(viewModel.state.state.phase, DataManagementPhase.error);
+    expect(viewModel.state.state.errorKind, DataManagementErrorKind.unexpected);
+  });
+
+  test('pick 例外 → unexpected', () async {
+    final export = _FakeExport(events: const []);
+    final import = _ThrowingImport(throwOnPick: true);
+    final container = _container(export: export, import: import);
+    addTearDown(container.dispose);
+
+    final viewModel = _readAlive(container);
+    await viewModel.onImportPick();
+    expect(viewModel.state.state.phase, DataManagementPhase.error);
+    expect(viewModel.state.state.errorKind, DataManagementErrorKind.unexpected);
+  });
+
+  test('apply 例外 → unexpected', () async {
+    final export = _FakeExport(events: const []);
+    final import = _ThrowingImport(throwOnApply: true);
+    final container = _container(export: export, import: import);
+    addTearDown(container.dispose);
+
+    final viewModel = _readAlive(container);
+    await viewModel.onImportPick();
+    await viewModel.onConfirmImport();
+    expect(viewModel.state.state.phase, DataManagementPhase.error);
+    expect(viewModel.state.state.errorKind, DataManagementErrorKind.unexpected);
+    expect(container.read(appDataImportRefreshProvider), 0);
+  });
+}
+
+final class _ThrowingExport implements ExportAppDataUsecase {
+  @override
+  Stream<ExportAppDataEvent> execute() async* {
+    throw StateError('export boom');
+  }
+}
+
+final class _ThrowingImport implements ImportAppDataUsecase {
+  _ThrowingImport({this.throwOnPick = false, this.throwOnApply = false});
+
+  final bool throwOnPick;
+  final bool throwOnApply;
+
+  @override
+  Future<ImportPickResult> pickForImport() async {
+    if (throwOnPick) {
+      throw StateError('pick boom');
+    }
+    return ImportPickSucceeded(Uint8List.fromList([1]));
+  }
+
+  @override
+  Stream<ImportAppDataEvent> applyImport(Uint8List bytes) async* {
+    if (throwOnApply) {
+      throw StateError('apply boom');
+    }
+  }
 }
 
 final class _SlowExport implements ExportAppDataUsecase {

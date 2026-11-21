@@ -65,4 +65,12 @@ final class DataManagementScreenEntity {
 
   /// 全置換確認ダイアログを出すか。
   final bool awaitingImportConfirm;
+
+  /// システム戻るで画面を閉じてはいけないか（エクスポート／選択／適用中）。
+  bool get blocksRoutePop => switch (phase) {
+    DataManagementPhase.exporting ||
+    DataManagementPhase.picking ||
+    DataManagementPhase.importing => true,
+    _ => false,
+  };
 }

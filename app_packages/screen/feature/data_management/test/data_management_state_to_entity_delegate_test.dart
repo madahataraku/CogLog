@@ -12,7 +12,7 @@ void main() {
     expect(entity.awaitingImportConfirm, isFalse);
   });
 
-  test('exporting は操作不可・進捗あり', () {
+  test('exporting は操作不可・進捗あり・戻る禁止', () {
     final entity = delegate.convert(
       const DataManagementScreenState(
         phase: DataManagementPhase.exporting,
@@ -26,6 +26,7 @@ void main() {
     expect(entity.interactive, isFalse);
     expect(entity.showProgress, isTrue);
     expect(entity.progressFraction, 0.4);
+    expect(entity.blocksRoutePop, isTrue);
   });
 
   test('confirming は確認待ち・操作不可', () {

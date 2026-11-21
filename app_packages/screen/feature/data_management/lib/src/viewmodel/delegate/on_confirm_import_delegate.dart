@@ -4,6 +4,7 @@ import 'package:state_stream/state_stream.dart';
 import 'package:usecase_import_app_data/usecase_import_app_data.dart';
 
 import '../state/data_management_screen_state.dart';
+import 'emit_unexpected_error.dart';
 import 'map_import_app_data_error.dart';
 
 /// 確認後に適用し、成功時は世代カウンタを進める。
@@ -109,14 +110,10 @@ final class OnConfirmImportDelegate {
         }
       }
     } on Object {
-      await state.updateWithLock((current, emitter) async {
-        await emitter.emit(
-          current.copyWith(
-            phase: DataManagementPhase.error,
-            errorKind: DataManagementErrorKind.unexpected,
-          ),
-        );
-      });
+      await emitUnexpectedDataManagementError(
+        state,
+        clearPendingImportBytes: false,
+      );
     }
   }
 }

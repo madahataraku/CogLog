@@ -75,58 +75,67 @@ class DataManagementScreenBody extends HookConsumerWidget {
       return null;
     }, [entity.awaitingImportConfirm, viewModel]);
 
-    return FScaffold(
-      header: FHeader.nested(
-        title: Text(strings.screen_feature_data_management_title),
-        prefixes: [
-          FHeaderAction.back(
-            onPress: entity.interactive ? viewModel.onBack : null,
-            semanticsLabel:
-                strings.screen_feature_data_management_back_semantics,
-          ),
-        ],
-      ),
-      child: ListView(
-        children: [
-          FTileGroup(
-            children: [
-              FTile(
-                title: Text(strings.screen_feature_data_management_export_item),
-                onPress: entity.interactive
-                    ? () {
-                        unawaited(viewModel.onExport());
-                      }
-                    : null,
+    return PopScope(
+      canPop: !entity.blocksRoutePop,
+      child: FScaffold(
+        header: FHeader.nested(
+          title: Text(strings.screen_feature_data_management_title),
+          prefixes: [
+            FHeaderAction.back(
+              onPress: entity.interactive ? viewModel.onBack : null,
+              semanticsLabel:
+                  strings.screen_feature_data_management_back_semantics,
+            ),
+          ],
+        ),
+        child: ListView(
+          children: [
+            FTileGroup(
+              children: [
+                FTile(
+                  title: Text(
+                    strings.screen_feature_data_management_export_item,
+                  ),
+                  onPress: entity.interactive
+                      ? () {
+                          unawaited(viewModel.onExport());
+                        }
+                      : null,
+                ),
+                FTile(
+                  title: Text(
+                    strings.screen_feature_data_management_import_item,
+                  ),
+                  onPress: entity.interactive
+                      ? () {
+                          unawaited(viewModel.onImportPick());
+                        }
+                      : null,
+                ),
+              ],
+            ),
+            if (entity.showProgress)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      strings.screen_feature_data_management_progress_working,
+                    ),
+                    const SizedBox(height: 8),
+                    FDeterminateProgress(value: entity.progressFraction),
+                  ],
+                ),
               ),
-              FTile(
-                title: Text(strings.screen_feature_data_management_import_item),
-                onPress: entity.interactive
-                    ? () {
-                        unawaited(viewModel.onImportPick());
-                      }
-                    : null,
-              ),
-            ],
-          ),
-          if (entity.showProgress)
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(strings.screen_feature_data_management_progress_working),
-                  const SizedBox(height: 8),
-                  FDeterminateProgress(value: entity.progressFraction),
-                ],
+            ..._statusMessages(entity).map(
+              (text) => Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Text(text),
               ),
             ),
-          ..._statusMessages(entity).map(
-            (text) => Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Text(text),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

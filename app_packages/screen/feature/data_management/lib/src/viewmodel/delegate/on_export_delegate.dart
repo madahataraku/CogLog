@@ -2,6 +2,7 @@ import 'package:state_stream/state_stream.dart';
 import 'package:usecase_export_app_data/usecase_export_app_data.dart';
 
 import '../state/data_management_screen_state.dart';
+import 'emit_unexpected_error.dart';
 
 /// エクスポート Usecase を進め、進捗と結果を State に反映する。
 ///
@@ -99,15 +100,7 @@ final class OnExportDelegate {
         }
       }
     } on Object {
-      await state.updateWithLock((current, emitter) async {
-        await emitter.emit(
-          current.copyWith(
-            phase: DataManagementPhase.error,
-            errorKind: DataManagementErrorKind.unexpected,
-            clearPendingImportBytes: true,
-          ),
-        );
-      });
+      await emitUnexpectedDataManagementError(state);
     }
   }
 
