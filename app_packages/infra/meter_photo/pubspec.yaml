@@ -10,7 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  image: any
   riverpod: any
 
 dev_dependencies:
   flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  test: any

@@ -41,8 +41,10 @@ final class ObtainMeterPhotoUsecaseImpl implements ObtainMeterPhotoUsecase {
       if (capture == null) {
         return const ObtainMeterPhotoCancelled();
       }
+      // 読み取り開始前に正規化する（60 秒上限の外側）。失敗時は原寸が返る。
+      final normalized = await infra.normalizeMeterPhotoBytes(capture.bytes);
       return ObtainMeterPhotoSuccess(
-        bytes: capture.bytes,
+        bytes: normalized,
         capturedAt: capture.capturedAt,
       );
     } on infra.MeterPhotoPermissionDeniedException catch (error) {

@@ -307,7 +307,8 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
     required MeterPhotoPermissionKind kind,
   }) async {
     try {
-      final file = await _picker.pickImage(source: source);
+      // imageQuality 指定で iOS の HEIC などを JPEG 再エンコードしやすくする。
+      final file = await _picker.pickImage(source: source, imageQuality: 85);
       if (file == null) {
         return null;
       }

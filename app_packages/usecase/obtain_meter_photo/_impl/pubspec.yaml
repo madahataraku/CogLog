@@ -17,5 +17,6 @@ dev_dependencies:
   flutter_lints: any
   flutter_test:
     sdk: flutter
+  image: any
   infra_meter_photo_testing: any
   test: any
