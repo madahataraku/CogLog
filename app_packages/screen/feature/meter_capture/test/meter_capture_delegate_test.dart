@@ -8,6 +8,7 @@ import 'package:screen_feature_meter_capture/src/viewmodel/delegate/meter_captur
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_back_to_step1_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_cancel_meter_reading_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/obtain_and_read_meter_photo.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_capture_photo_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_evaluate_model_download_guidance_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_field_changed_delegate.dart';
@@ -513,6 +514,78 @@ void main() {
     expect(state.state.creationStartedAt, isNotNull);
     expect(state.state.capturedAt, isNotNull);
     expect(state.state.recordedAt, state.state.capturedAt);
+    expect(state.state.recordedAtManuallySet, isFalse);
+  });
+
+  test('capturedAt ありなら撮影・運動した日時に載り作成開始は別', () async {
+    final captured = DateTime(2024, 5, 18, 12, 33, 21);
+    final obtain = _Obtain(
+      ObtainMeterPhotoSuccess(
+        bytes: Uint8List.fromList(const [9, 9]),
+        capturedAt: captured,
+      ),
+    );
+    final read = _Read(
+      const ReadMeterPanelResult(
+        values: MeterReadingValues(
+          distanceKm: 3,
+          duration: Duration(hours: 1),
+          caloriesKcal: 200,
+        ),
+        averageSpeedFromPanel: false,
+      ),
+    );
+    final before = DateTime.timestamp();
+
+    await obtainAndReadMeterPhoto(
+      state: state,
+      obtainMeterPhotoUsecase: obtain,
+      readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+      source: ObtainMeterPhotoSource.library,
+    );
+
+    expect(state.state.capturedAt, captured);
+    expect(state.state.recordedAt, captured);
+    expect(state.state.recordedAtManuallySet, isFalse);
+    expect(state.state.creationStartedAt, isNotNull);
+    expect(state.state.creationStartedAt, isNot(captured));
+    expect(
+      state.state.creationStartedAt!.isAfter(
+        before.subtract(const Duration(seconds: 5)),
+      ),
+      isTrue,
+    );
+  });
+
+  test('capturedAt 無しなら撮影・運動した日時は作成開始日時', () async {
+    final obtain = _Obtain(
+      ObtainMeterPhotoSuccess(bytes: Uint8List.fromList(const [9, 9])),
+    );
+    final read = _Read(
+      const ReadMeterPanelResult(
+        values: MeterReadingValues(
+          distanceKm: 3,
+          duration: Duration(hours: 1),
+          caloriesKcal: 200,
+        ),
+        averageSpeedFromPanel: false,
+      ),
+    );
+
+    await obtainAndReadMeterPhoto(
+      state: state,
+      obtainMeterPhotoUsecase: obtain,
+      readMeterPanelUsecase: read,
+      evaluateOnDeviceLlmGuidanceUsecase: _Evaluate(),
+      guidanceSession: OnDeviceLlmGuidanceSession(),
+      source: ObtainMeterPhotoSource.library,
+    );
+
+    expect(state.state.creationStartedAt, isNotNull);
+    expect(state.state.capturedAt, state.state.creationStartedAt);
+    expect(state.state.recordedAt, state.state.creationStartedAt);
     expect(state.state.recordedAtManuallySet, isFalse);
   });
 

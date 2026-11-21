@@ -9,7 +9,8 @@ import 'package:infra_meter_photo/infra_meter_photo.dart';
 /// アプリ内カメラと ImagePicker ライブラリで写真を取る。
 ///
 /// 撮影はシステムカメラを開かず [CameraController.takePicture] のみ。
-/// 撮影日時メタは常に null（EXIF 抽出は後続）。
+/// ライブラリ選択時は正規化前バイトの EXIF から撮影日時を埋める（読めない形式は null）。
+/// カメラ撮影の撮影日時は null のまま（作成開始日時フォールバック）。
 /// 開始と停止はキューで直列化し、古い開始の破棄が新しい初期化と重ならないようにする。
 ///
 /// Example:
@@ -124,6 +125,7 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
   Future<MeterPhotoCapture?> pickFromLibrary() => _pick(
     source: ImageSource.gallery,
     kind: MeterPhotoPermissionKind.library,
+    resolveCapturedAt: true,
   );
 
   Future<void> _enqueue(Future<void> Function() action) {
@@ -305,15 +307,28 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
   Future<MeterPhotoCapture?> _pick({
     required ImageSource source,
     required MeterPhotoPermissionKind kind,
+    bool resolveCapturedAt = false,
   }) async {
     try {
-      // imageQuality 指定で iOS の HEIC などを JPEG 再エンコードしやすくする。
-      final file = await _picker.pickImage(source: source, imageQuality: 85);
+      // ライブラリは EXIF 保持のため imageQuality を付けない（HEIC は日時未取得の既知制限）。
+      // カメラ経路のギャラリー以外では imageQuality 指定で JPEG 再エンコードしやすくする。
+      final file = resolveCapturedAt
+          ? await _picker.pickImage(source: source)
+          : await _picker.pickImage(source: source, imageQuality: 85);
       if (file == null) {
         return null;
       }
       final bytes = await file.readAsBytes();
-      return MeterPhotoCapture(bytes: bytes);
+      if (!resolveCapturedAt) {
+        return MeterPhotoCapture(bytes: bytes);
+      }
+      final capturedAt = resolveMeterPhotoCapturedAt(
+        bytes: bytes,
+        // XFile.lastModified は撮影／作成相当ではないため渡さない。
+        assetCapturedOrCreatedAt: null,
+        now: DateTime.timestamp(),
+      );
+      return MeterPhotoCapture(bytes: bytes, capturedAt: capturedAt);
     } on PlatformException catch (error) {
       if (_isPickerPermissionDenied(error)) {
         throw MeterPhotoPermissionDeniedException(kind);
