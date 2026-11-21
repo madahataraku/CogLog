@@ -99,4 +99,9 @@ void main() {
     final bytes = _jpegWithExif(dateTimeOriginal: '2026:11:25 00:00:00');
     expect(resolveMeterPhotoCapturedAt(bytes: bytes, now: now), isNull);
   });
+
+  test('不正な暦日の EXIF は null', () {
+    final bytes = _jpegWithExif(dateTimeOriginal: '2024:02:30 12:00:00');
+    expect(resolveMeterPhotoCapturedAt(bytes: bytes, now: now), isNull);
+  });
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
@@ -322,11 +323,15 @@ final class MobileMeterPhotoSource implements MeterPhotoSource {
       if (!resolveCapturedAt) {
         return MeterPhotoCapture(bytes: bytes);
       }
-      final capturedAt = resolveMeterPhotoCapturedAt(
-        bytes: bytes,
-        // XFile.lastModified は撮影／作成相当ではないため渡さない。
-        assetCapturedOrCreatedAt: null,
-        now: DateTime.timestamp(),
+      // EXIF 解析はワーカー isolate へ逃がし、大きなライブラリ写真でも UI を塞がない。
+      final now = DateTime.timestamp();
+      final capturedAt = await Isolate.run(
+        () => resolveMeterPhotoCapturedAt(
+          bytes: bytes,
+          // XFile.lastModified は撮影／作成相当ではないため渡さない。
+          assetCapturedOrCreatedAt: null,
+          now: now,
+        ),
       );
       return MeterPhotoCapture(bytes: bytes, capturedAt: capturedAt);
     } on PlatformException catch (error) {

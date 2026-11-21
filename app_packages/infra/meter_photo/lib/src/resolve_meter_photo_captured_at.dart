@@ -9,6 +9,7 @@ import 'meter_photo_captured_at_guard.dart';
 /// [bytes] は正規化前。優先は EXIF DateTimeOriginal → DateTimeDigitized →
 /// DateTime。次に [assetCapturedOrCreatedAt]。異常な EXIF を読めた場合は
 /// asset へ落とさず null（未取得）とする。
+/// JPEG は画素デコードせず EXIF だけ読む。
 ///
 /// Example:
 /// ```dart
@@ -47,11 +48,11 @@ DateTime? resolveMeterPhotoCapturedAt({
 /// ```
 DateTime? _parseExifCapturedAt(Uint8List bytes) {
   try {
-    final decoded = img.decodeImage(bytes);
-    if (decoded == null) {
+    // 画素デコードせず JPEG APP1 の EXIF だけ読む（大きな写真の UI 負荷を避ける）。
+    final exif = img.decodeJpgExif(bytes);
+    if (exif == null || exif.isEmpty) {
       return null;
     }
-    final exif = decoded.exif;
     final raw =
         _exifAscii(exif.exifIfd, 0x9003) ??
         _exifAscii(exif.exifIfd, 0x9004) ??
@@ -82,6 +83,8 @@ String? _exifAscii(img.IfdDirectory ifd, int tag) {
 
 /// EXIF の `yyyy:MM:dd HH:mm:ss` を端末ローカル壁時計の [DateTime] にする。
 ///
+/// 不正な暦日（例: 2 月 30 日）は [DateTime] の繰り上げを採用せず null にする。
+///
 /// Example:
 /// ```dart
 /// _parseExifDateTime('2024:05:18 12:33:21');
@@ -100,8 +103,27 @@ DateTime? _parseExifDateTime(String raw) {
   final hour = int.parse(match.group(4)!);
   final minute = int.parse(match.group(5)!);
   final second = int.parse(match.group(6) ?? '0');
+  if (month < 1 ||
+      month > 12 ||
+      day < 1 ||
+      day > 31 ||
+      hour > 23 ||
+      minute > 59 ||
+      second > 59) {
+    return null;
+  }
   try {
-    return DateTime(year, month, day, hour, minute, second);
+    final parsed = DateTime(year, month, day, hour, minute, second);
+    // DateTime は不正日を繰り上げるため、成分が一致しない場合は拒否する。
+    if (parsed.year != year ||
+        parsed.month != month ||
+        parsed.day != day ||
+        parsed.hour != hour ||
+        parsed.minute != minute ||
+        parsed.second != second) {
+      return null;
+    }
+    return parsed;
   } on Object {
     return null;
   }
