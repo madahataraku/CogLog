@@ -12,4 +12,13 @@ void main() {
       '/settings/data',
     );
   });
+
+  test('/settings/data ルートが登録されている', () {
+    final navigation = GoRouterScreenNavigation();
+    final match = navigation.router.configuration.findMatch(
+      Uri.parse('/settings/data'),
+    );
+    expect(match.error, isNull);
+    expect(match.matches, isNotEmpty);
+  });
 }

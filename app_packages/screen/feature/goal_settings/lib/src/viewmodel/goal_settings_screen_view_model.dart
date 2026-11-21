@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
 import 'package:usecase_save_daily_goal/usecase_save_daily_goal.dart';
@@ -33,6 +34,7 @@ final class GoalSettingsScreenViewModel {
   /// ```
   static final provider = Provider.autoDispose<GoalSettingsScreenViewModel>(
     (ref) {
+      ref.watch(appDataImportRefreshProvider);
       final result = GoalSettingsScreenViewModel._(
         state: MutableStateStream(GoalSettingsScreenState.initial),
         loadDailyGoalUsecase: ref.watch(LoadDailyGoalUsecase.provider),
@@ -45,6 +47,7 @@ final class GoalSettingsScreenViewModel {
       return result;
     },
     dependencies: [
+      appDataImportRefreshProvider,
       LoadDailyGoalUsecase.provider,
       SaveDailyGoalUsecase.provider,
     ],

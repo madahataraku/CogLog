@@ -1,7 +1,4 @@
 /// データ管理画面。
-///
-/// Example:
-/// ```dart
-/// // 画面本体は後続 PR で公開する。
-/// ```
 library;
+
+export 'src/view/data_management_screen.dart';
