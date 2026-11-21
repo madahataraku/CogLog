@@ -86,7 +86,13 @@ dependencies:
   usecase_sync_exercise_reminder_impl: any
   usecase_load_notification_settings: any
   usecase_load_notification_settings_impl: any
-
+  usecase_export_app_data: any
+  usecase_export_app_data_impl: any
+  usecase_import_app_data: any
+  usecase_import_app_data_impl: any
+  usecase_recover_interrupted_import: any
+  usecase_recover_interrupted_import_impl: any
+  infra_user_file: any
 
 dev_dependencies:
   flutter_lints: any

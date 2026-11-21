@@ -1,0 +1,31 @@
+name: usecase_export_app_data_impl
+description: Export app data implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_achievement: any
+  data_repository_daily_goal: any
+  data_repository_exercise_history: any
+  data_repository_notification_settings: any
+  infra_cogsav: any
+  infra_user_file: any
+  usecase_export_app_data: any
+
+dev_dependencies:
+  data_repository_achievement_testing: any
+  data_repository_daily_goal_testing: any
+  data_repository_exercise_history_testing: any
+  data_repository_notification_settings_testing: any
+  domain_achievement: any
+  domain_daily_goal: any
+  domain_exercise_history: any
+  domain_notification_settings: any
+  flutter_lints: any
+  image: any
+  infra_user_file_testing: any
+  test: any

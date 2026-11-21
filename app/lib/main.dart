@@ -10,6 +10,7 @@ import 'package:screen_injection/screen_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 import 'package:usecase_injection/usecase_injection.dart';
+import 'package:usecase_recover_interrupted_import/usecase_recover_interrupted_import.dart';
 
 import 'package:app_runner/app_runner.dart';
 
@@ -49,10 +50,11 @@ Future<void> launchCogLog() async {
         documentsDirectory: documents,
       ),
       ...infraOverrides(),
-      ...usecaseOverrides(),
+      ...usecaseOverrides(documentsDirectory: documents),
       ...screenOverrides(screens),
     ],
   );
+  await container.read(RecoverInterruptedImportUsecase.provider).execute();
   await ExerciseReminderBootstrap(
     container: container,
     navigation: screens.navigation,
