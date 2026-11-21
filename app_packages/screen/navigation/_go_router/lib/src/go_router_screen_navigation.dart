@@ -223,6 +223,17 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
     router.push('/settings/notification');
   }
 
+  /// データ管理画面を積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openDataManagement();
+  /// ```
+  @override
+  void openDataManagement() {
+    router.push('/settings/data');
+  }
+
   /// OSS ライセンス一覧を積む。
   ///
   /// Example:

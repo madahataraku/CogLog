@@ -68,6 +68,14 @@ abstract interface class ScreenNavigation {
   /// ```
   void openNotificationSettings();
 
+  /// データ管理画面をアプリ設定の子として積む。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.openDataManagement();
+  /// ```
+  void openDataManagement();
+
   /// OSS ライセンス一覧をアプリ設定の子として積む。
   ///
   /// Example:
