@@ -1,0 +1,15 @@
+name: infra_user_file_testing
+description: Fake UserFileGateway for tests.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_user_file: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any
