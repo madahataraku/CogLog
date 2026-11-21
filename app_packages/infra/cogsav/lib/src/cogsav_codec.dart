@@ -30,6 +30,15 @@ abstract final class CogsavCodec {
   /// このアプリが書く形式の版。
   static const int formatVersion = 1;
 
+  /// ZIP 内のファイル数上限（ディレクトリ除く）。
+  static const int maxArchiveEntries = 5000;
+
+  /// 1 エントリあたりの展開後バイト上限。
+  static const int maxEntryUncompressedBytes = 8 * 1024 * 1024;
+
+  /// 全エントリの展開後バイト合計上限。
+  static const int maxTotalUncompressedBytes = 64 * 1024 * 1024;
+
   static final RegExp _uuid = RegExp(
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
   );
@@ -97,19 +106,34 @@ abstract final class CogsavCodec {
     final Archive archive;
     try {
       archive = ZipDecoder().decodeBytes(bytes);
-    } on Object catch (error) {
-      throw CogsavCorruptException('ZIP として読めない: $error');
+    } on CogsavCorruptException {
+      rethrow;
+    } on Object {
+      throw const CogsavCorruptException('ZIP として読めない');
     }
 
     final seenNames = <String>{};
     ArchiveFile? manifestFile;
     ArchiveFile? dataFile;
     final photoFiles = <String, ArchiveFile>{};
+    var entryCount = 0;
+    var totalUncompressed = 0;
 
     for (final file in archive) {
       final name = file.name.replaceAll('\\', '/');
       if (file.isDirectory || name.endsWith('/')) {
         continue;
+      }
+      entryCount += 1;
+      if (entryCount > maxArchiveEntries) {
+        throw const CogsavCorruptException('ZIP エントリ数が上限を超える');
+      }
+      if (file.size < 0 || file.size > maxEntryUncompressedBytes) {
+        throw CogsavCorruptException('エントリサイズが不正: $name');
+      }
+      totalUncompressed += file.size;
+      if (totalUncompressed > maxTotalUncompressedBytes) {
+        throw const CogsavCorruptException('展開後サイズ合計が上限を超える');
       }
       if (name.contains('..') || name.startsWith('/')) {
         throw CogsavCorruptException('許可されないパス: $name');
@@ -146,12 +170,10 @@ abstract final class CogsavCodec {
       field: 'manifest.json',
     );
     final versionRaw = manifest['formatVersion'];
-    if (versionRaw is! int && versionRaw is! num) {
+    if (versionRaw is! int) {
       throw const CogsavCorruptException('formatVersion が整数でない');
     }
-    final version = versionRaw is int
-        ? versionRaw
-        : (versionRaw as num).toInt();
+    final version = versionRaw;
     if (version != formatVersion) {
       throw CogsavUnsupportedVersionException(version);
     }
@@ -170,11 +192,8 @@ abstract final class CogsavCodec {
 
     final photos = <String, Uint8List>{};
     for (final entry in photoFiles.entries) {
-      final content = entry.value.readBytes();
-      if (content == null) {
-        throw CogsavCorruptException('写真を読めない: ${entry.key}');
-      }
-      photos[entry.key] = Uint8List.fromList(content);
+      final content = _readBytes(entry.value);
+      photos[entry.key] = content;
     }
 
     return CogsavDocument(
@@ -190,15 +209,28 @@ abstract final class CogsavCodec {
     );
   }
 
-  static String _readUtf8(ArchiveFile file) {
-    final content = file.readBytes();
+  static Uint8List _readBytes(ArchiveFile file) {
+    final List<int>? content;
+    try {
+      content = file.readBytes();
+    } on Object {
+      throw CogsavCorruptException('${file.name} を読めない');
+    }
     if (content == null) {
       throw CogsavCorruptException('${file.name} を読めない');
     }
+    if (content.length > maxEntryUncompressedBytes) {
+      throw CogsavCorruptException('エントリサイズが不正: ${file.name}');
+    }
+    return Uint8List.fromList(content);
+  }
+
+  static String _readUtf8(ArchiveFile file) {
+    final content = _readBytes(file);
     try {
       return utf8.decode(content);
-    } on Object catch (error) {
-      throw CogsavCorruptException('${file.name} が UTF-8 でない: $error');
+    } on Object {
+      throw CogsavCorruptException('${file.name} が UTF-8 でない');
     }
   }
 

@@ -56,6 +56,17 @@ final class MemoryAchievementRepository implements AchievementRepository {
     _lastViewedAt = viewedAt.toUtc();
   }
 
+  /// メモリ上の最終閲覧日時を消す。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.clearLastViewedAt();
+  /// ```
+  @override
+  Future<void> clearLastViewedAt() async {
+    _lastViewedAt = null;
+  }
+
   /// 未所持の id だけ足す。既存 id の獲得日時は変えない。
   ///
   /// Example:

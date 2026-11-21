@@ -174,4 +174,123 @@ void main() {
       throwsA(isA<CogsavCorruptException>()),
     );
   });
+
+  Map<String, Object?> emptyDataPayload() => {
+    'exerciseHistories': <Object?>[],
+    'dailyGoal': {
+      'durationSeconds': null,
+      'caloriesKcal': null,
+      'distanceKm': null,
+    },
+    'dailyGoalAutoUpdate': {
+      'enabled': false,
+      'level': 'normal',
+      'enabledOnLocalDate': null,
+      'streakEpochLocalDate': null,
+      'lastAppliedLocalDate': null,
+      'weeklyAchievementDays': null,
+    },
+    'notificationSettings': {'enabled': false},
+    'achievementUnlocks': <Object?>[],
+    'achievementLastViewedAt': null,
+  };
+
+  Uint8List zipWith({
+    required Object? formatVersion,
+    Map<String, Object?>? data,
+  }) {
+    final archive = Archive()
+      ..add(
+        ArchiveFile.string(
+          'manifest.json',
+          jsonEncode({
+            'formatVersion': formatVersion,
+            'exportedAt': '2026-11-20T00:00:00.000Z',
+          }),
+        ),
+      )
+      ..add(
+        ArchiveFile.string('data.json', jsonEncode(data ?? emptyDataPayload())),
+      );
+    return ZipEncoder().encodeBytes(archive);
+  }
+
+  test('小数の formatVersion は CogsavCorruptException', () {
+    expect(
+      () => CogsavCodec.decode(zipWith(formatVersion: 1.5)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
+
+  test('壊れた data.json は CogsavCorruptException', () {
+    final archive = Archive()
+      ..add(
+        ArchiveFile.string(
+          'manifest.json',
+          jsonEncode({
+            'formatVersion': 1,
+            'exportedAt': '2026-11-20T00:00:00.000Z',
+          }),
+        ),
+      )
+      ..add(ArchiveFile.string('data.json', '{not-json'));
+    expect(
+      () => CogsavCodec.decode(ZipEncoder().encodeBytes(archive)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
+
+  test('必須キー欠落は CogsavCorruptException', () {
+    final data = emptyDataPayload()..remove('dailyGoal');
+    expect(
+      () => CogsavCodec.decode(zipWith(formatVersion: 1, data: data)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
+
+  test('運動時間 0 の履歴は CogsavCorruptException', () {
+    final data = emptyDataPayload();
+    data['exerciseHistories'] = [
+      {
+        'id': historyId,
+        'savedAt': '2026-11-05T00:00:00.000Z',
+        'creationStartedAt': '2026-11-05T01:00:00.000Z',
+        'capturedAt': '2026-11-05T02:00:00.000Z',
+        'recordedAt': '2026-11-05T03:00:00.000Z',
+        'recordedAtManuallySet': false,
+        'distanceKm': 1.0,
+        'durationMs': 0,
+        'caloriesKcal': 1.0,
+        'averageSpeedKmh': 1.0,
+        'healthWorkoutId': null,
+      },
+    ];
+    expect(
+      () => CogsavCodec.decode(zipWith(formatVersion: 1, data: data)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
+
+  test('不正な運動履歴 ID は CogsavCorruptException', () {
+    final data = emptyDataPayload();
+    data['exerciseHistories'] = [
+      {
+        'id': '../escape',
+        'savedAt': '2026-11-05T00:00:00.000Z',
+        'creationStartedAt': '2026-11-05T01:00:00.000Z',
+        'capturedAt': '2026-11-05T02:00:00.000Z',
+        'recordedAt': '2026-11-05T03:00:00.000Z',
+        'recordedAtManuallySet': false,
+        'distanceKm': 1.0,
+        'durationMs': 60000,
+        'caloriesKcal': 1.0,
+        'averageSpeedKmh': 1.0,
+        'healthWorkoutId': null,
+      },
+    ];
+    expect(
+      () => CogsavCodec.decode(zipWith(formatVersion: 1, data: data)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
 }

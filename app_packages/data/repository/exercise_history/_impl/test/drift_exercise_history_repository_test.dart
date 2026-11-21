@@ -705,6 +705,47 @@ void main() {
       isFalse,
     );
   });
+
+  test('replaceAllPreservingIds の duration 0 は既存を消さない', () async {
+    final old = await repo.create(
+      creationStartedAt: DateTime.utc(2026, 11, 1),
+      capturedAt: DateTime.utc(2026, 11, 1),
+      recordedAt: DateTime.utc(2026, 11, 1),
+      recordedAtManuallySet: false,
+      distanceKm: 1,
+      duration: const Duration(minutes: 1),
+      caloriesKcal: 1,
+      averageSpeedKmh: 1,
+      healthWorkoutId: null,
+      photoBytes: Uint8List.fromList([1]),
+    );
+
+    expect(
+      () => repo.replaceAllPreservingIds([
+        ImportedExerciseHistoryEntry(
+          history: ExerciseHistory(
+            id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+            savedAt: DateTime.utc(2026, 10, 1),
+            creationStartedAt: DateTime.utc(2026, 10, 1),
+            capturedAt: DateTime.utc(2026, 10, 1),
+            recordedAt: DateTime.utc(2026, 10, 1),
+            recordedAtManuallySet: false,
+            distanceKm: 1,
+            duration: Duration.zero,
+            caloriesKcal: 1,
+            averageSpeedKmh: 1,
+            photoRelativePath: 'exercise_histories/cccccccc-cccc-4ccc-8ccc-cccccccccccc/meter.jpg',
+            healthWorkoutId: null,
+          ),
+          photoBytes: Uint8List.fromList([2]),
+        ),
+      ]),
+      throwsA(isA<ArgumentError>()),
+    );
+
+    expect(await repo.findById(old.id), isNotNull);
+    expect(await repo.readPhotoBytes(old.id), Uint8List.fromList([1]));
+  });
 }
 
 /// `commitStaging` を常に [StateError] で失敗させる写真ストア。

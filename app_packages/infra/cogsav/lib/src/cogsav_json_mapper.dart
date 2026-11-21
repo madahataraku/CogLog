@@ -153,12 +153,23 @@ abstract final class CogsavJsonMapper {
     };
   }
 
+  static final RegExp _historyId = RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+  );
+
   static ExerciseHistory _decodeHistory(Object? raw) {
     final map = _asMap(raw, field: 'exerciseHistories[]');
     final id = _requireString(map, 'id');
+    if (!_historyId.hasMatch(id)) {
+      throw CogsavCorruptException('運動履歴 ID が UUID でない: $id');
+    }
     final durationMs = _requireInt(map, 'durationMs');
     if (durationMs < 0) {
       throw const CogsavCorruptException('durationMs が負');
+    }
+    final duration = Duration(milliseconds: durationMs);
+    if (duration.inSeconds == 0) {
+      throw const CogsavCorruptException('durationMs が 0 秒相当');
     }
     return ExerciseHistory(
       id: id,
@@ -180,7 +191,7 @@ abstract final class CogsavJsonMapper {
       ),
       recordedAtManuallySet: _requireBool(map, 'recordedAtManuallySet'),
       distanceKm: _requireDouble(map, 'distanceKm'),
-      duration: Duration(milliseconds: durationMs),
+      duration: duration,
       caloriesKcal: _requireDouble(map, 'caloriesKcal'),
       averageSpeedKmh: _requireDouble(map, 'averageSpeedKmh'),
       photoRelativePath: 'exercise_histories/$id/meter.jpg',
@@ -363,9 +374,6 @@ abstract final class CogsavJsonMapper {
     final value = raw[key];
     if (value is int) {
       return value;
-    }
-    if (value is num) {
-      return value.toInt();
     }
     throw CogsavCorruptException('$key が整数でない');
   }

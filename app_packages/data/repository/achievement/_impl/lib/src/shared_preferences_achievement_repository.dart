@@ -103,6 +103,27 @@ final class SharedPreferencesAchievementRepository
     }
   }
 
+  /// 最終閲覧日時キーを削除する。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.clearLastViewedAt();
+  /// ```
+  @override
+  Future<void> clearLastViewedAt() async {
+    var removed = false;
+    try {
+      removed = await _preferences.remove(_lastViewedAtKey);
+    } on Object {
+      await _preferences.reload();
+      rethrow;
+    }
+    if (!removed && _preferences.containsKey(_lastViewedAtKey)) {
+      await _preferences.reload();
+      throw StateError('$_lastViewedAtKey を削除できなかった。');
+    }
+  }
+
   /// 未所持の id だけ足して書き戻す。既存の獲得日時は維持する。
   ///
   /// Example:

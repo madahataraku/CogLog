@@ -145,18 +145,24 @@ final class MemoryExerciseHistoryRepository
   Future<void> replaceAllPreservingIds(
     List<ImportedExerciseHistoryEntry> entries,
   ) async {
-    _items.clear();
-    _photos.clear();
+    for (final entry in entries) {
+      if (entry.history.duration.inSeconds == 0) {
+        throw ArgumentError.value(
+          entry.history.duration,
+          'duration',
+          '0 では保存できない',
+        );
+      }
+    }
+    final nextItems = <ExerciseHistory>[];
+    final nextPhotos = <String, Uint8List>{};
     for (final entry in entries) {
       final history = entry.history;
-      if (history.duration.inSeconds == 0) {
-        throw ArgumentError.value(history.duration, 'duration', '0 では保存できない');
-      }
       final photoBytes = entry.photoBytes;
       if (photoBytes != null) {
-        _photos[history.id] = Uint8List.fromList(photoBytes);
+        nextPhotos[history.id] = Uint8List.fromList(photoBytes);
       }
-      _items.add(
+      nextItems.add(
         ExerciseHistory(
           id: history.id,
           savedAt: history.savedAt.toUtc(),
@@ -173,6 +179,12 @@ final class MemoryExerciseHistoryRepository
         ),
       );
     }
+    _items
+      ..clear()
+      ..addAll(nextItems);
+    _photos
+      ..clear()
+      ..addAll(nextPhotos);
   }
 
   /// 新規作成する。運動時間 0 は [ArgumentError]。

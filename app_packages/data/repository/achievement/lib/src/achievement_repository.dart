@@ -57,6 +57,14 @@ abstract interface class AchievementRepository {
   /// repository.writeLastViewedAt(DateTime.utc(2026, 11, 11));
   /// ```
   Future<void> writeLastViewedAt(DateTime viewedAt);
+
+  /// 最終閲覧日時を未設定に戻す（インポートで null を反映するとき用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// repository.clearLastViewedAt();
+  /// ```
+  Future<void> clearLastViewedAt();
 }
 
 /// アチーブメント Repository の注入点。未接続のときは失敗する。

@@ -127,6 +127,18 @@ void main() {
     expect(await repository.readLastViewedAt(), viewedAt);
   });
 
+  test('clearLastViewedAt で未設定に戻せる', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = SharedPreferencesAchievementRepository(
+      await SharedPreferences.getInstance(),
+    );
+    await repository.writeLastViewedAt(DateTime.utc(2026, 11, 11, 9));
+
+    await repository.clearLastViewedAt();
+
+    expect(await repository.readLastViewedAt(), isNull);
+  });
+
   test('最終閲覧日時の破損文字は null', () async {
     SharedPreferences.setMockInitialValues({
       'achievement_last_viewed_at': 'not-a-date',

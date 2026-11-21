@@ -175,6 +175,9 @@ final class _ThrowingAchievementRepository implements AchievementRepository {
 
   @override
   Future<void> writeLastViewedAt(DateTime viewedAt) async {}
+
+  @override
+  Future<void> clearLastViewedAt() async {}
 }
 
 /// [list] で必ず失敗する。
