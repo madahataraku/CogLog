@@ -11,19 +11,27 @@ import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.da
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import 'delegate/meter_capture_state_to_entity_delegate.dart';
 import 'delegate/on_acknowledge_model_download_guidance_delegate.dart';
+import 'delegate/on_acknowledge_tutorial_camera_delegate.dart';
+import 'delegate/on_acknowledge_tutorial_meter_edit_delegate.dart';
 import 'delegate/on_apply_camera_status_delegate.dart';
 import 'delegate/on_back_to_step1_delegate.dart';
 import 'delegate/on_cancel_meter_reading_delegate.dart';
 import 'delegate/on_capture_photo_delegate.dart';
+import 'delegate/on_dismiss_tutorial_camera_delegate.dart';
+import 'delegate/on_dismiss_tutorial_meter_edit_delegate.dart';
+import 'delegate/on_evaluate_tutorial_camera_delegate.dart';
+import 'delegate/on_evaluate_tutorial_meter_edit_delegate.dart';
 import 'delegate/on_field_changed_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
 import 'delegate/on_pick_library_photo_delegate.dart';
 import 'delegate/on_prepare_model_download_guidance_delegate.dart';
 import 'delegate/on_save_meter_capture_delegate.dart';
+import 'delegate/on_suppress_tutorial_for_reading_delegate.dart';
 import 'entity/meter_capture_screen_entity.dart';
 import 'state/meter_capture_screen_state.dart';
 
@@ -63,6 +71,13 @@ final class MeterCaptureScreenViewModel {
           PrepareOnDeviceLlmModelUsecase.provider,
         ),
         guidanceSession: ref.watch(ModelDownloadGuidanceProviders.session),
+        evaluateTutorialContextUsecase: ref.watch(
+          EvaluateTutorialContextUsecase.provider,
+        ),
+        markTutorialContextSeenUsecase: ref.watch(
+          MarkTutorialContextSeenUsecase.provider,
+        ),
+        tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const MeterCaptureStateToEntityDelegate(),
       );
@@ -87,6 +102,9 @@ final class MeterCaptureScreenViewModel {
       EvaluateOnDeviceLlmGuidanceUsecase.provider,
       PrepareOnDeviceLlmModelUsecase.provider,
       ModelDownloadGuidanceProviders.session,
+      EvaluateTutorialContextUsecase.provider,
+      MarkTutorialContextSeenUsecase.provider,
+      tutorialRuntimeSessionProvider,
       screenNavigationProvider,
     ],
   );
@@ -127,6 +145,18 @@ final class MeterCaptureScreenViewModel {
   @visibleForTesting
   final OnDeviceLlmGuidanceSession guidanceSession;
 
+  /// 文脈チュートリアルの表示要否。
+  @visibleForTesting
+  final EvaluateTutorialContextUsecase evaluateTutorialContextUsecase;
+
+  /// 文脈表示済みの永続化。
+  @visibleForTesting
+  final MarkTutorialContextSeenUsecase markTutorialContextSeenUsecase;
+
+  /// プロセス内のチュートリアル実行状態。
+  @visibleForTesting
+  final TutorialRuntimeSession tutorialSession;
+
   /// ホームタブへの遷移。
   @visibleForTesting
   final ScreenNavigation navigation;
@@ -159,6 +189,9 @@ final class MeterCaptureScreenViewModel {
     required this.evaluateOnDeviceLlmGuidanceUsecase,
     required this.prepareOnDeviceLlmModelUsecase,
     required this.guidanceSession,
+    required this.evaluateTutorialContextUsecase,
+    required this.markTutorialContextSeenUsecase,
+    required this.tutorialSession,
     required this.navigation,
     required this.stateToEntity,
   });

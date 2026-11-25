@@ -2,6 +2,7 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 import '../viewmodel/state/trends_screen_state.dart';
@@ -107,10 +108,13 @@ class TrendsScreenBody extends ConsumerWidget {
                 child: Text(strings.screen_feature_trends_retry_load),
               ),
             Expanded(
-              child: TrendsChart(
-                loading: entity.loading,
-                buckets: screenState.buckets,
-                series: entity.visibleSeries,
+              child: CoachMarkTarget(
+                id: CoachMarkTargetId.trendsChart,
+                child: TrendsChart(
+                  loading: entity.loading,
+                  buckets: screenState.buckets,
+                  series: entity.visibleSeries,
+                ),
               ),
             ),
           ],

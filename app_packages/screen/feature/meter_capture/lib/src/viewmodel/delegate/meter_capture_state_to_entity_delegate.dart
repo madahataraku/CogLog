@@ -43,6 +43,8 @@ final class MeterCaptureStateToEntityDelegate {
       caloriesText: _optionalNumber(state.caloriesKcal),
       recordedAt: state.recordedAt,
       pendingModelDownloadGuidance: state.pendingModelDownloadGuidance,
+      pendingTutorialCamera: state.pendingTutorialCamera,
+      pendingTutorialMeterEdit: state.pendingTutorialMeterEdit,
       showReadSuccessMessage: state.showReadSuccessMessage,
       showReadCautionMessage: state.showReadCautionMessage,
       showHandEntryGuidance: state.showHandEntryGuidance,

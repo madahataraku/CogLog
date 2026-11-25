@@ -449,6 +449,10 @@
   "@screen_feature_app_settings_os_label": {
     "description": "端末OSの見出し"
   },
+  "screen_feature_app_settings_replay_tutorial_item": "Replay tutorial",
+  "@screen_feature_app_settings_replay_tutorial_item": {
+    "description": "チュートリアル再表示"
+  },
   "screen_feature_app_settings_title": "App settings",
   "@screen_feature_app_settings_title": {
     "description": "画面タイトル"
@@ -927,6 +931,14 @@
   "@screen_feature_exercise_history_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_exercise_history_tutorial_body": "Yellow stamps mark days you exercised. Tap a day to review, edit, or delete.",
+  "@screen_feature_exercise_history_tutorial_body": {
+    "description": "段階8本文"
+  },
+  "screen_feature_exercise_history_tutorial_title": "Exercise day stamps",
+  "@screen_feature_exercise_history_tutorial_title": {
+    "description": "段階8タイトル"
+  },
   "screen_feature_exercise_history_weekday_fri": "Fri",
   "@screen_feature_exercise_history_weekday_fri": {
     "description": "カレンダー曜日（金曜）"
@@ -1189,6 +1201,22 @@
   "@screen_feature_meter_capture_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_meter_capture_tutorial_camera_body": "Photograph the meter panel to read distance, duration, and calories. Health write permission may be requested when saving.",
+  "@screen_feature_meter_capture_tutorial_camera_body": {
+    "description": "段階5本文"
+  },
+  "screen_feature_meter_capture_tutorial_camera_title": "Photograph the meter",
+  "@screen_feature_meter_capture_tutorial_camera_title": {
+    "description": "段階5タイトル"
+  },
+  "screen_feature_meter_capture_tutorial_meter_edit_body": "Distance, duration, and calories are filled in automatically. Correct any mistakes by hand before saving.",
+  "@screen_feature_meter_capture_tutorial_meter_edit_body": {
+    "description": "段階6本文"
+  },
+  "screen_feature_meter_capture_tutorial_meter_edit_title": "Review the reading",
+  "@screen_feature_meter_capture_tutorial_meter_edit_title": {
+    "description": "段階6タイトル"
+  },
   "screen_feature_notification_settings_back_semantics": "Back",
   "@screen_feature_notification_settings_back_semantics": {
     "description": "戻るボタンの代替テキスト"
@@ -1450,6 +1478,46 @@
   "@screen_feature_top_today": {
     "description": "集計期間"
   },
+  "screen_feature_top_tutorial_achievement_body": "Open trophies here. A dot appears when you have new unlocks.",
+  "@screen_feature_top_tutorial_achievement_body": {
+    "description": "アチーブメント文脈本文"
+  },
+  "screen_feature_top_tutorial_achievement_title": "Achievements",
+  "@screen_feature_top_tutorial_achievement_title": {
+    "description": "アチーブメント文脈タイトル"
+  },
+  "screen_feature_top_tutorial_main_1_body": "You can check today, this week, and this month totals and progress toward your goals. Switch metrics as needed.",
+  "@screen_feature_top_tutorial_main_1_body": {
+    "description": "段階1本文"
+  },
+  "screen_feature_top_tutorial_main_1_title": "Getting around Home",
+  "@screen_feature_top_tutorial_main_1_title": {
+    "description": "段階1タイトル"
+  },
+  "screen_feature_top_tutorial_main_2_body": "Meter capture reads from photos. Trends relate exercise and body metrics. History lets you review and edit by day. Goals set daily targets and weekly exercise days.",
+  "@screen_feature_top_tutorial_main_2_body": {
+    "description": "段階2本文"
+  },
+  "screen_feature_top_tutorial_main_2_title": "What each tab is for",
+  "@screen_feature_top_tutorial_main_2_title": {
+    "description": "段階2タイトル"
+  },
+  "screen_feature_top_tutorial_main_3_body": "Setting daily duration, calories, and distance makes progress clearer. Save when you are done.",
+  "@screen_feature_top_tutorial_main_3_body": {
+    "description": "段階3本文"
+  },
+  "screen_feature_top_tutorial_main_3_title": "Set your goals",
+  "@screen_feature_top_tutorial_main_3_title": {
+    "description": "段階3タイトル"
+  },
+  "screen_feature_top_tutorial_main_4_body": "From the Meter tab, photograph the meter panel to read distance, duration, and calories.",
+  "@screen_feature_top_tutorial_main_4_body": {
+    "description": "段階4本文"
+  },
+  "screen_feature_top_tutorial_main_4_title": "Capture with Meter",
+  "@screen_feature_top_tutorial_main_4_title": {
+    "description": "段階4タイトル"
+  },
   "screen_feature_top_unset_prompt": "Set a daily goal in Goals",
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
@@ -1573,6 +1641,14 @@
   "@screen_feature_trends_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_trends_tutorial_body": "See how calories relate to body fat and more on the chart. Body fat and weight need Health read access.",
+  "@screen_feature_trends_tutorial_body": {
+    "description": "段階7本文"
+  },
+  "screen_feature_trends_tutorial_title": "Exercise and body metrics",
+  "@screen_feature_trends_tutorial_title": {
+    "description": "段階7タイトル"
+  },
   "screen_feature_trends_unit_kcal": "kcal",
   "@screen_feature_trends_unit_kcal": {
     "description": "単位"
@@ -1592,6 +1668,18 @@
   "screen_feature_trends_unit_percent": "%",
   "@screen_feature_trends_unit_percent": {
     "description": "単位"
+  },
+  "view_coach_mark_close": "Close",
+  "@view_coach_mark_close": {
+    "description": "主ボタン（閉じる）"
+  },
+  "view_coach_mark_next": "Next",
+  "@view_coach_mark_next": {
+    "description": "主ボタン（次へ）"
+  },
+  "view_coach_mark_skip": "Skip",
+  "@view_coach_mark_skip": {
+    "description": "副ボタン（スキップ）"
   },
   "view_meter_reading_progress_cancel": "Cancel reading",
   "@view_meter_reading_progress_cancel": {

@@ -1,0 +1,26 @@
+name: view_coach_mark
+description: Shared coach mark overlay for tutorial highlights.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_hooks: any
+  flutter_riverpod: any
+  forui: any
+  foundation_resources: any
+  meta: any
+  monolith_localization_runtime: any
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  material_ui: any

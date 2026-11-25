@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 import '../viewmodel/meter_capture_screen_view_model.dart';
@@ -54,7 +55,12 @@ class MeterCaptureStep1View extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(child: _buildPreviewArea(context, viewModel)),
+        Expanded(
+          child: CoachMarkTarget(
+            id: CoachMarkTargetId.meterCameraArea,
+            child: _buildPreviewArea(context, viewModel),
+          ),
+        ),
         if (state.captureError)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),

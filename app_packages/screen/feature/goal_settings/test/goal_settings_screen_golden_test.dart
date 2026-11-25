@@ -11,6 +11,17 @@ import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
 import 'package:usecase_load_daily_goal_impl/usecase_load_daily_goal_impl.dart';
 import 'package:usecase_save_daily_goal/usecase_save_daily_goal.dart';
 import 'package:usecase_save_daily_goal_impl/usecase_save_daily_goal_impl.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
+
+final class _AdvanceTutorial implements AdvanceTutorialMainUsecase {
+  @override
+  Future<AdvanceTutorialMainResult> execute(
+    AdvanceTutorialMainRequest request,
+  ) async {
+    return const AdvanceTutorialMainResult.noop();
+  }
+}
 
 void main() {
   testWidgets('目標設定の未設定空状態 / ja / Android / light', (tester) async {
@@ -40,6 +51,15 @@ void main() {
             ),
             SaveDailyGoalUsecase.provider.overrideWith(
               (ref) => SaveDailyGoalUsecaseImpl(goals: goals),
+            ),
+            AdvanceTutorialMainUsecase.provider.overrideWith(
+              (ref) => _AdvanceTutorial(),
+            ),
+            tutorialRuntimeSessionProvider.overrideWith(
+              (ref) => TutorialRuntimeSession(),
+            ),
+            CoachMarkProviders.registry.overrideWith(
+              (ref) => CoachMarkRegistry(),
             ),
           ],
           child: MaterialApp(

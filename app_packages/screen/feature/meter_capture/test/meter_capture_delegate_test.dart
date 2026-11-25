@@ -13,7 +13,10 @@ import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_capture_p
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_evaluate_model_download_guidance_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_field_changed_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_read_meter_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_evaluate_tutorial_camera_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_evaluate_tutorial_meter_edit_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_save_meter_capture_delegate.dart';
+import 'package:screen_feature_meter_capture/src/viewmodel/delegate/on_suppress_tutorial_for_reading_delegate.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_camera_ui.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_screen_state.dart';
 import 'package:screen_feature_meter_capture/src/viewmodel/state/meter_capture_step.dart';
@@ -22,6 +25,7 @@ import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 final class _Obtain implements ObtainMeterPhotoUsecase {
@@ -939,5 +943,87 @@ void main() {
     expect(filled.showReadSuccessMessage, isTrue);
     expect(filled.showReadCautionMessage, isTrue);
     expect(filled.showHandEntryGuidance, isFalse);
+    expect(filled.pendingTutorialCamera, isFalse);
+    expect(filled.pendingTutorialMeterEdit, isFalse);
   });
+
+  test('撮影文脈は photo かつ非読み取りで pending を立てる', () async {
+    final state = MutableStateStream(MeterCaptureScreenState.initial);
+    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    await OnEvaluateTutorialCameraDelegate(
+      state: state,
+      evaluateContext: evaluate,
+    ).execute();
+    expect(evaluate.calls, 1);
+    expect(evaluate.lastKind, TutorialKind.camera);
+    expect(state.state.pendingTutorialCamera, isTrue);
+    await state.close();
+  });
+
+  test('撮影文脈は読み取り中は評価しない', () async {
+    final state = MutableStateStream(
+      MeterCaptureScreenState.initial.copyWith(reading: true),
+    );
+    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    await OnEvaluateTutorialCameraDelegate(
+      state: state,
+      evaluateContext: evaluate,
+    ).execute();
+    expect(evaluate.calls, 0);
+    expect(state.state.pendingTutorialCamera, isFalse);
+    await state.close();
+  });
+
+  test('結果編集文脈は edit かつ非読み取りで pending を立てる', () async {
+    final state = MutableStateStream(
+      MeterCaptureScreenState.initial.copyWith(step: MeterCaptureStep.edit),
+    );
+    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    await OnEvaluateTutorialMeterEditDelegate(
+      state: state,
+      evaluateContext: evaluate,
+    ).execute();
+    expect(evaluate.calls, 1);
+    expect(evaluate.lastKind, TutorialKind.meterEdit);
+    expect(state.state.pendingTutorialMeterEdit, isTrue);
+    await state.close();
+  });
+
+  test('読み取り抑止は pending を下ろし activeKind を消すが presented は残す', () async {
+    final session = TutorialRuntimeSession()
+      ..activeKind = TutorialKind.camera
+      ..markContextPresented(TutorialKind.camera);
+    final state = MutableStateStream(
+      MeterCaptureScreenState.initial.copyWith(
+        pendingTutorialCamera: true,
+        pendingTutorialMeterEdit: true,
+      ),
+    );
+    await OnSuppressTutorialForReadingDelegate(
+      state: state,
+      session: session,
+    ).execute();
+    expect(state.state.pendingTutorialCamera, isFalse);
+    expect(state.state.pendingTutorialMeterEdit, isFalse);
+    expect(session.activeKind, isNull);
+    expect(session.hasContextPresentedThisProcess(TutorialKind.camera), isTrue);
+    await state.close();
+  });
+}
+
+final class _EvaluateTutorialContext implements EvaluateTutorialContextUsecase {
+  _EvaluateTutorialContext({this.shouldShow = false});
+
+  final bool shouldShow;
+  var calls = 0;
+  TutorialKind? lastKind;
+
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async {
+    calls += 1;
+    lastKind = request.kind;
+    return EvaluateTutorialContextResult(shouldShow: shouldShow);
+  }
 }

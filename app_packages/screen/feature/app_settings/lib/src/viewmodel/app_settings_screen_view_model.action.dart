@@ -36,6 +36,20 @@ extension AppSettingsScreenViewModelActions on AppSettingsScreenViewModel {
     OnOpenNotificationSettingsDelegate(navigation: navigation).execute();
   }
 
+  /// チュートリアルを再表示する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onReplayTutorial();
+  /// ```
+  Future<void> onReplayTutorial() {
+    return OnReplayTutorialDelegate(
+      navigation: navigation,
+      resetUsecase: resetTutorialProgressUsecase,
+      session: tutorialSession,
+    ).execute();
+  }
+
   /// データ管理画面を開く。
   ///
   /// Example:

@@ -5,6 +5,7 @@ import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
+import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:infra_user_file/infra_user_file.dart';
 import 'package:usecase_export_app_data/usecase_export_app_data.dart';
@@ -18,6 +19,7 @@ import 'package:usecase_export_app_data/usecase_export_app_data.dart';
 ///   goals: goals,
 ///   notifications: notifications,
 ///   achievements: achievements,
+///   tutorial: tutorial,
 ///   userFile: userFile,
 /// );
 /// ```
@@ -33,6 +35,7 @@ final class ExportAppDataUsecaseImpl implements ExportAppDataUsecase {
   ///   goals: goals,
   ///   notifications: notifications,
   ///   achievements: achievements,
+  ///   tutorial: tutorial,
   ///   userFile: userFile,
   /// );
   /// ```
@@ -41,6 +44,7 @@ final class ExportAppDataUsecaseImpl implements ExportAppDataUsecase {
     required this.goals,
     required this.notifications,
     required this.achievements,
+    required this.tutorial,
     required this.userFile,
     this.clock,
   });
@@ -56,6 +60,9 @@ final class ExportAppDataUsecaseImpl implements ExportAppDataUsecase {
 
   /// アチーブメント。
   final AchievementRepository achievements;
+
+  /// チュートリアル進捗。
+  final TutorialRepository tutorial;
 
   /// 利用者ファイルの保存。
   final UserFileGateway userFile;
@@ -90,6 +97,7 @@ final class ExportAppDataUsecaseImpl implements ExportAppDataUsecase {
       final notificationSettings = await notifications.read();
       final unlocks = await achievements.readUnlocks();
       final lastViewed = await achievements.readLastViewedAt();
+      final tutorialProgress = await tutorial.read();
 
       yield const ExportAppDataProgress(fraction: 0.5);
       final resized = <String, Uint8List>{};
@@ -106,6 +114,7 @@ final class ExportAppDataUsecaseImpl implements ExportAppDataUsecase {
         notificationSettings: notificationSettings,
         achievementUnlocks: unlocks,
         achievementLastViewedAt: lastViewed,
+        tutorial: tutorialProgress,
         photos: resized,
       );
       final bytes = CogsavCodec.encode(document);

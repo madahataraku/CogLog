@@ -20,6 +20,7 @@ final class ExerciseHistoryScreenState {
     required this.loading,
     required this.loadError,
     required this.reloadGeneration,
+    this.pendingTutorial = false,
   });
 
   /// 指定月の未読込状態。
@@ -58,6 +59,9 @@ final class ExerciseHistoryScreenState {
   /// 競合する再取得を捨てるための世代。
   final int reloadGeneration;
 
+  /// 運動履歴文脈コーチマーク（段階8）を表示予約しているとき true。
+  final bool pendingTutorial;
+
   /// 一部だけ差し替えた新しい状態を返す。
   ///
   /// Example:
@@ -72,6 +76,7 @@ final class ExerciseHistoryScreenState {
     Object? loadError,
     bool clearLoadError = false,
     int? reloadGeneration,
+    bool? pendingTutorial,
   }) => ExerciseHistoryScreenState(
     year: year ?? this.year,
     month: month ?? this.month,
@@ -79,5 +84,6 @@ final class ExerciseHistoryScreenState {
     loading: loading ?? this.loading,
     loadError: clearLoadError ? null : (loadError ?? this.loadError),
     reloadGeneration: reloadGeneration ?? this.reloadGeneration,
+    pendingTutorial: pendingTutorial ?? this.pendingTutorial,
   );
 }

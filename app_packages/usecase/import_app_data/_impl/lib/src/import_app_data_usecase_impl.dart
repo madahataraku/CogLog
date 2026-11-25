@@ -5,11 +5,13 @@ import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
+import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:infra_local_notification/infra_local_notification.dart';
 import 'package:infra_user_file/infra_user_file.dart';
 import 'package:usecase_import_app_data/usecase_import_app_data.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import 'import_app_data_error_mapper.dart';
 import 'import_backup_store.dart';
@@ -23,14 +25,19 @@ import 'import_backup_store.dart';
 ///   goals: goals,
 ///   notifications: notifications,
 ///   achievements: achievements,
+///   tutorial: tutorial,
 ///   userFile: userFile,
 ///   localNotifications: localNotifications,
 ///   sync: sync,
 ///   backupStore: backupStore,
+///   tutorialSession: tutorialSession,
 /// );
 /// ```
 final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
   /// 依存を注入して作る。
+  ///
+  /// [tutorialSession] は tutorial キー適用で `mainCompleted==false` のとき
+  /// 同一プロセスのメイン再自動を抑止する（D8）。
   ///
   /// Example:
   /// ```dart
@@ -39,10 +46,12 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
   ///   goals: goals,
   ///   notifications: notifications,
   ///   achievements: achievements,
+  ///   tutorial: tutorial,
   ///   userFile: userFile,
   ///   localNotifications: localNotifications,
   ///   sync: sync,
   ///   backupStore: backupStore,
+  ///   tutorialSession: tutorialSession,
   /// );
   /// ```
   const ImportAppDataUsecaseImpl({
@@ -50,10 +59,12 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
     required this.goals,
     required this.notifications,
     required this.achievements,
+    required this.tutorial,
     required this.userFile,
     required this.localNotifications,
     required this.sync,
     required this.backupStore,
+    required this.tutorialSession,
     this.clock,
   });
 
@@ -69,6 +80,9 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
   /// アチーブメント。
   final AchievementRepository achievements;
 
+  /// チュートリアル進捗。
+  final TutorialRepository tutorial;
+
   /// 利用者ファイルの選択。
   final UserFileGateway userFile;
 
@@ -80,6 +94,9 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
 
   /// 中断対策のバックアップ。
   final ImportBackupStore backupStore;
+
+  /// プロセス内のチュートリアル実行状態（D8 の再自動抑止）。
+  final TutorialRuntimeSession tutorialSession;
 
   /// 同期リクエストの時刻。省略時は [DateTime.now]。
   final DateTime Function()? clock;
@@ -154,6 +171,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
             goals: goals,
             notifications: notifications,
             achievements: achievements,
+            tutorial: tutorial,
           );
           backupCreated = true;
           if (cancelled) {
@@ -167,6 +185,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
             goals: goals,
             notifications: notifications,
             achievements: achievements,
+            tutorial: tutorial,
             clearHealthWorkoutId: true,
           );
           if (cancelled) {
@@ -176,6 +195,12 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
           // コミット点: バックアップを消したらデータは確定。
           await backupStore.clear();
           committed = true;
+          // D8: tutorial キーありかつ mainCompleted==false なら同一プロセス再自動禁止。
+          // キー欠落で Repository を触らない旧形式では session を変えない。
+          final importedTutorial = document.tutorial;
+          if (importedTutorial != null && !importedTutorial.mainCompleted) {
+            tutorialSession.suppressMainAutoStartThisProcess = true;
+          }
           _addEvent(controller, const ImportAppDataProgress(fraction: 0.85));
 
           // 以降はコミット後。失敗してもインポート成功を返す。
@@ -241,6 +266,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
         goals: goals,
         notifications: notifications,
         achievements: achievements,
+        tutorial: tutorial,
       );
       await backupStore.clear();
     } on Object {

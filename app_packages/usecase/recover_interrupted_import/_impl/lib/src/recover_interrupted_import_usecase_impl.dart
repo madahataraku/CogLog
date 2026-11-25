@@ -2,6 +2,7 @@ import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
+import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:usecase_import_app_data_impl/usecase_import_app_data_impl.dart';
 import 'package:usecase_recover_interrupted_import/usecase_recover_interrupted_import.dart';
 
@@ -15,6 +16,7 @@ import 'package:usecase_recover_interrupted_import/usecase_recover_interrupted_i
 ///   goals: goals,
 ///   notifications: notifications,
 ///   achievements: achievements,
+///   tutorial: tutorial,
 /// );
 /// ```
 final class RecoverInterruptedImportUsecaseImpl
@@ -29,6 +31,7 @@ final class RecoverInterruptedImportUsecaseImpl
   ///   goals: goals,
   ///   notifications: notifications,
   ///   achievements: achievements,
+  ///   tutorial: tutorial,
   /// );
   /// ```
   const RecoverInterruptedImportUsecaseImpl({
@@ -37,6 +40,7 @@ final class RecoverInterruptedImportUsecaseImpl
     required this.goals,
     required this.notifications,
     required this.achievements,
+    required this.tutorial,
   });
 
   /// バックアップ格納。
@@ -53,6 +57,9 @@ final class RecoverInterruptedImportUsecaseImpl
 
   /// アチーブメント。
   final AchievementRepository achievements;
+
+  /// チュートリアル進捗。
+  final TutorialRepository tutorial;
 
   /// marker 無しは noop。完全 snapshot なら復元。不完全なら破棄。
   ///
@@ -77,6 +84,7 @@ final class RecoverInterruptedImportUsecaseImpl
         goals: goals,
         notifications: notifications,
         achievements: achievements,
+        tutorial: tutorial,
       );
       await backupStore.clear();
       return RecoverInterruptedImportResult.restored;

@@ -304,4 +304,26 @@ final class GoRouterScreenNavigation implements ScreenNavigation {
   void goToHomeTab() {
     _shell?.goBranch(0, initialLocation: true);
   }
+
+  /// 目標設定タブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToGoalSettingsTab();
+  /// ```
+  @override
+  void goToGoalSettingsTab() {
+    _shell?.goBranch(4, initialLocation: true);
+  }
+
+  /// メーター記録タブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToMeterCaptureTab();
+  /// ```
+  @override
+  void goToMeterCaptureTab() {
+    _shell?.goBranch(1, initialLocation: true);
+  }
 }

@@ -1,0 +1,20 @@
+name: usecase_tutorial_impl
+description: Tutorial usecase implementations.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_tutorial: any
+  domain_daily_goal: any
+  domain_tutorial: any
+  usecase_load_daily_goal: any
+  usecase_tutorial: any
+
+dev_dependencies:
+  data_repository_tutorial_testing: any
+  flutter_lints: any
+  test: any

@@ -103,6 +103,14 @@ mixin class L10nStringsMixin {
   String get screen_feature_trends_title =>
       LocalizeStringDelegate.get('screen_feature_trends_title');
 
+  /// 段階7本文
+  String get screen_feature_trends_tutorial_body =>
+      LocalizeStringDelegate.get('screen_feature_trends_tutorial_body');
+
+  /// 段階7タイトル
+  String get screen_feature_trends_tutorial_title =>
+      LocalizeStringDelegate.get('screen_feature_trends_tutorial_title');
+
   /// 単位
   String get screen_feature_trends_unit_kcal =>
       LocalizeStringDelegate.get('screen_feature_trends_unit_kcal');

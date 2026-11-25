@@ -45,6 +45,7 @@ final class TrendsScreenState {
     required this.exerciseSeries,
     required this.bodySeries,
     this.reloadGeneration = 0,
+    this.pendingTutorial = false,
   });
 
   /// 初期は過去 30 日・カロリー×体脂肪率・読込中。
@@ -95,6 +96,9 @@ final class TrendsScreenState {
   /// 再取得の世代。新しい読込開始のたびに増やす。
   final int reloadGeneration;
 
+  /// 推移文脈コーチマーク（段階7）を表示予約しているとき true。
+  final bool pendingTutorial;
+
   /// 指定したフィールドだけ差し替える。
   ///
   /// Example:
@@ -114,6 +118,7 @@ final class TrendsScreenState {
     Map<TrendsMetricKind, TrendsVisibleSeries>? exerciseSeries,
     Map<TrendsMetricKind, TrendsVisibleSeries>? bodySeries,
     int? reloadGeneration,
+    bool? pendingTutorial,
   }) => TrendsScreenState(
     period: period ?? this.period,
     comparison: comparison ?? this.comparison,
@@ -129,5 +134,6 @@ final class TrendsScreenState {
     exerciseSeries: exerciseSeries ?? this.exerciseSeries,
     bodySeries: bodySeries ?? this.bodySeries,
     reloadGeneration: reloadGeneration ?? this.reloadGeneration,
+    pendingTutorial: pendingTutorial ?? this.pendingTutorial,
   );
 }

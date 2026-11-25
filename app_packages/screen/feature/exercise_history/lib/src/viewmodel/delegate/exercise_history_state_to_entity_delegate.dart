@@ -83,6 +83,7 @@ final class ExerciseHistoryStateToEntityDelegate {
           ? strings.screen_feature_exercise_history_error
           : null,
       canRetry: showError,
+      pendingTutorial: state.pendingTutorial,
     );
   }
 

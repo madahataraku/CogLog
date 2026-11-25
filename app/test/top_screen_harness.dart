@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:data_database/data_database.dart';
@@ -22,6 +23,16 @@ import 'package:app/main.dart';
 
 const _advisorTones = ['fun', 'confused', 'happy', 'realized'];
 
+/// ナビ／指標テストでコーチマークが操作を遮らないよう、進捗を完了済みにする。
+const _completedTutorialProgressJson = {
+  'mainCompleted': true,
+  'cameraContextSeen': true,
+  'meterEditContextSeen': true,
+  'trendsContextSeen': true,
+  'historyContextSeen': true,
+  'achievementContextSeen': true,
+};
+
 /// トップ画面を、テスト用の履歴付きで起動する。
 Future<ScreenGraph> pumpTopScreen(
   WidgetTester tester, {
@@ -30,6 +41,7 @@ Future<ScreenGraph> pumpTopScreen(
   LoadTrendsUsecase? loadTrends,
 }) async {
   final stored = preferences ?? await _newPreferences();
+  await _seedCompletedTutorialProgress(stored);
   final documents = Directory.systemTemp.createTempSync('coglog_test_');
   addTearDown(() {
     if (documents.existsSync()) {
@@ -50,7 +62,7 @@ Future<ScreenGraph> pumpTopScreen(
         ),
         // Widget テストの既定 OS は Android。本番 DI のオンデバイス LLM は
         // readiness がチャネル待ちで止まるため、固定 Fake に差し替える。
-        // メーター写真も実カメラ初期化で progress が回り続けるため Fake にする。
+        // メーター撮影も実カメラ初期化で progress が回り続けるため Fake にする。
         // ヘルス読取もプラグイン未実装のため Unavailable にする。
         ...infraOverrides(
           onDeviceLlm: FakeOnDeviceLlm(available: false),
@@ -75,6 +87,14 @@ Future<ScreenGraph> pumpTopScreen(
   return screens;
 }
 
+/// SharedPreferences にチュートリアル完了 JSON を書く。
+Future<void> _seedCompletedTutorialProgress(SharedPreferences prefs) async {
+  await prefs.setString(
+    'tutorial_progress',
+    jsonEncode(_completedTutorialProgressJson),
+  );
+}
+
 /// アドバイザー PNG を先に読み、Golden のレースを防ぐ。
 Future<void> _precacheAdvisorImages(WidgetTester tester) async {
   final context = tester.element(find.byType(Application));
@@ -89,7 +109,9 @@ Future<void> _precacheAdvisorImages(WidgetTester tester) async {
 }
 
 Future<SharedPreferences> _newPreferences() async {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues({
+    'tutorial_progress': jsonEncode(_completedTutorialProgressJson),
+  });
   return SharedPreferences.getInstance();
 }
 

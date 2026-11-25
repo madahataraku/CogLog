@@ -50,3 +50,13 @@ advisor_semantics,アドバイザー,Advisor,アドバイスキャラクター�
 achievements_semantics,アチーブメント,Achievements,ホーム右上
 achievements_new_semantics,新規アチーブメントあり,New achievements available,ホーム trophy の新規ドット a11y
 settings_semantics,アプリ設定,App settings,ホーム右上の設定ボタンの代替テキスト
+tutorial_main_1_title,ホームの見かた,Getting around Home,段階1タイトル
+tutorial_main_1_body,本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。,"You can check today, this week, and this month totals and progress toward your goals. Switch metrics as needed.",段階1本文
+tutorial_main_2_title,各タブの役割,What each tab is for,段階2タイトル
+tutorial_main_2_body,メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。,Meter capture reads from photos. Trends relate exercise and body metrics. History lets you review and edit by day. Goals set daily targets and weekly exercise days.,段階2本文
+tutorial_main_3_title,目標を設定しましょう,Set your goals,段階3タイトル
+tutorial_main_3_body,一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。,"Setting daily duration, calories, and distance makes progress clearer. Save when you are done.",段階3本文
+tutorial_main_4_title,メーター記録で撮影,Capture with Meter,段階4タイトル
+tutorial_main_4_body,メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。,"From the Meter tab, photograph the meter panel to read distance, duration, and calories.",段階4本文
+tutorial_achievement_title,アチーブメント,Achievements,アチーブメント文脈タイトル
+tutorial_achievement_body,獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。,Open trophies here. A dot appears when you have new unlocks.,アチーブメント文脈本文

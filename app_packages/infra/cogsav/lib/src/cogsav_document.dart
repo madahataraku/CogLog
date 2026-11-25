@@ -4,10 +4,12 @@ import 'package:domain_achievement/domain_achievement.dart';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:domain_notification_settings/domain_notification_settings.dart';
+import 'package:domain_tutorial/domain_tutorial.dart';
 
 /// `.cogsav` 1 ファイル分の論理内容。
 ///
 /// 写真は [photos] に ID キーで持つ。キーが無い履歴は写真欠落として扱う。
+/// [tutorial] が null のときは decode 時にキーが無かったことを示す。
 ///
 /// Example:
 /// ```dart
@@ -20,11 +22,12 @@ import 'package:domain_notification_settings/domain_notification_settings.dart';
 ///   notificationSettings: NotificationSettings.initial,
 ///   achievementUnlocks: const [],
 ///   achievementLastViewedAt: null,
+///   tutorial: TutorialProgress.initial,
 ///   photos: const {},
 /// );
 /// ```
 final class CogsavDocument {
-  /// 版・日時・設定・履歴・写真をまとめる。
+  /// 版・日時・設定・履歴・チュートリアル・写真をまとめる。
   ///
   /// Example:
   /// ```dart
@@ -37,6 +40,7 @@ final class CogsavDocument {
   ///   notificationSettings: NotificationSettings.initial,
   ///   achievementUnlocks: const [],
   ///   achievementLastViewedAt: null,
+  ///   tutorial: TutorialProgress.initial,
   ///   photos: const {},
   /// );
   /// ```
@@ -49,6 +53,7 @@ final class CogsavDocument {
     required this.notificationSettings,
     required this.achievementUnlocks,
     required this.achievementLastViewedAt,
+    required this.tutorial,
     required this.photos,
   });
 
@@ -75,6 +80,9 @@ final class CogsavDocument {
 
   /// アチーブメント最終閲覧日時。未設定は null。
   final DateTime? achievementLastViewedAt;
+
+  /// チュートリアル進捗。キー欠落の decode のみ null。
+  final TutorialProgress? tutorial;
 
   /// 履歴 ID から JPEG バイト。欠落キーは写真なし。
   final Map<String, Uint8List> photos;

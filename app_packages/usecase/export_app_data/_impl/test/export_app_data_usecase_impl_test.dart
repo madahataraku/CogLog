@@ -6,9 +6,11 @@ import 'package:data_repository_achievement_testing/data_repository_achievement_
 import 'package:data_repository_daily_goal_testing/data_repository_daily_goal_testing.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:data_repository_notification_settings_testing/data_repository_notification_settings_testing.dart';
+import 'package:data_repository_tutorial_testing/data_repository_tutorial_testing.dart';
 import 'package:domain_achievement/domain_achievement.dart';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_notification_settings/domain_notification_settings.dart';
+import 'package:domain_tutorial/domain_tutorial.dart';
 import 'package:image/image.dart' as img;
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:infra_user_file_testing/infra_user_file_testing.dart';
@@ -31,12 +33,14 @@ void main() {
     MemoryDailyGoalRepository? goals,
     MemoryNotificationSettingsRepository? notifications,
     MemoryAchievementRepository? achievements,
+    MemoryTutorialRepository? tutorial,
   }) {
     return ExportAppDataUsecaseImpl(
       histories: histories,
       goals: goals ?? MemoryDailyGoalRepository(),
       notifications: notifications ?? MemoryNotificationSettingsRepository(),
       achievements: achievements ?? MemoryAchievementRepository(),
+      tutorial: tutorial ?? MemoryTutorialRepository(),
       userFile: userFile,
       clock: () => fixedNow,
     );
@@ -69,6 +73,10 @@ void main() {
       ),
     ]);
     await achievements.writeLastViewedAt(DateTime.utc(2026, 11, 11));
+    final tutorial = MemoryTutorialRepository();
+    await tutorial.write(
+      TutorialProgress.initial.copyWith(mainCompleted: true),
+    );
 
     final userFile = FakeUserFileGateway(
       saveBytesResult: Uri.parse('file:///tmp/out.cogsav'),
@@ -79,6 +87,7 @@ void main() {
       goals: goals,
       notifications: notifications,
       achievements: achievements,
+      tutorial: tutorial,
     ).execute().toList();
 
     expect(events.whereType<ExportAppDataProgress>(), isNotEmpty);
@@ -100,6 +109,7 @@ void main() {
     expect(decoded.notificationSettings.enabled, isTrue);
     expect(decoded.achievementUnlocks, hasLength(1));
     expect(decoded.achievementLastViewedAt, DateTime.utc(2026, 11, 11));
+    expect(decoded.tutorial?.mainCompleted, isTrue);
     expect(decoded.photos.containsKey(created.id), isTrue);
   });
 
