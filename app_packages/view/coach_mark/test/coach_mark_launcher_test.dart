@@ -75,6 +75,94 @@ void main() {
   });
 
   // テスト対象:
+  // CoachMarkLauncher.show / CoachMarkBubble 主ボタン
+  //
+  // テスト内容:
+  // 主ボタンで閉じると primary。
+  testWidgets('主ボタンは primary', (tester) async {
+    final registry = CoachMarkRegistry();
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      _wrap(
+        registry: registry,
+        child: Builder(
+          builder: (context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final future = CoachMarkLauncher.show(
+      savedContext,
+      step: const CoachMarkStep(
+        targetId: CoachMarkTargetId.trendsChart,
+        title: '主',
+        body: '本文',
+        primaryLabel: '次へ',
+      ),
+    );
+    // 上流の遅延 insert と focus アニメのため、短い間隔で複数フレーム進める。
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('主'), findsOneWidget);
+    await tester.tap(find.text('次へ'));
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(await future, CoachMarkDismissReason.primary);
+    expect(find.text('主'), findsNothing);
+  });
+
+  // テスト対象:
+  // CoachMarkLauncher.show / CoachMarkBubble 副ボタン
+  //
+  // テスト内容:
+  // 副ボタンで閉じると secondary。
+  testWidgets('副ボタンは secondary', (tester) async {
+    final registry = CoachMarkRegistry();
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      _wrap(
+        registry: registry,
+        child: Builder(
+          builder: (context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final future = CoachMarkLauncher.show(
+      savedContext,
+      step: const CoachMarkStep(
+        targetId: CoachMarkTargetId.trendsChart,
+        title: '副',
+        body: '本文',
+        primaryLabel: '次へ',
+        secondaryLabel: 'スキップ',
+      ),
+    );
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('副'), findsOneWidget);
+    await tester.tap(find.text('スキップ'));
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(await future, CoachMarkDismissReason.secondary);
+    expect(find.text('副'), findsNothing);
+  });
+
+  // テスト対象:
   // CoachMarkLauncher.contentAlignFor
   //
   // テスト内容:
