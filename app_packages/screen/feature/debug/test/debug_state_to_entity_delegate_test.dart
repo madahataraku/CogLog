@@ -16,7 +16,7 @@ void main() {
     expect(entity.canGenerate, isNull);
     expect(entity.gemmaReadiness, '-');
     expect(entity.gemmaCanGenerate, isNull);
-    expect(entity.preferGemmaOverOsLlm, isFalse);
+    expect(entity.preferLfmVlOverOsLlm, isFalse);
     expect(entity.logLines, isEmpty);
   });
 
@@ -54,7 +54,7 @@ void main() {
             message: 'm',
           ),
         ],
-        preferGemmaOverOsLlm: true,
+        preferLfmVlOverOsLlm: true,
       ),
     );
     expect(entity.readiness, 'ready');
@@ -65,7 +65,7 @@ void main() {
     expect(entity.gemmaVisionBackend, 'cpu');
     expect(entity.gemmaCanGenerate, isTrue);
     expect(entity.gemmaProbeOutputLength, '2');
-    expect(entity.preferGemmaOverOsLlm, isTrue);
+    expect(entity.preferLfmVlOverOsLlm, isTrue);
     expect(entity.logLines.single, contains('t: m'));
   });
 
@@ -75,7 +75,7 @@ void main() {
         running: false,
         result: null,
         gemmaResult: null,
-        preferGemmaOverOsLlm: false,
+        preferLfmVlOverOsLlm: false,
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 1),
@@ -110,7 +110,7 @@ void main() {
         running: false,
         result: null,
         gemmaResult: null,
-        preferGemmaOverOsLlm: false,
+        preferLfmVlOverOsLlm: false,
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 0),
@@ -131,7 +131,7 @@ void main() {
         running: false,
         result: null,
         gemmaResult: null,
-        preferGemmaOverOsLlm: false,
+        preferLfmVlOverOsLlm: false,
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 0),

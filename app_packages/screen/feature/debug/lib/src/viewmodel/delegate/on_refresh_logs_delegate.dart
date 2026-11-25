@@ -38,7 +38,7 @@ final class OnRefreshLogsDelegate {
           result: current.result,
           gemmaResult: current.gemmaResult,
           logs: log.entries,
-          preferGemmaOverOsLlm: current.preferGemmaOverOsLlm,
+          preferLfmVlOverOsLlm: current.preferLfmVlOverOsLlm,
         ),
       );
     });

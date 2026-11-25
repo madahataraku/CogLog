@@ -8,31 +8,31 @@ void main() {
   test('オンにするとセッションと State が true', () async {
     final preference = MeterReadingEngineSessionPreference();
     final state = MutableStateStream(DebugScreenState.initial);
-    await OnTogglePreferGemmaDelegate(
+    await OnTogglePreferLfmVlDelegate(
       state: state,
       sessionPreference: preference,
     ).execute(true);
-    expect(preference.preferGemmaOverOsLlm, isTrue);
-    expect(state.state.preferGemmaOverOsLlm, isTrue);
+    expect(preference.preferLfmVlOverOsLlm, isTrue);
+    expect(state.state.preferLfmVlOverOsLlm, isTrue);
   });
 
   test('オフに戻すとセッションと State が false', () async {
     final preference = MeterReadingEngineSessionPreference()
-      ..preferGemmaOverOsLlm = true;
+      ..preferLfmVlOverOsLlm = true;
     final state = MutableStateStream(
       const DebugScreenState(
         running: false,
         result: null,
         gemmaResult: null,
         logs: [],
-        preferGemmaOverOsLlm: true,
+        preferLfmVlOverOsLlm: true,
       ),
     );
-    await OnTogglePreferGemmaDelegate(
+    await OnTogglePreferLfmVlDelegate(
       state: state,
       sessionPreference: preference,
     ).execute(false);
-    expect(preference.preferGemmaOverOsLlm, isFalse);
-    expect(state.state.preferGemmaOverOsLlm, isFalse);
+    expect(preference.preferLfmVlOverOsLlm, isFalse);
+    expect(state.state.preferLfmVlOverOsLlm, isFalse);
   });
 }

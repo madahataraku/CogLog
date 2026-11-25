@@ -9,7 +9,7 @@ import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.da
 /// DebugScreenState.initial;
 /// ```
 final class DebugScreenState {
-  /// 診断結果・実行中フラグ・ログ行・Gemma 優先を持つ。
+  /// 診断結果・実行中フラグ・ログ行・LFM VL 優先を持つ。
   ///
   /// Example:
   /// ```dart
@@ -18,7 +18,7 @@ final class DebugScreenState {
   ///   result: null,
   ///   gemmaResult: null,
   ///   logs: [],
-  ///   preferGemmaOverOsLlm: false,
+  ///   preferLfmVlOverOsLlm: false,
   /// );
   /// ```
   const DebugScreenState({
@@ -26,7 +26,7 @@ final class DebugScreenState {
     required this.result,
     required this.gemmaResult,
     required this.logs,
-    required this.preferGemmaOverOsLlm,
+    required this.preferLfmVlOverOsLlm,
   });
 
   /// 初期状態。
@@ -35,7 +35,7 @@ final class DebugScreenState {
     result: null,
     gemmaResult: null,
     logs: [],
-    preferGemmaOverOsLlm: false,
+    preferLfmVlOverOsLlm: false,
   );
 
   /// 診断実行中なら true。
@@ -51,5 +51,5 @@ final class DebugScreenState {
   final List<AppLogEntry> logs;
 
   /// 同一プロセス内で Gemma をメーター読み取りで優先するとき true。
-  final bool preferGemmaOverOsLlm;
+  final bool preferLfmVlOverOsLlm;
 }

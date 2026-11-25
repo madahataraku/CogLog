@@ -14,7 +14,7 @@ void main() {
   final photo = Uint8List.fromList([1]);
 
   FakeMeterReadingEngine unavailableGemma() => FakeMeterReadingEngine(
-    kind: MeterReadingEngineKind.gemmaE2b,
+    kind: MeterReadingEngineKind.lfmVl,
     available: false,
   );
 
@@ -225,7 +225,7 @@ void main() {
       ),
     );
     final gemmaEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.gemmaE2b,
+      kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(distanceKm: 99),
     );
 
@@ -243,14 +243,14 @@ void main() {
     expect(result.values.distanceKm, 5);
   });
 
-  test('preferGemma かつ Gemma available なら OS ready+vision でも Gemma', () async {
+  test('preferLfmVl かつ Gemma available なら OS ready+vision でも Gemma', () async {
     final log = AppLogStore();
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 5),
     );
     final gemmaEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.gemmaE2b,
+      kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(
         distanceKm: 8,
         duration: Duration(minutes: 25),
@@ -266,7 +266,7 @@ void main() {
       llmEngine: llmEngine,
       gemmaEngine: gemmaEngine,
       sessionPreference: MeterReadingEngineSessionPreference()
-        ..preferGemmaOverOsLlm = true,
+        ..preferLfmVlOverOsLlm = true,
       log: log,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
@@ -275,11 +275,11 @@ void main() {
     expect(result.values.distanceKm, 8);
     expect(
       log.entries.map((e) => e.message),
-      contains(contains('reason=debug_prefer_gemma')),
+      contains(contains('reason=debug_prefer_lfm_vl')),
     );
   });
 
-  test('preferGemma でも Gemma unavailable なら OS LLM', () async {
+  test('preferLfmVl でも Gemma unavailable なら OS LLM', () async {
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(
@@ -298,7 +298,7 @@ void main() {
       llmEngine: llmEngine,
       gemmaEngine: gemmaEngine,
       sessionPreference: MeterReadingEngineSessionPreference()
-        ..preferGemmaOverOsLlm = true,
+        ..preferLfmVlOverOsLlm = true,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
@@ -313,7 +313,7 @@ void main() {
       values: const MeterReadingValues(distanceKm: 1),
     );
     final gemmaEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.gemmaE2b,
+      kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(
         distanceKm: 3,
         duration: Duration(minutes: 20),
@@ -346,7 +346,7 @@ void main() {
       values: const MeterReadingValues(distanceKm: 1),
     );
     final gemmaEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.gemmaE2b,
+      kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(
         distanceKm: 7,
         duration: Duration(minutes: 40),
@@ -399,7 +399,7 @@ void main() {
       values: const MeterReadingValues(distanceKm: 1),
     );
     final gemmaEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.gemmaE2b,
+      kind: MeterReadingEngineKind.lfmVl,
       throwOnRead: true,
     );
 
@@ -424,7 +424,7 @@ void main() {
   test('AppLog に測定値・生文が無い', () async {
     final log = AppLogStore();
     final gemmaEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.gemmaE2b,
+      kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(
         distanceKm: 12.5,
         duration: Duration(minutes: 15),

@@ -47,7 +47,7 @@ final class DebugScreenViewModel {
             result: null,
             gemmaResult: null,
             logs: [],
-            preferGemmaOverOsLlm: sessionPreference.preferGemmaOverOsLlm,
+            preferLfmVlOverOsLlm: sessionPreference.preferLfmVlOverOsLlm,
           ),
         ),
         diagnoseUsecase: ref.watch(DiagnoseOnDeviceLlmUsecase.provider),
@@ -93,7 +93,7 @@ final class DebugScreenViewModel {
   @visibleForTesting
   final AppLogStore log;
 
-  /// セッション内の Gemma 優先設定。
+  /// セッション内の LFM VL 優先設定。
   @visibleForTesting
   final MeterReadingEngineSessionPreference sessionPreference;
 

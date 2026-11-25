@@ -9,7 +9,7 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 /// OS LLM ready+vision なら [llmEngine]、さもなければ [gemmaEngine] が available ならそれを試し、
 /// どちらも無ければ手打ちへ進む。
 ///
-/// [sessionPreference.preferGemmaOverOsLlm] が true かつ [gemmaEngine] が available のときは
+/// [sessionPreference.preferLfmVlOverOsLlm] が true かつ [gemmaEngine] が available のときは
 /// ready+vision でも [gemmaEngine] を選ぶ。
 ///
 /// 全体の上限は [timeout]（既定 60 秒）。
@@ -60,7 +60,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   /// デバッグ画面向けのプロセス内ログ。
   final AppLogStore log;
 
-  /// セッション内の Gemma 優先フラグ。永続化しない。
+  /// セッション内の LFM VL 優先フラグ。永続化しない。
   final MeterReadingEngineSessionPreference sessionPreference;
 
   /// 読み取り全体の上限。
@@ -149,7 +149,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     );
   }
 
-  /// [sessionPreference.preferGemmaOverOsLlm] かつ Gemma available なら [gemmaEngine]。
+  /// [sessionPreference.preferLfmVlOverOsLlm] かつ Gemma available なら [gemmaEngine]。
   /// さもなければ ready+vision なら [llmEngine]、さらにさもなければ Gemma available ならそれ。
   /// それ以外は null。
   ///
@@ -161,14 +161,14 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   Future<MeterReadingEngine?> _selectEngine() async {
     final readiness = await llm.readiness;
     final vision = await llm.supportsVision;
-    final preferGemma = sessionPreference.preferGemmaOverOsLlm;
-    if (preferGemma && await gemmaEngine.isAvailable) {
+    final preferLfmVl = sessionPreference.preferLfmVlOverOsLlm;
+    if (preferLfmVl && await gemmaEngine.isAvailable) {
       log.append(
         tag: 'meter.read',
         level: AppLogLevel.info,
         message:
             'select gemma kind=${gemmaEngine.kind.name}; '
-            'reason=debug_prefer_gemma; '
+            'reason=debug_prefer_lfm_vl; '
             'readiness=${readiness.name}; vision=$vision',
       );
       return gemmaEngine;
@@ -199,7 +199,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
       level: AppLogLevel.warn,
       message:
           'no engine; readiness=${readiness.name}; vision=$vision; '
-          'gemmaUnavailable; preferGemma=$preferGemma',
+          'gemmaUnavailable; preferLfmVl=$preferLfmVl',
     );
     return null;
   }
