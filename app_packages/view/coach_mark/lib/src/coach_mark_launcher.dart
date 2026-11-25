@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import 'coach_mark_bubble.dart';
@@ -38,9 +39,6 @@ final class CoachMarkLauncher {
   /// 表示中の完了待ち。
   static Completer<CoachMarkDismissReason>? _activeCompleter;
 
-  /// 段階3 用の OS 戻る待ちルート（ライブラリの disableBack とは別）。
-  static Route<void>? _systemBackRoute;
-
   /// 既存表示があれば先に破棄してから [step] を載せる。
   ///
   /// ルート [Overlay] へ載せる。画面から [Navigator] を直接呼ばない。
@@ -59,22 +57,27 @@ final class CoachMarkLauncher {
 
     final container = ProviderScope.containerOf(context);
     final registry = container.read(CoachMarkProviders.registry);
-    final key = registry.keyFor(step.targetId);
     final size = MediaQuery.sizeOf(context);
+    final hole = registry.rectFor(step.targetId, context);
+    // Overlay 上でも吹き出しがテーマを読めるよう、呼び出し側の FTheme を運ぶ。
+    final theme = context.theme;
 
     void complete(CoachMarkDismissReason reason) {
       _finishActive(reason);
     }
 
+    // keyTarget ではなく表示時点の矩形を渡す（root Overlay でも座標解決できる）。
+    final fallback = TargetPosition(
+      Size(size.width * 0.6, 48),
+      Offset(size.width * 0.2, size.height * 0.4),
+    );
+    final position = hole == null
+        ? fallback
+        : TargetPosition(hole.size, hole.topLeft);
+
     final target = TargetFocus(
       identify: step.targetId.name,
-      keyTarget: key,
-      targetPosition: key == null
-          ? TargetPosition(
-              Size(size.width * 0.6, 48),
-              Offset(size.width * 0.2, size.height * 0.4),
-            )
-          : null,
+      targetPosition: position,
       shape: ShapeLightFocus.RRect,
       radius: 8,
       paddingFocus: 4,
@@ -83,9 +86,12 @@ final class CoachMarkLauncher {
       enableTargetPassThrough: step.allowTargetInteraction,
       contents: [
         TargetContent(
-          align: ContentAlign.bottom,
+          align: contentAlignFor(hole: hole, screenSize: size),
           padding: EdgeInsets.zero,
-          child: CoachMarkBubble(step: step, onDismiss: complete),
+          child: FTheme(
+            data: theme,
+            child: CoachMarkBubble(step: step, onDismiss: complete),
+          ),
         ),
       ],
     );
@@ -98,8 +104,11 @@ final class CoachMarkLauncher {
       paddingFocus: 4,
       focusAnimationDuration: const Duration(milliseconds: 300),
       unFocusAnimationDuration: const Duration(milliseconds: 200),
-      // 段階3以外はライブラリ側で戻るを塞ぐ。段階3は自前ルートでスキップ扱い。
-      disableBackButton: step.blockSystemBack,
+      // PopScope で戻るを握る（モーダルルートは使わない）。
+      disableBackButton: true,
+      onSystemBack: step.blockSystemBack
+          ? null
+          : () => complete(CoachMarkDismissReason.systemBack),
       onFinish: () {
         // finish() 経由で外されたとき、未完了なら primary 相当として閉じる。
         final pending = _activeCompleter;
@@ -111,10 +120,6 @@ final class CoachMarkLauncher {
     );
     _active = tutorial;
     tutorial.show(context: context, rootOverlay: true);
-
-    if (!step.blockSystemBack) {
-      _pushSystemBackRoute(context, complete);
-    }
 
     return completer.future;
   }
@@ -129,7 +134,26 @@ final class CoachMarkLauncher {
     _finishActive(CoachMarkDismissReason.forced);
   }
 
-  /// 完了理由を確定し、オーバーレイと戻るルートを外す。
+  /// 穴が画面下半分なら上、さもなくば下に吹き出しを置く。
+  ///
+  /// Example:
+  /// ```dart
+  /// CoachMarkLauncher.contentAlignFor(hole: null, screenSize: Size.zero);
+  /// ```
+  @visibleForTesting
+  static ContentAlign contentAlignFor({
+    required Rect? hole,
+    required Size screenSize,
+  }) {
+    if (hole == null || screenSize.height <= 0) {
+      return ContentAlign.bottom;
+    }
+    return hole.center.dy > screenSize.height * 0.55
+        ? ContentAlign.top
+        : ContentAlign.bottom;
+  }
+
+  /// 完了理由を確定し、オーバーレイを外す。
   ///
   /// Example:
   /// ```dart
@@ -140,11 +164,8 @@ final class CoachMarkLauncher {
     final tutorial = _active;
     _activeCompleter = null;
     _active = null;
-    _removeSystemBackRoute();
-    if (tutorial != null && tutorial.isShowing) {
-      // onFinish 内で completer を触らないよう先に外す。
-      tutorial.removeOverlayEntry();
-    }
+    // 未挿入（postFrame 待ち）でもキャンセルして遅延挿入を止める。
+    tutorial?.removeOverlayEntry();
     if (completer != null && !completer.isCompleted) {
       completer.complete(reason);
     }
@@ -159,56 +180,5 @@ final class CoachMarkLauncher {
   static void _clearActiveRefs() {
     _active = null;
     _activeCompleter = null;
-    _removeSystemBackRoute();
-  }
-
-  /// 段階3 向けに OS 戻るを握り、[complete] へ [CoachMarkDismissReason.systemBack] を渡す。
-  ///
-  /// Example:
-  /// ```dart
-  /// _pushSystemBackRoute(context, complete);
-  /// ```
-  static void _pushSystemBackRoute(
-    BuildContext context,
-    void Function(CoachMarkDismissReason) complete,
-  ) {
-    final navigator = Navigator.maybeOf(context, rootNavigator: true);
-    if (navigator == null) {
-      return;
-    }
-    final route = PageRouteBuilder<void>(
-      opaque: false,
-      barrierDismissible: false,
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (didPop) {
-              return;
-            }
-            complete(CoachMarkDismissReason.systemBack);
-          },
-          child: const SizedBox.shrink(),
-        );
-      },
-    );
-    _systemBackRoute = route;
-    navigator.push(route);
-  }
-
-  /// 段階3 用ルートがあれば外す。
-  ///
-  /// Example:
-  /// ```dart
-  /// _removeSystemBackRoute();
-  /// ```
-  static void _removeSystemBackRoute() {
-    final route = _systemBackRoute;
-    _systemBackRoute = null;
-    if (route == null || !route.isActive) {
-      return;
-    }
-    final navigator = route.navigator;
-    navigator?.removeRoute(route);
   }
 }

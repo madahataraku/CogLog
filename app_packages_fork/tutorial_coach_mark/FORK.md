@@ -5,4 +5,7 @@ Upstream: [tutorial_coach_mark 1.3.4](https://pub.dev/packages/tutorial_coach_ma
 ## Patch
 
 - Added `TargetFocus.enableTargetPassThrough`.
-- When true, the focus hole is clipped out of hit testing and the target `InkWell` is omitted so widgets under the hole receive taps (goal-waiting tutorial step).
+  - When true, the focus hole is clipped out of hit testing, the target `InkWell` is omitted, and the full-screen `InkWell` wrapper is skipped so widgets under the hole receive taps (goal-waiting tutorial step).
+- Deferred `show` insert is cancellable (`_cancelled` / `removeOverlayEntry` before the post-frame callback).
+- `postFrame` uses `WidgetsBinding.addPostFrameCallback` instead of `Future.delayed(Duration.zero)`.
+- `disableBackButton` uses in-overlay `PopScope` (optional `onSystemBack`) instead of a modal `PageRouteBuilder`, so tutorial controls and pass-through keep working.

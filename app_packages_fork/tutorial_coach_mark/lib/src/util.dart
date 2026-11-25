@@ -116,7 +116,12 @@ class NotFoundTargetException extends FormatException {
 /// has been built and painted. Commonly used for initialization tasks
 /// that require the widget to be fully rendered.
 void postFrame(VoidCallback callback) {
-  Future.delayed(Duration.zero, callback);
+  // CogLog: prefer the frame callback, and ensure a frame is scheduled so
+  // the insert still runs when show() is called outside build/layout
+  // (button handlers, tests after settle).
+  final binding = WidgetsBinding.instance;
+  binding.addPostFrameCallback((_) => callback());
+  binding.ensureVisualUpdate();
 }
 
 /// Extension on nullable types to provide safe callback execution.

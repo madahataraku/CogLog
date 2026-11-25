@@ -125,12 +125,22 @@ class TutorialCoachMark {
   final GlobalKey<TutorialCoachMarkWidgetState> _widgetKey = GlobalKey();
 
   /// Whether to disable the device back button during the tutorial.
+  ///
+  /// CogLog fork: implemented via [PopScope] inside the overlay (no modal
+  /// route), so tutorial controls and target pass-through keep working.
   final bool disableBackButton;
 
+  /// Called when the system back gesture is intercepted while showing.
+  ///
+  /// CogLog fork. Ignored when [disableBackButton] is false. When null, back
+  /// is swallowed; when set, the callback runs (typically to dismiss).
+  final VoidCallback? onSystemBack;
+
   OverlayEntry? _overlayEntry;
-  ModalRoute?
-      _blockBackRoute; // Referencia a la ruta que bloquea el botón "Atrás"
-  BuildContext? _contextTutorial; // Almacena el contexto para usarlo después
+  BuildContext? _contextTutorial; // Almacena el contexto del overlay
+
+  /// Set when [removeOverlayEntry] / [finish] runs before the deferred insert.
+  bool _cancelled = false;
 
   /// Creates a tutorial coach mark with the specified configuration.
   ///
@@ -159,6 +169,7 @@ class TutorialCoachMark {
   /// - [initialFocus]: Index of initial focus target. Default is 0.
   /// - [backgroundSemanticLabel]: Semantic label for background overlay.
   /// - [disableBackButton]: Whether to disable device back button. Default is false.
+  /// - [onSystemBack]: CogLog fork callback when back is pressed while showing.
   TutorialCoachMark({
     required this.targets,
     this.colorShadow = Colors.black,
@@ -185,12 +196,13 @@ class TutorialCoachMark {
     this.initialFocus = 0,
     this.backgroundSemanticLabel,
     this.disableBackButton = false,
+    this.onSystemBack,
   }) : assert(opacityShadow >= 0 && opacityShadow <= 1);
 
   OverlayEntry _buildOverlay({bool rootOverlay = false}) {
     return OverlayEntry(
       builder: (context) {
-        return TutorialCoachMarkWidget(
+        Widget child = TutorialCoachMarkWidget(
           key: _widgetKey,
           targets: targets,
           clickTarget: onClickTarget,
@@ -218,6 +230,20 @@ class TutorialCoachMark {
           initialFocus: initialFocus,
           backgroundSemanticLabel: backgroundSemanticLabel,
         );
+        // CogLog: intercept back inside the overlay (no modal barrier route).
+        if (disableBackButton) {
+          child = PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) {
+                return;
+              }
+              onSystemBack?.call();
+            },
+            child: child,
+          );
+        }
+        return child;
       },
     );
   }
@@ -269,25 +295,14 @@ class TutorialCoachMark {
     required OverlayState overlay,
     bool rootOverlay = false,
   }) {
+    _cancelled = false;
     _contextTutorial = overlay.context; // Guarda el contexto del overlay
     postFrame(() {
-      _createAndShow(overlay, rootOverlay: rootOverlay);
-      if (disableBackButton) {
-        // Bloquea el botón "Atrás" mientras el tutorial está activo
-        _blockBackRoute = PageRouteBuilder(
-          opaque: false,
-          barrierDismissible: false,
-          pageBuilder: (context, _, __) {
-            return PopScope(
-              canPop: false,
-              onPopInvokedWithResult: (value, result) async =>
-                  false, // Bloquea el retroceso
-              child: const SizedBox(), // No muestra nada
-            );
-          },
-        );
-        Navigator.of(_contextTutorial!).push(_blockBackRoute!);
+      // CogLog: skip insert if dismiss/finish ran before this frame.
+      if (_cancelled) {
+        return;
       }
+      _createAndShow(overlay, rootOverlay: rootOverlay);
     });
   }
 
@@ -295,6 +310,9 @@ class TutorialCoachMark {
     OverlayState overlay, {
     bool rootOverlay = false,
   }) {
+    if (_cancelled) {
+      return;
+    }
     if (_overlayEntry == null) {
       _overlayEntry = _buildOverlay(rootOverlay: rootOverlay);
       overlay.insert(_overlayEntry!);
@@ -341,25 +359,20 @@ class TutorialCoachMark {
   void goTo(int index) => _widgetKey.currentState?.goTo(index);
 
   void _removeOverlay() {
+    _cancelled = true;
     _overlayEntry?.remove();
     _overlayEntry = null;
     closeHiddenView();
   }
 
   void removeOverlayEntry() {
+    _cancelled = true;
     _overlayEntry?.remove();
     _overlayEntry = null;
     closeHiddenView();
   }
 
   void closeHiddenView() {
-    // Verifica si hay un contexto válido antes de intentar remover la ruta
-    if (_contextTutorial != null &&
-        _contextTutorial!.mounted &&
-        _blockBackRoute != null) {
-      Navigator.of(_contextTutorial!).removeRoute(_blockBackRoute!);
-      _blockBackRoute = null;
-    }
     _contextTutorial = null;
   }
 }

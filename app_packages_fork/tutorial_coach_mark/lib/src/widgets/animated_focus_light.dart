@@ -388,6 +388,40 @@ class AnimatedStaticFocusLightState extends AnimatedFocusLightState {
 
   @override
   Widget build(BuildContext context) {
+    final light = AnimatedBuilder(
+      animation: _controller,
+      builder: (_, child) {
+        _progressAnimated = _curvedAnimation.value;
+        return Stack(
+          children: <Widget>[
+            _getLightPaint(_targetFocus),
+            if (!_targetFocus.enableTargetPassThrough)
+              Positioned(
+                left: left,
+                top: top,
+                child: InkWell(
+                  borderRadius: _betBorderRadiusTarget(),
+                  onTapDown: _tapHandlerForPosition,
+                  onTap: _onTargetTap,
+                  child: Container(
+                    color: Colors.transparent,
+                    width: width,
+                    height: height,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+    // CogLog: omit full-screen InkWell when pass-through so hole hits fall
+    // through the ClipPath to widgets under the focus area.
+    if (_targetFocus.enableTargetPassThrough) {
+      return Semantics(
+        label: widget.backgroundSemanticLabel,
+        child: light,
+      );
+    }
     return Semantics(
       label: widget.backgroundSemanticLabel,
       button: true,
@@ -396,32 +430,7 @@ class AnimatedStaticFocusLightState extends AnimatedFocusLightState {
         onTap: _targetFocus.enableOverlayTab
             ? () => _tapHandler(overlayTap: true)
             : null,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, child) {
-            _progressAnimated = _curvedAnimation.value;
-            return Stack(
-              children: <Widget>[
-                _getLightPaint(_targetFocus),
-                if (!_targetFocus.enableTargetPassThrough)
-                  Positioned(
-                    left: left,
-                    top: top,
-                    child: InkWell(
-                      borderRadius: _betBorderRadiusTarget(),
-                      onTapDown: _tapHandlerForPosition,
-                      onTap: _onTargetTap,
-                      child: Container(
-                        color: Colors.transparent,
-                        width: width,
-                        height: height,
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
-        ),
+        child: light,
       ),
     );
   }
@@ -482,6 +491,47 @@ class AnimatedPulseFocusLightState extends AnimatedFocusLightState {
 
   @override
   Widget build(BuildContext context) {
+    final light = AnimatedBuilder(
+      animation: _controller,
+      builder: (_, child) {
+        _progressAnimated = _curvedAnimation.value;
+        return AnimatedBuilder(
+          animation: _controllerPulse,
+          builder: (_, child) {
+            if (_finishFocus) {
+              _progressAnimated = _tweenPulse.value;
+            }
+            return Stack(
+              children: <Widget>[
+                _getLightPaint(_targetFocus),
+                if (!_targetFocus.enableTargetPassThrough)
+                  Positioned(
+                    left: left,
+                    top: top,
+                    child: InkWell(
+                      borderRadius: _betBorderRadiusTarget(),
+                      onTap: _onTargetTap,
+                      onTapDown: _tapHandlerForPosition,
+                      child: Container(
+                        color: Colors.transparent,
+                        width: width,
+                        height: height,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    // CogLog: omit full-screen InkWell when pass-through (see static state).
+    if (_targetFocus.enableTargetPassThrough) {
+      return Semantics(
+        label: widget.backgroundSemanticLabel,
+        child: light,
+      );
+    }
     return Semantics(
       label: widget.backgroundSemanticLabel,
       button: true,
@@ -490,40 +540,7 @@ class AnimatedPulseFocusLightState extends AnimatedFocusLightState {
         onTap: _targetFocus.enableOverlayTab
             ? () => _tapHandler(overlayTap: true)
             : null,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, child) {
-            _progressAnimated = _curvedAnimation.value;
-            return AnimatedBuilder(
-              animation: _controllerPulse,
-              builder: (_, child) {
-                if (_finishFocus) {
-                  _progressAnimated = _tweenPulse.value;
-                }
-                return Stack(
-                  children: <Widget>[
-                    _getLightPaint(_targetFocus),
-                    if (!_targetFocus.enableTargetPassThrough)
-                      Positioned(
-                        left: left,
-                        top: top,
-                        child: InkWell(
-                          borderRadius: _betBorderRadiusTarget(),
-                          onTap: _onTargetTap,
-                          onTapDown: _tapHandlerForPosition,
-                          child: Container(
-                            color: Colors.transparent,
-                            width: width,
-                            height: height,
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+        child: light,
       ),
     );
   }
