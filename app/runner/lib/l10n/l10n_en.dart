@@ -537,7 +537,7 @@ class L10nEn extends L10n {
       'Session only; off after restart';
 
   @override
-  String get screen_feature_debug_prefer_gemma_item => 'Prefer Gemma';
+  String get screen_feature_debug_prefer_gemma_item => 'Prefer LFM VL';
 
   @override
   String get screen_feature_debug_prepare_error_label => 'prepare error';
@@ -568,10 +568,10 @@ class L10nEn extends L10n {
   String get screen_feature_debug_section_availability => 'On-device LLM';
 
   @override
-  String get screen_feature_debug_section_gemma_availability => 'Gemma E2B';
+  String get screen_feature_debug_section_gemma_availability => 'LFM VL';
 
   @override
-  String get screen_feature_debug_section_gemma_probe => 'Gemma image probe';
+  String get screen_feature_debug_section_gemma_probe => 'LFM VL image probe';
 
   @override
   String get screen_feature_debug_section_logs => 'App logs';

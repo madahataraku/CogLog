@@ -587,9 +587,9 @@
   },
   "screen_feature_debug_prefer_gemma_description": "同一セッションのみ。再起動でオフ",
   "@screen_feature_debug_prefer_gemma_description": {
-    "description": "Gemma 優先モードの説明"
+    "description": "LFM VL 優先モードの説明"
   },
-  "screen_feature_debug_prefer_gemma_item": "Gemma 優先モード",
+  "screen_feature_debug_prefer_gemma_item": "LFM VL 優先モード",
   "@screen_feature_debug_prefer_gemma_item": {
     "description": "メーター読み取りで Gemma を優先するスイッチ"
   },
@@ -629,11 +629,11 @@
   "@screen_feature_debug_section_availability": {
     "description": "可用性セクション見出し"
   },
-  "screen_feature_debug_section_gemma_availability": "Gemma E2B",
+  "screen_feature_debug_section_gemma_availability": "LFM VL",
   "@screen_feature_debug_section_gemma_availability": {
     "description": "Gemma 可用性セクション見出し"
   },
-  "screen_feature_debug_section_gemma_probe": "Gemma 画像プローブ",
+  "screen_feature_debug_section_gemma_probe": "LFM VL 画像プローブ",
   "@screen_feature_debug_section_gemma_probe": {
     "description": "Gemma プローブ見出し"
   },

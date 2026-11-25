@@ -967,7 +967,7 @@ abstract class L10n {
   /// **'platform notes'**
   String get screen_feature_debug_platform_notes_label;
 
-  /// Gemma 優先モードの説明
+  /// LFM VL 優先モードの説明
   ///
   /// In ja, this message translates to:
   /// **'同一セッションのみ。再起動でオフ'**
@@ -976,7 +976,7 @@ abstract class L10n {
   /// メーター読み取りで Gemma を優先するスイッチ
   ///
   /// In ja, this message translates to:
-  /// **'Gemma 優先モード'**
+  /// **'LFM VL 優先モード'**
   String get screen_feature_debug_prefer_gemma_item;
 
   /// 準備例外ラベル
@@ -1036,13 +1036,13 @@ abstract class L10n {
   /// Gemma 可用性セクション見出し
   ///
   /// In ja, this message translates to:
-  /// **'Gemma E2B'**
+  /// **'LFM VL'**
   String get screen_feature_debug_section_gemma_availability;
 
   /// Gemma プローブ見出し
   ///
   /// In ja, this message translates to:
-  /// **'Gemma 画像プローブ'**
+  /// **'LFM VL 画像プローブ'**
   String get screen_feature_debug_section_gemma_probe;
 
   /// ログセクション見出し

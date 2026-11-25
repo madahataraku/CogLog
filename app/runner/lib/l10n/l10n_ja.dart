@@ -490,7 +490,7 @@ class L10nJa extends L10n {
       '同一セッションのみ。再起動でオフ';
 
   @override
-  String get screen_feature_debug_prefer_gemma_item => 'Gemma 優先モード';
+  String get screen_feature_debug_prefer_gemma_item => 'LFM VL 優先モード';
 
   @override
   String get screen_feature_debug_prepare_error_label => 'prepare error';
@@ -521,10 +521,10 @@ class L10nJa extends L10n {
   String get screen_feature_debug_section_availability => '端末上 LLM';
 
   @override
-  String get screen_feature_debug_section_gemma_availability => 'Gemma E2B';
+  String get screen_feature_debug_section_gemma_availability => 'LFM VL';
 
   @override
-  String get screen_feature_debug_section_gemma_probe => 'Gemma 画像プローブ';
+  String get screen_feature_debug_section_gemma_probe => 'LFM VL 画像プローブ';
 
   @override
   String get screen_feature_debug_section_logs => 'アプリログ';
