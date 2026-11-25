@@ -1,5 +1,5 @@
 import 'package:infra_meter_reading/infra_meter_reading.dart';
-import 'package:screen_feature_debug/src/viewmodel/delegate/on_toggle_prefer_gemma_delegate.dart';
+import 'package:screen_feature_debug/src/viewmodel/delegate/on_toggle_prefer_lfm_vl_delegate.dart';
 import 'package:screen_feature_debug/src/viewmodel/state/debug_screen_state.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:test/test.dart';

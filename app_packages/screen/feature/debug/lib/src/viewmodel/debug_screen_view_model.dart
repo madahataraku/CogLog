@@ -14,7 +14,7 @@ import 'delegate/on_back_delegate.dart';
 import 'delegate/on_clear_logs_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_refresh_logs_delegate.dart';
-import 'delegate/on_toggle_prefer_gemma_delegate.dart';
+import 'delegate/on_toggle_prefer_lfm_vl_delegate.dart';
 import 'entity/debug_screen_entity.dart';
 import 'state/debug_screen_state.dart';
 
