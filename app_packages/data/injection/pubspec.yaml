@@ -10,6 +10,8 @@ environment:
 
 dependencies:
   data_database: any
+  data_repository_app_review: any
+  data_repository_app_review_impl: any
   data_repository_achievement: any
   data_repository_achievement_impl: any
   data_repository_daily_goal: any

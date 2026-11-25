@@ -40,6 +40,7 @@ Future<void> launchCogLog() async {
   await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
   final preferences = await SharedPreferences.getInstance();
   final documents = await getApplicationDocumentsDirectory();
+  final cache = await getApplicationCacheDirectory();
   final database = openDocumentsDatabase(documents);
   final screens = ScreenGraph();
   final container = ProviderContainer(
@@ -48,6 +49,7 @@ Future<void> launchCogLog() async {
         preferences: preferences,
         database: database,
         documentsDirectory: documents,
+        cacheDirectory: cache,
       ),
       ...infraOverrides(),
       ...usecaseOverrides(documentsDirectory: documents),

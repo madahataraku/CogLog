@@ -6,8 +6,10 @@ import 'package:data_repository_exercise_history/data_repository_exercise_histor
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
 import 'package:data_repository_tutorial/data_repository_tutorial.dart';
+import 'package:data_repository_app_review/data_repository_app_review.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
+import 'package:infra_app_review/infra_app_review.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
@@ -88,6 +90,8 @@ import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.da
 import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:usecase_tutorial_impl/usecase_tutorial_impl.dart';
+import 'package:usecase_request_app_review/usecase_request_app_review.dart';
+import 'package:usecase_request_app_review_impl/usecase_request_app_review_impl.dart';
 
 /// トップ・推移の読み込み、指標保存、一日あたり目標の読み書き、アドバイス生成、
 /// 端末上 LLM / Gemma 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
@@ -380,6 +384,14 @@ List<Override> usecaseOverrides({
     (ref) => ResetTutorialProgressUsecaseImpl(
       repository: ref.watch(tutorialRepositoryProvider),
       session: ref.watch(tutorialRuntimeSessionProvider),
+    ),
+  ),
+  RequestAppReviewUsecase.provider.overrideWith(
+    (ref) => RequestAppReviewUsecaseImpl(
+      review: ref.watch(appInAppReviewProvider),
+      suppression: ref.watch(appReviewSuppressionRepositoryProvider),
+      tutorial: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(appReviewRuntimeSessionProvider),
     ),
   ),
 ];

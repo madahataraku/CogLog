@@ -8,6 +8,7 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:infra_app_review_testing/infra_app_review_testing.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_body_metrics_testing/infra_health_body_metrics_testing.dart';
 import 'package:infra_injection/infra_injection.dart';
@@ -43,9 +44,13 @@ Future<ScreenGraph> pumpTopScreen(
   final stored = preferences ?? await _newPreferences();
   await _seedCompletedTutorialProgress(stored);
   final documents = Directory.systemTemp.createTempSync('coglog_test_');
+  final cache = Directory.systemTemp.createTempSync('coglog_cache_');
   addTearDown(() {
     if (documents.existsSync()) {
       documents.deleteSync(recursive: true);
+    }
+    if (cache.existsSync()) {
+      cache.deleteSync(recursive: true);
     }
   });
   final database = openMemoryDatabase();
@@ -58,6 +63,7 @@ Future<ScreenGraph> pumpTopScreen(
           preferences: stored,
           database: database,
           documentsDirectory: documents,
+          cacheDirectory: cache,
           histories: FixedExerciseHistoryRepository(histories),
         ),
         // Widget テストの既定 OS は Android。本番 DI のオンデバイス LLM は
@@ -70,6 +76,7 @@ Future<ScreenGraph> pumpTopScreen(
           healthBodyMetricsSource: FakeHealthBodyMetricsSource(
             status: HealthBodyPermissionStatus.denied,
           ),
+          appInAppReview: FakeAppInAppReview(available: false),
         ),
         ...usecaseOverrides(
           documentsDirectory: documents,

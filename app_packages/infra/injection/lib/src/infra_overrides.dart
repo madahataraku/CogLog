@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_runtime_info_mobile/infra_app_runtime_info_mobile.dart';
+import 'package:infra_app_review/infra_app_review.dart';
+import 'package:infra_app_review_mobile/infra_app_review_mobile.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_app_settings_mobile/infra_app_settings_mobile.dart';
 import 'package:infra_gemma_meter/infra_gemma_meter.dart';
@@ -46,6 +48,7 @@ List<Override> infraOverrides({
   HealthBodyMetricsSource? healthBodyMetricsSource,
   NetworkConnectivity? networkConnectivity,
   UserFileGateway? userFileGateway,
+  AppInAppReview? appInAppReview,
 }) => [
   onDeviceLlmProvider.overrideWith((ref) {
     final injected = onDeviceLlm;
@@ -126,6 +129,22 @@ List<Override> infraOverrides({
   appSettingsOpenerProvider.overrideWith(
     (ref) => const AppSettingsPackageOpener(),
   ),
+  appInAppReviewProvider.overrideWith((ref) {
+    final injected = appInAppReview;
+    if (injected != null) {
+      return injected;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        return const InAppReviewPluginClient();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const UnavailableAppInAppReview();
+    }
+  }),
   localNotificationGatewayProvider.overrideWith((ref) {
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
