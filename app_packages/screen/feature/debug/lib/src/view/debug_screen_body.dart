@@ -198,14 +198,14 @@ class DebugScreenBody extends HookConsumerWidget {
           FTileGroup(
             children: [
               FTile(
-                title: Text(strings.screen_feature_debug_prefer_lfm_vl_item),
+                title: Text(strings.screen_feature_debug_prefer_gemma_item),
                 subtitle: Text(
-                  strings.screen_feature_debug_prefer_lfm_vl_description,
+                  strings.screen_feature_debug_prefer_gemma_description,
                 ),
                 suffix: FSwitch(
                   value: entity.preferLfmVlOverOsLlm,
                   semanticsLabel:
-                      strings.screen_feature_debug_prefer_lfm_vl_item,
+                      strings.screen_feature_debug_prefer_gemma_item,
                   onChange: (value) {
                     unawaited(
                       ref

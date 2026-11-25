@@ -931,13 +931,13 @@ abstract class L10n {
   /// **'ログを消去'**
   String get screen_feature_debug_clear_logs;
 
-  /// Gemma main backend ラベル
+  /// LFM VL main backend ラベル
   ///
   /// In ja, this message translates to:
   /// **'backend'**
   String get screen_feature_debug_gemma_backend_label;
 
-  /// Gemma visionBackend ラベル
+  /// LFM VL visionBackend ラベル
   ///
   /// In ja, this message translates to:
   /// **'visionBackend'**
@@ -973,7 +973,7 @@ abstract class L10n {
   /// **'同一セッションのみ。再起動でオフ'**
   String get screen_feature_debug_prefer_gemma_description;
 
-  /// メーター読み取りで Gemma を優先するスイッチ
+  /// メーター読み取りで LFM VL を優先するスイッチ
   ///
   /// In ja, this message translates to:
   /// **'LFM VL 優先モード'**
@@ -1033,13 +1033,13 @@ abstract class L10n {
   /// **'端末上 LLM'**
   String get screen_feature_debug_section_availability;
 
-  /// Gemma 可用性セクション見出し
+  /// LFM VL 可用性セクション見出し
   ///
   /// In ja, this message translates to:
   /// **'LFM VL'**
   String get screen_feature_debug_section_gemma_availability;
 
-  /// Gemma プローブ見出し
+  /// LFM VL プローブ見出し
   ///
   /// In ja, this message translates to:
   /// **'LFM VL 画像プローブ'**
@@ -2476,13 +2476,13 @@ abstract class L10n {
   /// **'閉じる'**
   String get view_model_download_guidance_dismiss;
 
-  /// Gemma誘導本文
+  /// LFM VL誘導本文
   ///
   /// In ja, this message translates to:
   /// **'メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。'**
   String get view_model_download_guidance_gemma_body;
 
-  /// Gemma誘導タイトル
+  /// LFM VL誘導タイトル
   ///
   /// In ja, this message translates to:
   /// **'メーター読み取りモデルの準備'**
