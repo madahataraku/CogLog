@@ -1,0 +1,23 @@
+name: usecase_request_app_review_impl
+description: Request app review usecase implementation.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_app_review: any
+  data_repository_tutorial: any
+  domain_tutorial: any
+  foundation_metadata: any
+  infra_app_review: any
+  usecase_request_app_review: any
+
+dev_dependencies:
+  data_repository_app_review_testing: any
+  data_repository_tutorial_testing: any
+  flutter_lints: any
+  infra_app_review_testing: any
+  test: any

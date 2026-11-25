@@ -1,0 +1,14 @@
+name: usecase_request_app_review
+description: Request OS in-app review after tutorial completion.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any
