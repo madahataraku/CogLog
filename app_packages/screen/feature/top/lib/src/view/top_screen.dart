@@ -12,6 +12,7 @@ import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 import '../strings.dart';
 import '../viewmodel/top_screen_view_model.dart';
 import 'map_gemma_meter_prepare_error.dart';
+import 'should_evaluate_app_review_on_home.dart';
 import 'top_conditional_advice_catalog.dart';
 import 'top_screen_impl.dart';
 import 'top_screen_providers.dart';
@@ -117,6 +118,59 @@ class TopScreen extends HookConsumerWidget {
       ],
     );
 
+    // アプリ内レビュー（競合が無いときのみ。解消後も deps で再評価）。
+    useEffect(
+      () {
+        final routeIsCurrent = ModalRoute.of(context)?.isCurrent ?? true;
+        if (!shouldEvaluateAppReviewOnHome(
+          homeTabSelected: homeTabSelected,
+          foreground: foreground,
+          tutorialShowing: tutorialSession.isShowing,
+          pendingTutorialMain: entity.pendingTutorialMain,
+          pendingTutorialAchievement: entity.pendingTutorialAchievement,
+          pendingModelDownloadGuidance: entity.pendingModelDownloadGuidance,
+          pendingGemmaMeterGuidance: entity.pendingGemmaMeterGuidance,
+          homeRouteIsCurrent: routeIsCurrent,
+        )) {
+          return null;
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!context.mounted) {
+            return;
+          }
+          final stillCurrent = ModalRoute.of(context)?.isCurrent ?? true;
+          if (!shouldEvaluateAppReviewOnHome(
+            homeTabSelected: (ShellTabIndexScope.maybeOf(context) ?? 0) == 0,
+            foreground:
+                (WidgetsBinding.instance.lifecycleState == null ||
+                WidgetsBinding.instance.lifecycleState ==
+                    AppLifecycleState.resumed),
+            tutorialShowing: tutorialSession.isShowing,
+            pendingTutorialMain: entity.pendingTutorialMain,
+            pendingTutorialAchievement: entity.pendingTutorialAchievement,
+            pendingModelDownloadGuidance: entity.pendingModelDownloadGuidance,
+            pendingGemmaMeterGuidance: entity.pendingGemmaMeterGuidance,
+            homeRouteIsCurrent: stillCurrent,
+          )) {
+            return;
+          }
+          unawaited(viewModel.onEvaluateAppReview());
+        });
+        return null;
+      },
+      [
+        viewModel,
+        homeTabSelected,
+        lifecycle,
+        tutorialSession.isShowing,
+        entity.pendingTutorialMain,
+        entity.pendingTutorialAchievement,
+        entity.pendingModelDownloadGuidance,
+        entity.pendingGemmaMeterGuidance,
+        entity.adviceText,
+      ],
+    );
+
     useEffect(
       () {
         if (!entity.pendingTutorialMain) {
@@ -153,6 +207,10 @@ class TopScreen extends HookConsumerWidget {
               const AdvanceTutorialMainRequest.skip(),
             );
           }
+          if (!context.mounted) {
+            return;
+          }
+          unawaited(viewModel.onEvaluateAppReview());
         });
         return null;
       },
@@ -195,6 +253,10 @@ class TopScreen extends HookConsumerWidget {
             return;
           }
           await viewModel.onDismissTutorialAchievement();
+          if (!context.mounted) {
+            return;
+          }
+          unawaited(viewModel.onEvaluateAppReview());
         });
         return null;
       },
@@ -232,6 +294,10 @@ class TopScreen extends HookConsumerWidget {
           }
           // (A) の show 完了後に (B) を評価する。
           await viewModel.onEvaluateGemmaMeterGuidance();
+          if (!context.mounted) {
+            return;
+          }
+          unawaited(viewModel.onEvaluateAppReview());
         });
         return null;
       },
@@ -288,6 +354,10 @@ class TopScreen extends HookConsumerWidget {
             onPrepareProgress: viewModel.onPrepareGemmaMeterGuidance,
             mapPrepareError: mapGemmaMeterPrepareError,
           );
+          if (!context.mounted) {
+            return;
+          }
+          unawaited(viewModel.onEvaluateAppReview());
         });
         return null;
       },

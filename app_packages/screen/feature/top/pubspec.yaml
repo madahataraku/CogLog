@@ -30,6 +30,7 @@ dependencies:
   usecase_load_achievements: any
   usecase_load_top_screen: any
   usecase_on_device_llm_guidance: any
+  usecase_request_app_review: any
   usecase_save_top_screen_metric: any
   usecase_tutorial: any
   view_coach_mark: any

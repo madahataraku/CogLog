@@ -10,6 +10,7 @@ import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
+import 'package:usecase_request_app_review/usecase_request_app_review.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
@@ -20,6 +21,7 @@ import 'delegate/on_acknowledge_tutorial_achievement_delegate.dart';
 import 'delegate/on_acknowledge_tutorial_main_delegate.dart';
 import 'delegate/on_advance_tutorial_main_delegate.dart';
 import 'delegate/on_dismiss_tutorial_achievement_delegate.dart';
+import 'delegate/on_evaluate_app_review_delegate.dart';
 import 'delegate/on_evaluate_gemma_meter_guidance_delegate.dart';
 import 'delegate/on_evaluate_tutorial_achievement_delegate.dart';
 import 'delegate/on_evaluate_tutorial_main_delegate.dart';
@@ -91,6 +93,7 @@ final class TopScreenViewModel {
         ),
         loadAchievementsUsecase: ref.watch(LoadAchievementsUsecase.provider),
         tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
+        requestAppReviewUsecase: ref.watch(RequestAppReviewUsecase.provider),
         stateToEntity: const TopScreenStateToEntityDelegate(),
         now: DateTime.now,
       );
@@ -118,6 +121,7 @@ final class TopScreenViewModel {
       MarkTutorialContextSeenUsecase.provider,
       LoadAchievementsUsecase.provider,
       tutorialRuntimeSessionProvider,
+      RequestAppReviewUsecase.provider,
     ],
   );
 
@@ -194,6 +198,10 @@ final class TopScreenViewModel {
   @visibleForTesting
   final TutorialRuntimeSession tutorialSession;
 
+  /// アプリ内レビュー依頼。
+  @visibleForTesting
+  final RequestAppReviewUsecase requestAppReviewUsecase;
+
   /// State から表示文字列への変換。
   @visibleForTesting
   final TopScreenStateToEntityDelegate stateToEntity;
@@ -227,6 +235,7 @@ final class TopScreenViewModel {
     required this.markTutorialContextSeenUsecase,
     required this.loadAchievementsUsecase,
     required this.tutorialSession,
+    required this.requestAppReviewUsecase,
     required this.stateToEntity,
     required this.now,
   });

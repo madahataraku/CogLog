@@ -15,6 +15,7 @@ import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
+import 'package:usecase_request_app_review/usecase_request_app_review.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_coach_mark/view_coach_mark.dart';
@@ -178,6 +179,13 @@ final class _MarkTutorialContextSeen implements MarkTutorialContextSeenUsecase {
   Future<void> execute(MarkTutorialContextSeenRequest request) async {}
 }
 
+final class _RequestAppReview implements RequestAppReviewUsecase {
+  @override
+  Future<RequestAppReviewResult> execute() async {
+    return RequestAppReviewResult.skippedFlavor;
+  }
+}
+
 Future<void> _pumpTop(WidgetTester tester, {required bool hasNew}) async {
   debugDefaultTargetPlatformOverride = TargetPlatform.android;
   tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
@@ -238,6 +246,9 @@ Future<void> _pumpTop(WidgetTester tester, {required bool hasNew}) async {
       ),
       tutorialRuntimeSessionProvider.overrideWith(
         (ref) => TutorialRuntimeSession(),
+      ),
+      RequestAppReviewUsecase.provider.overrideWith(
+        (ref) => _RequestAppReview(),
       ),
       CoachMarkProviders.registry.overrideWith((ref) => CoachMarkRegistry()),
     ],

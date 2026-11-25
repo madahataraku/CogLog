@@ -225,4 +225,17 @@ extension TopScreenViewModelActions on TopScreenViewModel {
       markSeen: markTutorialContextSeenUsecase,
     ).execute();
   }
+
+  /// アプリ内レビュー依頼を評価・実行する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEvaluateAppReview();
+  /// ```
+  Future<void> onEvaluateAppReview() {
+    return OnEvaluateAppReviewDelegate(
+      state: state,
+      usecase: requestAppReviewUsecase,
+    ).execute();
+  }
 }
