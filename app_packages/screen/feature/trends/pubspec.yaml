@@ -26,6 +26,8 @@ dependencies:
   usecase_load_trends: any
   usecase_open_app_settings: any
   usecase_request_health_body_permission: any
+  usecase_tutorial: any
+  view_coach_mark: any
 
 dev_dependencies:
   foundation_resources: any

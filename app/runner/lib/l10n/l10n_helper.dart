@@ -970,6 +970,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_title;
       },
+      'screen_feature_exercise_history_tutorial_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_tutorial_body;
+      },
+      'screen_feature_exercise_history_tutorial_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_tutorial_title;
+      },
       'screen_feature_exercise_history_weekday_fri': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_weekday_fri;
@@ -1233,6 +1241,22 @@ final class L10nHelper {
       'screen_feature_meter_capture_title': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_title;
+      },
+      'screen_feature_meter_capture_tutorial_camera_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_tutorial_camera_body;
+      },
+      'screen_feature_meter_capture_tutorial_camera_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_tutorial_camera_title;
+      },
+      'screen_feature_meter_capture_tutorial_meter_edit_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_tutorial_meter_edit_body;
+      },
+      'screen_feature_meter_capture_tutorial_meter_edit_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_tutorial_meter_edit_title;
       },
       'screen_feature_notification_settings_back_semantics': (source) {
         // No Placeholders
@@ -1636,6 +1660,14 @@ final class L10nHelper {
       'screen_feature_trends_title': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_title;
+      },
+      'screen_feature_trends_tutorial_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_tutorial_body;
+      },
+      'screen_feature_trends_tutorial_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_tutorial_title;
       },
       'screen_feature_trends_unit_kcal': (source) {
         // No Placeholders

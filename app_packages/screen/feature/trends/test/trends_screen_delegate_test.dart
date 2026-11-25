@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:domain_trends/domain_trends.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
+import 'package:screen_feature_trends/src/viewmodel/delegate/on_evaluate_tutorial_delegate.dart';
 import 'package:screen_feature_trends/src/viewmodel/delegate/on_reload_delegate.dart';
 import 'package:screen_feature_trends/src/viewmodel/delegate/on_request_health_permission_delegate.dart';
 import 'package:screen_feature_trends/src/viewmodel/delegate/on_select_comparison_delegate.dart';
@@ -15,6 +16,7 @@ import 'package:screen_feature_trends/src/viewmodel/state/trends_screen_state.da
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_trends/usecase_load_trends.dart';
 import 'package:usecase_request_health_body_permission/usecase_request_health_body_permission.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 final class _FakeLoadTrends implements LoadTrendsUsecase {
   LoadTrendsResult? result;
@@ -457,4 +459,49 @@ void main() {
     expect(state.state.buckets.length, buckets.length);
     expect(state.state.reloadGeneration, 2);
   });
+
+  test('推移文脈は Ready 後に pending を立てる', () async {
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(current.copyWith(loading: false));
+    });
+    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    await OnEvaluateTutorialDelegate(
+      state: state,
+      evaluateContext: evaluate,
+    ).execute();
+    expect(evaluate.calls, 1);
+    expect(evaluate.lastKind, TutorialKind.trends);
+    expect(state.state.pendingTutorial, isTrue);
+    expect(
+      const TrendsStateToEntityDelegate().execute(state.state).pendingTutorial,
+      isTrue,
+    );
+  });
+
+  test('推移文脈は loading 中は評価しない', () async {
+    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    await OnEvaluateTutorialDelegate(
+      state: state,
+      evaluateContext: evaluate,
+    ).execute();
+    expect(evaluate.calls, 0);
+    expect(state.state.pendingTutorial, isFalse);
+  });
+}
+
+final class _EvaluateTutorialContext implements EvaluateTutorialContextUsecase {
+  _EvaluateTutorialContext({this.shouldShow = false});
+
+  final bool shouldShow;
+  var calls = 0;
+  TutorialKind? lastKind;
+
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async {
+    calls += 1;
+    lastKind = request.kind;
+    return EvaluateTutorialContextResult(shouldShow: shouldShow);
+  }
 }

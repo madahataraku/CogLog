@@ -5,9 +5,13 @@ import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_exercise_history_month/usecase_load_exercise_history_month.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import 'delegate/exercise_history_state_to_entity_delegate.dart';
+import 'delegate/on_acknowledge_tutorial_delegate.dart';
 import 'delegate/on_cold_start_delegate.dart';
+import 'delegate/on_dismiss_tutorial_delegate.dart';
+import 'delegate/on_evaluate_tutorial_delegate.dart';
 import 'delegate/on_reload_selected_month_delegate.dart';
 import 'delegate/on_retry_delegate.dart';
 import 'delegate/on_select_month_delegate.dart';
@@ -40,6 +44,12 @@ final class ExerciseHistoryScreenViewModel {
           ExerciseHistoryScreenState.initial(year: now.year, month: now.month),
         ),
         loadMonthUsecase: ref.watch(LoadExerciseHistoryMonthUsecase.provider),
+        evaluateTutorialContextUsecase: ref.watch(
+          EvaluateTutorialContextUsecase.provider,
+        ),
+        markTutorialContextSeenUsecase: ref.watch(
+          MarkTutorialContextSeenUsecase.provider,
+        ),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const ExerciseHistoryStateToEntityDelegate(),
         clock: DateTime.now,
@@ -52,6 +62,8 @@ final class ExerciseHistoryScreenViewModel {
     dependencies: [
       appDataImportRefreshProvider,
       LoadExerciseHistoryMonthUsecase.provider,
+      EvaluateTutorialContextUsecase.provider,
+      MarkTutorialContextSeenUsecase.provider,
       screenNavigationProvider,
     ],
   );
@@ -63,6 +75,14 @@ final class ExerciseHistoryScreenViewModel {
   /// 月内全件の読み込み。
   @visibleForTesting
   final LoadExerciseHistoryMonthUsecase loadMonthUsecase;
+
+  /// 文脈チュートリアルの表示要否。
+  @visibleForTesting
+  final EvaluateTutorialContextUsecase evaluateTutorialContextUsecase;
+
+  /// 文脈表示済みの永続化。
+  @visibleForTesting
+  final MarkTutorialContextSeenUsecase markTutorialContextSeenUsecase;
 
   /// 詳細への遷移。
   @visibleForTesting
@@ -85,6 +105,8 @@ final class ExerciseHistoryScreenViewModel {
   const ExerciseHistoryScreenViewModel._({
     required this.state,
     required this.loadMonthUsecase,
+    required this.evaluateTutorialContextUsecase,
+    required this.markTutorialContextSeenUsecase,
     required this.navigation,
     required this.stateToEntity,
     required this.clock,

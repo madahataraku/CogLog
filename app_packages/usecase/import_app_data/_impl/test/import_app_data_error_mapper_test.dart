@@ -11,6 +11,7 @@ import 'package:test/test.dart';
 import 'package:usecase_import_app_data/usecase_import_app_data.dart';
 import 'package:usecase_import_app_data_impl/usecase_import_app_data_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 final class _NoopSync implements SyncExerciseReminderUsecase {
   @override
@@ -30,6 +31,7 @@ ImportAppDataUsecaseImpl _usecase(FakeUserFileGateway userFile) {
     localNotifications: FakeLocalNotificationGateway(),
     sync: _NoopSync(),
     backupStore: ImportBackupStore(documentsDirectory: Directory.systemTemp),
+    tutorialSession: TutorialRuntimeSession(),
   );
 }
 

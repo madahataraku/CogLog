@@ -62,6 +62,7 @@ final class TrendsStateToEntityDelegate {
       showRetryButton: state.bodyReadFailed,
       visibleSeries: visible,
       bucketCount: state.buckets.length,
+      pendingTutorial: state.pendingTutorial,
     );
   }
 }

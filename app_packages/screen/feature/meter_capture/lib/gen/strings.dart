@@ -135,4 +135,28 @@ mixin class L10nStringsMixin {
   /// 画面タイトル
   String get screen_feature_meter_capture_title =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_title');
+
+  /// 段階5本文
+  String get screen_feature_meter_capture_tutorial_camera_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_tutorial_camera_body',
+      );
+
+  /// 段階5タイトル
+  String get screen_feature_meter_capture_tutorial_camera_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_tutorial_camera_title',
+      );
+
+  /// 段階6本文
+  String get screen_feature_meter_capture_tutorial_meter_edit_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_tutorial_meter_edit_body',
+      );
+
+  /// 段階6タイトル
+  String get screen_feature_meter_capture_tutorial_meter_edit_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_tutorial_meter_edit_title',
+      );
 }

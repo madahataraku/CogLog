@@ -54,6 +54,18 @@ mixin class L10nStringsMixin {
   String get screen_feature_exercise_history_title =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_title');
 
+  /// 段階8本文
+  String get screen_feature_exercise_history_tutorial_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_tutorial_body',
+      );
+
+  /// 段階8タイトル
+  String get screen_feature_exercise_history_tutorial_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_tutorial_title',
+      );
+
   /// カレンダー曜日（金曜）
   String get screen_feature_exercise_history_weekday_fri =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_weekday_fri');

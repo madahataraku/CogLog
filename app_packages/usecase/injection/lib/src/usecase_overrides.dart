@@ -338,6 +338,7 @@ List<Override> usecaseOverrides({
       localNotifications: ref.watch(localNotificationGatewayProvider),
       sync: ref.watch(SyncExerciseReminderUsecase.provider),
       backupStore: ImportBackupStore(documentsDirectory: documentsDirectory),
+      tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
     ),
   ),
   RecoverInterruptedImportUsecase.provider.overrideWith(

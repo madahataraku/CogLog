@@ -21,6 +21,7 @@ import 'package:test/test.dart';
 import 'package:usecase_import_app_data/usecase_import_app_data.dart';
 import 'package:usecase_import_app_data_impl/usecase_import_app_data_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 const _historyId = '11111111-1111-4111-8111-111111111111';
 
@@ -141,6 +142,7 @@ void main() {
     FakeLocalNotificationGateway localNotifications,
     _RecordingSync sync,
     ImportBackupStore backupStore,
+    TutorialRuntimeSession tutorialSession,
   })
   build({
     FakeUserFileGateway? userFile,
@@ -156,6 +158,7 @@ void main() {
     final local = localNotifications ?? FakeLocalNotificationGateway();
     final syncUsecase = sync ?? _RecordingSync();
     final backupStore = ImportBackupStore(documentsDirectory: tempDir);
+    final tutorialSession = TutorialRuntimeSession();
     final usecase = ImportAppDataUsecaseImpl(
       histories: histories,
       goals: goals,
@@ -166,6 +169,7 @@ void main() {
       localNotifications: local,
       sync: syncUsecase,
       backupStore: backupStore,
+      tutorialSession: tutorialSession,
       clock: () => DateTime.utc(2026, 11, 20, 12),
     );
     return (
@@ -179,6 +183,7 @@ void main() {
       localNotifications: local,
       sync: syncUsecase,
       backupStore: backupStore,
+      tutorialSession: tutorialSession,
     );
   }
 
@@ -360,6 +365,7 @@ void main() {
       localNotifications: env.localNotifications,
       sync: env.sync,
       backupStore: env.backupStore,
+      tutorialSession: env.tutorialSession,
     );
 
     final events = await usecase
@@ -460,6 +466,7 @@ void main() {
     expect(events.last, isA<ImportAppDataSucceeded>());
     expect((await env.goals.read()).caloriesKcal, 300);
     expect((await env.tutorial.read()).mainCompleted, isTrue);
+    expect(env.tutorialSession.suppressMainAutoStartThisProcess, isFalse);
   });
 
   test('tutorial キーありは置換する', () async {
@@ -482,6 +489,23 @@ void main() {
     final progress = await env.tutorial.read();
     expect(progress.mainCompleted, isTrue);
     expect(progress.cameraContextSeen, isTrue);
+    expect(env.tutorialSession.suppressMainAutoStartThisProcess, isFalse);
+  });
+
+  test('tutorial キーありで mainCompleted=false なら suppress を立てる', () async {
+    final env = build();
+    await env.tutorial.write(
+      TutorialProgress.initial.copyWith(mainCompleted: true),
+    );
+    final events = await env.usecase
+        .applyImport(
+          CogsavCodec.encode(_document(tutorial: TutorialProgress.initial)),
+        )
+        .toList();
+
+    expect(events.last, isA<ImportAppDataSucceeded>());
+    expect((await env.tutorial.read()).mainCompleted, isFalse);
+    expect(env.tutorialSession.suppressMainAutoStartThisProcess, isTrue);
   });
 
   test('tutorial 不正値は Failed(corrupt) で書き込みなし', () async {

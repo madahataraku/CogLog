@@ -24,3 +24,7 @@ goal_auto_updated,目標が自動更新されました,Daily goals were auto-upd
 achievement_unlocked_title,{name},Unlocked: {name},単件トーストタイトル（name引数）
 achievement_unlocked_body,{condition},{condition},単件トースト本文
 achievement_unlocked_summary_title,アチーブメントを{count}件獲得：{firstName}ほか,{count} achievements unlocked: {firstName} and more,複数要約
+tutorial_camera_title,メーターを撮影,Photograph the meter,段階5タイトル
+tutorial_camera_body,カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。,"Photograph the meter panel to read distance, duration, and calories. Health write permission may be requested when saving.",段階5本文
+tutorial_meter_edit_title,読み取り結果の確認,Review the reading,段階6タイトル
+tutorial_meter_edit_body,走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。,"Distance, duration, and calories are filled in automatically. Correct any mistakes by hand before saving.",段階6本文

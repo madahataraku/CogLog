@@ -1,4 +1,4 @@
-/// 入力欄へ出す表示用文字列と誘導・メッセージ予約。
+/// 入力欄へ出す表示用文字列と誘導・メッセージ・チュートリアル予約。
 ///
 /// Example:
 /// ```dart
@@ -11,13 +11,15 @@
 ///   caloriesText: '100',
 ///   recordedAt: null,
 ///   pendingModelDownloadGuidance: false,
+///   pendingTutorialCamera: false,
+///   pendingTutorialMeterEdit: false,
 ///   showReadSuccessMessage: false,
 ///   showReadCautionMessage: false,
 ///   showHandEntryGuidance: false,
 /// );
 /// ```
 final class MeterCaptureScreenEntity {
-  /// 表示用文字列と誘導・メッセージ予約をすべて指定して作る。
+  /// 表示用文字列と誘導・メッセージ・チュートリアル予約をすべて指定して作る。
   ///
   /// Example:
   /// ```dart
@@ -30,6 +32,8 @@ final class MeterCaptureScreenEntity {
   ///   caloriesText: '100',
   ///   recordedAt: null,
   ///   pendingModelDownloadGuidance: false,
+  ///   pendingTutorialCamera: false,
+  ///   pendingTutorialMeterEdit: false,
   ///   showReadSuccessMessage: false,
   ///   showReadCautionMessage: false,
   ///   showHandEntryGuidance: false,
@@ -44,6 +48,8 @@ final class MeterCaptureScreenEntity {
     required this.caloriesText,
     required this.recordedAt,
     required this.pendingModelDownloadGuidance,
+    required this.pendingTutorialCamera,
+    required this.pendingTutorialMeterEdit,
     required this.showReadSuccessMessage,
     required this.showReadCautionMessage,
     required this.showHandEntryGuidance,
@@ -72,6 +78,12 @@ final class MeterCaptureScreenEntity {
 
   /// モデル未ダウンロード誘導を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
+
+  /// 撮影画面の文脈コーチマークを表示予約しているとき true。
+  final bool pendingTutorialCamera;
+
+  /// 結果編集の文脈コーチマークを表示予約しているとき true。
+  final bool pendingTutorialMeterEdit;
 
   /// 自動読み取り完全時の成功メッセージを出すとき true。
   final bool showReadSuccessMessage;

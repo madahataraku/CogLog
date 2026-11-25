@@ -21,6 +21,7 @@ dependencies:
   meta: any
   usecase_import_app_data: any
   usecase_sync_exercise_reminder: any
+  usecase_tutorial: any
 
 dev_dependencies:
   archive: any

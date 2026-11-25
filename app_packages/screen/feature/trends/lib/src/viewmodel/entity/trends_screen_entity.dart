@@ -16,6 +16,7 @@ import 'trends_visible_series.dart';
 ///   showRetryButton: false,
 ///   visibleSeries: const [],
 ///   bucketCount: 0,
+///   pendingTutorial: false,
 /// );
 /// ```
 final class TrendsScreenEntity {
@@ -33,6 +34,7 @@ final class TrendsScreenEntity {
   ///   showRetryButton: false,
   ///   visibleSeries: const [],
   ///   bucketCount: 0,
+  ///   pendingTutorial: false,
   /// );
   /// ```
   const TrendsScreenEntity({
@@ -45,6 +47,7 @@ final class TrendsScreenEntity {
     required this.showRetryButton,
     required this.visibleSeries,
     required this.bucketCount,
+    required this.pendingTutorial,
   });
 
   /// 選んでいる期間。
@@ -73,4 +76,7 @@ final class TrendsScreenEntity {
 
   /// グラフ X スロット数（バケット数）。
   final int bucketCount;
+
+  /// 推移文脈コーチマークを表示予約しているとき true。
+  final bool pendingTutorial;
 }

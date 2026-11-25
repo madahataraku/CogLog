@@ -81,4 +81,40 @@ extension TrendsScreenViewModelActions on TrendsScreenViewModel {
       now: now ?? DateTime.now(),
     ).execute();
   }
+
+  /// 推移文脈コーチマークの要否を評価する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEvaluateTutorial();
+  /// ```
+  Future<void> onEvaluateTutorial() {
+    return OnEvaluateTutorialDelegate(
+      state: state,
+      evaluateContext: evaluateTutorialContextUsecase,
+    ).execute();
+  }
+
+  /// 推移文脈の表示予約を消費する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeTutorial();
+  /// ```
+  Future<void> onAcknowledgeTutorial() {
+    return OnAcknowledgeTutorialDelegate(state: state).execute();
+  }
+
+  /// 推移文脈を閉じ、表示済みにする。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onDismissTutorial();
+  /// ```
+  Future<void> onDismissTutorial() {
+    return OnDismissTutorialDelegate(
+      state: state,
+      markSeen: markTutorialContextSeenUsecase,
+    ).execute();
+  }
 }

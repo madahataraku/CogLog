@@ -41,6 +41,8 @@ final class MeterCaptureScreenState {
     this.captureError = false,
     this.cameraSessionGeneration = 0,
     this.pendingModelDownloadGuidance = false,
+    this.pendingTutorialCamera = false,
+    this.pendingTutorialMeterEdit = false,
     this.showReadSuccessMessage = false,
     this.showReadCautionMessage = false,
     this.showHandEntryGuidance = false,
@@ -115,6 +117,12 @@ final class MeterCaptureScreenState {
   /// モデル未ダウンロード誘導を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
 
+  /// 撮影画面の文脈コーチマーク（段階5）を表示予約しているとき true。
+  final bool pendingTutorialCamera;
+
+  /// 結果編集の文脈コーチマーク（段階6）を表示予約しているとき true。
+  final bool pendingTutorialMeterEdit;
+
   /// 自動読み取り完全時の成功メッセージを出すとき true。
   final bool showReadSuccessMessage;
 
@@ -162,6 +170,8 @@ final class MeterCaptureScreenState {
     bool? captureError,
     int? cameraSessionGeneration,
     bool? pendingModelDownloadGuidance,
+    bool? pendingTutorialCamera,
+    bool? pendingTutorialMeterEdit,
     bool? showReadSuccessMessage,
     bool? showReadCautionMessage,
     bool? showHandEntryGuidance,
@@ -199,6 +209,9 @@ final class MeterCaptureScreenState {
         cameraSessionGeneration ?? this.cameraSessionGeneration,
     pendingModelDownloadGuidance:
         pendingModelDownloadGuidance ?? this.pendingModelDownloadGuidance,
+    pendingTutorialCamera: pendingTutorialCamera ?? this.pendingTutorialCamera,
+    pendingTutorialMeterEdit:
+        pendingTutorialMeterEdit ?? this.pendingTutorialMeterEdit,
     showReadSuccessMessage:
         showReadSuccessMessage ?? this.showReadSuccessMessage,
     showReadCautionMessage:

@@ -752,6 +752,13 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_title => '運動履歴';
 
   @override
+  String get screen_feature_exercise_history_tutorial_body =>
+      '黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。';
+
+  @override
+  String get screen_feature_exercise_history_tutorial_title => '運動した日のスタンプ';
+
+  @override
   String get screen_feature_exercise_history_weekday_fri => '金';
 
   @override
@@ -953,6 +960,21 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_meter_capture_title => 'メーター記録';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_camera_body =>
+      'カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_camera_title => 'メーターを撮影';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_meter_edit_body =>
+      '走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_meter_edit_title =>
+      '読み取り結果の確認';
 
   @override
   String get screen_feature_notification_settings_back_semantics => '戻る';
@@ -1278,6 +1300,13 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_title => '推移';
+
+  @override
+  String get screen_feature_trends_tutorial_body =>
+      '消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。';
+
+  @override
+  String get screen_feature_trends_tutorial_title => '運動と身体の関係';
 
   @override
   String get screen_feature_trends_unit_kcal => 'kcal';

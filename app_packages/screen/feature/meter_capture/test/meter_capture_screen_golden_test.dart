@@ -22,6 +22,8 @@ import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.da
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 /// テスト用のメーター写真バイト。
@@ -161,8 +163,30 @@ List<Override> _baseOverrides() => [
   ModelDownloadGuidanceProviders.session.overrideWith(
     (ref) => OnDeviceLlmGuidanceSession(),
   ),
+  EvaluateTutorialContextUsecase.provider.overrideWith(
+    (ref) => _EvaluateTutorialNever(),
+  ),
+  MarkTutorialContextSeenUsecase.provider.overrideWith(
+    (ref) => _MarkTutorialNever(),
+  ),
+  tutorialRuntimeSessionProvider.overrideWith(
+    (ref) => TutorialRuntimeSession(),
+  ),
+  CoachMarkProviders.registry.overrideWith((ref) => CoachMarkRegistry()),
   screenNavigationProvider.overrideWithValue(_Nav()),
 ];
+
+final class _EvaluateTutorialNever implements EvaluateTutorialContextUsecase {
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async => const EvaluateTutorialContextResult(shouldShow: false);
+}
+
+final class _MarkTutorialNever implements MarkTutorialContextSeenUsecase {
+  @override
+  Future<void> execute(MarkTutorialContextSeenRequest request) async {}
+}
 
 Future<void> _prepareSurface(
   WidgetTester tester, {

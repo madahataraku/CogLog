@@ -1441,6 +1441,18 @@ abstract class L10n {
   /// **'運動履歴'**
   String get screen_feature_exercise_history_title;
 
+  /// 段階8本文
+  ///
+  /// In ja, this message translates to:
+  /// **'黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。'**
+  String get screen_feature_exercise_history_tutorial_body;
+
+  /// 段階8タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'運動した日のスタンプ'**
+  String get screen_feature_exercise_history_tutorial_title;
+
   /// カレンダー曜日（金曜）
   ///
   /// In ja, this message translates to:
@@ -1811,6 +1823,30 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'メーター記録'**
   String get screen_feature_meter_capture_title;
+
+  /// 段階5本文
+  ///
+  /// In ja, this message translates to:
+  /// **'カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。'**
+  String get screen_feature_meter_capture_tutorial_camera_body;
+
+  /// 段階5タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'メーターを撮影'**
+  String get screen_feature_meter_capture_tutorial_camera_title;
+
+  /// 段階6本文
+  ///
+  /// In ja, this message translates to:
+  /// **'走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。'**
+  String get screen_feature_meter_capture_tutorial_meter_edit_body;
+
+  /// 段階6タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取り結果の確認'**
+  String get screen_feature_meter_capture_tutorial_meter_edit_title;
 
   /// 戻るボタンの代替テキスト
   ///
@@ -2355,6 +2391,18 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'推移'**
   String get screen_feature_trends_title;
+
+  /// 段階7本文
+  ///
+  /// In ja, this message translates to:
+  /// **'消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。'**
+  String get screen_feature_trends_tutorial_body;
+
+  /// 段階7タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'運動と身体の関係'**
+  String get screen_feature_trends_tutorial_title;
 
   /// 単位
   ///

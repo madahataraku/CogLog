@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
 import 'package:screen_feature_achievement/screen_feature_achievement.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 import '../viewmodel/can_submit_meter_capture.dart';
@@ -27,6 +28,8 @@ import '../viewmodel/state/meter_capture_screen_state.dart';
 ///     caloriesText: '',
 ///     recordedAt: null,
 ///     pendingModelDownloadGuidance: false,
+///     pendingTutorialCamera: false,
+///     pendingTutorialMeterEdit: false,
 ///     showReadSuccessMessage: false,
 ///     showReadCautionMessage: false,
 ///     showHandEntryGuidance: false,
@@ -50,6 +53,8 @@ class MeterCaptureStep2View extends HookConsumerWidget {
   ///     caloriesText: '',
   ///     recordedAt: null,
   ///     pendingModelDownloadGuidance: false,
+  ///     pendingTutorialCamera: false,
+  ///     pendingTutorialMeterEdit: false,
   ///     showReadSuccessMessage: false,
   ///     showReadCautionMessage: false,
   ///     showHandEntryGuidance: false,
@@ -83,6 +88,8 @@ class MeterCaptureStep2View extends HookConsumerWidget {
   ///     caloriesText: '',
   ///     recordedAt: null,
   ///     pendingModelDownloadGuidance: false,
+  ///     pendingTutorialCamera: false,
+  ///     pendingTutorialMeterEdit: false,
   ///     showReadSuccessMessage: false,
   ///     showReadCautionMessage: false,
   ///     showHandEntryGuidance: false,
@@ -208,92 +215,107 @@ class MeterCaptureStep2View extends HookConsumerWidget {
             strings.screen_feature_meter_capture_hand_entry_guidance,
             textAlign: TextAlign.center,
           ),
-        FTextField(
-          control: .managed(
-            controller: distanceController,
-            onChange: (_) =>
-                viewModel.onDistanceChanged(distanceController.text),
+        CoachMarkTarget(
+          id: CoachMarkTargetId.meterEditFields,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 16,
+            children: [
+              FTextField(
+                control: .managed(
+                  controller: distanceController,
+                  onChange: (_) =>
+                      viewModel.onDistanceChanged(distanceController.text),
+                ),
+                label: Text(strings.screen_feature_meter_capture_distance),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                enabled: !busy,
+              ),
+              Row(
+                spacing: 8,
+                children: [
+                  Expanded(
+                    child: FTextField(
+                      control: .managed(
+                        controller: hoursController,
+                        onChange: (_) => syncDuration(),
+                      ),
+                      label: Text(
+                        strings.screen_feature_meter_capture_duration_hours,
+                      ),
+                      keyboardType: TextInputType.number,
+                      enabled: !busy,
+                    ),
+                  ),
+                  Expanded(
+                    child: FTextField(
+                      control: .managed(
+                        controller: minutesController,
+                        onChange: (_) => syncDuration(),
+                      ),
+                      label: Text(
+                        strings.screen_feature_meter_capture_duration_minutes,
+                      ),
+                      keyboardType: TextInputType.number,
+                      enabled: !busy,
+                    ),
+                  ),
+                  Expanded(
+                    child: FTextField(
+                      control: .managed(
+                        controller: secondsController,
+                        onChange: (_) => syncDuration(),
+                      ),
+                      label: Text(
+                        strings.screen_feature_meter_capture_duration_seconds,
+                      ),
+                      keyboardType: TextInputType.number,
+                      enabled: !busy,
+                    ),
+                  ),
+                ],
+              ),
+              FTextField(
+                control: .managed(controller: averageSpeedController),
+                label: Text(strings.screen_feature_meter_capture_average_speed),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                enabled: false,
+              ),
+              FTextField(
+                control: .managed(
+                  controller: caloriesController,
+                  onChange: (_) =>
+                      viewModel.onCaloriesChanged(caloriesController.text),
+                ),
+                label: Text(strings.screen_feature_meter_capture_calories),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                enabled: !busy,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 8,
+                children: [
+                  Text(strings.screen_feature_meter_capture_recorded_at),
+                  TextButton(
+                    onPressed: busy ? null : pickExercisedAt,
+                    style: TextButton.styleFrom(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(recordedAtLabel, textAlign: TextAlign.start),
+                  ),
+                ],
+              ),
+            ],
           ),
-          label: Text(strings.screen_feature_meter_capture_distance),
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          enabled: !busy,
-        ),
-        Row(
-          spacing: 8,
-          children: [
-            Expanded(
-              child: FTextField(
-                control: .managed(
-                  controller: hoursController,
-                  onChange: (_) => syncDuration(),
-                ),
-                label: Text(
-                  strings.screen_feature_meter_capture_duration_hours,
-                ),
-                keyboardType: TextInputType.number,
-                enabled: !busy,
-              ),
-            ),
-            Expanded(
-              child: FTextField(
-                control: .managed(
-                  controller: minutesController,
-                  onChange: (_) => syncDuration(),
-                ),
-                label: Text(
-                  strings.screen_feature_meter_capture_duration_minutes,
-                ),
-                keyboardType: TextInputType.number,
-                enabled: !busy,
-              ),
-            ),
-            Expanded(
-              child: FTextField(
-                control: .managed(
-                  controller: secondsController,
-                  onChange: (_) => syncDuration(),
-                ),
-                label: Text(
-                  strings.screen_feature_meter_capture_duration_seconds,
-                ),
-                keyboardType: TextInputType.number,
-                enabled: !busy,
-              ),
-            ),
-          ],
-        ),
-        FTextField(
-          control: .managed(controller: averageSpeedController),
-          label: Text(strings.screen_feature_meter_capture_average_speed),
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          enabled: false,
-        ),
-        FTextField(
-          control: .managed(
-            controller: caloriesController,
-            onChange: (_) =>
-                viewModel.onCaloriesChanged(caloriesController.text),
-          ),
-          label: Text(strings.screen_feature_meter_capture_calories),
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          enabled: !busy,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 8,
-          children: [
-            Text(strings.screen_feature_meter_capture_recorded_at),
-            TextButton(
-              onPressed: busy ? null : pickExercisedAt,
-              style: TextButton.styleFrom(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(recordedAtLabel, textAlign: TextAlign.start),
-            ),
-          ],
         ),
         if (state.saveError)
           Text(

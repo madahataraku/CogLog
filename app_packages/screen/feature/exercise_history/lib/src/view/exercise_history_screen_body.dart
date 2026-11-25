@@ -2,6 +2,7 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 import '../viewmodel/exercise_history_screen_view_model.dart';
@@ -93,11 +94,14 @@ class ExerciseHistoryScreenBody extends ConsumerWidget {
             const Expanded(child: Center(child: FCircularProgress()))
           else
             Expanded(
-              child: SingleChildScrollView(
-                child: ExerciseHistoryCalendar(
-                  weekdayLabels: entity.weekdayLabels,
-                  dayCells: entity.dayCells,
-                  onDayPressed: (day) => viewModel.onTapDay(day: day),
+              child: CoachMarkTarget(
+                id: CoachMarkTargetId.historyCalendar,
+                child: SingleChildScrollView(
+                  child: ExerciseHistoryCalendar(
+                    weekdayLabels: entity.weekdayLabels,
+                    dayCells: entity.dayCells,
+                    onDayPressed: (day) => viewModel.onTapDay(day: day),
+                  ),
                 ),
               ),
             ),

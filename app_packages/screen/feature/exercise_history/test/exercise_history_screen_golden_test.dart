@@ -13,6 +13,8 @@ import 'package:screen_feature_exercise_history/src/viewmodel/exercise_history_s
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_exercise_history_month/usecase_load_exercise_history_month.dart';
 import 'package:usecase_load_exercise_history_month_impl/usecase_load_exercise_history_month_impl.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 final class _Nav implements ScreenNavigation {
   @override
@@ -115,8 +117,30 @@ List<Override> _monthOverrides(FixedExerciseHistoryRepository histories) => [
   LoadExerciseHistoryMonthUsecase.provider.overrideWith(
     (ref) => LoadExerciseHistoryMonthUsecaseImpl(histories: histories),
   ),
+  EvaluateTutorialContextUsecase.provider.overrideWith(
+    (ref) => _EvaluateTutorialNever(),
+  ),
+  MarkTutorialContextSeenUsecase.provider.overrideWith(
+    (ref) => _MarkTutorialNever(),
+  ),
+  tutorialRuntimeSessionProvider.overrideWith(
+    (ref) => TutorialRuntimeSession(),
+  ),
+  CoachMarkProviders.registry.overrideWith((ref) => CoachMarkRegistry()),
   screenNavigationProvider.overrideWithValue(_Nav()),
 ];
+
+final class _EvaluateTutorialNever implements EvaluateTutorialContextUsecase {
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async => const EvaluateTutorialContextResult(shouldShow: false);
+}
+
+final class _MarkTutorialNever implements MarkTutorialContextSeenUsecase {
+  @override
+  Future<void> execute(MarkTutorialContextSeenRequest request) async {}
+}
 
 void main() {
   testWidgets('運動履歴カレンダー空月 / ja / Android / light', (tester) async {
@@ -181,6 +205,16 @@ void main() {
         LoadExerciseHistoryMonthUsecase.provider.overrideWith(
           (ref) => _FailingLoadMonth(),
         ),
+        EvaluateTutorialContextUsecase.provider.overrideWith(
+          (ref) => _EvaluateTutorialNever(),
+        ),
+        MarkTutorialContextSeenUsecase.provider.overrideWith(
+          (ref) => _MarkTutorialNever(),
+        ),
+        tutorialRuntimeSessionProvider.overrideWith(
+          (ref) => TutorialRuntimeSession(),
+        ),
+        CoachMarkProviders.registry.overrideWith((ref) => CoachMarkRegistry()),
         screenNavigationProvider.overrideWithValue(_Nav()),
       ],
     );

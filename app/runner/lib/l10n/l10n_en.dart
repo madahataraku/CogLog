@@ -818,6 +818,14 @@ class L10nEn extends L10n {
   String get screen_feature_exercise_history_title => 'Exercise history';
 
   @override
+  String get screen_feature_exercise_history_tutorial_body =>
+      'Yellow stamps mark days you exercised. Tap a day to review, edit, or delete.';
+
+  @override
+  String get screen_feature_exercise_history_tutorial_title =>
+      'Exercise day stamps';
+
+  @override
   String get screen_feature_exercise_history_weekday_fri => 'Fri';
 
   @override
@@ -1028,6 +1036,22 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_meter_capture_title => 'Meter record';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_camera_body =>
+      'Photograph the meter panel to read distance, duration, and calories. Health write permission may be requested when saving.';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_camera_title =>
+      'Photograph the meter';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_meter_edit_body =>
+      'Distance, duration, and calories are filled in automatically. Correct any mistakes by hand before saving.';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_meter_edit_title =>
+      'Review the reading';
 
   @override
   String get screen_feature_notification_settings_back_semantics => 'Back';
@@ -1362,6 +1386,14 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_title => 'Trends';
+
+  @override
+  String get screen_feature_trends_tutorial_body =>
+      'See how calories relate to body fat and more on the chart. Body fat and weight need Health read access.';
+
+  @override
+  String get screen_feature_trends_tutorial_title =>
+      'Exercise and body metrics';
 
   @override
   String get screen_feature_trends_unit_kcal => 'kcal';
