@@ -371,6 +371,39 @@ void main() {
     expect(state.state.fieldsSyncGeneration, greaterThan(0));
   });
 
+  test('撮影日時無しの差し替えは作成開始日時を撮影日時にする', () async {
+    final creation = DateTime(2026, 1, 10, 8);
+    final oldRecorded = DateTime(2026, 1, 9, 7);
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          recordedAt: oldRecorded,
+          recordedAtManuallySet: false,
+          creationStartedAt: creation,
+          capturedAt: oldRecorded,
+          distanceKm: 1,
+          duration: const Duration(minutes: 10),
+          caloriesKcal: 10,
+          averageSpeedKmh: 6,
+        ),
+      );
+    });
+
+    await obtainAndReadEditPhoto(
+      state: state,
+      obtainMeterPhotoUsecase: _Obtain(
+        ObtainMeterPhotoSuccess(bytes: Uint8List.fromList([1])),
+      ),
+      readMeterPanelUsecase: _Read(),
+      source: ObtainMeterPhotoSource.library,
+    );
+
+    expect(state.state.capturedAt, creation);
+    expect(state.state.recordedAt, creation);
+    expect(state.state.recordedAtManuallySet, isFalse);
+    expect(state.state.creationStartedAt, creation);
+  });
+
   test('手変更ありの写真差し替えは運動した日時を維持する', () async {
     final oldAt = DateTime(2026, 5, 1, 10);
     final newCapturedAt = DateTime(2026, 5, 2, 15);

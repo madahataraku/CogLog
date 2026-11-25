@@ -71,11 +71,12 @@ Future<void> obtainAndReadEditPhoto({
         await emitter.emit(current.copyWith(permissionDeniedKind: kind));
       });
     case ObtainMeterPhotoSuccess(:final bytes, :final capturedAt):
-      final resolvedCapturedAt = capturedAt ?? DateTime.timestamp();
       await state.updateWithLock((current, emitter) async {
         if (current.photoSessionGeneration != generation) {
           return;
         }
+        final resolvedCapturedAt =
+            capturedAt ?? current.creationStartedAt ?? DateTime.timestamp();
         await emitter.emit(
           current.copyWith(
             photoBytes: bytes,
