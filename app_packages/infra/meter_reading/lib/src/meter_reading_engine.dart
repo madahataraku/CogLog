@@ -59,7 +59,7 @@ final meterReadingLlmEngineProvider = Provider<MeterReadingEngine>(
   (ref) => throw UnimplementedError('meterReadingLlmEngineProvider'),
 );
 
-/// Gemma E2B メーター読み取りエンジンの注入点。
+/// LFM VL メーター読み取りエンジンの注入点。
 ///
 /// Example:
 /// ```dart

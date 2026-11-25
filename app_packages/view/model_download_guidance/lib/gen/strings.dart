@@ -17,11 +17,11 @@ mixin class L10nStringsMixin {
   String get view_model_download_guidance_dismiss =>
       LocalizeStringDelegate.get('view_model_download_guidance_dismiss');
 
-  /// Gemma誘導本文
+  /// LFM VL誘導本文
   String get view_model_download_guidance_gemma_body =>
       LocalizeStringDelegate.get('view_model_download_guidance_gemma_body');
 
-  /// Gemma誘導タイトル
+  /// LFM VL誘導タイトル
   String get view_model_download_guidance_gemma_title =>
       LocalizeStringDelegate.get('view_model_download_guidance_gemma_title');
 

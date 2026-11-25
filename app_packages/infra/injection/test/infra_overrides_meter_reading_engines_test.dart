@@ -10,7 +10,7 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  test('iOS は LLM foundationModel と gemmaE2b', () {
+  test('iOS は LLM foundationModel と lfmVl', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -25,7 +25,7 @@ void main() {
     );
     expect(
       container.read(meterReadingGemmaEngineProvider).kind,
-      MeterReadingEngineKind.gemmaE2b,
+      MeterReadingEngineKind.lfmVl,
     );
     expect(
       container.read(meterReadingGemmaEngineProvider),
@@ -34,11 +34,11 @@ void main() {
     expect(container.read(meterReadingEnginesProvider), hasLength(2));
     expect(container.read(meterReadingEnginesProvider).map((e) => e.kind), [
       MeterReadingEngineKind.foundationModel,
-      MeterReadingEngineKind.gemmaE2b,
+      MeterReadingEngineKind.lfmVl,
     ]);
   });
 
-  test('Android は LLM geminiNano と gemmaE2b', () {
+  test('Android は LLM geminiNano と lfmVl', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -49,16 +49,16 @@ void main() {
     );
     expect(
       container.read(meterReadingGemmaEngineProvider).kind,
-      MeterReadingEngineKind.gemmaE2b,
+      MeterReadingEngineKind.lfmVl,
     );
     expect(container.read(meterReadingEnginesProvider), hasLength(2));
     expect(container.read(meterReadingEnginesProvider).map((e) => e.kind), [
       MeterReadingEngineKind.geminiNano,
-      MeterReadingEngineKind.gemmaE2b,
+      MeterReadingEngineKind.lfmVl,
     ]);
   });
 
-  test('desktop は Unavailable LLM と gemmaE2b', () {
+  test('desktop は Unavailable LLM と lfmVl', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     final container = ProviderContainer(overrides: infraOverrides());
     addTearDown(container.dispose);
@@ -69,12 +69,12 @@ void main() {
     );
     expect(
       container.read(meterReadingGemmaEngineProvider).kind,
-      MeterReadingEngineKind.gemmaE2b,
+      MeterReadingEngineKind.lfmVl,
     );
     expect(container.read(meterReadingEnginesProvider), hasLength(2));
     expect(
       container.read(meterReadingEnginesProvider).map((e) => e.kind),
-      contains(MeterReadingEngineKind.gemmaE2b),
+      contains(MeterReadingEngineKind.lfmVl),
     );
   });
 }

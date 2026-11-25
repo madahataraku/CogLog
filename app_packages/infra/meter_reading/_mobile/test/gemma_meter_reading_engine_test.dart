@@ -14,7 +14,7 @@ void main() {
       response: 'DISTANCE_KM=5\nDURATION=0:30:00\nCALORIES_KCAL=80',
     );
     final engine = GemmaMeterReadingEngine(gemma: gemma, log: log);
-    expect(engine.kind, MeterReadingEngineKind.gemmaE2b);
+    expect(engine.kind, MeterReadingEngineKind.lfmVl);
     expect(await engine.isAvailable, isTrue);
 
     final bytes = Uint8List.fromList([7, 8, 9]);
@@ -25,7 +25,7 @@ void main() {
     expect(values.caloriesKcal, 80);
     expect(values.averageSpeedKmh, isNull);
     expect(log.entries, hasLength(2));
-    expect(log.entries.first.tag, 'meter.gemma');
+    expect(log.entries.first.tag, 'meter.lfm');
     expect(log.entries.first.message, contains('rawLength='));
     expect(log.entries.first.message, isNot(contains('DISTANCE_KM=')));
     expect(log.entries.last.message, contains('present=[distanceKm'));

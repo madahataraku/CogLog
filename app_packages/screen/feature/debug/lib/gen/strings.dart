@@ -31,11 +31,11 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_clear_logs =>
       LocalizeStringDelegate.get('screen_feature_debug_clear_logs');
 
-  /// Gemma main backend ラベル
+  /// LFM VL main backend ラベル
   String get screen_feature_debug_gemma_backend_label =>
       LocalizeStringDelegate.get('screen_feature_debug_gemma_backend_label');
 
-  /// Gemma visionBackend ラベル
+  /// LFM VL visionBackend ラベル
   String get screen_feature_debug_gemma_vision_backend_label =>
       LocalizeStringDelegate.get(
         'screen_feature_debug_gemma_vision_backend_label',
@@ -57,13 +57,13 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_platform_notes_label =>
       LocalizeStringDelegate.get('screen_feature_debug_platform_notes_label');
 
-  /// Gemma 優先モードの説明
+  /// LFM VL 優先モードの説明
   String get screen_feature_debug_prefer_gemma_description =>
       LocalizeStringDelegate.get(
         'screen_feature_debug_prefer_gemma_description',
       );
 
-  /// メーター読み取りで Gemma を優先するスイッチ
+  /// メーター読み取りで LFM VL を優先するスイッチ
   String get screen_feature_debug_prefer_gemma_item =>
       LocalizeStringDelegate.get('screen_feature_debug_prefer_gemma_item');
 
@@ -105,13 +105,13 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_section_availability =>
       LocalizeStringDelegate.get('screen_feature_debug_section_availability');
 
-  /// Gemma 可用性セクション見出し
+  /// LFM VL 可用性セクション見出し
   String get screen_feature_debug_section_gemma_availability =>
       LocalizeStringDelegate.get(
         'screen_feature_debug_section_gemma_availability',
       );
 
-  /// Gemma プローブ見出し
+  /// LFM VL プローブ見出し
   String get screen_feature_debug_section_gemma_probe =>
       LocalizeStringDelegate.get('screen_feature_debug_section_gemma_probe');
 

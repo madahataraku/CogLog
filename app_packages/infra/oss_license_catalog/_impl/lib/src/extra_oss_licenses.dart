@@ -8,6 +8,19 @@ import 'package:infra_oss_license_catalog/infra_oss_license_catalog.dart';
 /// ```
 const extraOssLicenses = <OssLicenseEntry>[
   OssLicenseEntry(
+    name: 'LFM2.5-VL-1.6B (Liquid AI)',
+    license: '''LFM Open License v1.0
+Copyright Liquid AI
+
+Commercial use is free for Legal Entities with annual revenue under
+USD 10,000,000. Above that threshold, obtain a commercial license from
+Liquid AI (https://www.liquid.ai/lfm-license).
+
+Full license text: https://www.liquid.ai/lfm-license
+Model card: https://huggingface.co/litert-community/LFM2.5-VL-1.6B
+''',
+  ),
+  OssLicenseEntry(
     name: 'LiteRT-LM (LiteRTLM)',
     license: r'''                                 Apache License
                            Version 2.0, January 2004

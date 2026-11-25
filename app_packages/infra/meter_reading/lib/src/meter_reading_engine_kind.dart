@@ -4,7 +4,7 @@
 ///
 /// Example:
 /// ```dart
-/// MeterReadingEngineKind.gemmaE2b;
+/// MeterReadingEngineKind.lfmVl;
 /// ```
 enum MeterReadingEngineKind {
   /// iOS Foundation Models。
@@ -13,6 +13,6 @@ enum MeterReadingEngineKind {
   /// Android Gemini Nano。
   geminiNano,
 
-  /// LiteRT-LM 上の Gemma E2B（メーター読み取り専用）。
-  gemmaE2b,
+  /// LiteRT-LM 上の LFM VL（メーター読み取り専用）。
+  lfmVl,
 }

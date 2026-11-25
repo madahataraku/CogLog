@@ -203,14 +203,14 @@ class DebugScreenBody extends HookConsumerWidget {
                   strings.screen_feature_debug_prefer_gemma_description,
                 ),
                 suffix: FSwitch(
-                  value: entity.preferGemmaOverOsLlm,
+                  value: entity.preferLfmVlOverOsLlm,
                   semanticsLabel:
                       strings.screen_feature_debug_prefer_gemma_item,
                   onChange: (value) {
                     unawaited(
                       ref
                           .read(DebugScreenViewModel.provider)
-                          .onTogglePreferGemma(value),
+                          .onTogglePreferLfmVl(value),
                     );
                   },
                 ),

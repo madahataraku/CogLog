@@ -13,7 +13,7 @@ let package = Package(
   ],
   dependencies: [
     .package(name: "FlutterFramework", path: "../FlutterFramework"),
-    // LiteRT-LM Gemma E2B runtime (GPU main/vision + MTP). Same .litertlm as Android.
+    // LiteRT-LM LFM VL runtime (CPU main/vision, MTP off). Same .litertlm as Android.
     .package(url: "https://github.com/google-ai-edge/LiteRT-LM", from: "0.19.1"),
   ],
   targets: [

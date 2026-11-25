@@ -4,27 +4,27 @@ import 'package:state_stream/state_stream.dart';
 
 import '../state/debug_screen_state.dart';
 
-/// Gemma 優先モードのオン／オフをセッション設定と State へ写す。
+/// LFM VL 優先モードのオン／オフをセッション設定と State へ写す。
 ///
 /// Example:
 /// ```dart
-/// OnTogglePreferGemmaDelegate(
+/// OnTogglePreferLfmVlDelegate(
 ///   state: state,
 ///   sessionPreference: preference,
 /// ).execute(true);
 /// ```
 @internal
-final class OnTogglePreferGemmaDelegate {
+final class OnTogglePreferLfmVlDelegate {
   /// 依存を受け取る。
   ///
   /// Example:
   /// ```dart
-  /// OnTogglePreferGemmaDelegate(
+  /// OnTogglePreferLfmVlDelegate(
   ///   state: state,
   ///   sessionPreference: preference,
   /// );
   /// ```
-  const OnTogglePreferGemmaDelegate({
+  const OnTogglePreferLfmVlDelegate({
     required this.state,
     required this.sessionPreference,
   });
@@ -35,14 +35,14 @@ final class OnTogglePreferGemmaDelegate {
   /// セッション内のエンジン優先設定。
   final MeterReadingEngineSessionPreference sessionPreference;
 
-  /// [preferGemma] をセッションと State の両方へ反映する。
+  /// [preferLfmVl] をセッションと State の両方へ反映する。
   ///
   /// Example:
   /// ```dart
   /// await delegate.execute(true);
   /// ```
-  Future<void> execute(bool preferGemma) async {
-    sessionPreference.preferGemmaOverOsLlm = preferGemma;
+  Future<void> execute(bool preferLfmVl) async {
+    sessionPreference.preferLfmVlOverOsLlm = preferLfmVl;
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
         DebugScreenState(
@@ -50,7 +50,7 @@ final class OnTogglePreferGemmaDelegate {
           result: current.result,
           gemmaResult: current.gemmaResult,
           logs: current.logs,
-          preferGemmaOverOsLlm: preferGemma,
+          preferLfmVlOverOsLlm: preferLfmVl,
         ),
       );
     });

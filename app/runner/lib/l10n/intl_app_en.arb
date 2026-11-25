@@ -563,11 +563,11 @@
   },
   "screen_feature_debug_gemma_backend_label": "backend",
   "@screen_feature_debug_gemma_backend_label": {
-    "description": "Gemma main backend ラベル"
+    "description": "LFM VL main backend ラベル"
   },
   "screen_feature_debug_gemma_vision_backend_label": "visionBackend",
   "@screen_feature_debug_gemma_vision_backend_label": {
-    "description": "Gemma visionBackend ラベル"
+    "description": "LFM VL visionBackend ラベル"
   },
   "screen_feature_debug_generate_error_label": "generate error",
   "@screen_feature_debug_generate_error_label": {
@@ -587,11 +587,11 @@
   },
   "screen_feature_debug_prefer_gemma_description": "Session only; off after restart",
   "@screen_feature_debug_prefer_gemma_description": {
-    "description": "Gemma 優先モードの説明"
+    "description": "LFM VL 優先モードの説明"
   },
-  "screen_feature_debug_prefer_gemma_item": "Prefer Gemma",
+  "screen_feature_debug_prefer_gemma_item": "Prefer LFM VL",
   "@screen_feature_debug_prefer_gemma_item": {
-    "description": "メーター読み取りで Gemma を優先するスイッチ"
+    "description": "メーター読み取りで LFM VL を優先するスイッチ"
   },
   "screen_feature_debug_prepare_error_label": "prepare error",
   "@screen_feature_debug_prepare_error_label": {
@@ -629,13 +629,13 @@
   "@screen_feature_debug_section_availability": {
     "description": "可用性セクション見出し"
   },
-  "screen_feature_debug_section_gemma_availability": "Gemma E2B",
+  "screen_feature_debug_section_gemma_availability": "LFM VL",
   "@screen_feature_debug_section_gemma_availability": {
-    "description": "Gemma 可用性セクション見出し"
+    "description": "LFM VL 可用性セクション見出し"
   },
-  "screen_feature_debug_section_gemma_probe": "Gemma image probe",
+  "screen_feature_debug_section_gemma_probe": "LFM VL image probe",
   "@screen_feature_debug_section_gemma_probe": {
-    "description": "Gemma プローブ見出し"
+    "description": "LFM VL プローブ見出し"
   },
   "screen_feature_debug_section_logs": "App logs",
   "@screen_feature_debug_section_logs": {
@@ -1699,11 +1699,11 @@
   },
   "view_model_download_guidance_gemma_body": "The meter reading model is not on this device yet. You can start preparing it while on Wi-Fi.",
   "@view_model_download_guidance_gemma_body": {
-    "description": "Gemma誘導本文"
+    "description": "LFM VL誘導本文"
   },
   "view_model_download_guidance_gemma_title": "Prepare meter reading model",
   "@view_model_download_guidance_gemma_title": {
-    "description": "Gemma誘導タイトル"
+    "description": "LFM VL誘導タイトル"
   },
   "view_model_download_guidance_prepare": "Prepare model",
   "@view_model_download_guidance_prepare": {

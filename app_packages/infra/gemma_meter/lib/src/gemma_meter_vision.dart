@@ -5,7 +5,7 @@ import 'package:riverpod/riverpod.dart';
 import 'gemma_meter_availability_snapshot.dart';
 import 'gemma_meter_readiness.dart';
 
-/// メーター読み取り専用の Gemma E2B（LiteRT-LM）窓口。
+/// メーター読み取り専用の LFM VL（LiteRT-LM）窓口。
 ///
 /// [isAvailable] は [readiness] が [GemmaMeterReadiness.ready] のときだけ true。
 ///

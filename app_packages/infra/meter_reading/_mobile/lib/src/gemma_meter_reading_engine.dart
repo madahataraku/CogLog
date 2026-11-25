@@ -8,7 +8,7 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'meter_extract_prompt.dart';
 import 'meter_reading_field_presence.dart';
 
-/// Gemma E2B の画像生成でメーター値を取るエンジン。
+/// LFM VL の画像生成でメーター値を取るエンジン。
 ///
 /// 生文の長さと解析フィールドの有無だけを [log] へ出す（測定値・生文は出さない）。
 ///
@@ -20,7 +20,7 @@ import 'meter_reading_field_presence.dart';
 /// );
 /// ```
 final class GemmaMeterReadingEngine implements MeterReadingEngine {
-  /// [gemma] と任意の [log] を持つ Gemma エンジンを作る。
+  /// [gemma] と任意の [log] を持つ LFM VL エンジンを作る。
   ///
   /// Example:
   /// ```dart
@@ -32,14 +32,14 @@ final class GemmaMeterReadingEngine implements MeterReadingEngine {
   GemmaMeterReadingEngine({required this.gemma, AppLogStore? log})
     : log = log ?? AppLogStore();
 
-  /// 常に [MeterReadingEngineKind.gemmaE2b]。
+  /// 常に [MeterReadingEngineKind.lfmVl]。
   ///
   /// Example:
   /// ```dart
   /// engine.kind;
   /// ```
   @override
-  MeterReadingEngineKind get kind => MeterReadingEngineKind.gemmaE2b;
+  MeterReadingEngineKind get kind => MeterReadingEngineKind.lfmVl;
 
   /// 画像付き生成の窓口。
   final GemmaMeterVision gemma;
@@ -69,13 +69,13 @@ final class GemmaMeterReadingEngine implements MeterReadingEngine {
       imageBytes: photoBytes,
     );
     log.append(
-      tag: 'meter.gemma',
+      tag: 'meter.lfm',
       level: raw.trim().isEmpty ? AppLogLevel.warn : AppLogLevel.info,
       message: 'kind=${kind.name}; rawLength=${raw.length}',
     );
     final values = MeterPanelTextParser.parse(raw);
     log.append(
-      tag: 'meter.gemma',
+      tag: 'meter.lfm',
       level: AppLogLevel.info,
       message:
           'kind=${kind.name}; parsed ${formatMeterReadingFieldPresence(values)}',

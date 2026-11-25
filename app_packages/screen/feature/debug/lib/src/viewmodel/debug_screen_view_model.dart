@@ -14,7 +14,7 @@ import 'delegate/on_back_delegate.dart';
 import 'delegate/on_clear_logs_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_refresh_logs_delegate.dart';
-import 'delegate/on_toggle_prefer_gemma_delegate.dart';
+import 'delegate/on_toggle_prefer_lfm_vl_delegate.dart';
 import 'entity/debug_screen_entity.dart';
 import 'state/debug_screen_state.dart';
 
@@ -47,7 +47,7 @@ final class DebugScreenViewModel {
             result: null,
             gemmaResult: null,
             logs: [],
-            preferGemmaOverOsLlm: sessionPreference.preferGemmaOverOsLlm,
+            preferLfmVlOverOsLlm: sessionPreference.preferLfmVlOverOsLlm,
           ),
         ),
         diagnoseUsecase: ref.watch(DiagnoseOnDeviceLlmUsecase.provider),
@@ -93,7 +93,7 @@ final class DebugScreenViewModel {
   @visibleForTesting
   final AppLogStore log;
 
-  /// セッション内の Gemma 優先設定。
+  /// セッション内の LFM VL 優先設定。
   @visibleForTesting
   final MeterReadingEngineSessionPreference sessionPreference;
 

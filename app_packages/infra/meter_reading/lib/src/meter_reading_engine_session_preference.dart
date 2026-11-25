@@ -2,14 +2,14 @@ import 'package:riverpod/riverpod.dart';
 
 /// メーター読み取りエンジンのセッション内優先上書き。
 ///
-/// 永続化しない。プロセス再起動で [preferGemmaOverOsLlm] は false に戻る。
+/// 永続化しない。プロセス再起動で [preferLfmVlOverOsLlm] は false に戻る。
 ///
 /// Example:
 /// ```dart
 /// MeterReadingEngineSessionPreference();
 /// ```
 final class MeterReadingEngineSessionPreference {
-  /// 初期は OS LLM 優先（[preferGemmaOverOsLlm] は false）。
+  /// 初期は OS LLM 優先（[preferLfmVlOverOsLlm] は false）。
   ///
   /// Example:
   /// ```dart
@@ -17,8 +17,8 @@ final class MeterReadingEngineSessionPreference {
   /// ```
   MeterReadingEngineSessionPreference();
 
-  /// true のとき ready+vision でも Gemma が available なら Gemma を選ぶ。
-  bool preferGemmaOverOsLlm = false;
+  /// true のとき ready+vision でも LFM VL が available なら LFM VL を選ぶ。
+  bool preferLfmVlOverOsLlm = false;
 }
 
 /// 同一プロセスで共有する [MeterReadingEngineSessionPreference]。

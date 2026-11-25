@@ -23,7 +23,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * LiteRT-LM Gemma E2B meter-reading bridge.
+ * LiteRT-LM LFM VL meter-reading bridge.
  *
  * Model files live under [Context.getNoBackupFilesDir] so OS backup excludes them.
  */
@@ -103,20 +103,21 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     }
   }
 
-  /** Configured LiteRT-LM backends (main GPU, vision GPU, MTP on). */
+  /** Configured LiteRT-LM backends (main GPU, vision CPU, MTP off). */
   private fun configuredBackendFields(): Map<String, String> =
     mapOf(
       "backend" to "gpu",
-      "visionBackend" to "gpu",
+      "visionBackend" to "cpu",
     )
 
   private fun availabilityMap(): Map<String, String> {
+    removeLegacyGemmaModelIfPresent()
     val model = modelFile()
     if (model == null || !model.isFile || model.length() == 0L) {
       return mapOf(
         "status" to "modelNotDownloaded",
         "reason" to "missingFile",
-        "message" to "Gemma meter model is not downloaded.",
+        "message" to "LFM VL meter model is not downloaded.",
       ) + configuredBackendFields()
     }
     return try {
@@ -124,13 +125,13 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
       mapOf(
         "status" to "ready",
         "reason" to "ready",
-        "message" to "Gemma meter model is ready.",
+        "message" to "LFM VL meter model is ready.",
       ) + configuredBackendFields()
     } catch (_: Exception) {
       mapOf(
         "status" to "unavailable",
         "reason" to "initializeFailed",
-        "message" to "Gemma meter model failed to initialize.",
+        "message" to "LFM VL meter model failed to initialize.",
       ) + configuredBackendFields()
     }
   }
@@ -144,11 +145,12 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
       if (appContext == null) {
         throw IOException("Application context is unavailable.")
       }
+      removeLegacyGemmaModelIfPresent()
       val target = modelFile()!!
       if (target.isFile && target.length() > 0L && !isEngineStampCurrent()) {
-        // Pre-MTP / stamp-mismatched artifacts must be refreshed once.
+        // Stamp-mismatched artifacts must be refreshed once.
         if (!target.delete()) {
-          throw IOException("Could not clear outdated Gemma model for refresh.")
+          throw IOException("Could not clear outdated LFM VL model for refresh.")
         }
         clearEngineStamp()
         closeEngine()
@@ -193,7 +195,7 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     }
     val free = parent.usableSpace
     if (free in 1 until MIN_FREE_BYTES) {
-      throw InsufficientStorageException("Not enough free space for Gemma model.")
+      throw InsufficientStorageException("Not enough free space for LFM VL model.")
     }
     try {
       val connection = (URL(MODEL_URL).openConnection() as HttpURLConnection).apply {
@@ -211,7 +213,7 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
         // so the guidance dialog gauge still advances with bytes read.
         val total = resolveDownloadTotalBytes(connection)
         if (parent.usableSpace in 1 until total) {
-          throw InsufficientStorageException("Not enough free space for Gemma model.")
+          throw InsufficientStorageException("Not enough free space for LFM VL model.")
         }
         connection.inputStream.use { input ->
           FileOutputStream(partial).use { output ->
@@ -273,9 +275,9 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
     val model = modelFile()
     if (model == null || !model.isFile || model.length() == 0L) {
       if (requireReady) {
-        throw IllegalStateException("Gemma meter model is not ready.")
+        throw IllegalStateException("LFM VL meter model is not ready.")
       }
-      throw IllegalStateException("Gemma meter model is not downloaded.")
+      throw IllegalStateException("LFM VL meter model is not downloaded.")
     }
     val active = ensureEngine(model)
     active.createConversation().use { conversation ->
@@ -297,10 +299,10 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
       EngineConfig(
         modelPath = model.absolutePath,
         backend = Backend.GPU(),
-        visionBackend = Backend.GPU(),
+        visionBackend = Backend.CPU(),
         cacheDir = cacheDir?.absolutePath,
         speculativeDecodingConfig =
-          SpeculativeDecodingConfig(mode = SpeculativeDecodingMode.ON),
+          SpeculativeDecodingConfig(mode = SpeculativeDecodingMode.OFF),
       )
     val created = Engine(config)
     created.initialize()
@@ -419,21 +421,31 @@ class GemmaMeterPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHa
   private class NetworkException(message: String, cause: Throwable? = null) :
     IOException(message, cause)
 
+  /** Deletes the previous Gemma LiteRT tree under noBackupFilesDir if present. */
+  private fun removeLegacyGemmaModelIfPresent() {
+    val ctx = appContext ?: return
+    val legacy = File(ctx.noBackupFilesDir, LEGACY_MODEL_DIR)
+    if (legacy.exists()) {
+      legacy.deleteRecursively()
+    }
+  }
+
   companion object {
-    private const val MODEL_DIR = "gemma_meter"
-    private const val MODEL_FILE_NAME = "gemma-4-E2B-it.litertlm"
-    // litert-community Gemma 4 E2B (ungated). models.litert.dev 3n mirror is 404;
-    // google/gemma-3n-… is gated (401).
+    private const val MODEL_DIR = "lfm_meter"
+    private const val MODEL_FILE_NAME = "LFM2.5-VL-1.6B_int4_fixB.litertlm"
+    // litert-community LFM2.5-VL-1.6B fixB (ungated, full-image vision graphs).
     private const val MODEL_URL =
-      "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
+      "https://huggingface.co/litert-community/LFM2.5-VL-1.6B/resolve/main/LFM2.5-VL-1.6B_int4_fixB.litertlm"
     private const val MIN_FREE_BYTES = 200L * 1024L * 1024L
-    /** Current litert-community E2B `.litertlm` payload (~2.59 GB). */
-    private const val ESTIMATED_MODEL_BYTES = 2_588_147_712L
+    /** Current litert-community LFM VL `.litertlm` payload (~1.30 GB). */
+    private const val ESTIMATED_MODEL_BYTES = 1_395_586_662L
     /** Reject tiny redirect-body Content-Length values as the download total. */
     private const val MIN_PLAUSIBLE_MODEL_BYTES = 100L * 1024L * 1024L
-    private const val PREFS_NAME = "gemma_meter"
+    private const val PREFS_NAME = "lfm_meter"
     private const val ENGINE_STAMP_KEY = "engine_stamp"
     /** Artifact generation id (not initialize success). Bump to force refresh. */
-    private const val ENGINE_STAMP_VALUE = "litert-mtp-gpu-v1"
+    private const val ENGINE_STAMP_VALUE = "litert-lfm25-vl-int4-fixB-v1"
+    /** Previous Gemma LiteRT download directory (delete on prepare / availability). */
+    private const val LEGACY_MODEL_DIR = "gemma_meter"
   }
 }
