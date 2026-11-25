@@ -10,7 +10,7 @@ import 'package:test/test.dart';
 /// flutter test test/android_litert_mtp_constants_test.dart
 /// ```
 void main() {
-  test('Android GemmaMeterPlugin uses GPU main/vision and MTP on', () {
+  test('Android GemmaMeterPlugin uses GPU main, CPU vision, MTP off', () {
     final file = File(
       [
         Directory.current.path,
@@ -30,13 +30,31 @@ void main() {
     final source = file.readAsStringSync();
 
     expect(source, contains('backend = Backend.GPU()'));
-    expect(source, contains('visionBackend = Backend.GPU()'));
-    expect(source, contains('SpeculativeDecodingMode.ON'));
-    expect(source, contains('ENGINE_STAMP_VALUE = "litert-mtp-gpu-v1"'));
+    expect(source, contains('visionBackend = Backend.CPU()'));
+    expect(source, contains('SpeculativeDecodingMode.OFF'));
+    expect(
+      source,
+      contains('ENGINE_STAMP_VALUE = "litert-lfm25-vl-int4-fixB-v1"'),
+    );
+    expect(source, isNot(contains('litert-mtp-gpu-v1')));
+    expect(source, contains('ESTIMATED_MODEL_BYTES = 1_395_586_662L'));
+    expect(source, isNot(contains('2_588_147_712L')));
     expect(source, contains('MIN_PLAUSIBLE_MODEL_BYTES'));
     expect(source, contains('readTotal < MIN_PLAUSIBLE_MODEL_BYTES'));
     expect(source, contains('"backend" to "gpu"'));
-    expect(source, contains('"visionBackend" to "gpu"'));
-    expect(source, isNot(contains('Backend.CPU()')));
+    expect(source, contains('"visionBackend" to "cpu"'));
+    expect(source, contains('MODEL_DIR = "lfm_meter"'));
+    expect(
+      source,
+      contains('LFM2.5-VL-1.6B_int4_fixB.litertlm'),
+    );
+    expect(
+      source,
+      contains(
+        'https://huggingface.co/litert-community/LFM2.5-VL-1.6B/resolve/main/LFM2.5-VL-1.6B_int4_fixB.litertlm',
+      ),
+    );
+    expect(source, contains('LEGACY_MODEL_DIR = "gemma_meter"'));
+    expect(source, contains('removeLegacyGemmaModelIfPresent'));
   });
 }

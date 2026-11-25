@@ -4,32 +4,34 @@ import Foundation
 import LiteRTLM
 #endif
 
-/// Flutter bridge for LiteRT-LM Gemma E2B meter reading on iOS.
+/// Flutter bridge for LiteRT-LM LFM VL meter reading on iOS.
 ///
 /// Downloads the same ungated Hugging Face `litert-community` `.litertlm`
-/// used on Android into Documents/Models/`gemma_meter/`, excluded from OS
-/// backup. Engine: main GPU, vision GPU, speculative decoding (MTP) on.
+/// used on Android into Documents/Models/`lfm_meter/`, excluded from OS
+/// backup. Engine: main CPU, vision CPU, speculative decoding (MTP) off.
 public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
-  private static let modelFolderName = "gemma_meter"
-  private static let modelFileName = "gemma-4-E2B-it.litertlm"
+  private static let modelFolderName = "lfm_meter"
+  private static let modelFileName = "LFM2.5-VL-1.6B_int4_fixB.litertlm"
   private static let modelURL =
-    "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
-  /// Current litert-community E2B `.litertlm` payload (~2.59 GB).
-  private static let estimatedModelBytes: Int64 = 2_588_147_712
+    "https://huggingface.co/litert-community/LFM2.5-VL-1.6B/resolve/main/LFM2.5-VL-1.6B_int4_fixB.litertlm"
+  /// Current litert-community LFM VL `.litertlm` payload (~1.30 GB).
+  private static let estimatedModelBytes: Int64 = 1_395_586_662
   /// Reject truncated / redirect-body downloads as complete artifacts.
   private static let minPlausibleModelBytes: Int64 = 100 * 1024 * 1024
   /// Legacy CoreMLLLM chunk tree (pre LiteRT-LM migration).
   private static let legacyCoreMLFolderName = "gemma4-e2b"
+  /// Previous Gemma LiteRT download directory.
+  private static let legacyGemmaLiteRtFolderName = "gemma_meter"
   /// URLSession peak ≈ one model copy in tmp/Documents + LiteRT cache margin.
   private static var minFreeBytes: Int64 {
     estimatedModelBytes + 500_000_000
   }
 
-  private static let configuredBackend = "gpu"
-  private static let configuredVisionBackend = "gpu"
+  private static let configuredBackend = "cpu"
+  private static let configuredVisionBackend = "cpu"
   /// On-disk artifact generation (not initialize success). Bump to force refresh.
   private static let engineStampKey = "gemmaMeter.engineStamp"
-  private static let engineStampValue = "litert-mtp-gpu-v1"
+  private static let engineStampValue = "litert-lfm25-vl-int4-fixB-v1"
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.gemma_meter")
   private var prepareEvents: FlutterEventSink?
@@ -110,11 +112,12 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     #if canImport(LiteRTLM)
     // Best-effort: reclaim the old CoreMLLLM tree so both models are not kept.
     removeLegacyCoreMLModelIfPresent()
+    removeLegacyGemmaLiteRtModelIfPresent()
     guard isModelDownloaded() else {
       return [
         "status": "modelNotDownloaded",
         "reason": "missingFile",
-        "message": "Gemma meter model is not downloaded.",
+        "message": "LFM VL meter model is not downloaded.",
       ].merging(configuredBackendFields()) { _, new in new }
     }
     // Mirror Android: ready only after Engine.initialize() succeeds this process.
@@ -123,13 +126,13 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       return [
         "status": "ready",
         "reason": "ready",
-        "message": "Gemma meter model is ready.",
+        "message": "LFM VL meter model is ready.",
       ].merging(configuredBackendFields()) { _, new in new }
     } catch {
       return [
         "status": "unavailable",
         "reason": "initializeFailed",
-        "message": "Gemma meter model failed to initialize.",
+        "message": "LFM VL meter model failed to initialize.",
       ].merging(configuredBackendFields()) { _, new in new }
     }
     #else
@@ -149,7 +152,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         result(
           FlutterError(
             code: "generic",
-            message: "Gemma meter prepare is already running.",
+            message: "LFM VL meter prepare is already running.",
             details: nil
           )
         )
@@ -160,6 +163,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     emitProgress(0)
     do {
       removeLegacyCoreMLModelIfPresent()
+      removeLegacyGemmaLiteRtModelIfPresent()
       try downloadIfNeeded()
       try excludeDownloadedModelFromBackup()
       _ = try ensureEngine()
@@ -205,7 +209,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       throw NSError(
         domain: "GemmaMeter",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma meter model is not downloaded."]
+        userInfo: [NSLocalizedDescriptionKey: "LFM VL meter model is not downloaded."]
       )
     }
     if requireReady {
@@ -233,7 +237,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       throw NSError(
         domain: "GemmaMeter",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "Gemma meter model is not downloaded."]
+        userInfo: [NSLocalizedDescriptionKey: "LFM VL meter model is not downloaded."]
       )
     }
     let cacheDir = model.deletingLastPathComponent().appendingPathComponent(
@@ -243,10 +247,10 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     try FileManager.default.createDirectory(at: cacheDir, withIntermediateDirectories: true)
     let config = try EngineConfig(
       modelPath: model.path,
-      backend: .gpu,
-      visionBackend: .gpu,
+      backend: .cpu,
+      visionBackend: .cpu,
       cacheDir: cacheDir.path,
-      speculativeDecodingConfig: SpeculativeDecodingConfig(mode: .on)
+      speculativeDecodingConfig: SpeculativeDecodingConfig(mode: .off)
     )
     let created = Engine(engineConfig: config)
     do {
@@ -295,7 +299,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
     guard isModelDownloaded() else {
       try? removeIncompleteModel()
-      throw PrepareError.generic("Gemma meter download finished without a valid model file.")
+      throw PrepareError.generic("LFM VL meter download finished without a valid model file.")
     }
     // Stamp means "artifact generation current", independent of initialize().
     markEngineStampCurrent()
@@ -458,6 +462,19 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     UserDefaults.standard.removeObject(forKey: "gemmaMeter.loadSucceeded")
     UserDefaults.standard.removeObject(forKey: "gemmaMeter.activeBackend")
     UserDefaults.standard.removeObject(forKey: "gemmaMeter.litertLoadSucceeded")
+  }
+
+  private func legacyGemmaLiteRtDirectoryURL() -> URL? {
+    modelsRootURL()?.appendingPathComponent(Self.legacyGemmaLiteRtFolderName, isDirectory: true)
+  }
+
+  /// Deletes Documents/Models/gemma_meter from the Gemma LiteRT era if still present.
+  private func removeLegacyGemmaLiteRtModelIfPresent() {
+    let fm = FileManager.default
+    guard let legacy = legacyGemmaLiteRtDirectoryURL(), fm.fileExists(atPath: legacy.path) else {
+      return
+    }
+    try? fm.removeItem(at: legacy)
   }
 
   private func removeIncompleteModel() throws {
@@ -630,7 +647,7 @@ public class GemmaMeterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     var errorDescription: String? {
       switch self {
       case .insufficientStorage:
-        return "Not enough free space for Gemma model."
+        return "Not enough free space for LFM VL model."
       case .network(let message):
         return message
       case .generic(let message):
