@@ -7,8 +7,9 @@ import 'meter_photo_captured_at_guard.dart';
 /// EXIF / OS 撮影・作成相当から採用する撮影日時を決める。
 ///
 /// [bytes] は正規化前。優先は EXIF DateTimeOriginal → DateTimeDigitized →
-/// DateTime。次に [assetCapturedOrCreatedAt]。異常な EXIF を読めた場合は
-/// asset へ落とさず null（未取得）とする。
+/// DateTime。次に [assetCapturedOrCreatedAt]。
+/// EXIF 日時フィールドが存在するが不正／異常な場合は、asset へ落とさず null
+/// （未取得）とする。フィールド自体が無いときだけ asset を試す。
 /// JPEG は画素デコードせず EXIF だけ読む。
 ///
 /// Example:
@@ -23,13 +24,18 @@ DateTime? resolveMeterPhotoCapturedAt({
   DateTime? assetCapturedOrCreatedAt,
   required DateTime now,
 }) {
-  final fromExif = _parseExifCapturedAt(bytes);
-  if (fromExif != null) {
+  final exifLookup = _lookupExifCapturedAt(bytes);
+  if (exifLookup.hadField) {
+    final fromExif = exifLookup.value;
+    if (fromExif == null) {
+      return null;
+    }
     if (!isAcceptableMeterPhotoCapturedAt(fromExif, now: now)) {
       return null;
     }
     return fromExif;
   }
+
   final asset = assetCapturedOrCreatedAt;
   if (asset == null) {
     return null;
@@ -40,29 +46,54 @@ DateTime? resolveMeterPhotoCapturedAt({
   return asset;
 }
 
-/// [bytes] から EXIF 撮影日時文字列を解釈する。読めなければ null。
+/// EXIF 日時フィールドの有無と、解釈できたときの値。
+final class _ExifCapturedAtLookup {
+  const _ExifCapturedAtLookup._({required this.hadField, this.value});
+
+  /// 日時フィールドが無かったとき。
+  const _ExifCapturedAtLookup.missing() : this._(hadField: false);
+
+  /// フィールドはあったが解釈不能なとき。
+  const _ExifCapturedAtLookup.invalid() : this._(hadField: true);
+
+  /// フィールドを解釈できたとき。
+  const _ExifCapturedAtLookup.ok(DateTime value)
+    : this._(hadField: true, value: value);
+
+  /// EXIF の撮影日時相当フィールドが見つかったか。
+  final bool hadField;
+
+  /// 解釈できた撮影日時。不正なときは null。
+  final DateTime? value;
+}
+
+/// [bytes] から EXIF 撮影日時フィールドを探す。
 ///
 /// Example:
 /// ```dart
-/// _parseExifCapturedAt(Uint8List(0));
+/// _lookupExifCapturedAt(Uint8List(0));
 /// ```
-DateTime? _parseExifCapturedAt(Uint8List bytes) {
+_ExifCapturedAtLookup _lookupExifCapturedAt(Uint8List bytes) {
   try {
     // 画素デコードせず JPEG APP1 の EXIF だけ読む（大きな写真の UI 負荷を避ける）。
     final exif = img.decodeJpgExif(bytes);
     if (exif == null || exif.isEmpty) {
-      return null;
+      return const _ExifCapturedAtLookup.missing();
     }
     final raw =
         _exifAscii(exif.exifIfd, 0x9003) ??
         _exifAscii(exif.exifIfd, 0x9004) ??
         _exifAscii(exif.imageIfd, 0x0132);
     if (raw == null) {
-      return null;
+      return const _ExifCapturedAtLookup.missing();
     }
-    return _parseExifDateTime(raw);
+    final parsed = _parseExifDateTime(raw);
+    if (parsed == null) {
+      return const _ExifCapturedAtLookup.invalid();
+    }
+    return _ExifCapturedAtLookup.ok(parsed);
   } on Object {
-    return null;
+    return const _ExifCapturedAtLookup.missing();
   }
 }
 
