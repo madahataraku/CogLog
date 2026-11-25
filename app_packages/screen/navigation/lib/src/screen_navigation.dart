@@ -120,6 +120,22 @@ abstract interface class ScreenNavigation {
   /// navigation.goToHomeTab();
   /// ```
   void goToHomeTab();
+
+  /// 目標設定タブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToGoalSettingsTab();
+  /// ```
+  void goToGoalSettingsTab();
+
+  /// メーター記録タブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToMeterCaptureTab();
+  /// ```
+  void goToMeterCaptureTab();
 }
 
 /// 画面遷移の注入点。未接続のときは失敗する。

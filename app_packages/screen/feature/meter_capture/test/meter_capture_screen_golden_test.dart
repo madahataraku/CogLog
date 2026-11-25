@@ -65,6 +65,12 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void goToHomeTab() {}
+
+  @override
+  void goToGoalSettingsTab() {}
+
+  @override
+  void goToMeterCaptureTab() {}
 }
 
 final class _ObtainCancelled implements ObtainMeterPhotoUsecase {

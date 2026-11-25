@@ -85,6 +85,8 @@ dependencies:
   usecase_save_top_screen_metric_impl: any
   usecase_sync_exercise_reminder: any
   usecase_sync_exercise_reminder_impl: any
+  usecase_tutorial: any
+  usecase_tutorial_impl: any
   usecase_load_notification_settings: any
   usecase_load_notification_settings_impl: any
   usecase_export_app_data: any

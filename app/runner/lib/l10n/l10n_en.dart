@@ -416,6 +416,10 @@ class L10nEn extends L10n {
   String get screen_feature_app_settings_os_label => 'OS';
 
   @override
+  String get screen_feature_app_settings_replay_tutorial_item =>
+      'Replay tutorial';
+
+  @override
   String get screen_feature_app_settings_title => 'App settings';
 
   @override
@@ -1232,6 +1236,41 @@ class L10nEn extends L10n {
   String get screen_feature_top_today => 'Today';
 
   @override
+  String get screen_feature_top_tutorial_achievement_body =>
+      'Open trophies here. A dot appears when you have new unlocks.';
+
+  @override
+  String get screen_feature_top_tutorial_achievement_title => 'Achievements';
+
+  @override
+  String get screen_feature_top_tutorial_main_1_body =>
+      'You can check today, this week, and this month totals and progress toward your goals. Switch metrics as needed.';
+
+  @override
+  String get screen_feature_top_tutorial_main_1_title => 'Getting around Home';
+
+  @override
+  String get screen_feature_top_tutorial_main_2_body =>
+      'Meter capture reads from photos. Trends relate exercise and body metrics. History lets you review and edit by day. Goals set daily targets and weekly exercise days.';
+
+  @override
+  String get screen_feature_top_tutorial_main_2_title => 'What each tab is for';
+
+  @override
+  String get screen_feature_top_tutorial_main_3_body =>
+      'Setting daily duration, calories, and distance makes progress clearer. Save when you are done.';
+
+  @override
+  String get screen_feature_top_tutorial_main_3_title => 'Set your goals';
+
+  @override
+  String get screen_feature_top_tutorial_main_4_body =>
+      'From the Meter tab, photograph the meter panel to read distance, duration, and calories.';
+
+  @override
+  String get screen_feature_top_tutorial_main_4_title => 'Capture with Meter';
+
+  @override
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
 
   @override
@@ -1338,6 +1377,15 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_unit_percent => '%';
+
+  @override
+  String get view_coach_mark_close => 'Close';
+
+  @override
+  String get view_coach_mark_next => 'Next';
+
+  @override
+  String get view_coach_mark_skip => 'Skip';
 
   @override
   String get view_meter_reading_progress_cancel => 'Cancel reading';

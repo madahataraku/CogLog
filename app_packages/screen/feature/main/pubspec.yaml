@@ -15,6 +15,7 @@ dependencies:
   material_ui: any
   meta: any
   monolith_localization_runtime: any
+  view_coach_mark: any
 
 dev_dependencies:
   flutter_lints: any

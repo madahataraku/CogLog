@@ -11,11 +11,18 @@ import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import 'delegate/on_acknowledge_gemma_meter_guidance_delegate.dart';
 import 'delegate/on_acknowledge_model_download_guidance_delegate.dart';
+import 'delegate/on_acknowledge_tutorial_achievement_delegate.dart';
+import 'delegate/on_acknowledge_tutorial_main_delegate.dart';
+import 'delegate/on_advance_tutorial_main_delegate.dart';
+import 'delegate/on_dismiss_tutorial_achievement_delegate.dart';
 import 'delegate/on_evaluate_gemma_meter_guidance_delegate.dart';
+import 'delegate/on_evaluate_tutorial_achievement_delegate.dart';
+import 'delegate/on_evaluate_tutorial_main_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_open_achievements_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
@@ -70,6 +77,20 @@ final class TopScreenViewModel {
         gemmaSession: ref.watch(ModelDownloadGuidanceProviders.gemmaSession),
         navigation: ref.watch(screenNavigationProvider),
         newIndicator: ref.watch(LoadAchievementNewIndicatorUsecase.provider),
+        evaluateTutorialMainAutoStartUsecase: ref.watch(
+          EvaluateTutorialMainAutoStartUsecase.provider,
+        ),
+        advanceTutorialMainUsecase: ref.watch(
+          AdvanceTutorialMainUsecase.provider,
+        ),
+        evaluateTutorialContextUsecase: ref.watch(
+          EvaluateTutorialContextUsecase.provider,
+        ),
+        markTutorialContextSeenUsecase: ref.watch(
+          MarkTutorialContextSeenUsecase.provider,
+        ),
+        loadAchievementsUsecase: ref.watch(LoadAchievementsUsecase.provider),
+        tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
         stateToEntity: const TopScreenStateToEntityDelegate(),
         now: DateTime.now,
       );
@@ -91,6 +112,12 @@ final class TopScreenViewModel {
       ModelDownloadGuidanceProviders.gemmaSession,
       screenNavigationProvider,
       LoadAchievementNewIndicatorUsecase.provider,
+      EvaluateTutorialMainAutoStartUsecase.provider,
+      AdvanceTutorialMainUsecase.provider,
+      EvaluateTutorialContextUsecase.provider,
+      MarkTutorialContextSeenUsecase.provider,
+      LoadAchievementsUsecase.provider,
+      tutorialRuntimeSessionProvider,
     ],
   );
 
@@ -142,6 +169,31 @@ final class TopScreenViewModel {
   @visibleForTesting
   final LoadAchievementNewIndicatorUsecase newIndicator;
 
+  /// メイン自動開始判定。
+  @visibleForTesting
+  final EvaluateTutorialMainAutoStartUsecase
+  evaluateTutorialMainAutoStartUsecase;
+
+  /// メイン段階進行。
+  @visibleForTesting
+  final AdvanceTutorialMainUsecase advanceTutorialMainUsecase;
+
+  /// 文脈判定。
+  @visibleForTesting
+  final EvaluateTutorialContextUsecase evaluateTutorialContextUsecase;
+
+  /// 文脈表示済み。
+  @visibleForTesting
+  final MarkTutorialContextSeenUsecase markTutorialContextSeenUsecase;
+
+  /// アチーブメント一覧（文脈の獲得件数）。
+  @visibleForTesting
+  final LoadAchievementsUsecase loadAchievementsUsecase;
+
+  /// プロセス内チュートリアル状態。
+  @visibleForTesting
+  final TutorialRuntimeSession tutorialSession;
+
   /// State から表示文字列への変換。
   @visibleForTesting
   final TopScreenStateToEntityDelegate stateToEntity;
@@ -169,6 +221,12 @@ final class TopScreenViewModel {
     required this.gemmaSession,
     required this.navigation,
     required this.newIndicator,
+    required this.evaluateTutorialMainAutoStartUsecase,
+    required this.advanceTutorialMainUsecase,
+    required this.evaluateTutorialContextUsecase,
+    required this.markTutorialContextSeenUsecase,
+    required this.loadAchievementsUsecase,
+    required this.tutorialSession,
     required this.stateToEntity,
     required this.now,
   });

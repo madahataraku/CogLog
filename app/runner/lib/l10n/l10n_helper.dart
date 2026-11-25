@@ -492,6 +492,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_app_settings_os_label;
       },
+      'screen_feature_app_settings_replay_tutorial_item': (source) {
+        // No Placeholders
+        return l10n.screen_feature_app_settings_replay_tutorial_item;
+      },
       'screen_feature_app_settings_title': (source) {
         // No Placeholders
         return l10n.screen_feature_app_settings_title;
@@ -1473,6 +1477,46 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_top_today;
       },
+      'screen_feature_top_tutorial_achievement_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_achievement_body;
+      },
+      'screen_feature_top_tutorial_achievement_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_achievement_title;
+      },
+      'screen_feature_top_tutorial_main_1_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_1_body;
+      },
+      'screen_feature_top_tutorial_main_1_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_1_title;
+      },
+      'screen_feature_top_tutorial_main_2_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_2_body;
+      },
+      'screen_feature_top_tutorial_main_2_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_2_title;
+      },
+      'screen_feature_top_tutorial_main_3_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_3_body;
+      },
+      'screen_feature_top_tutorial_main_3_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_3_title;
+      },
+      'screen_feature_top_tutorial_main_4_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_4_body;
+      },
+      'screen_feature_top_tutorial_main_4_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_4_title;
+      },
       'screen_feature_top_unset_prompt': (source) {
         // No Placeholders
         return l10n.screen_feature_top_unset_prompt;
@@ -1612,6 +1656,18 @@ final class L10nHelper {
       'screen_feature_trends_unit_percent': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_unit_percent;
+      },
+      'view_coach_mark_close': (source) {
+        // No Placeholders
+        return l10n.view_coach_mark_close;
+      },
+      'view_coach_mark_next': (source) {
+        // No Placeholders
+        return l10n.view_coach_mark_next;
+      },
+      'view_coach_mark_skip': (source) {
+        // No Placeholders
+        return l10n.view_coach_mark_skip;
       },
       'view_meter_reading_progress_cancel': (source) {
         // No Placeholders

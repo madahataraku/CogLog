@@ -5,6 +5,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_app_runtime_info/usecase_load_app_runtime_info.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import 'delegate/app_settings_state_to_entity_delegate.dart';
 import 'delegate/on_back_delegate.dart';
@@ -13,6 +14,7 @@ import 'delegate/on_open_data_management_delegate.dart';
 import 'delegate/on_open_debug_delegate.dart';
 import 'delegate/on_open_notification_settings_delegate.dart';
 import 'delegate/on_open_oss_licenses_delegate.dart';
+import 'delegate/on_replay_tutorial_delegate.dart';
 import 'entity/app_settings_screen_entity.dart';
 import 'state/app_settings_screen_state.dart';
 
@@ -38,6 +40,10 @@ final class AppSettingsScreenViewModel {
         state: MutableStateStream(AppSettingsScreenState.initial),
         loadUsecase: ref.watch(LoadAppRuntimeInfoUsecase.provider),
         navigation: ref.watch(screenNavigationProvider),
+        resetTutorialProgressUsecase: ref.watch(
+          ResetTutorialProgressUsecase.provider,
+        ),
+        tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
         stateToEntity: const AppSettingsStateToEntityDelegate(),
       );
       ref.onDispose(() {
@@ -48,6 +54,8 @@ final class AppSettingsScreenViewModel {
     dependencies: [
       LoadAppRuntimeInfoUsecase.provider,
       screenNavigationProvider,
+      ResetTutorialProgressUsecase.provider,
+      tutorialRuntimeSessionProvider,
     ],
   );
 
@@ -63,6 +71,14 @@ final class AppSettingsScreenViewModel {
   @visibleForTesting
   final ScreenNavigation navigation;
 
+  /// チュートリアル進捗リセット。
+  @visibleForTesting
+  final ResetTutorialProgressUsecase resetTutorialProgressUsecase;
+
+  /// プロセス内チュートリアル状態。
+  @visibleForTesting
+  final TutorialRuntimeSession tutorialSession;
+
   /// State → Entity。
   @visibleForTesting
   final AppSettingsStateToEntityDelegate stateToEntity;
@@ -77,6 +93,8 @@ final class AppSettingsScreenViewModel {
     required this.state,
     required this.loadUsecase,
     required this.navigation,
+    required this.resetTutorialProgressUsecase,
+    required this.tutorialSession,
     required this.stateToEntity,
   });
 

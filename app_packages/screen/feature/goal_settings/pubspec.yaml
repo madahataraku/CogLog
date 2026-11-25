@@ -24,6 +24,8 @@ dependencies:
   state_stream_riverpod: any
   usecase_load_daily_goal: any
   usecase_save_daily_goal: any
+  usecase_tutorial: any
+  view_coach_mark: any
 
 dev_dependencies:
   data_repository_daily_goal_testing: any

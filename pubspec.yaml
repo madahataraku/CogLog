@@ -91,6 +91,7 @@ workspace:
   - app_packages/screen/feature/oss_licenses
   - app_packages/screen/feature/top
   - app_packages/view/confirm_dialog
+  - app_packages/view/coach_mark
   - app_packages/view/model_download_guidance
   - app_packages/view/meter_reading_progress
   - app_packages/screen/injection
@@ -153,6 +154,8 @@ workspace:
   - app_packages/usecase/save_top_screen_metric/_impl
   - app_packages/usecase/sync_exercise_reminder
   - app_packages/usecase/sync_exercise_reminder/_impl
+  - app_packages/usecase/tutorial
+  - app_packages/usecase/tutorial/_impl
   - app_packages/usecase/load_notification_settings
   - app_packages/usecase/load_notification_settings/_impl
   - app_packages/usecase/save_notification_settings

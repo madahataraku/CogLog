@@ -763,6 +763,12 @@ abstract class L10n {
   /// **'OS'**
   String get screen_feature_app_settings_os_label;
 
+  /// チュートリアル再表示
+  ///
+  /// In ja, this message translates to:
+  /// **'チュートリアルを再表示'**
+  String get screen_feature_app_settings_replay_tutorial_item;
+
   /// 画面タイトル
   ///
   /// In ja, this message translates to:
@@ -2130,6 +2136,66 @@ abstract class L10n {
   /// **'本日'**
   String get screen_feature_top_today;
 
+  /// アチーブメント文脈本文
+  ///
+  /// In ja, this message translates to:
+  /// **'獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。'**
+  String get screen_feature_top_tutorial_achievement_body;
+
+  /// アチーブメント文脈タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'アチーブメント'**
+  String get screen_feature_top_tutorial_achievement_title;
+
+  /// 段階1本文
+  ///
+  /// In ja, this message translates to:
+  /// **'本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。'**
+  String get screen_feature_top_tutorial_main_1_body;
+
+  /// 段階1タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'ホームの見かた'**
+  String get screen_feature_top_tutorial_main_1_title;
+
+  /// 段階2本文
+  ///
+  /// In ja, this message translates to:
+  /// **'メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。'**
+  String get screen_feature_top_tutorial_main_2_body;
+
+  /// 段階2タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'各タブの役割'**
+  String get screen_feature_top_tutorial_main_2_title;
+
+  /// 段階3本文
+  ///
+  /// In ja, this message translates to:
+  /// **'一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。'**
+  String get screen_feature_top_tutorial_main_3_body;
+
+  /// 段階3タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'目標を設定しましょう'**
+  String get screen_feature_top_tutorial_main_3_title;
+
+  /// 段階4本文
+  ///
+  /// In ja, this message translates to:
+  /// **'メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。'**
+  String get screen_feature_top_tutorial_main_4_body;
+
+  /// 段階4タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'メーター記録で撮影'**
+  String get screen_feature_top_tutorial_main_4_title;
+
   /// 目標未設定時の設定促進
   ///
   /// In ja, this message translates to:
@@ -2319,6 +2385,24 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'%'**
   String get screen_feature_trends_unit_percent;
+
+  /// 主ボタン（閉じる）
+  ///
+  /// In ja, this message translates to:
+  /// **'閉じる'**
+  String get view_coach_mark_close;
+
+  /// 主ボタン（次へ）
+  ///
+  /// In ja, this message translates to:
+  /// **'次へ'**
+  String get view_coach_mark_next;
+
+  /// 副ボタン（スキップ）
+  ///
+  /// In ja, this message translates to:
+  /// **'スキップ'**
+  String get view_coach_mark_skip;
 
   /// 読み取り中止
   ///

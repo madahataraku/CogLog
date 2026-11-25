@@ -1,6 +1,7 @@
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 /// トップ画面が持つ期間合計・目標・アドバイス本文とトーン。
 ///
@@ -28,6 +29,9 @@ final class TopScreenState {
     required this.adviceTone,
     required this.pendingModelDownloadGuidance,
     required this.pendingGemmaMeterGuidance,
+    required this.pendingTutorialMain,
+    required this.tutorialMainStep,
+    required this.pendingTutorialAchievement,
     required this.hasNewAchievements,
     required this.weeklyAchievementDays,
     required this.weekGoalAchievementDayCount,
@@ -46,6 +50,9 @@ final class TopScreenState {
     adviceTone: AdviceTone.fun,
     pendingModelDownloadGuidance: false,
     pendingGemmaMeterGuidance: false,
+    pendingTutorialMain: false,
+    tutorialMainStep: null,
+    pendingTutorialAchievement: false,
     hasNewAchievements: false,
     weeklyAchievementDays: null,
     weekGoalAchievementDayCount: 0,
@@ -82,6 +89,15 @@ final class TopScreenState {
   /// Gemma メーター誘導 (B) を表示予約しているとき true。
   final bool pendingGemmaMeterGuidance;
 
+  /// メインチュートリアルを表示予約しているとき true。
+  final bool pendingTutorialMain;
+
+  /// 表示中／予約中のメイン段階。未表示は null。
+  final TutorialMainStep? tutorialMainStep;
+
+  /// アチーブメント文脈を表示予約しているとき true。
+  final bool pendingTutorialAchievement;
+
   /// ホーム trophy に新規ドットを出すとき true。
   final bool hasNewAchievements;
 
@@ -113,6 +129,10 @@ final class TopScreenState {
     AdviceTone? adviceTone,
     bool? pendingModelDownloadGuidance,
     bool? pendingGemmaMeterGuidance,
+    bool? pendingTutorialMain,
+    TutorialMainStep? tutorialMainStep,
+    bool clearTutorialMainStep = false,
+    bool? pendingTutorialAchievement,
     bool? hasNewAchievements,
     int? weeklyAchievementDays,
     bool clearWeeklyAchievementDays = false,
@@ -132,6 +152,12 @@ final class TopScreenState {
           pendingModelDownloadGuidance ?? this.pendingModelDownloadGuidance,
       pendingGemmaMeterGuidance:
           pendingGemmaMeterGuidance ?? this.pendingGemmaMeterGuidance,
+      pendingTutorialMain: pendingTutorialMain ?? this.pendingTutorialMain,
+      tutorialMainStep: clearTutorialMainStep
+          ? null
+          : (tutorialMainStep ?? this.tutorialMainStep),
+      pendingTutorialAchievement:
+          pendingTutorialAchievement ?? this.pendingTutorialAchievement,
       hasNewAchievements: hasNewAchievements ?? this.hasNewAchievements,
       weeklyAchievementDays: clearWeeklyAchievementDays
           ? null

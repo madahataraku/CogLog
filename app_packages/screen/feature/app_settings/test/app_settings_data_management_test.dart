@@ -9,6 +9,7 @@ import 'package:monolith_localization_runtime/monolith_localization_runtime.dart
 import 'package:screen_feature_app_settings/screen_feature_app_settings.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_app_runtime_info/usecase_load_app_runtime_info.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 final class _RecordingNav implements ScreenNavigation {
   var openDataManagementCalls = 0;
@@ -52,6 +53,12 @@ final class _RecordingNav implements ScreenNavigation {
 
   @override
   void goToHomeTab() {}
+
+  @override
+  void goToGoalSettingsTab() {}
+
+  @override
+  void goToMeterCaptureTab() {}
 }
 
 final class _FakeLoadAppRuntimeInfoUsecase
@@ -63,6 +70,11 @@ final class _FakeLoadAppRuntimeInfoUsecase
     osName: 'Android',
     osVersion: '14',
   );
+}
+
+final class _FakeResetTutorial implements ResetTutorialProgressUsecase {
+  @override
+  Future<void> execute() async {}
 }
 
 void main() {
@@ -108,6 +120,12 @@ void main() {
             screenNavigationProvider.overrideWith((ref) => nav),
             LoadAppRuntimeInfoUsecase.provider.overrideWith(
               (ref) => _FakeLoadAppRuntimeInfoUsecase(),
+            ),
+            ResetTutorialProgressUsecase.provider.overrideWith(
+              (ref) => _FakeResetTutorial(),
+            ),
+            tutorialRuntimeSessionProvider.overrideWith(
+              (ref) => TutorialRuntimeSession(),
             ),
           ],
           child: MaterialApp(

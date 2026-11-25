@@ -86,6 +86,8 @@ import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.da
 import 'package:usecase_save_top_screen_metric_impl/usecase_save_top_screen_metric_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:usecase_tutorial_impl/usecase_tutorial_impl.dart';
 
 /// トップ・推移の読み込み、指標保存、一日あたり目標の読み書き、アドバイス生成、
 /// 端末上 LLM / Gemma 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
@@ -346,6 +348,37 @@ List<Override> usecaseOverrides({
       notifications: ref.watch(notificationSettingsRepositoryProvider),
       achievements: ref.watch(achievementRepositoryProvider),
       tutorial: ref.watch(tutorialRepositoryProvider),
+    ),
+  ),
+  EvaluateTutorialMainAutoStartUsecase.provider.overrideWith(
+    (ref) => EvaluateTutorialMainAutoStartUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+    ),
+  ),
+  AdvanceTutorialMainUsecase.provider.overrideWith(
+    (ref) => AdvanceTutorialMainUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+      loadDailyGoal: ref.watch(LoadDailyGoalUsecase.provider),
+    ),
+  ),
+  EvaluateTutorialContextUsecase.provider.overrideWith(
+    (ref) => EvaluateTutorialContextUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+    ),
+  ),
+  MarkTutorialContextSeenUsecase.provider.overrideWith(
+    (ref) => MarkTutorialContextSeenUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+    ),
+  ),
+  ResetTutorialProgressUsecase.provider.overrideWith(
+    (ref) => ResetTutorialProgressUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
     ),
   ),
 ];

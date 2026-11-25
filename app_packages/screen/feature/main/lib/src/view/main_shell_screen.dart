@@ -1,5 +1,6 @@
 import 'package:forui/forui.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 
@@ -68,25 +69,42 @@ class MainShellScreen extends StatelessWidget {
               index: currentIndex,
               onChange: onIndexChange,
               children: [
-                FBottomNavigationBarItem(
-                  icon: const Icon(FLucideIcons.house),
-                  label: Text(strings.screen_feature_main_nav_home),
+                CoachMarkTarget(
+                  id: CoachMarkTargetId.navHome,
+                  child: FBottomNavigationBarItem(
+                    icon: const Icon(FLucideIcons.house),
+                    label: Text(strings.screen_feature_main_nav_home),
+                  ),
                 ),
-                FBottomNavigationBarItem(
-                  icon: const Icon(FLucideIcons.camera),
-                  label: Text(strings.screen_feature_main_nav_meter_capture),
+                CoachMarkTarget(
+                  id: CoachMarkTargetId.navMeterCapture,
+                  child: FBottomNavigationBarItem(
+                    icon: const Icon(FLucideIcons.camera),
+                    label: Text(strings.screen_feature_main_nav_meter_capture),
+                  ),
                 ),
-                FBottomNavigationBarItem(
-                  icon: const Icon(FLucideIcons.chartLine),
-                  label: Text(strings.screen_feature_main_nav_trends),
+                CoachMarkTarget(
+                  id: CoachMarkTargetId.navTrends,
+                  child: FBottomNavigationBarItem(
+                    icon: const Icon(FLucideIcons.chartLine),
+                    label: Text(strings.screen_feature_main_nav_trends),
+                  ),
                 ),
-                FBottomNavigationBarItem(
-                  icon: const Icon(FLucideIcons.history),
-                  label: Text(strings.screen_feature_main_nav_exercise_history),
+                CoachMarkTarget(
+                  id: CoachMarkTargetId.navExerciseHistory,
+                  child: FBottomNavigationBarItem(
+                    icon: const Icon(FLucideIcons.history),
+                    label: Text(
+                      strings.screen_feature_main_nav_exercise_history,
+                    ),
+                  ),
                 ),
-                FBottomNavigationBarItem(
-                  icon: const Icon(FLucideIcons.target),
-                  label: Text(strings.screen_feature_main_nav_goal_settings),
+                CoachMarkTarget(
+                  id: CoachMarkTargetId.navGoalSettings,
+                  child: FBottomNavigationBarItem(
+                    icon: const Icon(FLucideIcons.target),
+                    label: Text(strings.screen_feature_main_nav_goal_settings),
+                  ),
                 ),
               ],
             ),
