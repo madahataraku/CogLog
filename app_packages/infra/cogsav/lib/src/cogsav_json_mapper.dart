@@ -346,10 +346,12 @@ abstract final class CogsavJsonMapper {
     final mainCompleted = _requireBool(map, 'mainCompleted');
     return TutorialProgress(
       mainCompleted: mainCompleted,
-      mainReachedStep: _optionalTutorialInt(
-        map,
-        'mainReachedStep',
-        fallback: mainCompleted ? 7 : 0,
+      mainReachedStep: _requireMainReachedStep(
+        _optionalTutorialInt(
+          map,
+          'mainReachedStep',
+          fallback: mainCompleted ? 7 : 0,
+        ),
       ),
       goalSettingsContextSeen: _optionalTutorialBool(
         map,
@@ -362,6 +364,19 @@ abstract final class CogsavJsonMapper {
       historyContextSeen: _requireBool(map, 'historyContextSeen'),
       achievementContextSeen: _requireBool(map, 'achievementContextSeen'),
     );
+  }
+
+  /// メイン到達段階は 0〜7。範囲外は [CogsavCorruptException]。
+  ///
+  /// Example:
+  /// ```dart
+  /// CogsavJsonMapper._requireMainReachedStep(3);
+  /// ```
+  static int _requireMainReachedStep(int value) {
+    if (value < 0 || value > 7) {
+      throw CogsavCorruptException('mainReachedStep が範囲外: $value');
+    }
+    return value;
   }
 
   /// 新 tutorial フィールド用。欠落は [fallback]。

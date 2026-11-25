@@ -45,6 +45,16 @@ void main() {
     expect(session.mainStep, TutorialMainStep.homeIntro);
   });
 
+  test('読込み後に文脈が有効なら start は noop', () async {
+    session.activeKind = TutorialKind.camera;
+    final result = await usecase().execute(
+      const AdvanceTutorialMainRequest.start(),
+    );
+    expect(result, isA<AdvanceTutorialMainNoopResult>());
+    expect(session.activeKind, TutorialKind.camera);
+    expect(session.mainStep, isNull);
+  });
+
   test('1→2→3', () async {
     final u = usecase();
     await u.execute(const AdvanceTutorialMainRequest.start());

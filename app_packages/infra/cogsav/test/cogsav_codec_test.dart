@@ -348,6 +348,57 @@ void main() {
     );
   });
 
+  test('tutorial の mainReachedStep 範囲外は CogsavCorruptException', () {
+    final data = emptyDataPayload();
+    data['tutorial'] = {
+      'mainCompleted': false,
+      'mainReachedStep': -1,
+      'cameraContextSeen': false,
+      'meterEditContextSeen': false,
+      'trendsContextSeen': false,
+      'historyContextSeen': false,
+      'achievementContextSeen': false,
+    };
+    expect(
+      () => CogsavCodec.decode(zipWith(formatVersion: 1, data: data)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
+
+  test('tutorial の mainReachedStep 0 と 7 は復元できる', () {
+    final data = emptyDataPayload();
+    data['tutorial'] = {
+      'mainCompleted': false,
+      'mainReachedStep': 0,
+      'cameraContextSeen': false,
+      'meterEditContextSeen': false,
+      'trendsContextSeen': false,
+      'historyContextSeen': false,
+      'achievementContextSeen': false,
+    };
+    expect(
+      CogsavCodec.decode(zipWith(formatVersion: 1, data: data))
+          .tutorial
+          ?.mainReachedStep,
+      0,
+    );
+    data['tutorial'] = {
+      'mainCompleted': true,
+      'mainReachedStep': 7,
+      'cameraContextSeen': false,
+      'meterEditContextSeen': false,
+      'trendsContextSeen': false,
+      'historyContextSeen': false,
+      'achievementContextSeen': false,
+    };
+    expect(
+      CogsavCodec.decode(zipWith(formatVersion: 1, data: data))
+          .tutorial
+          ?.mainReachedStep,
+      7,
+    );
+  });
+
   test('encode は常に tutorial キーを出す', () {
     final decoded = CogsavCodec.decode(
       CogsavCodec.encode(

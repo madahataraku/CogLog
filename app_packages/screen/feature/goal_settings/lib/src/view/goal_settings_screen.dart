@@ -48,14 +48,16 @@ class GoalSettingsScreen extends HookConsumerWidget {
       if (!tabSelected) {
         return null;
       }
+      bool isGoalTabSelected() =>
+          (ShellTabIndexScope.maybeOf(context) ?? -1) == 4;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!context.mounted) {
+        if (!context.mounted || !isGoalTabSelected()) {
           return;
         }
         final decision = await evaluate.execute(
           const EvaluateTutorialContextRequest(kind: TutorialKind.goalSettings),
         );
-        if (!decision.shouldShow || !context.mounted) {
+        if (!decision.shouldShow || !context.mounted || !isGoalTabSelected()) {
           return;
         }
         final steps = <CoachMarkStep>[
@@ -79,12 +81,12 @@ class GoalSettingsScreen extends HookConsumerWidget {
           ),
         ];
         for (final step in steps) {
-          if (!context.mounted) {
+          if (!context.mounted || !isGoalTabSelected()) {
             return;
           }
           await CoachMarkLauncher.show(context, step: step);
         }
-        if (!context.mounted) {
+        if (!context.mounted || !isGoalTabSelected()) {
           return;
         }
         await markSeen.execute(

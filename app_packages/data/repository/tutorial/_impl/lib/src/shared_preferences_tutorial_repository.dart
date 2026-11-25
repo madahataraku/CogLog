@@ -48,10 +48,8 @@ final class SharedPreferencesTutorialRepository implements TutorialRepository {
       final mainCompleted = _requireBool(map, 'mainCompleted');
       return TutorialProgress(
         mainCompleted: mainCompleted,
-        mainReachedStep: _optionalInt(
-          map,
-          'mainReachedStep',
-          fallback: mainCompleted ? 7 : 0,
+        mainReachedStep: _requireMainReachedStep(
+          _optionalInt(map, 'mainReachedStep', fallback: mainCompleted ? 7 : 0),
         ),
         goalSettingsContextSeen: _optionalBool(
           map,
@@ -135,6 +133,19 @@ final class SharedPreferencesTutorialRepository implements TutorialRepository {
     final value = map[key];
     if (value is! int) {
       throw FormatException('$key が整数でない');
+    }
+    return value;
+  }
+
+  /// メイン到達段階は 0〜7。範囲外は [FormatException]（読取りは initial へ落ちる）。
+  ///
+  /// Example:
+  /// ```dart
+  /// SharedPreferencesTutorialRepository._requireMainReachedStep(3);
+  /// ```
+  static int _requireMainReachedStep(int value) {
+    if (value < 0 || value > 7) {
+      throw FormatException('mainReachedStep が範囲外: $value');
     }
     return value;
   }

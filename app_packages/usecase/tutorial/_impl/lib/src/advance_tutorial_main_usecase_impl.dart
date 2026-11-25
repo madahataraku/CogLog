@@ -55,6 +55,10 @@ final class AdvanceTutorialMainUsecaseImpl
   Future<AdvanceTutorialMainResult> _startOrResume() async {
     session.manualStartGuard = false;
     final progress = await repository.read();
+    // 読込み待ち中に文脈が始まっていれば、メインは状態を上書きしない。
+    if (session.activeKind != null && session.activeKind != TutorialKind.main) {
+      return const AdvanceTutorialMainResult.noop();
+    }
     if (progress.mainCompleted) {
       return const AdvanceTutorialMainResult.noop();
     }
