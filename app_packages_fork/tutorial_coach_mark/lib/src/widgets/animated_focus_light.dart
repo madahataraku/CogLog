@@ -464,13 +464,15 @@ class AnimatedPulseFocusLightState extends AnimatedFocusLightState {
 
   bool _finishFocus = false;
 
-  get left => (_targetPosition?.offset.dx ?? 0) - _getPaddingFocus() * 2;
+  double get left => (_targetPosition?.offset.dx ?? 0) - _getPaddingFocus() * 2;
 
-  get top => (_targetPosition?.offset.dy ?? 0) - _getPaddingFocus() * 2;
+  double get top => (_targetPosition?.offset.dy ?? 0) - _getPaddingFocus() * 2;
 
-  get width => (_targetPosition?.size.width ?? 0) + _getPaddingFocus() * 4;
+  double get width =>
+      (_targetPosition?.size.width ?? 0) + _getPaddingFocus() * 4;
 
-  get height => (_targetPosition?.size.height ?? 0) + _getPaddingFocus() * 4;
+  double get height =>
+      (_targetPosition?.size.height ?? 0) + _getPaddingFocus() * 4;
 
   @override
   void initState() {

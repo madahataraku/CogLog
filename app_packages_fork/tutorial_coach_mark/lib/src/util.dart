@@ -106,7 +106,7 @@ extension StateExt on State {
 /// - The target widget is not currently in the widget tree
 /// - The widget's render object is not available
 class NotFoundTargetException extends FormatException {
-  NotFoundTargetException(identify)
+  NotFoundTargetException(Object? identify)
       : super('It was not possible to obtain target position ($identify).');
 }
 

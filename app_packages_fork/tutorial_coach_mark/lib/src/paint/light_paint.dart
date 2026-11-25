@@ -53,7 +53,7 @@ class LightPaint extends CustomPainter {
       circleHole,
       Paint()
         ..style = PaintingStyle.fill
-        ..color = colorShadow.withOpacity(opacityShadow),
+        ..color = colorShadow.withValues(alpha: opacityShadow),
     );
     if (borderSide != null && borderSide?.style != BorderStyle.none) {
       canvas.drawPath(

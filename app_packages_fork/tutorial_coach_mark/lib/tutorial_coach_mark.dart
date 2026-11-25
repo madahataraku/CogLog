@@ -137,7 +137,6 @@ class TutorialCoachMark {
   final VoidCallback? onSystemBack;
 
   OverlayEntry? _overlayEntry;
-  BuildContext? _contextTutorial; // Almacena el contexto del overlay
 
   /// Set when [removeOverlayEntry] / [finish] runs before the deferred insert.
   bool _cancelled = false;
@@ -296,7 +295,6 @@ class TutorialCoachMark {
     bool rootOverlay = false,
   }) {
     _cancelled = false;
-    _contextTutorial = overlay.context; // Guarda el contexto del overlay
     postFrame(() {
       // CogLog: skip insert if dismiss/finish ran before this frame.
       if (_cancelled) {
@@ -372,7 +370,6 @@ class TutorialCoachMark {
     closeHiddenView();
   }
 
-  void closeHiddenView() {
-    _contextTutorial = null;
-  }
+  /// No-op after replacing the modal back route with overlay [PopScope].
+  void closeHiddenView() {}
 }

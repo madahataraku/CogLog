@@ -104,7 +104,7 @@ class LightPaintRect extends CustomPainter {
           : RectClipper.rectHolePath(size, x, y, w, h),
       Paint()
         ..style = PaintingStyle.fill
-        ..color = colorShadow.withOpacity(opacityShadow)
+        ..color = colorShadow.withValues(alpha: opacityShadow)
         ..strokeWidth = 4,
     );
     if (borderSide != null && borderSide?.style != BorderStyle.none) {
