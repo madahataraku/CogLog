@@ -44,13 +44,10 @@ TargetPosition? getTargetCurrent(
 
       BuildContext? context;
       if (rootOverlay) {
-        context = keyContext
-            .findRootAncestorStateOfType<OverlayState>()
-            ?.context;
+        context =
+            keyContext.findRootAncestorStateOfType<OverlayState>()?.context;
       } else {
-        context = keyContext
-            .findAncestorStateOfType<NavigatorState>()
-            ?.context;
+        context = keyContext.findAncestorStateOfType<NavigatorState>()?.context;
       }
       Offset offset;
       if (context != null) {

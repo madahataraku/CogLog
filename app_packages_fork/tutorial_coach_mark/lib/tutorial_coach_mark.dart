@@ -49,7 +49,7 @@ export 'package:tutorial_coach_mark/src/util.dart';
 class TutorialCoachMark {
   /// List of targets to focus during the tutorial sequence.
   final List<TargetFocus> targets;
-  
+
   /// Callback executed before focus
   final FutureOr<void> Function(TargetFocus)? beforeFocus;
 
