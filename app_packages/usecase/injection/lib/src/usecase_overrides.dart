@@ -5,6 +5,7 @@ import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
+import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
@@ -320,6 +321,7 @@ List<Override> usecaseOverrides({
       goals: ref.watch(dailyGoalRepositoryProvider),
       notifications: ref.watch(notificationSettingsRepositoryProvider),
       achievements: ref.watch(achievementRepositoryProvider),
+      tutorial: ref.watch(tutorialRepositoryProvider),
       userFile: ref.watch(userFileGatewayProvider),
     ),
   ),
@@ -329,6 +331,7 @@ List<Override> usecaseOverrides({
       goals: ref.watch(dailyGoalRepositoryProvider),
       notifications: ref.watch(notificationSettingsRepositoryProvider),
       achievements: ref.watch(achievementRepositoryProvider),
+      tutorial: ref.watch(tutorialRepositoryProvider),
       userFile: ref.watch(userFileGatewayProvider),
       localNotifications: ref.watch(localNotificationGatewayProvider),
       sync: ref.watch(SyncExerciseReminderUsecase.provider),
@@ -342,6 +345,7 @@ List<Override> usecaseOverrides({
       goals: ref.watch(dailyGoalRepositoryProvider),
       notifications: ref.watch(notificationSettingsRepositoryProvider),
       achievements: ref.watch(achievementRepositoryProvider),
+      tutorial: ref.watch(tutorialRepositoryProvider),
     ),
   ),
 ];

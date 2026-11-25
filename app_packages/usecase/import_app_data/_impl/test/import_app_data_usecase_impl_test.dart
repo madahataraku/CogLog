@@ -8,10 +8,12 @@ import 'package:data_repository_daily_goal_testing/data_repository_daily_goal_te
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:data_repository_notification_settings_testing/data_repository_notification_settings_testing.dart';
+import 'package:data_repository_tutorial_testing/data_repository_tutorial_testing.dart';
 import 'package:domain_achievement/domain_achievement.dart';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:domain_notification_settings/domain_notification_settings.dart';
+import 'package:domain_tutorial/domain_tutorial.dart';
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:infra_local_notification_testing/infra_local_notification_testing.dart';
 import 'package:infra_user_file_testing/infra_user_file_testing.dart';
@@ -48,6 +50,14 @@ CogsavDocument _document({
   NotificationSettings notificationSettings = const NotificationSettings(
     enabled: true,
   ),
+  TutorialProgress? tutorial = const TutorialProgress(
+    mainCompleted: true,
+    cameraContextSeen: false,
+    meterEditContextSeen: false,
+    trendsContextSeen: false,
+    historyContextSeen: false,
+    achievementContextSeen: false,
+  ),
 }) {
   return CogsavDocument(
     formatVersion: CogsavCodec.formatVersion,
@@ -67,6 +77,7 @@ CogsavDocument _document({
       ),
     ],
     achievementLastViewedAt: DateTime.utc(2026, 11, 12),
+    tutorial: tutorial,
     photos:
         photos ??
         {
@@ -125,6 +136,7 @@ void main() {
     MemoryDailyGoalRepository goals,
     MemoryNotificationSettingsRepository notifications,
     MemoryAchievementRepository achievements,
+    MemoryTutorialRepository tutorial,
     FakeUserFileGateway userFile,
     FakeLocalNotificationGateway localNotifications,
     _RecordingSync sync,
@@ -139,6 +151,7 @@ void main() {
     final goals = MemoryDailyGoalRepository();
     final notifications = MemoryNotificationSettingsRepository();
     final achievements = MemoryAchievementRepository();
+    final tutorial = MemoryTutorialRepository();
     final files = userFile ?? FakeUserFileGateway();
     final local = localNotifications ?? FakeLocalNotificationGateway();
     final syncUsecase = sync ?? _RecordingSync();
@@ -148,6 +161,7 @@ void main() {
       goals: goals,
       notifications: notifications,
       achievements: achievements,
+      tutorial: tutorial,
       userFile: files,
       localNotifications: local,
       sync: syncUsecase,
@@ -160,6 +174,7 @@ void main() {
       goals: goals,
       notifications: notifications,
       achievements: achievements,
+      tutorial: tutorial,
       userFile: files,
       localNotifications: local,
       sync: syncUsecase,
@@ -222,6 +237,7 @@ void main() {
     expect((await env.goals.read()).caloriesKcal, 300);
     expect((await env.notifications.read()).enabled, isTrue);
     expect(await env.achievements.readUnlocks(), hasLength(1));
+    expect((await env.tutorial.read()).mainCompleted, isTrue);
     expect(env.sync.callCount, 1);
     expect(await env.backupStore.hasMarker(), isFalse);
   });
@@ -339,6 +355,7 @@ void main() {
       goals: env.goals,
       notifications: env.notifications,
       achievements: env.achievements,
+      tutorial: env.tutorial,
       userFile: env.userFile,
       localNotifications: env.localNotifications,
       sync: env.sync,
@@ -403,12 +420,109 @@ void main() {
       notificationSettings: NotificationSettings.initial,
       achievementUnlocks: const [],
       achievementLastViewedAt: null,
+      tutorial: TutorialProgress.initial,
       photos: const {},
     );
 
     await env.usecase.applyImport(CogsavCodec.encode(doc)).drain();
 
     expect(await env.achievements.readLastViewedAt(), isNull);
+  });
+
+  test('tutorial キー欠落は他データを置換しつつ端末の tutorial を維持', () async {
+    final env = build();
+    await env.tutorial.write(
+      TutorialProgress.initial.copyWith(mainCompleted: true),
+    );
+    await env.goals.write(const DailyGoal(caloriesKcal: 11));
+    final bytes = _zipWithData({
+      'exerciseHistories': <Object?>[],
+      'dailyGoal': {
+        'durationSeconds': null,
+        'caloriesKcal': 300,
+        'distanceKm': null,
+      },
+      'dailyGoalAutoUpdate': {
+        'enabled': false,
+        'level': 'normal',
+        'enabledOnLocalDate': null,
+        'streakEpochLocalDate': null,
+        'lastAppliedLocalDate': null,
+        'weeklyAchievementDays': null,
+      },
+      'notificationSettings': {'enabled': false},
+      'achievementUnlocks': <Object?>[],
+      'achievementLastViewedAt': null,
+    });
+
+    final events = await env.usecase.applyImport(bytes).toList();
+
+    expect(events.last, isA<ImportAppDataSucceeded>());
+    expect((await env.goals.read()).caloriesKcal, 300);
+    expect((await env.tutorial.read()).mainCompleted, isTrue);
+  });
+
+  test('tutorial キーありは置換する', () async {
+    final env = build();
+    await env.tutorial.write(TutorialProgress.initial);
+    final events = await env.usecase
+        .applyImport(
+          CogsavCodec.encode(
+            _document(
+              tutorial: TutorialProgress.initial.copyWith(
+                mainCompleted: true,
+                cameraContextSeen: true,
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    expect(events.last, isA<ImportAppDataSucceeded>());
+    final progress = await env.tutorial.read();
+    expect(progress.mainCompleted, isTrue);
+    expect(progress.cameraContextSeen, isTrue);
+  });
+
+  test('tutorial 不正値は Failed(corrupt) で書き込みなし', () async {
+    final env = build();
+    await env.tutorial.write(
+      TutorialProgress.initial.copyWith(mainCompleted: true),
+    );
+    await env.goals.write(const DailyGoal(caloriesKcal: 11));
+    final bytes = _zipWithData({
+      'exerciseHistories': <Object?>[],
+      'dailyGoal': {
+        'durationSeconds': null,
+        'caloriesKcal': 300,
+        'distanceKm': null,
+      },
+      'dailyGoalAutoUpdate': {
+        'enabled': false,
+        'level': 'normal',
+        'enabledOnLocalDate': null,
+        'streakEpochLocalDate': null,
+        'lastAppliedLocalDate': null,
+        'weeklyAchievementDays': null,
+      },
+      'notificationSettings': {'enabled': false},
+      'achievementUnlocks': <Object?>[],
+      'achievementLastViewedAt': null,
+      'tutorial': {'mainCompleted': true},
+    });
+
+    final events = await env.usecase.applyImport(bytes).toList();
+
+    expect(
+      events.last,
+      isA<ImportAppDataFailed>().having(
+        (e) => e.error,
+        'error',
+        ImportAppDataError.corrupt,
+      ),
+    );
+    expect((await env.goals.read()).caloriesKcal, 11);
+    expect((await env.tutorial.read()).mainCompleted, isTrue);
   });
 }
 

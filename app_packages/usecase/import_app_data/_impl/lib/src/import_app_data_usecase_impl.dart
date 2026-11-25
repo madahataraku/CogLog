@@ -5,6 +5,7 @@ import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
+import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:infra_local_notification/infra_local_notification.dart';
 import 'package:infra_user_file/infra_user_file.dart';
@@ -23,6 +24,7 @@ import 'import_backup_store.dart';
 ///   goals: goals,
 ///   notifications: notifications,
 ///   achievements: achievements,
+///   tutorial: tutorial,
 ///   userFile: userFile,
 ///   localNotifications: localNotifications,
 ///   sync: sync,
@@ -39,6 +41,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
   ///   goals: goals,
   ///   notifications: notifications,
   ///   achievements: achievements,
+  ///   tutorial: tutorial,
   ///   userFile: userFile,
   ///   localNotifications: localNotifications,
   ///   sync: sync,
@@ -50,6 +53,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
     required this.goals,
     required this.notifications,
     required this.achievements,
+    required this.tutorial,
     required this.userFile,
     required this.localNotifications,
     required this.sync,
@@ -68,6 +72,9 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
 
   /// アチーブメント。
   final AchievementRepository achievements;
+
+  /// チュートリアル進捗。
+  final TutorialRepository tutorial;
 
   /// 利用者ファイルの選択。
   final UserFileGateway userFile;
@@ -154,6 +161,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
             goals: goals,
             notifications: notifications,
             achievements: achievements,
+            tutorial: tutorial,
           );
           backupCreated = true;
           if (cancelled) {
@@ -167,6 +175,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
             goals: goals,
             notifications: notifications,
             achievements: achievements,
+            tutorial: tutorial,
             clearHealthWorkoutId: true,
           );
           if (cancelled) {
@@ -241,6 +250,7 @@ final class ImportAppDataUsecaseImpl implements ImportAppDataUsecase {
         goals: goals,
         notifications: notifications,
         achievements: achievements,
+        tutorial: tutorial,
       );
       await backupStore.clear();
     } on Object {

@@ -13,6 +13,7 @@ dependencies:
   domain_daily_goal: any
   domain_exercise_history: any
   domain_notification_settings: any
+  domain_tutorial: any
   image: any
   meta: any
 

@@ -7,6 +7,7 @@ import 'package:data_repository_achievement/data_repository_achievement.dart';
 import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
+import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:meta/meta.dart';
@@ -44,8 +45,10 @@ final class ImportBackupStore {
   Directory get backupDirectory =>
       Directory('${documentsDirectory.path}/cogsav_import_backup');
 
+  /// 中断状態を示す marker.json。
   File get _markerFile => File('${backupDirectory.path}/marker.json');
 
+  /// 現行データの snapshot.cogsav。
   File get _snapshotFile => File('${backupDirectory.path}/snapshot.cogsav');
 
   /// [action] を他の排他区間と重ならないよう実行する。
@@ -87,10 +90,10 @@ final class ImportBackupStore {
     }
     try {
       CogsavCodec.decode(await _snapshotFile.readAsBytes());
-      return true;
     } on Object {
       return false;
     }
+    return true;
   }
 
   /// 現行 Repository 内容をバックアップし、marker を in_progress にする。
@@ -102,6 +105,7 @@ final class ImportBackupStore {
   ///   goals: goals,
   ///   notifications: notifications,
   ///   achievements: achievements,
+  ///   tutorial: tutorial,
   /// );
   /// ```
   Future<void> createFromCurrent({
@@ -109,6 +113,7 @@ final class ImportBackupStore {
     required DailyGoalRepository goals,
     required NotificationSettingsRepository notifications,
     required AchievementRepository achievements,
+    required TutorialRepository tutorial,
   }) async {
     await clear();
     await backupDirectory.create(recursive: true);
@@ -132,6 +137,7 @@ final class ImportBackupStore {
       notificationSettings: await notifications.read(),
       achievementUnlocks: await achievements.readUnlocks(),
       achievementLastViewedAt: await achievements.readLastViewedAt(),
+      tutorial: await tutorial.read(),
       photos: photos,
     );
     await _snapshotFile.writeAsBytes(CogsavCodec.encode(document), flush: true);
@@ -146,6 +152,7 @@ final class ImportBackupStore {
   ///   goals: goals,
   ///   notifications: notifications,
   ///   achievements: achievements,
+  ///   tutorial: tutorial,
   /// );
   /// ```
   Future<void> restore({
@@ -153,6 +160,7 @@ final class ImportBackupStore {
     required DailyGoalRepository goals,
     required NotificationSettingsRepository notifications,
     required AchievementRepository achievements,
+    required TutorialRepository tutorial,
   }) async {
     await _writeMarker(state: 'restoring');
     final document = CogsavCodec.decode(await _snapshotFile.readAsBytes());
@@ -162,6 +170,7 @@ final class ImportBackupStore {
       goals: goals,
       notifications: notifications,
       achievements: achievements,
+      tutorial: tutorial,
       clearHealthWorkoutId: false,
     );
   }
@@ -181,6 +190,7 @@ final class ImportBackupStore {
   /// [document] を各 Repository へ適用する。
   ///
   /// [clearHealthWorkoutId] が true のときヘルス ID をすべて null にする。
+  /// [CogsavDocument.tutorial] が null のときはチュートリアル Repository を触らない。
   /// 戻り値は写真欠落件数。最終閲覧が null のときは [AchievementRepository.clearLastViewedAt]
   /// で未設定に戻す。
   ///
@@ -192,6 +202,7 @@ final class ImportBackupStore {
   ///   goals: goals,
   ///   notifications: notifications,
   ///   achievements: achievements,
+  ///   tutorial: tutorial,
   ///   clearHealthWorkoutId: true,
   /// );
   /// ```
@@ -202,6 +213,7 @@ final class ImportBackupStore {
     required DailyGoalRepository goals,
     required NotificationSettingsRepository notifications,
     required AchievementRepository achievements,
+    required TutorialRepository tutorial,
     required bool clearHealthWorkoutId,
   }) async {
     var photoMissingCount = 0;
@@ -245,9 +257,19 @@ final class ImportBackupStore {
     } else {
       await achievements.clearLastViewedAt();
     }
+    final tutorialProgress = document.tutorial;
+    if (tutorialProgress != null) {
+      await tutorial.write(tutorialProgress);
+    }
     return photoMissingCount;
   }
 
+  /// [state] を marker.json に書き、ディレクトリが無ければ作る。
+  ///
+  /// Example:
+  /// ```dart
+  /// await store._writeMarker(state: 'in_progress');
+  /// ```
   Future<void> _writeMarker({required String state}) async {
     await backupDirectory.create(recursive: true);
     final payload = <String, Object?>{

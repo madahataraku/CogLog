@@ -27,7 +27,11 @@ workspace:
   - app_packages/data/repository/notification_settings
   - app_packages/data/repository/notification_settings/_impl
   - app_packages/data/repository/notification_settings/_testing
+  - app_packages/data/repository/tutorial
+  - app_packages/data/repository/tutorial/_impl
+  - app_packages/data/repository/tutorial/_testing
   - app_packages/domain/notification_settings
+  - app_packages/domain/tutorial
   - app_packages/infra/local_notification
   - app_packages/infra/local_notification/_mobile
   - app_packages/infra/local_notification/_testing

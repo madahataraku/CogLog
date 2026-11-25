@@ -2,6 +2,7 @@ import 'package:domain_achievement/domain_achievement.dart';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:domain_notification_settings/domain_notification_settings.dart';
+import 'package:domain_tutorial/domain_tutorial.dart';
 import 'package:meta/meta.dart';
 
 import 'cogsav_exceptions.dart';
@@ -17,11 +18,14 @@ import 'cogsav_exceptions.dart';
 ///   notificationSettings: NotificationSettings.initial,
 ///   achievementUnlocks: const [],
 ///   achievementLastViewedAt: null,
+///   tutorial: TutorialProgress.initial,
 /// );
 /// ```
 @internal
 abstract final class CogsavJsonMapper {
   /// ドメイン値を `data.json` 用 Map にする。
+  ///
+  /// [tutorial] は常に非 null で、`tutorial` キーを必ず出す。
   ///
   /// Example:
   /// ```dart
@@ -32,6 +36,7 @@ abstract final class CogsavJsonMapper {
   ///   notificationSettings: NotificationSettings.initial,
   ///   achievementUnlocks: const [],
   ///   achievementLastViewedAt: null,
+  ///   tutorial: TutorialProgress.initial,
   /// );
   /// ```
   static Map<String, Object?> encodeDataPayload({
@@ -41,6 +46,7 @@ abstract final class CogsavJsonMapper {
     required NotificationSettings notificationSettings,
     required List<AchievementUnlock> achievementUnlocks,
     required DateTime? achievementLastViewedAt,
+    required TutorialProgress tutorial,
   }) {
     return <String, Object?>{
       'exerciseHistories': [
@@ -57,10 +63,13 @@ abstract final class CogsavJsonMapper {
       'achievementLastViewedAt': achievementLastViewedAt
           ?.toUtc()
           .toIso8601String(),
+      'tutorial': _encodeTutorial(tutorial),
     };
   }
 
   /// `data.json` の Map をドメイン値にする。必須欠落・型不正は [CogsavCorruptException]。
+  ///
+  /// `tutorial` キー欠落は null。キーありで不正なら破損。
   ///
   /// Example:
   /// ```dart
@@ -91,6 +100,7 @@ abstract final class CogsavJsonMapper {
     NotificationSettings notificationSettings,
     List<AchievementUnlock> achievementUnlocks,
     DateTime? achievementLastViewedAt,
+    TutorialProgress? tutorial,
   })
   decodeDataPayload(Map<Object?, Object?> raw) {
     final historiesRaw = _requireList(raw, 'exerciseHistories');
@@ -127,6 +137,13 @@ abstract final class CogsavJsonMapper {
       throw const CogsavCorruptException('achievementLastViewedAt の型が不正');
     }
 
+    final TutorialProgress? tutorial;
+    if (!raw.containsKey('tutorial')) {
+      tutorial = null;
+    } else {
+      tutorial = _decodeTutorial(raw['tutorial']);
+    }
+
     return (
       exerciseHistories: histories,
       dailyGoal: _decodeDailyGoal(dailyGoalRaw),
@@ -134,6 +151,7 @@ abstract final class CogsavJsonMapper {
       notificationSettings: _decodeNotification(notificationRaw),
       achievementUnlocks: unlocks,
       achievementLastViewedAt: lastViewed,
+      tutorial: tutorial,
     );
   }
 
@@ -286,6 +304,50 @@ abstract final class CogsavJsonMapper {
 
   static NotificationSettings _decodeNotification(Map<Object?, Object?> raw) {
     return NotificationSettings(enabled: _requireBool(raw, 'enabled'));
+  }
+
+  /// [progress] を `data.json` の `tutorial` オブジェクトにする。
+  ///
+  /// Example:
+  /// ```dart
+  /// CogsavJsonMapper._encodeTutorial(TutorialProgress.initial);
+  /// ```
+  static Map<String, Object?> _encodeTutorial(TutorialProgress progress) {
+    return <String, Object?>{
+      'mainCompleted': progress.mainCompleted,
+      'cameraContextSeen': progress.cameraContextSeen,
+      'meterEditContextSeen': progress.meterEditContextSeen,
+      'trendsContextSeen': progress.trendsContextSeen,
+      'historyContextSeen': progress.historyContextSeen,
+      'achievementContextSeen': progress.achievementContextSeen,
+    };
+  }
+
+  /// `tutorial` 値を [TutorialProgress] にする。
+  ///
+  /// 非オブジェクト・bool 欠落／非 bool は [CogsavCorruptException]。
+  ///
+  /// Example:
+  /// ```dart
+  /// CogsavJsonMapper._decodeTutorial(<String, Object?>{
+  ///   'mainCompleted': false,
+  ///   'cameraContextSeen': false,
+  ///   'meterEditContextSeen': false,
+  ///   'trendsContextSeen': false,
+  ///   'historyContextSeen': false,
+  ///   'achievementContextSeen': false,
+  /// });
+  /// ```
+  static TutorialProgress _decodeTutorial(Object? raw) {
+    final map = _asMap(raw, field: 'tutorial');
+    return TutorialProgress(
+      mainCompleted: _requireBool(map, 'mainCompleted'),
+      cameraContextSeen: _requireBool(map, 'cameraContextSeen'),
+      meterEditContextSeen: _requireBool(map, 'meterEditContextSeen'),
+      trendsContextSeen: _requireBool(map, 'trendsContextSeen'),
+      historyContextSeen: _requireBool(map, 'historyContextSeen'),
+      achievementContextSeen: _requireBool(map, 'achievementContextSeen'),
+    );
   }
 
   static Map<String, Object?> _encodeUnlock(AchievementUnlock unlock) {

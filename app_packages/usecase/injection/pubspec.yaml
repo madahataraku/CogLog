@@ -13,6 +13,7 @@ dependencies:
   data_repository_exercise_history: any
   data_repository_notification_settings: any
   data_repository_top_screen_metric: any
+  data_repository_tutorial: any
   infra_app_runtime_info: any
   infra_app_settings: any
   infra_health_body_metrics: any

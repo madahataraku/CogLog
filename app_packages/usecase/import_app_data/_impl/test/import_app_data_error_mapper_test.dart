@@ -4,6 +4,7 @@ import 'package:data_repository_achievement_testing/data_repository_achievement_
 import 'package:data_repository_daily_goal_testing/data_repository_daily_goal_testing.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:data_repository_notification_settings_testing/data_repository_notification_settings_testing.dart';
+import 'package:data_repository_tutorial_testing/data_repository_tutorial_testing.dart';
 import 'package:infra_local_notification_testing/infra_local_notification_testing.dart';
 import 'package:infra_user_file_testing/infra_user_file_testing.dart';
 import 'package:test/test.dart';
@@ -24,6 +25,7 @@ ImportAppDataUsecaseImpl _usecase(FakeUserFileGateway userFile) {
     goals: MemoryDailyGoalRepository(),
     notifications: MemoryNotificationSettingsRepository(),
     achievements: MemoryAchievementRepository(),
+    tutorial: MemoryTutorialRepository(),
     userFile: userFile,
     localNotifications: FakeLocalNotificationGateway(),
     sync: _NoopSync(),

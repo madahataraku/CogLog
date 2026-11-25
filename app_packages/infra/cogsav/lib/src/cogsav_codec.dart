@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:domain_tutorial/domain_tutorial.dart';
 
 import 'cogsav_document.dart';
 import 'cogsav_exceptions.dart';
@@ -21,6 +22,7 @@ import 'cogsav_json_mapper.dart';
 ///     notificationSettings: NotificationSettings.initial,
 ///     achievementUnlocks: const [],
 ///     achievementLastViewedAt: null,
+///     tutorial: TutorialProgress.initial,
 ///     photos: const {},
 ///   ),
 /// );
@@ -49,6 +51,8 @@ abstract final class CogsavCodec {
 
   /// [document] を ZIP バイト列にする。
   ///
+  /// [CogsavDocument.tutorial] が null のときは [TutorialProgress.initial] を書く。
+  ///
   /// Example:
   /// ```dart
   /// CogsavCodec.encode(
@@ -61,6 +65,7 @@ abstract final class CogsavCodec {
   ///     notificationSettings: NotificationSettings.initial,
   ///     achievementUnlocks: const [],
   ///     achievementLastViewedAt: null,
+  ///     tutorial: TutorialProgress.initial,
   ///     photos: const {},
   ///   ),
   /// );
@@ -77,6 +82,7 @@ abstract final class CogsavCodec {
       notificationSettings: document.notificationSettings,
       achievementUnlocks: document.achievementUnlocks,
       achievementLastViewedAt: document.achievementLastViewedAt,
+      tutorial: document.tutorial ?? TutorialProgress.initial,
     );
 
     final archive = Archive()
@@ -97,6 +103,7 @@ abstract final class CogsavCodec {
   ///
   /// 壊れている・許可外パス・重複エントリは [CogsavCorruptException]。
   /// 版が [formatVersion] 以外は [CogsavUnsupportedVersionException]。
+  /// `data.json` に `tutorial` キーが無いときは [CogsavDocument.tutorial] を null にする。
   ///
   /// Example:
   /// ```dart
@@ -205,6 +212,7 @@ abstract final class CogsavCodec {
       notificationSettings: payload.notificationSettings,
       achievementUnlocks: payload.achievementUnlocks,
       achievementLastViewedAt: payload.achievementLastViewedAt,
+      tutorial: payload.tutorial,
       photos: photos,
     );
   }
