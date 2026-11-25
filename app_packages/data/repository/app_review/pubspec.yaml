@@ -1,0 +1,14 @@
+name: data_repository_app_review
+description: App review suppression repository for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  riverpod: any
+
+dev_dependencies:
+  flutter_lints: any

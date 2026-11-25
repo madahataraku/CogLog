@@ -1,0 +1,15 @@
+name: data_repository_app_review_impl
+description: Cache-file app review suppression repository for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_app_review: any
+
+dev_dependencies:
+  flutter_lints: any
+  test: any
