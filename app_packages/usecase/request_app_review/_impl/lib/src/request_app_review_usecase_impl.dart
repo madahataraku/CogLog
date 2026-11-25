@@ -75,7 +75,14 @@ final class RequestAppReviewUsecaseImpl implements RequestAppReviewUsecase {
       if (!progress.mainCompleted) {
         return RequestAppReviewResult.skippedTutorial;
       }
-      if (!await review.isAvailable()) {
+      final bool available;
+      try {
+        available = await review.isAvailable();
+      } on Object {
+        // 可用性確認の失敗は利用不可と同じ扱い。抑止しない。
+        return RequestAppReviewResult.skippedUnavailable;
+      }
+      if (!available) {
         return RequestAppReviewResult.skippedUnavailable;
       }
       try {

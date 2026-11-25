@@ -75,6 +75,14 @@ void main() {
     expect(await suppression.isSuppressed(), isFalse);
   });
 
+  test('isAvailable 例外なら skippedUnavailable で抑止しない', () async {
+    await completeMain();
+    review.throwOnIsAvailable = true;
+    expect(await usecase.execute(), RequestAppReviewResult.skippedUnavailable);
+    expect(review.requestCount, 0);
+    expect(await suppression.isSuppressed(), isFalse);
+  });
+
   test('inFlight 中は skippedInFlight', () async {
     await completeMain();
     session.requestInFlight = true;

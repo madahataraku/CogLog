@@ -13,7 +13,11 @@ final class FakeAppInAppReview implements AppInAppReview {
   /// ```dart
   /// FakeAppInAppReview(available: false);
   /// ```
-  FakeAppInAppReview({this.available = true, this.throwOnRequest = false});
+  FakeAppInAppReview({
+    this.available = true,
+    this.throwOnRequest = false,
+    this.throwOnIsAvailable = false,
+  });
 
   /// [isAvailable] が返す値。
   bool available;
@@ -21,17 +25,25 @@ final class FakeAppInAppReview implements AppInAppReview {
   /// [requestReview] で例外を投げるか。
   bool throwOnRequest;
 
+  /// [isAvailable] で例外を投げるか。
+  bool throwOnIsAvailable;
+
   /// [requestReview] が呼ばれた回数。
   int requestCount = 0;
 
-  /// [available] を返す。
+  /// [available] を返す。例外設定時は投げる。
   ///
   /// Example:
   /// ```dart
   /// await FakeAppInAppReview().isAvailable();
   /// ```
   @override
-  Future<bool> isAvailable() async => available;
+  Future<bool> isAvailable() async {
+    if (throwOnIsAvailable) {
+      throw StateError('isAvailable failed');
+    }
+    return available;
+  }
 
   /// 回数を増やし、必要なら例外を投げる。
   ///

@@ -10,6 +10,7 @@ import 'package:view_coach_mark/view_coach_mark.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../strings.dart';
+import '../viewmodel/entity/top_screen_entity.dart';
 import '../viewmodel/top_screen_view_model.dart';
 import 'map_gemma_meter_prepare_error.dart';
 import 'should_evaluate_app_review_on_home.dart';
@@ -138,19 +139,10 @@ class TopScreen extends HookConsumerWidget {
           if (!context.mounted) {
             return;
           }
-          final stillCurrent = ModalRoute.of(context)?.isCurrent ?? true;
-          if (!shouldEvaluateAppReviewOnHome(
-            homeTabSelected: (ShellTabIndexScope.maybeOf(context) ?? 0) == 0,
-            foreground:
-                (WidgetsBinding.instance.lifecycleState == null ||
-                WidgetsBinding.instance.lifecycleState ==
-                    AppLifecycleState.resumed),
-            tutorialShowing: tutorialSession.isShowing,
-            pendingTutorialMain: entity.pendingTutorialMain,
-            pendingTutorialAchievement: entity.pendingTutorialAchievement,
-            pendingModelDownloadGuidance: entity.pendingModelDownloadGuidance,
-            pendingGemmaMeterGuidance: entity.pendingGemmaMeterGuidance,
-            homeRouteIsCurrent: stillCurrent,
+          if (!_shouldEvaluateAppReviewNow(
+            context,
+            entity: ref.read(TopScreenProviders.entity),
+            tutorialSession: tutorialSession,
           )) {
             return;
           }
@@ -210,6 +202,13 @@ class TopScreen extends HookConsumerWidget {
           if (!context.mounted) {
             return;
           }
+          if (!_shouldEvaluateAppReviewNow(
+            context,
+            entity: ref.read(TopScreenProviders.entity),
+            tutorialSession: tutorialSession,
+          )) {
+            return;
+          }
           unawaited(viewModel.onEvaluateAppReview());
         });
         return null;
@@ -256,6 +255,13 @@ class TopScreen extends HookConsumerWidget {
           if (!context.mounted) {
             return;
           }
+          if (!_shouldEvaluateAppReviewNow(
+            context,
+            entity: ref.read(TopScreenProviders.entity),
+            tutorialSession: tutorialSession,
+          )) {
+            return;
+          }
           unawaited(viewModel.onEvaluateAppReview());
         });
         return null;
@@ -295,6 +301,13 @@ class TopScreen extends HookConsumerWidget {
           // (A) の show 完了後に (B) を評価する。
           await viewModel.onEvaluateGemmaMeterGuidance();
           if (!context.mounted) {
+            return;
+          }
+          if (!_shouldEvaluateAppReviewNow(
+            context,
+            entity: ref.read(TopScreenProviders.entity),
+            tutorialSession: tutorialSession,
+          )) {
             return;
           }
           unawaited(viewModel.onEvaluateAppReview());
@@ -357,6 +370,13 @@ class TopScreen extends HookConsumerWidget {
           if (!context.mounted) {
             return;
           }
+          if (!_shouldEvaluateAppReviewNow(
+            context,
+            entity: ref.read(TopScreenProviders.entity),
+            tutorialSession: tutorialSession,
+          )) {
+            return;
+          }
           unawaited(viewModel.onEvaluateAppReview());
         });
         return null;
@@ -373,6 +393,34 @@ class TopScreen extends HookConsumerWidget {
     );
     return const TopScreenImpl();
   }
+}
+
+/// 最新の Entity / ライフサイクル / ルートからレビュー評価可否を返す。
+///
+/// Example:
+/// ```dart
+/// _shouldEvaluateAppReviewNow(
+///   context,
+///   entity: entity,
+///   tutorialSession: tutorialSession,
+/// );
+/// ```
+bool _shouldEvaluateAppReviewNow(
+  BuildContext context, {
+  required TopScreenEntity entity,
+  required TutorialRuntimeSession tutorialSession,
+}) {
+  final life = WidgetsBinding.instance.lifecycleState;
+  return shouldEvaluateAppReviewOnHome(
+    homeTabSelected: (ShellTabIndexScope.maybeOf(context) ?? 0) == 0,
+    foreground: life == null || life == AppLifecycleState.resumed,
+    tutorialShowing: tutorialSession.isShowing,
+    pendingTutorialMain: entity.pendingTutorialMain,
+    pendingTutorialAchievement: entity.pendingTutorialAchievement,
+    pendingModelDownloadGuidance: entity.pendingModelDownloadGuidance,
+    pendingGemmaMeterGuidance: entity.pendingGemmaMeterGuidance,
+    homeRouteIsCurrent: ModalRoute.of(context)?.isCurrent ?? true,
+  );
 }
 
 /// メイン段階に対応するコーチマーク step。
