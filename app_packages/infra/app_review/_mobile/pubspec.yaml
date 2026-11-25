@@ -1,0 +1,19 @@
+name: infra_app_review_mobile
+description: in_app_review-backed client for CogLog.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  in_app_review: any
+  infra_app_review: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

@@ -43,9 +43,17 @@ workspace:
   - app_packages/foundation/datetime
   - app_packages/foundation/metadata
   - app_packages/foundation/resources
+  - app_packages/infra/app_review
+  - app_packages/infra/app_review/_mobile
+  - app_packages/infra/app_review/_testing
   - app_packages/infra/app_settings
   - app_packages/infra/app_settings/_mobile
   - app_packages/infra/app_settings/_testing
+  - app_packages/data/repository/app_review
+  - app_packages/data/repository/app_review/_impl
+  - app_packages/data/repository/app_review/_testing
+  - app_packages/usecase/request_app_review
+  - app_packages/usecase/request_app_review/_impl
   - app_packages/infra/app_runtime_info
   - app_packages/infra/app_runtime_info/_mobile
   - app_packages/infra/app_runtime_info/_testing
@@ -177,6 +185,7 @@ dependency_overrides:
   flutter_timezone: 5.1.1
   timezone: 0.11.2
   app_settings: 9.0.1
+  in_app_review: 2.0.12
   # 利用者ファイル保存・選択。8.x / 12.x は win32・dbus 制約で既存依存と衝突するため 13.4.0 に固定する。
   # Android 実装は flutter.compileSdkVersion を参照する。
   file_picker: 13.4.0
