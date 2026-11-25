@@ -6,6 +6,7 @@ import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/delegate/exercise_history_state_to_entity_delegate.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_cold_start_delegate.dart';
+import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_evaluate_tutorial_delegate.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_reload_selected_month_delegate.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_select_month_delegate.dart';
 import 'package:screen_feature_exercise_history/src/viewmodel/delegate/on_tap_day_delegate.dart';
@@ -13,6 +14,7 @@ import 'package:screen_feature_exercise_history/src/viewmodel/state/exercise_his
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_exercise_history_month/usecase_load_exercise_history_month.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 ExerciseHistory _history({
   required String id,
@@ -98,6 +100,12 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void goToHomeTab() {}
+
+  @override
+  void goToGoalSettingsTab() {}
+
+  @override
+  void goToMeterCaptureTab() {}
 }
 
 void main() {
@@ -274,5 +282,61 @@ void main() {
       isNotNull,
     );
     expect(ja['screen_feature_exercise_history_count_badge'], isNotNull);
+    expect(ja['screen_feature_exercise_history_tutorial_title'], isNotNull);
   });
+
+  test('運動履歴文脈は Ready 後に pending を立てる', () async {
+    final state = MutableStateStream(
+      ExerciseHistoryScreenState.initial(year: 2026, month: 11),
+    );
+    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    await OnEvaluateTutorialDelegate(
+      state: state,
+      evaluateContext: evaluate,
+    ).execute();
+    expect(evaluate.calls, 1);
+    expect(evaluate.lastKind, TutorialKind.history);
+    expect(state.state.pendingTutorial, isTrue);
+    expect(
+      const ExerciseHistoryStateToEntityDelegate()
+          .execute(state.state)
+          .pendingTutorial,
+      isTrue,
+    );
+    await state.close();
+  });
+
+  test('運動履歴文脈は loading 中は評価しない', () async {
+    final state = MutableStateStream(
+      ExerciseHistoryScreenState.initial(
+        year: 2026,
+        month: 11,
+      ).copyWith(loading: true),
+    );
+    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    await OnEvaluateTutorialDelegate(
+      state: state,
+      evaluateContext: evaluate,
+    ).execute();
+    expect(evaluate.calls, 0);
+    expect(state.state.pendingTutorial, isFalse);
+    await state.close();
+  });
+}
+
+final class _EvaluateTutorialContext implements EvaluateTutorialContextUsecase {
+  _EvaluateTutorialContext({this.shouldShow = false});
+
+  final bool shouldShow;
+  var calls = 0;
+  TutorialKind? lastKind;
+
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async {
+    calls += 1;
+    lastKind = request.kind;
+    return EvaluateTutorialContextResult(shouldShow: shouldShow);
+  }
 }

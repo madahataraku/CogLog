@@ -6,6 +6,7 @@ import 'package:domain_achievement/domain_achievement.dart';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:domain_notification_settings/domain_notification_settings.dart';
+import 'package:domain_tutorial/domain_tutorial.dart';
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:test/test.dart';
 
@@ -58,6 +59,14 @@ void main() {
         ),
       ],
       achievementLastViewedAt: DateTime.utc(2026, 11, 11),
+      tutorial: const TutorialProgress(
+        mainCompleted: true,
+        cameraContextSeen: true,
+        meterEditContextSeen: false,
+        trendsContextSeen: true,
+        historyContextSeen: false,
+        achievementContextSeen: true,
+      ),
       photos: photos,
     );
   }
@@ -90,6 +99,9 @@ void main() {
     expect(decoded.notificationSettings.enabled, isTrue);
     expect(decoded.achievementUnlocks.single.id, 'first_record');
     expect(decoded.achievementLastViewedAt, DateTime.utc(2026, 11, 11));
+    expect(decoded.tutorial?.mainCompleted, isTrue);
+    expect(decoded.tutorial?.cameraContextSeen, isTrue);
+    expect(decoded.tutorial?.achievementContextSeen, isTrue);
     expect(decoded.photos[historyId], Uint8List.fromList([1, 2, 3, 4]));
   });
 
@@ -132,6 +144,14 @@ void main() {
             'notificationSettings': {'enabled': false},
             'achievementUnlocks': <Object?>[],
             'achievementLastViewedAt': null,
+            'tutorial': {
+              'mainCompleted': false,
+              'cameraContextSeen': false,
+              'meterEditContextSeen': false,
+              'trendsContextSeen': false,
+              'historyContextSeen': false,
+              'achievementContextSeen': false,
+            },
           }),
         ),
       );
@@ -193,6 +213,14 @@ void main() {
     'notificationSettings': {'enabled': false},
     'achievementUnlocks': <Object?>[],
     'achievementLastViewedAt': null,
+    'tutorial': {
+      'mainCompleted': false,
+      'cameraContextSeen': false,
+      'meterEditContextSeen': false,
+      'trendsContextSeen': false,
+      'historyContextSeen': false,
+      'achievementContextSeen': false,
+    },
   };
 
   Uint8List zipWith({
@@ -292,5 +320,49 @@ void main() {
       () => CogsavCodec.decode(zipWith(formatVersion: 1, data: data)),
       throwsA(isA<CogsavCorruptException>()),
     );
+  });
+
+  test('tutorial キー欠落は null', () {
+    final data = emptyDataPayload()..remove('tutorial');
+    final decoded = CogsavCodec.decode(zipWith(formatVersion: 1, data: data));
+    expect(decoded.tutorial, isNull);
+  });
+
+  test('tutorial が非オブジェクトなら CogsavCorruptException', () {
+    final data = emptyDataPayload();
+    data['tutorial'] = true;
+    expect(
+      () => CogsavCodec.decode(zipWith(formatVersion: 1, data: data)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
+
+  test('tutorial の bool 欠落は CogsavCorruptException', () {
+    final data = emptyDataPayload();
+    data['tutorial'] = {'mainCompleted': true};
+    expect(
+      () => CogsavCodec.decode(zipWith(formatVersion: 1, data: data)),
+      throwsA(isA<CogsavCorruptException>()),
+    );
+  });
+
+  test('encode は常に tutorial キーを出す', () {
+    final decoded = CogsavCodec.decode(
+      CogsavCodec.encode(
+        CogsavDocument(
+          formatVersion: CogsavCodec.formatVersion,
+          exportedAt: DateTime.utc(2026, 11, 20),
+          exerciseHistories: const [],
+          dailyGoal: DailyGoal.unset,
+          dailyGoalAutoUpdate: DailyGoalAutoUpdateSettings.defaults,
+          notificationSettings: NotificationSettings.initial,
+          achievementUnlocks: const [],
+          achievementLastViewedAt: null,
+          tutorial: null,
+          photos: const {},
+        ),
+      ),
+    );
+    expect(decoded.tutorial, TutorialProgress.initial);
   });
 }

@@ -6,7 +6,11 @@ import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_trends/usecase_load_trends.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_request_health_body_permission/usecase_request_health_body_permission.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
+import 'delegate/on_acknowledge_tutorial_delegate.dart';
+import 'delegate/on_dismiss_tutorial_delegate.dart';
+import 'delegate/on_evaluate_tutorial_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
 import 'delegate/on_reload_delegate.dart';
@@ -43,6 +47,12 @@ final class TrendsScreenViewModel {
           RequestHealthBodyPermissionUsecase.provider,
         ),
         openAppSettingsUsecase: ref.watch(OpenAppSettingsUsecase.provider),
+        evaluateTutorialContextUsecase: ref.watch(
+          EvaluateTutorialContextUsecase.provider,
+        ),
+        markTutorialContextSeenUsecase: ref.watch(
+          MarkTutorialContextSeenUsecase.provider,
+        ),
         stateToEntity: const TrendsStateToEntityDelegate(),
       );
       ref.onDispose(() {
@@ -54,6 +64,8 @@ final class TrendsScreenViewModel {
       LoadTrendsUsecase.provider,
       RequestHealthBodyPermissionUsecase.provider,
       OpenAppSettingsUsecase.provider,
+      EvaluateTutorialContextUsecase.provider,
+      MarkTutorialContextSeenUsecase.provider,
     ],
   );
 
@@ -73,6 +85,14 @@ final class TrendsScreenViewModel {
   @visibleForTesting
   final OpenAppSettingsUsecase openAppSettingsUsecase;
 
+  /// 文脈チュートリアルの表示要否。
+  @visibleForTesting
+  final EvaluateTutorialContextUsecase evaluateTutorialContextUsecase;
+
+  /// 文脈表示済みの永続化。
+  @visibleForTesting
+  final MarkTutorialContextSeenUsecase markTutorialContextSeenUsecase;
+
   /// State から表示用 Entity への変換。
   @visibleForTesting
   final TrendsStateToEntityDelegate stateToEntity;
@@ -88,6 +108,8 @@ final class TrendsScreenViewModel {
     required this.loadTrendsUsecase,
     required this.requestHealthPermissionUsecase,
     required this.openAppSettingsUsecase,
+    required this.evaluateTutorialContextUsecase,
+    required this.markTutorialContextSeenUsecase,
     required this.stateToEntity,
   });
 

@@ -25,3 +25,5 @@ request_health_history,ヘルスの履歴データを許可,Allow health history
 open_os_settings,設定を開く,Open Settings,永久拒否時に OS 設定を開く
 retry_load,再試行,Retry,系列の再読取
 chart_placeholder,読み込み中,Loading,グラフ領域のロード中表示
+tutorial_title,運動と身体の関係,Exercise and body metrics,段階7タイトル
+tutorial_body,消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。,"See how calories relate to body fat and more on the chart. Body fat and weight need Health read access.",段階7本文

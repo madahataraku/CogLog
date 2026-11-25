@@ -54,6 +54,12 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void goToHomeTab() {}
+
+  @override
+  void goToGoalSettingsTab() {}
+
+  @override
+  void goToMeterCaptureTab() {}
 }
 
 void main() {

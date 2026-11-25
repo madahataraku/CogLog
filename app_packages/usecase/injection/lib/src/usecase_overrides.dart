@@ -5,6 +5,7 @@ import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
+import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
@@ -85,6 +86,8 @@ import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.da
 import 'package:usecase_save_top_screen_metric_impl/usecase_save_top_screen_metric_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:usecase_tutorial_impl/usecase_tutorial_impl.dart';
 
 /// トップ・推移の読み込み、指標保存、一日あたり目標の読み書き、アドバイス生成、
 /// 端末上 LLM / Gemma 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
@@ -320,6 +323,7 @@ List<Override> usecaseOverrides({
       goals: ref.watch(dailyGoalRepositoryProvider),
       notifications: ref.watch(notificationSettingsRepositoryProvider),
       achievements: ref.watch(achievementRepositoryProvider),
+      tutorial: ref.watch(tutorialRepositoryProvider),
       userFile: ref.watch(userFileGatewayProvider),
     ),
   ),
@@ -329,10 +333,12 @@ List<Override> usecaseOverrides({
       goals: ref.watch(dailyGoalRepositoryProvider),
       notifications: ref.watch(notificationSettingsRepositoryProvider),
       achievements: ref.watch(achievementRepositoryProvider),
+      tutorial: ref.watch(tutorialRepositoryProvider),
       userFile: ref.watch(userFileGatewayProvider),
       localNotifications: ref.watch(localNotificationGatewayProvider),
       sync: ref.watch(SyncExerciseReminderUsecase.provider),
       backupStore: ImportBackupStore(documentsDirectory: documentsDirectory),
+      tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
     ),
   ),
   RecoverInterruptedImportUsecase.provider.overrideWith(
@@ -342,6 +348,38 @@ List<Override> usecaseOverrides({
       goals: ref.watch(dailyGoalRepositoryProvider),
       notifications: ref.watch(notificationSettingsRepositoryProvider),
       achievements: ref.watch(achievementRepositoryProvider),
+      tutorial: ref.watch(tutorialRepositoryProvider),
+    ),
+  ),
+  EvaluateTutorialMainAutoStartUsecase.provider.overrideWith(
+    (ref) => EvaluateTutorialMainAutoStartUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+    ),
+  ),
+  AdvanceTutorialMainUsecase.provider.overrideWith(
+    (ref) => AdvanceTutorialMainUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+      loadDailyGoal: ref.watch(LoadDailyGoalUsecase.provider),
+    ),
+  ),
+  EvaluateTutorialContextUsecase.provider.overrideWith(
+    (ref) => EvaluateTutorialContextUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+    ),
+  ),
+  MarkTutorialContextSeenUsecase.provider.overrideWith(
+    (ref) => MarkTutorialContextSeenUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
+    ),
+  ),
+  ResetTutorialProgressUsecase.provider.overrideWith(
+    (ref) => ResetTutorialProgressUsecaseImpl(
+      repository: ref.watch(tutorialRepositoryProvider),
+      session: ref.watch(tutorialRuntimeSessionProvider),
     ),
   ),
 ];

@@ -4,6 +4,7 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 import '../viewmodel/entity/top_goal_ring_entity.dart';
@@ -42,31 +43,34 @@ class TopScreenBody extends HookConsumerWidget {
       header: FHeader(
         title: Text(strings.foundation_resources_app_name),
         suffixes: [
-          FHeaderAction(
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(FLucideIcons.trophy),
-                if (entity.hasNewAchievements)
-                  Positioned(
-                    right: -2,
-                    top: -2,
-                    child: Semantics(
-                      label:
-                          strings.screen_feature_top_achievements_new_semantics,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: context.theme.colors.primary,
-                          shape: BoxShape.circle,
+          CoachMarkTarget(
+            id: CoachMarkTargetId.homeAchievementTrophy,
+            child: FHeaderAction(
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(FLucideIcons.trophy),
+                  if (entity.hasNewAchievements)
+                    Positioned(
+                      right: -2,
+                      top: -2,
+                      child: Semantics(
+                        label: strings
+                            .screen_feature_top_achievements_new_semantics,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: context.theme.colors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const SizedBox(width: 8, height: 8),
                         ),
-                        child: const SizedBox(width: 8, height: 8),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
+              onPress: viewModel.onOpenAchievements,
+              semanticsLabel: strings.screen_feature_top_achievements_semantics,
             ),
-            onPress: viewModel.onOpenAchievements,
-            semanticsLabel: strings.screen_feature_top_achievements_semantics,
           ),
           FHeaderAction(
             icon: const Icon(FLucideIcons.settings),
@@ -80,60 +84,68 @@ class TopScreenBody extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 16,
           children: [
-            FSelectMenuTile<PeriodTotalMetric>.fromMap(
-              {
-                for (final metric in PeriodTotalMetric.values)
-                  _metricLabel(metric): metric,
-              },
-              title: Text(_metricLabel(entity.metric)),
-              enabled: !saving.value,
-              selectControl: .lifted(
-                value: {entity.metric},
-                onChange: (values) async {
-                  final metric = values.difference({entity.metric}).firstOrNull;
-                  if (metric == null ||
-                      metric == entity.metric ||
-                      saving.value) {
-                    return;
-                  }
-                  saving.value = true;
-                  try {
-                    await ref
-                        .read(TopScreenViewModel.provider)
-                        .onSelectMetric(metric);
-                  } on Object {
-                    // 保存に失敗したときは State を変えない。未処理のエラーにしない。
-                  } finally {
-                    saving.value = false;
-                  }
+            CoachMarkTarget(
+              id: CoachMarkTargetId.homeMetricSelect,
+              child: FSelectMenuTile<PeriodTotalMetric>.fromMap(
+                {
+                  for (final metric in PeriodTotalMetric.values)
+                    _metricLabel(metric): metric,
                 },
+                title: Text(_metricLabel(entity.metric)),
+                enabled: !saving.value,
+                selectControl: .lifted(
+                  value: {entity.metric},
+                  onChange: (values) async {
+                    final metric = values.difference({
+                      entity.metric,
+                    }).firstOrNull;
+                    if (metric == null ||
+                        metric == entity.metric ||
+                        saving.value) {
+                      return;
+                    }
+                    saving.value = true;
+                    try {
+                      await ref
+                          .read(TopScreenViewModel.provider)
+                          .onSelectMetric(metric);
+                    } on Object {
+                      // 保存に失敗したときは State を変えない。未処理のエラーにしない。
+                    } finally {
+                      saving.value = false;
+                    }
+                  },
+                ),
               ),
             ),
-            Row(
-              spacing: 8,
-              children: [
-                Expanded(
-                  child: _PeriodBox(
-                    label: strings.screen_feature_top_today,
-                    value: entity.todayText,
-                    metric: entity.metric,
+            CoachMarkTarget(
+              id: CoachMarkTargetId.homePeriodTotals,
+              child: Row(
+                spacing: 8,
+                children: [
+                  Expanded(
+                    child: _PeriodBox(
+                      label: strings.screen_feature_top_today,
+                      value: entity.todayText,
+                      metric: entity.metric,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _PeriodBox(
-                    label: strings.screen_feature_top_this_week,
-                    value: entity.weekText,
-                    metric: entity.metric,
+                  Expanded(
+                    child: _PeriodBox(
+                      label: strings.screen_feature_top_this_week,
+                      value: entity.weekText,
+                      metric: entity.metric,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _PeriodBox(
-                    label: strings.screen_feature_top_this_month,
-                    value: entity.monthText,
-                    metric: entity.metric,
+                  Expanded(
+                    child: _PeriodBox(
+                      label: strings.screen_feature_top_this_month,
+                      value: entity.monthText,
+                      metric: entity.metric,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             if (entity.adviceText.isNotEmpty)
               AdviceSpeechPanel(
@@ -145,29 +157,32 @@ class TopScreenBody extends HookConsumerWidget {
               strings.screen_feature_top_achievement_title,
               style: titleStyle,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 8,
-              children: [
-                Expanded(
-                  child: _ring(
-                    title: strings.screen_feature_top_duration,
-                    ring: entity.duration,
+            CoachMarkTarget(
+              id: CoachMarkTargetId.homeGoalRings,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Expanded(
+                    child: _ring(
+                      title: strings.screen_feature_top_duration,
+                      ring: entity.duration,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _ring(
-                    title: strings.screen_feature_top_calories,
-                    ring: entity.calories,
+                  Expanded(
+                    child: _ring(
+                      title: strings.screen_feature_top_calories,
+                      ring: entity.calories,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _ring(
-                    title: strings.screen_feature_top_distance,
-                    ring: entity.distance,
+                  Expanded(
+                    child: _ring(
+                      title: strings.screen_feature_top_distance,
+                      ring: entity.distance,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             WeeklyGoalAchievementBar(
               title: strings.screen_feature_top_weekly_achievement_title,

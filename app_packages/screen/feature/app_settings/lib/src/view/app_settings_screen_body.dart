@@ -58,6 +58,12 @@ class AppSettingsScreenBody extends ConsumerWidget {
               ),
               FTile(
                 title: Text(
+                  strings.screen_feature_app_settings_replay_tutorial_item,
+                ),
+                onPress: viewModel.onReplayTutorial,
+              ),
+              FTile(
+                title: Text(
                   strings.screen_feature_app_settings_data_management_item,
                 ),
                 onPress: viewModel.onOpenDataManagement,

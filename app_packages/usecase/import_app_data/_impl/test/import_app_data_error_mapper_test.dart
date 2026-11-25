@@ -4,12 +4,14 @@ import 'package:data_repository_achievement_testing/data_repository_achievement_
 import 'package:data_repository_daily_goal_testing/data_repository_daily_goal_testing.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:data_repository_notification_settings_testing/data_repository_notification_settings_testing.dart';
+import 'package:data_repository_tutorial_testing/data_repository_tutorial_testing.dart';
 import 'package:infra_local_notification_testing/infra_local_notification_testing.dart';
 import 'package:infra_user_file_testing/infra_user_file_testing.dart';
 import 'package:test/test.dart';
 import 'package:usecase_import_app_data/usecase_import_app_data.dart';
 import 'package:usecase_import_app_data_impl/usecase_import_app_data_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 final class _NoopSync implements SyncExerciseReminderUsecase {
   @override
@@ -24,10 +26,12 @@ ImportAppDataUsecaseImpl _usecase(FakeUserFileGateway userFile) {
     goals: MemoryDailyGoalRepository(),
     notifications: MemoryNotificationSettingsRepository(),
     achievements: MemoryAchievementRepository(),
+    tutorial: MemoryTutorialRepository(),
     userFile: userFile,
     localNotifications: FakeLocalNotificationGateway(),
     sync: _NoopSync(),
     backupStore: ImportBackupStore(documentsDirectory: Directory.systemTemp),
+    tutorialSession: TutorialRuntimeSession(),
   );
 }
 

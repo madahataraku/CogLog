@@ -6,8 +6,10 @@ import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_daily_goal_testing/data_repository_daily_goal_testing.dart';
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:data_repository_notification_settings_testing/data_repository_notification_settings_testing.dart';
+import 'package:data_repository_tutorial_testing/data_repository_tutorial_testing.dart';
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_notification_settings/domain_notification_settings.dart';
+import 'package:domain_tutorial/domain_tutorial.dart';
 import 'package:infra_cogsav/infra_cogsav.dart';
 import 'package:test/test.dart';
 import 'package:usecase_import_app_data_impl/usecase_import_app_data_impl.dart';
@@ -21,6 +23,7 @@ void main() {
   late MemoryDailyGoalRepository goals;
   late MemoryNotificationSettingsRepository notifications;
   late MemoryAchievementRepository achievements;
+  late MemoryTutorialRepository tutorial;
   late RecoverInterruptedImportUsecaseImpl usecase;
 
   setUp(() async {
@@ -30,12 +33,14 @@ void main() {
     goals = MemoryDailyGoalRepository();
     notifications = MemoryNotificationSettingsRepository();
     achievements = MemoryAchievementRepository();
+    tutorial = MemoryTutorialRepository();
     usecase = RecoverInterruptedImportUsecaseImpl(
       backupStore: backupStore,
       histories: histories,
       goals: goals,
       notifications: notifications,
       achievements: achievements,
+      tutorial: tutorial,
     );
   });
 
@@ -57,6 +62,7 @@ void main() {
       goals: goals,
       notifications: notifications,
       achievements: achievements,
+      tutorial: tutorial,
     );
 
     // 適用後の「壊れた」状態をシミュレート。
@@ -109,6 +115,7 @@ void main() {
       notificationSettings: NotificationSettings.initial,
       achievementUnlocks: const [],
       achievementLastViewedAt: null,
+      tutorial: TutorialProgress.initial,
       photos: const {},
     );
     await File('${dir.path}/snapshot.cogsav')
@@ -121,6 +128,7 @@ void main() {
       goals: failingGoals,
       notifications: notifications,
       achievements: achievements,
+      tutorial: tutorial,
     );
 
     expect(

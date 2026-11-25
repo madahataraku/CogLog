@@ -4,6 +4,7 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 import '../viewmodel/delegate/on_save_delegate.dart';
@@ -18,19 +19,30 @@ import 'goal_settings_screen_providers.dart';
 /// ```
 @internal
 class GoalSettingsScreenBody extends HookConsumerWidget {
-  /// 本文を作る。
+  /// 本文を作る。[onSaveSucceeded] は保存成功時のみ（チュートリアル段階3用）。
   ///
   /// Example:
   /// ```dart
-  /// const GoalSettingsScreenBody();
+  /// GoalSettingsScreenBody(
+  ///   onSaveSucceeded: () async {},
+  /// );
   /// ```
-  const GoalSettingsScreenBody({super.key});
+  const GoalSettingsScreenBody({this.onSaveSucceeded, super.key});
+
+  /// 保存成功後の追加処理（段階4への進行など）。
+  ///
+  /// null のときは保存後に追加処理しない。
+  final Future<void> Function()? onSaveSucceeded;
 
   /// 各欄の controller を Entity と同期し、保存ボタンで ViewModel へ渡す。
   ///
+  /// 保存成功時は [onSaveSucceeded] があれば呼ぶ。
+  ///
   /// Example:
   /// ```dart
-  /// const GoalSettingsScreenBody();
+  /// GoalSettingsScreenBody(
+  ///   onSaveSucceeded: () async {},
+  /// ).build(context, ref);
   /// ```
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -80,63 +92,76 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 16,
           children: [
-            Text(strings.screen_feature_goal_settings_duration_label),
-            Row(
-              spacing: 8,
-              children: [
-                Expanded(
-                  child: FTextField(
-                    control: .managed(controller: hoursController),
+            CoachMarkTarget(
+              id: CoachMarkTargetId.goalDailyInputs,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 16,
+                children: [
+                  Text(strings.screen_feature_goal_settings_duration_label),
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Expanded(
+                        child: FTextField(
+                          control: .managed(controller: hoursController),
+                          label: Text(
+                            strings.screen_feature_goal_settings_hours_label,
+                          ),
+                          keyboardType: TextInputType.number,
+                          enabled: entity.loaded && !saving.value,
+                        ),
+                      ),
+                      Expanded(
+                        child: FTextField(
+                          control: .managed(controller: minutesController),
+                          label: Text(
+                            strings.screen_feature_goal_settings_minutes_label,
+                          ),
+                          keyboardType: TextInputType.number,
+                          enabled: entity.loaded && !saving.value,
+                        ),
+                      ),
+                      Expanded(
+                        child: FTextField(
+                          control: .managed(controller: secondsController),
+                          label: Text(
+                            strings.screen_feature_goal_settings_seconds_label,
+                          ),
+                          keyboardType: TextInputType.number,
+                          enabled: entity.loaded && !saving.value,
+                        ),
+                      ),
+                    ],
+                  ),
+                  FTextField(
+                    control: .managed(controller: caloriesController),
                     label: Text(
-                      strings.screen_feature_goal_settings_hours_label,
+                      strings.screen_feature_goal_settings_calories_label,
                     ),
-                    keyboardType: TextInputType.number,
+                    description: Text(
+                      strings.screen_feature_goal_settings_calories_unit,
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     enabled: entity.loaded && !saving.value,
                   ),
-                ),
-                Expanded(
-                  child: FTextField(
-                    control: .managed(controller: minutesController),
+                  FTextField(
+                    control: .managed(controller: distanceController),
                     label: Text(
-                      strings.screen_feature_goal_settings_minutes_label,
+                      strings.screen_feature_goal_settings_distance_label,
                     ),
-                    keyboardType: TextInputType.number,
+                    description: Text(
+                      strings.screen_feature_goal_settings_distance_unit,
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     enabled: entity.loaded && !saving.value,
                   ),
-                ),
-                Expanded(
-                  child: FTextField(
-                    control: .managed(controller: secondsController),
-                    label: Text(
-                      strings.screen_feature_goal_settings_seconds_label,
-                    ),
-                    keyboardType: TextInputType.number,
-                    enabled: entity.loaded && !saving.value,
-                  ),
-                ),
-              ],
-            ),
-            FTextField(
-              control: .managed(controller: caloriesController),
-              label: Text(strings.screen_feature_goal_settings_calories_label),
-              description: Text(
-                strings.screen_feature_goal_settings_calories_unit,
+                ],
               ),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              enabled: entity.loaded && !saving.value,
-            ),
-            FTextField(
-              control: .managed(controller: distanceController),
-              label: Text(strings.screen_feature_goal_settings_distance_label),
-              description: Text(
-                strings.screen_feature_goal_settings_distance_unit,
-              ),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              enabled: entity.loaded && !saving.value,
             ),
             FSelect<String>(
               enabled: entity.loaded && !saving.value,
@@ -242,6 +267,9 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
                             GoalSettingsSaveOutcome.saveFailed => .destructive,
                           },
                         );
+                        if (outcome == GoalSettingsSaveOutcome.success) {
+                          await onSaveSucceeded?.call();
+                        }
                       } finally {
                         saving.value = false;
                       }

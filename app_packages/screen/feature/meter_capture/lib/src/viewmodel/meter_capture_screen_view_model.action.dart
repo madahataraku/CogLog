@@ -257,6 +257,91 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
     ).execute();
   }
 
+  /// 撮影画面の文脈コーチマーク要否を評価する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEvaluateTutorialCamera();
+  /// ```
+  Future<void> onEvaluateTutorialCamera() {
+    return OnEvaluateTutorialCameraDelegate(
+      state: state,
+      evaluateContext: evaluateTutorialContextUsecase,
+    ).execute();
+  }
+
+  /// 結果編集の文脈コーチマーク要否を評価する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEvaluateTutorialMeterEdit();
+  /// ```
+  Future<void> onEvaluateTutorialMeterEdit() {
+    return OnEvaluateTutorialMeterEditDelegate(
+      state: state,
+      evaluateContext: evaluateTutorialContextUsecase,
+    ).execute();
+  }
+
+  /// 撮影文脈の表示予約を消費する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeTutorialCamera();
+  /// ```
+  Future<void> onAcknowledgeTutorialCamera() {
+    return OnAcknowledgeTutorialCameraDelegate(state: state).execute();
+  }
+
+  /// 結果編集文脈の表示予約を消費する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeTutorialMeterEdit();
+  /// ```
+  Future<void> onAcknowledgeTutorialMeterEdit() {
+    return OnAcknowledgeTutorialMeterEditDelegate(state: state).execute();
+  }
+
+  /// 撮影文脈を閉じ、表示済みにする。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onDismissTutorialCamera();
+  /// ```
+  Future<void> onDismissTutorialCamera() {
+    return OnDismissTutorialCameraDelegate(
+      state: state,
+      markSeen: markTutorialContextSeenUsecase,
+    ).execute();
+  }
+
+  /// 結果編集文脈を閉じ、表示済みにする。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onDismissTutorialMeterEdit();
+  /// ```
+  Future<void> onDismissTutorialMeterEdit() {
+    return OnDismissTutorialMeterEditDelegate(
+      state: state,
+      markSeen: markTutorialContextSeenUsecase,
+    ).execute();
+  }
+
+  /// 読み取り中はコーチマークを隠し、提示済みにしない。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onSuppressTutorialForReading();
+  /// ```
+  Future<void> onSuppressTutorialForReading() {
+    return OnSuppressTutorialForReadingDelegate(
+      state: state,
+      session: tutorialSession,
+    ).execute();
+  }
+
   /// ホームタブへ切り替える。
   ///
   /// Example:

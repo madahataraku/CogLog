@@ -1,5 +1,6 @@
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import 'top_goal_ring_entity.dart';
 
@@ -82,6 +83,9 @@ final class TopScreenEntity {
     required this.adviceTone,
     required this.pendingModelDownloadGuidance,
     required this.pendingGemmaMeterGuidance,
+    required this.pendingTutorialMain,
+    required this.tutorialMainStep,
+    required this.pendingTutorialAchievement,
     required this.hasNewAchievements,
     required this.showWeeklyGoalGuidance,
     required this.weeklyAchievementDays,
@@ -116,6 +120,15 @@ final class TopScreenEntity {
 
   /// Gemma メーター誘導 (B) を表示予約しているとき true。
   final bool pendingGemmaMeterGuidance;
+
+  /// メインチュートリアルを表示予約しているとき true。
+  final bool pendingTutorialMain;
+
+  /// 吹き出し文言切替用のメイン段階。
+  final TutorialMainStep? tutorialMainStep;
+
+  /// アチーブメント文脈を表示予約しているとき true。
+  final bool pendingTutorialAchievement;
 
   /// trophy に新規ドットを出すとき true。
   final bool hasNewAchievements;

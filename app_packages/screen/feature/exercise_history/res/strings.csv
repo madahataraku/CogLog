@@ -13,3 +13,5 @@ weekday_sun,日,Sun,カレンダー曜日（日曜）
 stamp_semantics_one,{day}日、運動履歴1件,"Day {day}, 1 exercise history",スタンプ日1件の VoiceOver 等
 stamp_semantics_other,{day}日、運動履歴{count}件,"Day {day}, {count} exercise histories",スタンプ日複数件の VoiceOver 等
 count_badge,{count},{count},同一日複数件のカレンダー上件数
+tutorial_title,運動した日のスタンプ,Exercise day stamps,段階8タイトル
+tutorial_body,黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。,"Yellow stamps mark days you exercised. Tap a day to review, edit, or delete.",段階8本文

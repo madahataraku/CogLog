@@ -1,0 +1,12 @@
+name: domain_tutorial
+description: Tutorial progress flags for main and contextual coach marks.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

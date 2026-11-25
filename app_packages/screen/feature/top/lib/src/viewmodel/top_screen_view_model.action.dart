@@ -147,4 +147,82 @@ extension TopScreenViewModelActions on TopScreenViewModel {
   void onOpenAppSettings() {
     OnOpenAppSettingsDelegate(navigation: navigation).execute();
   }
+
+  /// メインチュートリアルの自動開始を評価する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEvaluateTutorialMain();
+  /// ```
+  Future<void> onEvaluateTutorialMain() {
+    return OnEvaluateTutorialMainDelegate(
+      state: state,
+      evaluateUsecase: evaluateTutorialMainAutoStartUsecase,
+      advanceUsecase: advanceTutorialMainUsecase,
+    ).execute();
+  }
+
+  /// メイン表示予約を消費する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeTutorialMain();
+  /// ```
+  Future<void> onAcknowledgeTutorialMain() {
+    return OnAcknowledgeTutorialMainDelegate(state: state).execute();
+  }
+
+  /// メイン段階を進める。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAdvanceTutorialMain(const AdvanceTutorialMainRequest.next());
+  /// ```
+  Future<AdvanceTutorialMainResult> onAdvanceTutorialMain(
+    AdvanceTutorialMainRequest request,
+  ) {
+    return OnAdvanceTutorialMainDelegate(
+      state: state,
+      advanceUsecase: advanceTutorialMainUsecase,
+      navigation: navigation,
+    ).execute(request);
+  }
+
+  /// アチーブメント文脈の要否を評価する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onEvaluateTutorialAchievement();
+  /// ```
+  Future<void> onEvaluateTutorialAchievement() {
+    return OnEvaluateTutorialAchievementDelegate(
+      state: state,
+      loadAchievements: loadAchievementsUsecase,
+      evaluateContext: evaluateTutorialContextUsecase,
+      now: now,
+    ).execute();
+  }
+
+  /// アチーブメント文脈の表示予約を消費する。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onAcknowledgeTutorialAchievement();
+  /// ```
+  Future<void> onAcknowledgeTutorialAchievement() {
+    return OnAcknowledgeTutorialAchievementDelegate(state: state).execute();
+  }
+
+  /// アチーブメント文脈を閉じる。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onDismissTutorialAchievement();
+  /// ```
+  Future<void> onDismissTutorialAchievement() {
+    return OnDismissTutorialAchievementDelegate(
+      state: state,
+      markSeen: markTutorialContextSeenUsecase,
+    ).execute();
+  }
 }

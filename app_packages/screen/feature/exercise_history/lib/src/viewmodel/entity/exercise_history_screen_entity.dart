@@ -12,6 +12,7 @@ import 'exercise_history_day_cell_entity.dart';
 ///   showError: false,
 ///   errorText: null,
 ///   canRetry: false,
+///   pendingTutorial: false,
 /// );
 /// ```
 final class ExerciseHistoryScreenEntity {
@@ -27,6 +28,7 @@ final class ExerciseHistoryScreenEntity {
   ///   showError: false,
   ///   errorText: null,
   ///   canRetry: false,
+  ///   pendingTutorial: false,
   /// );
   /// ```
   const ExerciseHistoryScreenEntity({
@@ -37,6 +39,7 @@ final class ExerciseHistoryScreenEntity {
     required this.showError,
     required this.errorText,
     required this.canRetry,
+    required this.pendingTutorial,
   });
 
   /// 月セレクタに出すラベル。
@@ -59,4 +62,7 @@ final class ExerciseHistoryScreenEntity {
 
   /// 再試行を出せるか。
   final bool canRetry;
+
+  /// 運動履歴文脈コーチマークを表示予約しているとき true。
+  final bool pendingTutorial;
 }

@@ -449,6 +449,10 @@
   "@screen_feature_app_settings_os_label": {
     "description": "端末OSの見出し"
   },
+  "screen_feature_app_settings_replay_tutorial_item": "チュートリアルを再表示",
+  "@screen_feature_app_settings_replay_tutorial_item": {
+    "description": "チュートリアル再表示"
+  },
   "screen_feature_app_settings_title": "アプリ設定",
   "@screen_feature_app_settings_title": {
     "description": "画面タイトル"
@@ -927,6 +931,14 @@
   "@screen_feature_exercise_history_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_exercise_history_tutorial_body": "黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。",
+  "@screen_feature_exercise_history_tutorial_body": {
+    "description": "段階8本文"
+  },
+  "screen_feature_exercise_history_tutorial_title": "運動した日のスタンプ",
+  "@screen_feature_exercise_history_tutorial_title": {
+    "description": "段階8タイトル"
+  },
   "screen_feature_exercise_history_weekday_fri": "金",
   "@screen_feature_exercise_history_weekday_fri": {
     "description": "カレンダー曜日（金曜）"
@@ -1189,6 +1201,22 @@
   "@screen_feature_meter_capture_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_meter_capture_tutorial_camera_body": "カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。",
+  "@screen_feature_meter_capture_tutorial_camera_body": {
+    "description": "段階5本文"
+  },
+  "screen_feature_meter_capture_tutorial_camera_title": "メーターを撮影",
+  "@screen_feature_meter_capture_tutorial_camera_title": {
+    "description": "段階5タイトル"
+  },
+  "screen_feature_meter_capture_tutorial_meter_edit_body": "走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。",
+  "@screen_feature_meter_capture_tutorial_meter_edit_body": {
+    "description": "段階6本文"
+  },
+  "screen_feature_meter_capture_tutorial_meter_edit_title": "読み取り結果の確認",
+  "@screen_feature_meter_capture_tutorial_meter_edit_title": {
+    "description": "段階6タイトル"
+  },
   "screen_feature_notification_settings_back_semantics": "戻る",
   "@screen_feature_notification_settings_back_semantics": {
     "description": "戻るボタンの代替テキスト"
@@ -1450,6 +1478,46 @@
   "@screen_feature_top_today": {
     "description": "集計期間"
   },
+  "screen_feature_top_tutorial_achievement_body": "獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。",
+  "@screen_feature_top_tutorial_achievement_body": {
+    "description": "アチーブメント文脈本文"
+  },
+  "screen_feature_top_tutorial_achievement_title": "アチーブメント",
+  "@screen_feature_top_tutorial_achievement_title": {
+    "description": "アチーブメント文脈タイトル"
+  },
+  "screen_feature_top_tutorial_main_1_body": "本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。",
+  "@screen_feature_top_tutorial_main_1_body": {
+    "description": "段階1本文"
+  },
+  "screen_feature_top_tutorial_main_1_title": "ホームの見かた",
+  "@screen_feature_top_tutorial_main_1_title": {
+    "description": "段階1タイトル"
+  },
+  "screen_feature_top_tutorial_main_2_body": "メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。",
+  "@screen_feature_top_tutorial_main_2_body": {
+    "description": "段階2本文"
+  },
+  "screen_feature_top_tutorial_main_2_title": "各タブの役割",
+  "@screen_feature_top_tutorial_main_2_title": {
+    "description": "段階2タイトル"
+  },
+  "screen_feature_top_tutorial_main_3_body": "一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。",
+  "@screen_feature_top_tutorial_main_3_body": {
+    "description": "段階3本文"
+  },
+  "screen_feature_top_tutorial_main_3_title": "目標を設定しましょう",
+  "@screen_feature_top_tutorial_main_3_title": {
+    "description": "段階3タイトル"
+  },
+  "screen_feature_top_tutorial_main_4_body": "メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。",
+  "@screen_feature_top_tutorial_main_4_body": {
+    "description": "段階4本文"
+  },
+  "screen_feature_top_tutorial_main_4_title": "メーター記録で撮影",
+  "@screen_feature_top_tutorial_main_4_title": {
+    "description": "段階4タイトル"
+  },
   "screen_feature_top_unset_prompt": "目標設定で一日あたりの目標を設定しましょう",
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
@@ -1573,6 +1641,14 @@
   "@screen_feature_trends_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_trends_tutorial_body": "消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。",
+  "@screen_feature_trends_tutorial_body": {
+    "description": "段階7本文"
+  },
+  "screen_feature_trends_tutorial_title": "運動と身体の関係",
+  "@screen_feature_trends_tutorial_title": {
+    "description": "段階7タイトル"
+  },
   "screen_feature_trends_unit_kcal": "kcal",
   "@screen_feature_trends_unit_kcal": {
     "description": "単位"
@@ -1592,6 +1668,18 @@
   "screen_feature_trends_unit_percent": "%",
   "@screen_feature_trends_unit_percent": {
     "description": "単位"
+  },
+  "view_coach_mark_close": "閉じる",
+  "@view_coach_mark_close": {
+    "description": "主ボタン（閉じる）"
+  },
+  "view_coach_mark_next": "次へ",
+  "@view_coach_mark_next": {
+    "description": "主ボタン（次へ）"
+  },
+  "view_coach_mark_skip": "スキップ",
+  "@view_coach_mark_skip": {
+    "description": "副ボタン（スキップ）"
   },
   "view_meter_reading_progress_cancel": "読み取りを中止",
   "@view_meter_reading_progress_cancel": {

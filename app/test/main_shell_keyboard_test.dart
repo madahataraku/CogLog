@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
 import 'package:material_ui/material_ui.dart';
@@ -9,19 +10,21 @@ void main() {
   testWidgets('キーボード表示中はボトムナビが無く子の bottom inset は 0', (tester) async {
     late double childBottomInset;
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 300)),
-        child: MaterialApp(
-          home: FTheme(
-            data: lightTheme,
-            child: MainShellScreen(
-              currentIndex: 0,
-              onIndexChange: (_) {},
-              child: Builder(
-                builder: (context) {
-                  childBottomInset = MediaQuery.viewInsetsOf(context).bottom;
-                  return const SizedBox.shrink();
-                },
+      ProviderScope(
+        child: MediaQuery(
+          data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 300)),
+          child: MaterialApp(
+            home: FTheme(
+              data: lightTheme,
+              child: MainShellScreen(
+                currentIndex: 0,
+                onIndexChange: (_) {},
+                child: Builder(
+                  builder: (context) {
+                    childBottomInset = MediaQuery.viewInsetsOf(context).bottom;
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
             ),
           ),
@@ -36,15 +39,17 @@ void main() {
 
   testWidgets('キーボード非表示時はボトムナビがある', (tester) async {
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(),
-        child: MaterialApp(
-          home: FTheme(
-            data: lightTheme,
-            child: MainShellScreen(
-              currentIndex: 0,
-              onIndexChange: (_) {},
-              child: const SizedBox.shrink(),
+      ProviderScope(
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: MaterialApp(
+            home: FTheme(
+              data: lightTheme,
+              child: MainShellScreen(
+                currentIndex: 0,
+                onIndexChange: (_) {},
+                child: const SizedBox.shrink(),
+              ),
             ),
           ),
         ),

@@ -16,6 +16,8 @@ import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 final class _Nav implements ScreenNavigation {
@@ -56,6 +58,12 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void goToHomeTab() {}
+
+  @override
+  void goToGoalSettingsTab() {}
+
+  @override
+  void goToMeterCaptureTab() {}
 }
 
 final class _LoadTop implements LoadTopScreenUsecase {
@@ -130,6 +138,46 @@ final class _NewIndicator implements LoadAchievementNewIndicatorUsecase {
   Future<bool> execute({required DateTime now}) async => false;
 }
 
+final class _LoadAchievements implements LoadAchievementsUsecase {
+  @override
+  Future<LoadAchievementsResult> execute(
+    LoadAchievementsRequest request,
+  ) async {
+    return const LoadAchievementsSuccess([]);
+  }
+}
+
+final class _EvaluateTutorialMain
+    implements EvaluateTutorialMainAutoStartUsecase {
+  @override
+  Future<EvaluateTutorialMainAutoStartResult> execute() async {
+    return const EvaluateTutorialMainAutoStartResult(shouldStart: false);
+  }
+}
+
+final class _AdvanceTutorialMain implements AdvanceTutorialMainUsecase {
+  @override
+  Future<AdvanceTutorialMainResult> execute(
+    AdvanceTutorialMainRequest request,
+  ) async {
+    return const AdvanceTutorialMainResult.noop();
+  }
+}
+
+final class _EvaluateTutorialContext implements EvaluateTutorialContextUsecase {
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async {
+    return const EvaluateTutorialContextResult(shouldShow: false);
+  }
+}
+
+final class _MarkTutorialContextSeen implements MarkTutorialContextSeenUsecase {
+  @override
+  Future<void> execute(MarkTutorialContextSeenRequest request) async {}
+}
+
 Future<void> _pumpTop(WidgetTester tester, {required bool hasNew}) async {
   debugDefaultTargetPlatformOverride = TargetPlatform.android;
   tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
@@ -173,6 +221,25 @@ Future<void> _pumpTop(WidgetTester tester, {required bool hasNew}) async {
       ModelDownloadGuidanceProviders.gemmaSession.overrideWith(
         (ref) => GemmaMeterGuidanceSession(),
       ),
+      LoadAchievementsUsecase.provider.overrideWith(
+        (ref) => _LoadAchievements(),
+      ),
+      EvaluateTutorialMainAutoStartUsecase.provider.overrideWith(
+        (ref) => _EvaluateTutorialMain(),
+      ),
+      AdvanceTutorialMainUsecase.provider.overrideWith(
+        (ref) => _AdvanceTutorialMain(),
+      ),
+      EvaluateTutorialContextUsecase.provider.overrideWith(
+        (ref) => _EvaluateTutorialContext(),
+      ),
+      MarkTutorialContextSeenUsecase.provider.overrideWith(
+        (ref) => _MarkTutorialContextSeen(),
+      ),
+      tutorialRuntimeSessionProvider.overrideWith(
+        (ref) => TutorialRuntimeSession(),
+      ),
+      CoachMarkProviders.registry.overrideWith((ref) => CoachMarkRegistry()),
     ],
   );
   addTearDown(container.dispose);

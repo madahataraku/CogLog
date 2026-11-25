@@ -47,6 +47,12 @@ mixin class L10nStringsMixin {
   String get screen_feature_app_settings_os_label =>
       LocalizeStringDelegate.get('screen_feature_app_settings_os_label');
 
+  /// チュートリアル再表示
+  String get screen_feature_app_settings_replay_tutorial_item =>
+      LocalizeStringDelegate.get(
+        'screen_feature_app_settings_replay_tutorial_item',
+      );
+
   /// 画面タイトル
   String get screen_feature_app_settings_title =>
       LocalizeStringDelegate.get('screen_feature_app_settings_title');

@@ -373,6 +373,9 @@ class L10nJa extends L10n {
   String get screen_feature_app_settings_os_label => 'OS';
 
   @override
+  String get screen_feature_app_settings_replay_tutorial_item => 'チュートリアルを再表示';
+
+  @override
   String get screen_feature_app_settings_title => 'アプリ設定';
 
   @override
@@ -749,6 +752,13 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_title => '運動履歴';
 
   @override
+  String get screen_feature_exercise_history_tutorial_body =>
+      '黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。';
+
+  @override
+  String get screen_feature_exercise_history_tutorial_title => '運動した日のスタンプ';
+
+  @override
   String get screen_feature_exercise_history_weekday_fri => '金';
 
   @override
@@ -950,6 +960,21 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_meter_capture_title => 'メーター記録';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_camera_body =>
+      'カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_camera_title => 'メーターを撮影';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_meter_edit_body =>
+      '走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。';
+
+  @override
+  String get screen_feature_meter_capture_tutorial_meter_edit_title =>
+      '読み取り結果の確認';
 
   @override
   String get screen_feature_notification_settings_back_semantics => '戻る';
@@ -1155,6 +1180,41 @@ class L10nJa extends L10n {
   String get screen_feature_top_today => '本日';
 
   @override
+  String get screen_feature_top_tutorial_achievement_body =>
+      '獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。';
+
+  @override
+  String get screen_feature_top_tutorial_achievement_title => 'アチーブメント';
+
+  @override
+  String get screen_feature_top_tutorial_main_1_body =>
+      '本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。';
+
+  @override
+  String get screen_feature_top_tutorial_main_1_title => 'ホームの見かた';
+
+  @override
+  String get screen_feature_top_tutorial_main_2_body =>
+      'メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。';
+
+  @override
+  String get screen_feature_top_tutorial_main_2_title => '各タブの役割';
+
+  @override
+  String get screen_feature_top_tutorial_main_3_body =>
+      '一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。';
+
+  @override
+  String get screen_feature_top_tutorial_main_3_title => '目標を設定しましょう';
+
+  @override
+  String get screen_feature_top_tutorial_main_4_body =>
+      'メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。';
+
+  @override
+  String get screen_feature_top_tutorial_main_4_title => 'メーター記録で撮影';
+
+  @override
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';
 
   @override
@@ -1242,6 +1302,13 @@ class L10nJa extends L10n {
   String get screen_feature_trends_title => '推移';
 
   @override
+  String get screen_feature_trends_tutorial_body =>
+      '消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。';
+
+  @override
+  String get screen_feature_trends_tutorial_title => '運動と身体の関係';
+
+  @override
   String get screen_feature_trends_unit_kcal => 'kcal';
 
   @override
@@ -1255,6 +1322,15 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_unit_percent => '%';
+
+  @override
+  String get view_coach_mark_close => '閉じる';
+
+  @override
+  String get view_coach_mark_next => '次へ';
+
+  @override
+  String get view_coach_mark_skip => 'スキップ';
 
   @override
   String get view_meter_reading_progress_cancel => '読み取りを中止';

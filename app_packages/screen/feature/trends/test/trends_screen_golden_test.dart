@@ -13,6 +13,8 @@ import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_trends/usecase_load_trends.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_request_health_body_permission/usecase_request_health_body_permission.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 final class _FakeLoadTrends implements LoadTrendsUsecase {
   _FakeLoadTrends(this.result);
@@ -127,7 +129,29 @@ List<Override> _overrides(LoadTrendsResult result) => [
     (ref) => _FakeRequestPermission(),
   ),
   OpenAppSettingsUsecase.provider.overrideWith((ref) => _FakeOpenSettings()),
+  EvaluateTutorialContextUsecase.provider.overrideWith(
+    (ref) => _EvaluateTutorialNever(),
+  ),
+  MarkTutorialContextSeenUsecase.provider.overrideWith(
+    (ref) => _MarkTutorialNever(),
+  ),
+  tutorialRuntimeSessionProvider.overrideWith(
+    (ref) => TutorialRuntimeSession(),
+  ),
+  CoachMarkProviders.registry.overrideWith((ref) => CoachMarkRegistry()),
 ];
+
+final class _EvaluateTutorialNever implements EvaluateTutorialContextUsecase {
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async => const EvaluateTutorialContextResult(shouldShow: false);
+}
+
+final class _MarkTutorialNever implements MarkTutorialContextSeenUsecase {
+  @override
+  Future<void> execute(MarkTutorialContextSeenRequest request) async {}
+}
 
 Future<void> _prepareSurface(WidgetTester tester) async {
   debugDefaultTargetPlatformOverride = TargetPlatform.android;
