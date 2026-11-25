@@ -21,6 +21,8 @@ void main() {
     final repository = SharedPreferencesTutorialRepository(preferences);
     const progress = TutorialProgress(
       mainCompleted: true,
+      mainReachedStep: 7,
+      goalSettingsContextSeen: true,
       cameraContextSeen: true,
       meterEditContextSeen: false,
       trendsContextSeen: true,

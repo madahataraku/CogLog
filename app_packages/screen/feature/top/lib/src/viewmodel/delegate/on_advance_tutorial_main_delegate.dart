@@ -55,6 +55,18 @@ final class OnAdvanceTutorialMainDelegate {
         if (navigateToGoalTab) {
           navigation.goToGoalSettingsTab();
         }
+        // 段階3の次へは目標文脈へ渡すだけ。ホームの pending は立てない。
+        if (step == TutorialMainStep.goalRecommend && navigateToGoalTab) {
+          await state.updateWithLock((current, emitter) async {
+            await emitter.emit(
+              current.copyWith(
+                pendingTutorialMain: false,
+                clearTutorialMainStep: true,
+              ),
+            );
+          });
+          break;
+        }
         await state.updateWithLock((current, emitter) async {
           await emitter.emit(
             current.copyWith(pendingTutorialMain: true, tutorialMainStep: step),
@@ -70,7 +82,14 @@ final class OnAdvanceTutorialMainDelegate {
           );
         });
       case AdvanceTutorialMainNoopResult():
-        break;
+        await state.updateWithLock((current, emitter) async {
+          await emitter.emit(
+            current.copyWith(
+              pendingTutorialMain: false,
+              clearTutorialMainStep: true,
+            ),
+          );
+        });
     }
     return result;
   }

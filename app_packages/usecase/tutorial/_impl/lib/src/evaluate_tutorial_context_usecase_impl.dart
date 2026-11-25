@@ -62,9 +62,8 @@ final class EvaluateTutorialContextUsecaseImpl
       return const EvaluateTutorialContextResult(shouldShow: false);
     }
 
-    if (kind == TutorialKind.achievement) {
-      final count = request.unlockedAchievementCount ?? 0;
-      if (!progress.mainCompleted || count < 1) {
+    if (kind == TutorialKind.goalSettings) {
+      if (progress.mainCompleted || progress.mainReachedStep < 3) {
         return const EvaluateTutorialContextResult(shouldShow: false);
       }
     }
@@ -80,18 +79,13 @@ final class EvaluateTutorialContextUsecaseImpl
   }
 
   /// 永続の表示済みフラグ。
-  ///
-  /// Example:
-  /// ```dart
-  /// _alreadySeen(TutorialProgress.initial, TutorialKind.camera);
-  /// ```
   bool _alreadySeen(TutorialProgress progress, TutorialKind kind) {
     return switch (kind) {
+      TutorialKind.goalSettings => progress.goalSettingsContextSeen,
       TutorialKind.camera => progress.cameraContextSeen,
       TutorialKind.meterEdit => progress.meterEditContextSeen,
       TutorialKind.trends => progress.trendsContextSeen,
       TutorialKind.history => progress.historyContextSeen,
-      TutorialKind.achievement => progress.achievementContextSeen,
       TutorialKind.main => true,
     };
   }

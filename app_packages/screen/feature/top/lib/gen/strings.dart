@@ -228,13 +228,13 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_today =>
       LocalizeStringDelegate.get('screen_feature_top_today');
 
-  /// アチーブメント文脈本文
+  /// 段階7互換キー
   String get screen_feature_top_tutorial_achievement_body =>
       LocalizeStringDelegate.get(
         'screen_feature_top_tutorial_achievement_body',
       );
 
-  /// アチーブメント文脈タイトル
+  /// 段階7互換キー
   String get screen_feature_top_tutorial_achievement_title =>
       LocalizeStringDelegate.get(
         'screen_feature_top_tutorial_achievement_title',
@@ -271,6 +271,30 @@ mixin class L10nStringsMixin {
   /// 段階4タイトル
   String get screen_feature_top_tutorial_main_4_title =>
       LocalizeStringDelegate.get('screen_feature_top_tutorial_main_4_title');
+
+  /// 段階5本文
+  String get screen_feature_top_tutorial_main_5_body =>
+      LocalizeStringDelegate.get('screen_feature_top_tutorial_main_5_body');
+
+  /// 段階5タイトル
+  String get screen_feature_top_tutorial_main_5_title =>
+      LocalizeStringDelegate.get('screen_feature_top_tutorial_main_5_title');
+
+  /// 段階6本文
+  String get screen_feature_top_tutorial_main_6_body =>
+      LocalizeStringDelegate.get('screen_feature_top_tutorial_main_6_body');
+
+  /// 段階6タイトル
+  String get screen_feature_top_tutorial_main_6_title =>
+      LocalizeStringDelegate.get('screen_feature_top_tutorial_main_6_title');
+
+  /// 段階7本文
+  String get screen_feature_top_tutorial_main_7_body =>
+      LocalizeStringDelegate.get('screen_feature_top_tutorial_main_7_body');
+
+  /// 段階7タイトル
+  String get screen_feature_top_tutorial_main_7_title =>
+      LocalizeStringDelegate.get('screen_feature_top_tutorial_main_7_title');
 
   /// 目標未設定時の設定促進
   String get screen_feature_top_unset_prompt =>

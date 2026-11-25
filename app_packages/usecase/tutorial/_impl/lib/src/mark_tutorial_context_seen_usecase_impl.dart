@@ -50,13 +50,13 @@ final class MarkTutorialContextSeenUsecaseImpl
     try {
       final current = await repository.read();
       final next = switch (kind) {
+        TutorialKind.goalSettings => current.copyWith(
+          goalSettingsContextSeen: true,
+        ),
         TutorialKind.camera => current.copyWith(cameraContextSeen: true),
         TutorialKind.meterEdit => current.copyWith(meterEditContextSeen: true),
         TutorialKind.trends => current.copyWith(trendsContextSeen: true),
         TutorialKind.history => current.copyWith(historyContextSeen: true),
-        TutorialKind.achievement => current.copyWith(
-          achievementContextSeen: true,
-        ),
         TutorialKind.main => current,
       };
       await repository.write(next);

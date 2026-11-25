@@ -99,6 +99,42 @@ mixin class L10nStringsMixin {
   String get screen_feature_goal_settings_title =>
       LocalizeStringDelegate.get('screen_feature_goal_settings_title');
 
+  /// 目標設定文脈①本文
+  String get screen_feature_goal_settings_tutorial_1_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_tutorial_1_body',
+      );
+
+  /// 目標設定文脈①タイトル
+  String get screen_feature_goal_settings_tutorial_1_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_tutorial_1_title',
+      );
+
+  /// 目標設定文脈②本文
+  String get screen_feature_goal_settings_tutorial_2_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_tutorial_2_body',
+      );
+
+  /// 目標設定文脈②タイトル
+  String get screen_feature_goal_settings_tutorial_2_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_tutorial_2_title',
+      );
+
+  /// 目標設定文脈③本文
+  String get screen_feature_goal_settings_tutorial_3_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_tutorial_3_body',
+      );
+
+  /// 目標設定文脈③タイトル
+  String get screen_feature_goal_settings_tutorial_3_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_tutorial_3_title',
+      );
+
   /// 未設定の説明
   String get screen_feature_goal_settings_unset_hint =>
       LocalizeStringDelegate.get('screen_feature_goal_settings_unset_hint');

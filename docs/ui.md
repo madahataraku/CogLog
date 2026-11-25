@@ -95,12 +95,12 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 ## コーチマーク（チュートリアル）
 
 - 再利用 UI は `view_coach_mark` に置く。専用全画面ウィザードは作らない。
-- ハイライト表示は `tutorial_coach_mark`（`TutorialCoachMark` / `TargetFocus`）を使う。`showFDialog` は使わない（段階3で目標フォーム操作を許すため）。
-- 実効版はルート `dependency_overrides` で固定する。段階3の穴タップ透過・遅延 show のキャンセル・Overlay 内 `PopScope` のため `app_packages_fork/tutorial_coach_mark` を path 上書きする（モーダル戻るルートは使わない）。
+- ハイライト表示は `tutorial_coach_mark`（`TutorialCoachMark` / `TargetFocus`）を使う。`showFDialog` は使わない（目標設定文脈でフォーム操作を許すため）。
+- 実効版はルート `dependency_overrides` で固定する。目標設定文脈の穴タップ透過・遅延 show のキャンセル・Overlay 内 `PopScope` のため `app_packages_fork/tutorial_coach_mark` を path 上書きする（モーダル戻るルートは使わない）。
 - ハイライト対象は `CoachMarkTarget` で `CoachMarkTargetId` を登録し、`GlobalKey` を `TargetFocus.keyTarget` に渡す。キー未解決時は画面中央の `TargetPosition` にフォールバックする。
 - 吹き出し（タイトル・本文・主／副ボタン）は `TargetContent` の子として `view_coach_mark` が描く。穴が画面下半分なら上、さもなくば下に置く。ライブラリ標準の SKIP は隠す。
-- 外側タップ・ハイライト外タップ・背面スクロールは既定で無効。段階3（目標待ち）のみ穴下のフォーム操作とスキップを許可し、システム戻る／pop はスキップ扱い。
-- 戻る（OS 戻る）は Overlay 内 `PopScope` で既定無効。段階3のみスキップ完了。
+- 外側タップ・ハイライト外タップ・背面スクロールは既定で無効。目標設定文脈（一日あたり／週間日数／自動更新）のみ穴下のフォーム操作を許可し、メイン段階3のスキップ／システム戻るはメイン完了扱い。
+- 戻る（OS 戻る）は Overlay 内 `PopScope` で既定無効。メイン段階3のみスキップ完了。
 - 読み取り中モーダル表示中はコーチマークを出さない／隠す。提示済みにはしない。
 - チュートリアル表示中はモデル未ダウンロード誘導を出さない。抑止では誘導の提示済みにしない。
 - アプリ設定の「チュートリアルを再表示」は通知設定とデータ管理のあいだの `FTile`。

@@ -315,6 +315,8 @@ abstract final class CogsavJsonMapper {
   static Map<String, Object?> _encodeTutorial(TutorialProgress progress) {
     return <String, Object?>{
       'mainCompleted': progress.mainCompleted,
+      'mainReachedStep': progress.mainReachedStep,
+      'goalSettingsContextSeen': progress.goalSettingsContextSeen,
       'cameraContextSeen': progress.cameraContextSeen,
       'meterEditContextSeen': progress.meterEditContextSeen,
       'trendsContextSeen': progress.trendsContextSeen,
@@ -325,7 +327,8 @@ abstract final class CogsavJsonMapper {
 
   /// `tutorial` 値を [TutorialProgress] にする。
   ///
-  /// 非オブジェクト・bool 欠落／非 bool は [CogsavCorruptException]。
+  /// 非オブジェクト・旧必須 bool 欠落／非 bool は [CogsavCorruptException]。
+  /// 新フィールド欠落は既定（goalSettings=false、mainReachedStep は完了なら 7）。
   ///
   /// Example:
   /// ```dart
@@ -340,14 +343,53 @@ abstract final class CogsavJsonMapper {
   /// ```
   static TutorialProgress _decodeTutorial(Object? raw) {
     final map = _asMap(raw, field: 'tutorial');
+    final mainCompleted = _requireBool(map, 'mainCompleted');
     return TutorialProgress(
-      mainCompleted: _requireBool(map, 'mainCompleted'),
+      mainCompleted: mainCompleted,
+      mainReachedStep: _optionalTutorialInt(
+        map,
+        'mainReachedStep',
+        fallback: mainCompleted ? 7 : 0,
+      ),
+      goalSettingsContextSeen: _optionalTutorialBool(
+        map,
+        'goalSettingsContextSeen',
+        fallback: false,
+      ),
       cameraContextSeen: _requireBool(map, 'cameraContextSeen'),
       meterEditContextSeen: _requireBool(map, 'meterEditContextSeen'),
       trendsContextSeen: _requireBool(map, 'trendsContextSeen'),
       historyContextSeen: _requireBool(map, 'historyContextSeen'),
       achievementContextSeen: _requireBool(map, 'achievementContextSeen'),
     );
+  }
+
+  /// 新 tutorial フィールド用。欠落は [fallback]。
+  static bool _optionalTutorialBool(
+    Map<Object?, Object?> map,
+    String key, {
+    required bool fallback,
+  }) {
+    if (!map.containsKey(key)) {
+      return fallback;
+    }
+    return _requireBool(map, key);
+  }
+
+  /// 新 tutorial フィールド用。欠落は [fallback]。
+  static int _optionalTutorialInt(
+    Map<Object?, Object?> map,
+    String key, {
+    required int fallback,
+  }) {
+    if (!map.containsKey(key)) {
+      return fallback;
+    }
+    final value = map[key];
+    if (value is! int) {
+      throw CogsavCorruptException('$key が整数でない');
+    }
+    return value;
   }
 
   static Map<String, Object?> _encodeUnlock(AchievementUnlock unlock) {

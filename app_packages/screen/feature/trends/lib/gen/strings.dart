@@ -103,11 +103,11 @@ mixin class L10nStringsMixin {
   String get screen_feature_trends_title =>
       LocalizeStringDelegate.get('screen_feature_trends_title');
 
-  /// 段階7本文
+  /// 推移文脈本文
   String get screen_feature_trends_tutorial_body =>
       LocalizeStringDelegate.get('screen_feature_trends_tutorial_body');
 
-  /// 段階7タイトル
+  /// 推移文脈タイトル
   String get screen_feature_trends_tutorial_title =>
       LocalizeStringDelegate.get('screen_feature_trends_tutorial_title');
 

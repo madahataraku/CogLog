@@ -361,7 +361,6 @@ List<Override> usecaseOverrides({
     (ref) => AdvanceTutorialMainUsecaseImpl(
       repository: ref.watch(tutorialRepositoryProvider),
       session: ref.watch(tutorialRuntimeSessionProvider),
-      loadDailyGoal: ref.watch(LoadDailyGoalUsecase.provider),
     ),
   ),
   EvaluateTutorialContextUsecase.provider.overrideWith(

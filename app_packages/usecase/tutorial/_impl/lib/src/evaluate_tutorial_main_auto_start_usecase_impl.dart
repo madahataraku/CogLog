@@ -1,7 +1,7 @@
 import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 
-/// 永続と session からメイン自動開始要否を決める。
+/// 永続と session からメイン自動開始／再開要否を決める。
 ///
 /// Example:
 /// ```dart
@@ -32,7 +32,7 @@ final class EvaluateTutorialMainAutoStartUsecaseImpl
   /// プロセス内実行状態。
   final TutorialRuntimeSession session;
 
-  /// suppress / guard / 表示中 / 完了済みなら false。
+  /// suppress / guard / 表示中 / 完了済み／再開条件未満なら false。
   ///
   /// Example:
   /// ```dart
@@ -50,6 +50,23 @@ final class EvaluateTutorialMainAutoStartUsecaseImpl
     if (progress.mainCompleted) {
       return const EvaluateTutorialMainAutoStartResult(shouldStart: false);
     }
-    return const EvaluateTutorialMainAutoStartResult(shouldStart: true);
+    if (progress.mainReachedStep < 3) {
+      return const EvaluateTutorialMainAutoStartResult(shouldStart: true);
+    }
+    if (progress.mainReachedStep == 3 && progress.goalSettingsContextSeen) {
+      return const EvaluateTutorialMainAutoStartResult(shouldStart: true);
+    }
+    if (progress.mainReachedStep == 4 &&
+        progress.cameraContextSeen &&
+        progress.meterEditContextSeen) {
+      return const EvaluateTutorialMainAutoStartResult(shouldStart: true);
+    }
+    if (progress.mainReachedStep == 5 && progress.trendsContextSeen) {
+      return const EvaluateTutorialMainAutoStartResult(shouldStart: true);
+    }
+    if (progress.mainReachedStep == 6 && progress.historyContextSeen) {
+      return const EvaluateTutorialMainAutoStartResult(shouldStart: true);
+    }
+    return const EvaluateTutorialMainAutoStartResult(shouldStart: false);
   }
 }

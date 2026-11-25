@@ -61,6 +61,8 @@ void main() {
       achievementLastViewedAt: DateTime.utc(2026, 11, 11),
       tutorial: const TutorialProgress(
         mainCompleted: true,
+        mainReachedStep: 7,
+        goalSettingsContextSeen: true,
         cameraContextSeen: true,
         meterEditContextSeen: false,
         trendsContextSeen: true,

@@ -35,6 +35,12 @@ enum CoachMarkTargetId {
   /// 目標設定: 一日あたり入力グループ。
   goalDailyInputs,
 
+  /// 目標設定: 週間の目標運動日数。
+  goalWeeklyDays,
+
+  /// 目標設定: 自動更新スイッチとレベル。
+  goalAutoUpdate,
+
   /// 撮影: カメラプレビュー／権限案内領域。
   meterCameraArea,
 

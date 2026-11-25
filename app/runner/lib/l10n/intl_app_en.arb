@@ -931,13 +931,13 @@
   "@screen_feature_exercise_history_title": {
     "description": "画面タイトル"
   },
-  "screen_feature_exercise_history_tutorial_body": "Yellow stamps mark days you exercised. Tap a day to review, edit, or delete.",
+  "screen_feature_exercise_history_tutorial_body": "Yellow stamps mark days you exercised. Tap a day to review details or edit and delete history.",
   "@screen_feature_exercise_history_tutorial_body": {
-    "description": "段階8本文"
+    "description": "運動履歴文脈本文"
   },
-  "screen_feature_exercise_history_tutorial_title": "Exercise day stamps",
+  "screen_feature_exercise_history_tutorial_title": "Review and edit history",
   "@screen_feature_exercise_history_tutorial_title": {
-    "description": "段階8タイトル"
+    "description": "運動履歴文脈タイトル"
   },
   "screen_feature_exercise_history_weekday_fri": "Fri",
   "@screen_feature_exercise_history_weekday_fri": {
@@ -1042,6 +1042,30 @@
   "screen_feature_goal_settings_title": "Goals",
   "@screen_feature_goal_settings_title": {
     "description": "画面タイトル"
+  },
+  "screen_feature_goal_settings_tutorial_1_body": "Start by entering your daily targets for duration, calories, and distance. For beginners, about 20 min, 200 kcal, and 5 km is a good start.",
+  "@screen_feature_goal_settings_tutorial_1_body": {
+    "description": "目標設定文脈①本文"
+  },
+  "screen_feature_goal_settings_tutorial_1_title": "How to set goals 1",
+  "@screen_feature_goal_settings_tutorial_1_title": {
+    "description": "目標設定文脈①タイトル"
+  },
+  "screen_feature_goal_settings_tutorial_2_body": "After daily targets, choose how many days per week to exercise. Starting around 3 days and increasing gradually is easier to keep up.",
+  "@screen_feature_goal_settings_tutorial_2_body": {
+    "description": "目標設定文脈②本文"
+  },
+  "screen_feature_goal_settings_tutorial_2_title": "How to set goals 2 (weekly days)",
+  "@screen_feature_goal_settings_tutorial_2_title": {
+    "description": "目標設定文脈②タイトル"
+  },
+  "screen_feature_goal_settings_tutorial_3_body": "When you hit goals in a row you can auto-raise them. Pick one of three increase levels to match your pace.",
+  "@screen_feature_goal_settings_tutorial_3_body": {
+    "description": "目標設定文脈③本文"
+  },
+  "screen_feature_goal_settings_tutorial_3_title": "How to set goals 3 (auto-update)",
+  "@screen_feature_goal_settings_tutorial_3_title": {
+    "description": "目標設定文脈③タイトル"
   },
   "screen_feature_goal_settings_unset_hint": "Leave fields empty to keep them unset",
   "@screen_feature_goal_settings_unset_hint": {
@@ -1201,21 +1225,21 @@
   "@screen_feature_meter_capture_title": {
     "description": "画面タイトル"
   },
-  "screen_feature_meter_capture_tutorial_camera_body": "Photograph the meter panel to read distance, duration, and calories. Health write permission may be requested when saving.",
+  "screen_feature_meter_capture_tutorial_camera_body": "Photograph the meter panel to read distance, duration, and calories automatically. You can also pick an existing photo from your library.",
   "@screen_feature_meter_capture_tutorial_camera_body": {
-    "description": "段階5本文"
+    "description": "メーター記録文脈・撮影本文"
   },
-  "screen_feature_meter_capture_tutorial_camera_title": "Photograph the meter",
+  "screen_feature_meter_capture_tutorial_camera_title": "Photograph the bike meter to log",
   "@screen_feature_meter_capture_tutorial_camera_title": {
-    "description": "段階5タイトル"
+    "description": "メーター記録文脈・撮影タイトル"
   },
-  "screen_feature_meter_capture_tutorial_meter_edit_body": "Distance, duration, and calories are filled in automatically. Correct any mistakes by hand before saving.",
+  "screen_feature_meter_capture_tutorial_meter_edit_body": "Check the distance, duration, and calories the app read, and fix any mistakes. Tap Save to log them. Linking Health when saving also writes the workout there.",
   "@screen_feature_meter_capture_tutorial_meter_edit_body": {
-    "description": "段階6本文"
+    "description": "メーター記録文脈・結果本文"
   },
-  "screen_feature_meter_capture_tutorial_meter_edit_title": "Review the reading",
+  "screen_feature_meter_capture_tutorial_meter_edit_title": "About the reading",
   "@screen_feature_meter_capture_tutorial_meter_edit_title": {
-    "description": "段階6タイトル"
+    "description": "メーター記録文脈・結果タイトル"
   },
   "screen_feature_notification_settings_back_semantics": "Back",
   "@screen_feature_notification_settings_back_semantics": {
@@ -1478,15 +1502,15 @@
   "@screen_feature_top_today": {
     "description": "集計期間"
   },
-  "screen_feature_top_tutorial_achievement_body": "Open trophies here. A dot appears when you have new unlocks.",
+  "screen_feature_top_tutorial_achievement_body": "From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.",
   "@screen_feature_top_tutorial_achievement_body": {
-    "description": "アチーブメント文脈本文"
+    "description": "段階7互換キー"
   },
-  "screen_feature_top_tutorial_achievement_title": "Achievements",
+  "screen_feature_top_tutorial_achievement_title": "Earn many trophies",
   "@screen_feature_top_tutorial_achievement_title": {
-    "description": "アチーブメント文脈タイトル"
+    "description": "段階7互換キー"
   },
-  "screen_feature_top_tutorial_main_1_body": "You can check today, this week, and this month totals and progress toward your goals. Switch metrics as needed.",
+  "screen_feature_top_tutorial_main_1_body": "You can check the total exercise values for today, this week, and this month. Use the dropdown to switch among calories, distance, and duration.",
   "@screen_feature_top_tutorial_main_1_body": {
     "description": "段階1本文"
   },
@@ -1494,29 +1518,53 @@
   "@screen_feature_top_tutorial_main_1_title": {
     "description": "段階1タイトル"
   },
-  "screen_feature_top_tutorial_main_2_body": "Meter capture reads from photos. Trends relate exercise and body metrics. History lets you review and edit by day. Goals set daily targets and weekly exercise days.",
+  "screen_feature_top_tutorial_main_2_body": "See progress against the goals set on the Goals screen. You can set daily targets and how many days per week to exercise.",
   "@screen_feature_top_tutorial_main_2_body": {
     "description": "段階2本文"
   },
-  "screen_feature_top_tutorial_main_2_title": "What each tab is for",
+  "screen_feature_top_tutorial_main_2_title": "Reading goal progress",
   "@screen_feature_top_tutorial_main_2_title": {
     "description": "段階2タイトル"
   },
-  "screen_feature_top_tutorial_main_3_body": "Setting daily duration, calories, and distance makes progress clearer. Save when you are done.",
+  "screen_feature_top_tutorial_main_3_body": "From the Goals tab you can set the targets shown in the progress section. Start by setting your goals.",
   "@screen_feature_top_tutorial_main_3_body": {
     "description": "段階3本文"
   },
-  "screen_feature_top_tutorial_main_3_title": "Set your goals",
+  "screen_feature_top_tutorial_main_3_title": "Let's set your goals",
   "@screen_feature_top_tutorial_main_3_title": {
     "description": "段階3タイトル"
   },
-  "screen_feature_top_tutorial_main_4_body": "From the Meter tab, photograph the meter panel to read distance, duration, and calories.",
+  "screen_feature_top_tutorial_main_4_body": "After setting goals, log your exercise. From the Meter tab you can photograph the bike meter panel to record data easily.",
   "@screen_feature_top_tutorial_main_4_body": {
     "description": "段階4本文"
   },
-  "screen_feature_top_tutorial_main_4_title": "Capture with Meter",
+  "screen_feature_top_tutorial_main_4_title": "Log with Meter capture",
   "@screen_feature_top_tutorial_main_4_title": {
     "description": "段階4タイトル"
+  },
+  "screen_feature_top_tutorial_main_5_body": "From the Trends tab you can see how logged exercise relates to weight and body fat (Health access required separately).",
+  "@screen_feature_top_tutorial_main_5_body": {
+    "description": "段階5本文"
+  },
+  "screen_feature_top_tutorial_main_5_title": "Review your results",
+  "@screen_feature_top_tutorial_main_5_title": {
+    "description": "段階5タイトル"
+  },
+  "screen_feature_top_tutorial_main_6_body": "From the History tab you can review, edit, and delete past exercise data.",
+  "@screen_feature_top_tutorial_main_6_body": {
+    "description": "段階6本文"
+  },
+  "screen_feature_top_tutorial_main_6_title": "Check past records",
+  "@screen_feature_top_tutorial_main_6_title": {
+    "description": "段階6タイトル"
+  },
+  "screen_feature_top_tutorial_main_7_body": "From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.",
+  "@screen_feature_top_tutorial_main_7_body": {
+    "description": "段階7本文"
+  },
+  "screen_feature_top_tutorial_main_7_title": "Earn many trophies",
+  "@screen_feature_top_tutorial_main_7_title": {
+    "description": "段階7タイトル"
   },
   "screen_feature_top_unset_prompt": "Set a daily goal in Goals",
   "@screen_feature_top_unset_prompt": {
@@ -1641,13 +1689,13 @@
   "@screen_feature_trends_title": {
     "description": "画面タイトル"
   },
-  "screen_feature_trends_tutorial_body": "See how calories relate to body fat and more on the chart. Body fat and weight need Health read access.",
+  "screen_feature_trends_tutorial_body": "See how calories relate to body fat and more on the chart. Choose which cut to view. Body metrics such as body fat and weight need Health read access.",
   "@screen_feature_trends_tutorial_body": {
-    "description": "段階7本文"
+    "description": "推移文脈本文"
   },
-  "screen_feature_trends_tutorial_title": "Exercise and body metrics",
+  "screen_feature_trends_tutorial_title": "Review exercise trends",
   "@screen_feature_trends_tutorial_title": {
-    "description": "段階7タイトル"
+    "description": "推移文脈タイトル"
   },
   "screen_feature_trends_unit_kcal": "kcal",
   "@screen_feature_trends_unit_kcal": {

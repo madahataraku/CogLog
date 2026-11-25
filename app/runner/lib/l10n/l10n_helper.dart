@@ -1082,6 +1082,30 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_goal_settings_title;
       },
+      'screen_feature_goal_settings_tutorial_1_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_tutorial_1_body;
+      },
+      'screen_feature_goal_settings_tutorial_1_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_tutorial_1_title;
+      },
+      'screen_feature_goal_settings_tutorial_2_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_tutorial_2_body;
+      },
+      'screen_feature_goal_settings_tutorial_2_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_tutorial_2_title;
+      },
+      'screen_feature_goal_settings_tutorial_3_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_tutorial_3_body;
+      },
+      'screen_feature_goal_settings_tutorial_3_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_tutorial_3_title;
+      },
       'screen_feature_goal_settings_unset_hint': (source) {
         // No Placeholders
         return l10n.screen_feature_goal_settings_unset_hint;
@@ -1540,6 +1564,30 @@ final class L10nHelper {
       'screen_feature_top_tutorial_main_4_title': (source) {
         // No Placeholders
         return l10n.screen_feature_top_tutorial_main_4_title;
+      },
+      'screen_feature_top_tutorial_main_5_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_5_body;
+      },
+      'screen_feature_top_tutorial_main_5_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_5_title;
+      },
+      'screen_feature_top_tutorial_main_6_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_6_body;
+      },
+      'screen_feature_top_tutorial_main_6_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_6_title;
+      },
+      'screen_feature_top_tutorial_main_7_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_7_body;
+      },
+      'screen_feature_top_tutorial_main_7_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_7_title;
       },
       'screen_feature_top_unset_prompt': (source) {
         // No Placeholders

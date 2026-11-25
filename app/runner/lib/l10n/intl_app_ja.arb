@@ -931,13 +931,13 @@
   "@screen_feature_exercise_history_title": {
     "description": "画面タイトル"
   },
-  "screen_feature_exercise_history_tutorial_body": "黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。",
+  "screen_feature_exercise_history_tutorial_body": "黄色い丸のスタンプが運動した日です。タップすると内容の確認と、運動履歴の編集・削除が行えます。",
   "@screen_feature_exercise_history_tutorial_body": {
-    "description": "段階8本文"
+    "description": "運動履歴文脈本文"
   },
-  "screen_feature_exercise_history_tutorial_title": "運動した日のスタンプ",
+  "screen_feature_exercise_history_tutorial_title": "運動履歴の確認や編集を行おう",
   "@screen_feature_exercise_history_tutorial_title": {
-    "description": "段階8タイトル"
+    "description": "運動履歴文脈タイトル"
   },
   "screen_feature_exercise_history_weekday_fri": "金",
   "@screen_feature_exercise_history_weekday_fri": {
@@ -1042,6 +1042,30 @@
   "screen_feature_goal_settings_title": "目標設定",
   "@screen_feature_goal_settings_title": {
     "description": "画面タイトル"
+  },
+  "screen_feature_goal_settings_tutorial_1_body": "まずは1日あたりに目指したい運動時間、消費カロリー、距離を入力してみましょう。初めての場合、20分、200kcal、5kmあたりから始めるのがおすすめです。",
+  "@screen_feature_goal_settings_tutorial_1_body": {
+    "description": "目標設定文脈①本文"
+  },
+  "screen_feature_goal_settings_tutorial_1_title": "目標設定のやり方①",
+  "@screen_feature_goal_settings_tutorial_1_title": {
+    "description": "目標設定文脈①タイトル"
+  },
+  "screen_feature_goal_settings_tutorial_2_body": "1日あたりの運動目標を設定したら、次は1週間のうち何日運動するかを決めましょう。3日くらいの軽い目標から徐々に増やしていくのが続けやすくおすすめです。",
+  "@screen_feature_goal_settings_tutorial_2_body": {
+    "description": "目標設定文脈②本文"
+  },
+  "screen_feature_goal_settings_tutorial_2_title": "目標設定のやり方②（週間の運動目標日数）",
+  "@screen_feature_goal_settings_tutorial_2_title": {
+    "description": "目標設定文脈②タイトル"
+  },
+  "screen_feature_goal_settings_tutorial_3_body": "目標を連続して達成しているとき、徐々に目標値を自動的に上方更新することもできます。増える度合いも3種類から選べるので、自分のペースで設定してみてください。",
+  "@screen_feature_goal_settings_tutorial_3_body": {
+    "description": "目標設定文脈③本文"
+  },
+  "screen_feature_goal_settings_tutorial_3_title": "目標設定のやり方③（自動更新）",
+  "@screen_feature_goal_settings_tutorial_3_title": {
+    "description": "目標設定文脈③タイトル"
   },
   "screen_feature_goal_settings_unset_hint": "未設定の欄は空のまま保存できます",
   "@screen_feature_goal_settings_unset_hint": {
@@ -1201,21 +1225,21 @@
   "@screen_feature_meter_capture_title": {
     "description": "画面タイトル"
   },
-  "screen_feature_meter_capture_tutorial_camera_body": "カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。",
+  "screen_feature_meter_capture_tutorial_camera_body": "カメラでメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを自動的に読み取ります。ライブラリから撮影済みの写真を選ぶこともできます。",
   "@screen_feature_meter_capture_tutorial_camera_body": {
-    "description": "段階5本文"
+    "description": "メーター記録文脈・撮影本文"
   },
-  "screen_feature_meter_capture_tutorial_camera_title": "メーターを撮影",
+  "screen_feature_meter_capture_tutorial_camera_title": "エアロバイクのメーターを撮影して記録しよう",
   "@screen_feature_meter_capture_tutorial_camera_title": {
-    "description": "段階5タイトル"
+    "description": "メーター記録文脈・撮影タイトル"
   },
-  "screen_feature_meter_capture_tutorial_meter_edit_body": "走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。",
+  "screen_feature_meter_capture_tutorial_meter_edit_body": "アプリが自動的に読み取った走行距離・運動時間・消費カロリーを確認し、誤りがあれば修整してください。登録ボタンを押すと記録されます。また、登録時ヘルスケアと連携しておくと、運動データをヘルスケア側にも記録することができます。",
   "@screen_feature_meter_capture_tutorial_meter_edit_body": {
-    "description": "段階6本文"
+    "description": "メーター記録文脈・結果本文"
   },
-  "screen_feature_meter_capture_tutorial_meter_edit_title": "読み取り結果の確認",
+  "screen_feature_meter_capture_tutorial_meter_edit_title": "撮影結果について",
   "@screen_feature_meter_capture_tutorial_meter_edit_title": {
-    "description": "段階6タイトル"
+    "description": "メーター記録文脈・結果タイトル"
   },
   "screen_feature_notification_settings_back_semantics": "戻る",
   "@screen_feature_notification_settings_back_semantics": {
@@ -1478,45 +1502,69 @@
   "@screen_feature_top_today": {
     "description": "集計期間"
   },
-  "screen_feature_top_tutorial_achievement_body": "獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。",
+  "screen_feature_top_tutorial_achievement_body": "アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。",
   "@screen_feature_top_tutorial_achievement_body": {
-    "description": "アチーブメント文脈本文"
+    "description": "段階7互換キー"
   },
-  "screen_feature_top_tutorial_achievement_title": "アチーブメント",
+  "screen_feature_top_tutorial_achievement_title": "たくさんの称号を取得しよう",
   "@screen_feature_top_tutorial_achievement_title": {
-    "description": "アチーブメント文脈タイトル"
+    "description": "段階7互換キー"
   },
-  "screen_feature_top_tutorial_main_1_body": "本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。",
+  "screen_feature_top_tutorial_main_1_body": "本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。",
   "@screen_feature_top_tutorial_main_1_body": {
     "description": "段階1本文"
   },
-  "screen_feature_top_tutorial_main_1_title": "ホームの見かた",
+  "screen_feature_top_tutorial_main_1_title": "ホーム画面の見かた",
   "@screen_feature_top_tutorial_main_1_title": {
     "description": "段階1タイトル"
   },
-  "screen_feature_top_tutorial_main_2_body": "メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。",
+  "screen_feature_top_tutorial_main_2_body": "目標設定画面で設定した目標に対し、現在の進捗状況を確認できます。目標は1日あたりの目標と、1週間あたり何日運動するのかを設定できます。",
   "@screen_feature_top_tutorial_main_2_body": {
     "description": "段階2本文"
   },
-  "screen_feature_top_tutorial_main_2_title": "各タブの役割",
+  "screen_feature_top_tutorial_main_2_title": "目標進捗率の見かた",
   "@screen_feature_top_tutorial_main_2_title": {
     "description": "段階2タイトル"
   },
-  "screen_feature_top_tutorial_main_3_body": "一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。",
+  "screen_feature_top_tutorial_main_3_body": "目標設定タブから、先ほどの目標進捗率で表示する目標の設定ができます。まずは目標から設定してみましょう。",
   "@screen_feature_top_tutorial_main_3_body": {
     "description": "段階3本文"
   },
-  "screen_feature_top_tutorial_main_3_title": "目標を設定しましょう",
+  "screen_feature_top_tutorial_main_3_title": "目標設定をしましょう",
   "@screen_feature_top_tutorial_main_3_title": {
     "description": "段階3タイトル"
   },
-  "screen_feature_top_tutorial_main_4_body": "メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。",
+  "screen_feature_top_tutorial_main_4_body": "目標を設定したら、早速運動の記録をつけましょう。メーター記録タブから、エアロバイクのメーターパネルを撮影するだけで簡単に運動データを記録できます。",
   "@screen_feature_top_tutorial_main_4_body": {
     "description": "段階4本文"
   },
-  "screen_feature_top_tutorial_main_4_title": "メーター記録で撮影",
+  "screen_feature_top_tutorial_main_4_title": "メーター記録を行いましょう",
   "@screen_feature_top_tutorial_main_4_title": {
     "description": "段階4タイトル"
+  },
+  "screen_feature_top_tutorial_main_5_body": "推移タブから、記録した運動データと体重・体脂肪率などの相関関係を確認できます。（別途ヘルスケア連携が必要です）",
+  "@screen_feature_top_tutorial_main_5_body": {
+    "description": "段階5本文"
+  },
+  "screen_feature_top_tutorial_main_5_title": "運動の結果を振り返りましょう",
+  "@screen_feature_top_tutorial_main_5_title": {
+    "description": "段階5タイトル"
+  },
+  "screen_feature_top_tutorial_main_6_body": "運動履歴タブからは、過去の運動データの確認、修整、削除が行えます。",
+  "@screen_feature_top_tutorial_main_6_body": {
+    "description": "段階6本文"
+  },
+  "screen_feature_top_tutorial_main_6_title": "過去の記録を確認しましょう",
+  "@screen_feature_top_tutorial_main_6_title": {
+    "description": "段階6タイトル"
+  },
+  "screen_feature_top_tutorial_main_7_body": "アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。",
+  "@screen_feature_top_tutorial_main_7_body": {
+    "description": "段階7本文"
+  },
+  "screen_feature_top_tutorial_main_7_title": "たくさんの称号を取得しよう",
+  "@screen_feature_top_tutorial_main_7_title": {
+    "description": "段階7タイトル"
   },
   "screen_feature_top_unset_prompt": "目標設定で一日あたりの目標を設定しましょう",
   "@screen_feature_top_unset_prompt": {
@@ -1641,13 +1689,13 @@
   "@screen_feature_trends_title": {
     "description": "画面タイトル"
   },
-  "screen_feature_trends_tutorial_body": "消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。",
+  "screen_feature_trends_tutorial_body": "消費カロリーと体脂肪率などの関係をグラフで確認できます。どのカットで推移を確認するかを選べます。また、体脂肪率・体重などの身体データはヘルスケアの読み取り連携が必要です。",
   "@screen_feature_trends_tutorial_body": {
-    "description": "段階7本文"
+    "description": "推移文脈本文"
   },
-  "screen_feature_trends_tutorial_title": "運動と身体の関係",
+  "screen_feature_trends_tutorial_title": "運動データの推移の確認",
   "@screen_feature_trends_tutorial_title": {
-    "description": "段階7タイトル"
+    "description": "推移文脈タイトル"
   },
   "screen_feature_trends_unit_kcal": "kcal",
   "@screen_feature_trends_unit_kcal": {

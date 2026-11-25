@@ -100,10 +100,7 @@ class TopScreen extends HookConsumerWidget {
           if (!context.mounted) {
             return;
           }
-          unawaited(() async {
-            await viewModel.onEvaluateTutorialMain();
-            await viewModel.onEvaluateTutorialAchievement();
-          }());
+          unawaited(viewModel.onEvaluateTutorialMain());
         });
         return null;
       },
@@ -132,10 +129,6 @@ class TopScreen extends HookConsumerWidget {
           }
           final step = entity.tutorialMainStep;
           if (step == null) {
-            return;
-          }
-          // 段階3は目標タブ側で出す。
-          if (step == TutorialMainStep.goalRecommend) {
             return;
           }
           final coachStep = _mainCoachMarkStep(step);
@@ -167,54 +160,11 @@ class TopScreen extends HookConsumerWidget {
 
     useEffect(
       () {
-        if (!entity.pendingTutorialAchievement) {
-          return null;
-        }
-        if (!homeTabSelected || !foreground) {
-          return null;
-        }
-        if (tutorialSession.isShowing &&
-            tutorialSession.activeKind == TutorialKind.main) {
-          return null;
-        }
-        unawaited(viewModel.onAcknowledgeTutorialAchievement());
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          if (!context.mounted) {
-            return;
-          }
-          await CoachMarkLauncher.show(
-            context,
-            step: CoachMarkStep(
-              targetId: CoachMarkTargetId.homeAchievementTrophy,
-              title: strings.screen_feature_top_tutorial_achievement_title,
-              body: strings.screen_feature_top_tutorial_achievement_body,
-              primaryLabel: strings.view_coach_mark_close,
-            ),
-          );
-          if (!context.mounted) {
-            return;
-          }
-          await viewModel.onDismissTutorialAchievement();
-        });
-        return null;
-      },
-      [
-        entity.pendingTutorialAchievement,
-        viewModel,
-        homeTabSelected,
-        lifecycle,
-      ],
-    );
-
-    useEffect(
-      () {
         if (!entity.pendingModelDownloadGuidance) {
           return null;
         }
         // チュートリアル表示中はモデル誘導を出さない（提示済みにもしない）。
-        if (tutorialSession.isShowing ||
-            entity.pendingTutorialMain ||
-            entity.pendingTutorialAchievement) {
+        if (tutorialSession.isShowing || entity.pendingTutorialMain) {
           return null;
         }
         // 予約時点で同期的に提示済みにし、initialize 再入とのレースを防ぐ。
@@ -238,7 +188,6 @@ class TopScreen extends HookConsumerWidget {
       [
         entity.pendingModelDownloadGuidance,
         entity.pendingTutorialMain,
-        entity.pendingTutorialAchievement,
         tutorialSession.isShowing,
         viewModel,
       ],
@@ -248,9 +197,7 @@ class TopScreen extends HookConsumerWidget {
         if (!entity.pendingGemmaMeterGuidance) {
           return null;
         }
-        if (tutorialSession.isShowing ||
-            entity.pendingTutorialMain ||
-            entity.pendingTutorialAchievement) {
+        if (tutorialSession.isShowing || entity.pendingTutorialMain) {
           return null;
         }
         // ホーム選択かつ前面のときだけ出す。満たさない間は pending を残す。
@@ -294,7 +241,6 @@ class TopScreen extends HookConsumerWidget {
       [
         entity.pendingGemmaMeterGuidance,
         entity.pendingTutorialMain,
-        entity.pendingTutorialAchievement,
         tutorialSession.isShowing,
         viewModel,
         homeTabSelected,
@@ -319,25 +265,42 @@ CoachMarkStep _mainCoachMarkStep(TutorialMainStep step) {
       body: strings.screen_feature_top_tutorial_main_1_body,
       primaryLabel: strings.view_coach_mark_next,
     ),
-    TutorialMainStep.tabOverview => CoachMarkStep(
-      targetId: CoachMarkTargetId.navHome,
+    TutorialMainStep.goalProgressIntro => CoachMarkStep(
+      targetId: CoachMarkTargetId.homeGoalRings,
       title: strings.screen_feature_top_tutorial_main_2_title,
       body: strings.screen_feature_top_tutorial_main_2_body,
       primaryLabel: strings.view_coach_mark_next,
     ),
     TutorialMainStep.goalRecommend => CoachMarkStep(
-      targetId: CoachMarkTargetId.goalDailyInputs,
+      targetId: CoachMarkTargetId.navGoalSettings,
       title: strings.screen_feature_top_tutorial_main_3_title,
       body: strings.screen_feature_top_tutorial_main_3_body,
       primaryLabel: strings.view_coach_mark_next,
       secondaryLabel: strings.view_coach_mark_skip,
-      allowTargetInteraction: true,
       blockSystemBack: false,
     ),
     TutorialMainStep.meterRecommend => CoachMarkStep(
       targetId: CoachMarkTargetId.navMeterCapture,
       title: strings.screen_feature_top_tutorial_main_4_title,
       body: strings.screen_feature_top_tutorial_main_4_body,
+      primaryLabel: strings.view_coach_mark_close,
+    ),
+    TutorialMainStep.trendsRecommend => CoachMarkStep(
+      targetId: CoachMarkTargetId.navTrends,
+      title: strings.screen_feature_top_tutorial_main_5_title,
+      body: strings.screen_feature_top_tutorial_main_5_body,
+      primaryLabel: strings.view_coach_mark_close,
+    ),
+    TutorialMainStep.historyRecommend => CoachMarkStep(
+      targetId: CoachMarkTargetId.navExerciseHistory,
+      title: strings.screen_feature_top_tutorial_main_6_title,
+      body: strings.screen_feature_top_tutorial_main_6_body,
+      primaryLabel: strings.view_coach_mark_close,
+    ),
+    TutorialMainStep.achievementRecommend => CoachMarkStep(
+      targetId: CoachMarkTargetId.homeAchievementTrophy,
+      title: strings.screen_feature_top_tutorial_main_7_title,
+      body: strings.screen_feature_top_tutorial_main_7_body,
       primaryLabel: strings.view_coach_mark_close,
     ),
   };
