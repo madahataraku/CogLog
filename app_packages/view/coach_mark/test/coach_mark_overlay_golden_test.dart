@@ -4,7 +4,7 @@ import 'package:forui/forui.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
-import 'package:view_coach_mark/src/coach_mark_overlay.dart';
+import 'package:view_coach_mark/src/coach_mark_bubble.dart';
 import 'package:view_coach_mark/view_coach_mark.dart';
 
 /// Golden 用に ja / Forui ライトテーマで包む。
@@ -33,11 +33,11 @@ void main() {
   tearDown(LocalizeStringDelegate.resetDelegateForTest);
 
   // テスト対象:
-  // CoachMarkOverlay
+  // CoachMarkBubble
   //
   // テスト内容:
-  // ja / Android / light で穴付きオーバーレイの見た目が golden と一致する。
-  testWidgets('コーチマークオーバーレイ / ja / Android / light', (tester) async {
+  // ja / Android / light で吹き出しの見た目が golden と一致する。
+  testWidgets('コーチマーク吹き出し / ja / Android / light', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
     addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
@@ -51,31 +51,23 @@ void main() {
     try {
       await tester.pumpWidget(
         _wrap(
-          Stack(
-            children: [
-              const Positioned(
-                left: 40,
-                top: 120,
-                child: SizedBox(width: 280, height: 80),
+          Center(
+            child: CoachMarkBubble(
+              step: const CoachMarkStep(
+                targetId: CoachMarkTargetId.homePeriodTotals,
+                title: 'ホームの見かた',
+                body: '本日・今週・今月の合計と、目標に対する達成状況を確認できます。',
+                primaryLabel: '次へ',
+                secondaryLabel: 'スキップ',
               ),
-              CoachMarkOverlay(
-                step: const CoachMarkStep(
-                  targetId: CoachMarkTargetId.homePeriodTotals,
-                  title: 'ホームの見かた',
-                  body: '本日・今週・今月の合計と、目標に対する達成状況を確認できます。',
-                  primaryLabel: '次へ',
-                  secondaryLabel: 'スキップ',
-                ),
-                hole: const Rect.fromLTWH(40, 120, 280, 80),
-                onDismiss: (_) {},
-              ),
-            ],
+              onDismiss: (_) {},
+            ),
           ),
         ),
       );
       await tester.pumpAndSettle();
       await expectLater(
-        find.byType(CoachMarkOverlay),
+        find.byType(CoachMarkBubble),
         matchesGoldenFile('goldens/coach_mark_overlay_light.png'),
       );
     } finally {
