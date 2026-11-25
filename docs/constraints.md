@@ -8,7 +8,7 @@
 - 子パッケージの外部依存は `any` にする。
 - `flutter pub get` と Monolith のコマンドはリポジトリルートで実行する。
 - `flutter run` と `dart run forui` は `app/` で実行する。
-- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に Gemma E2B を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない。版は運用追従）。Android / iOS とも LiteRT-LM（`.litertlm` + MTP、main/vision とも GPU）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
+- 外部パッケージをパッチするときは `app_packages_fork/` に置き、ルートの `dependency_overrides` で path 指定する。端末上 LLM は `infra_on_device_llm_mobile` の自前 Flutter plugin を使う。優先は OS 提供モデル（iOS: Foundation Models / Android: Gemini Nano）。メーター読み取りで OS モデルが使えないとき（非対応・未 ready・画像入力非対応を含む）は、メーター読み取り専用に LFM VL を別途ダウンロードして実行する（アプリ同梱しない。ワンポイントアドバイスには使わない。版は運用追従）。Android / iOS とも LiteRT-LM（`.litertlm`。Android: main GPU / vision CPU、iOS: main/vision CPU。MTP OFF）。AICore / GenAI の診断（例外型名を含む）は OS モデル実装が担う。
 
 ## Syncfusion Charts
 
@@ -75,22 +75,23 @@ Java / Kotlin の JVM ターゲットは **17** に揃える（`app/android/app/
 `app/android/build.gradle.kts` の `subprojects`）。プラグイン側が Java 11 のままだと、
 `compileReleaseKotlin`（17）と `compileReleaseJavaWithJavac`（11）が不一致になり release APK が失敗する。
 
-メーター読み取りの自動解析は OS LLM または Gemma E2B のみとする。空間 OCR
+メーター読み取りの自動解析は OS LLM または LFM VL のみとする。空間 OCR
 （ML Kit / Vision / 七セグ TFLite。メーター読み取り用の独自 Core ML OCR を含む）は採用しない。
 
-Gemma E2B 経路（`infra_gemma_meter_mobile`）は Android / iOS とも LiteRT-LM を使う。
+LFM VL 経路（`infra_gemma_meter_mobile`）は Android / iOS とも LiteRT-LM を使う。
 Android 依存は `com.google.ai.edge.litertlm:litertlm-android`（実効版はビルド時に
 Google Maven の release を追う。ピン留めしない）。iOS は Swift Package
 `https://github.com/google-ai-edge/LiteRT-LM`（product `LiteRTLM`。実効版は
 SPM の up-to-next-major で追う。ピン留めしない）。ネイティブ／アセットの
 OSS ライセンス一覧の再生成対象に含める。モデル成果物の既定 URL／ファイル名は
-運用で更新し、特定版へのピン留めはしない。当面の既定は Hugging Face
-`litert-community` の Gemma 4 E2B
-`https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm`
-（認証不要。おおよそ 2.59 GB。`models.litert.dev` の 3n ミラーは 404、
-`google/gemma-3n-E2B-it-litert-lm` は gated のためアプリからの匿名取得では使わない）。
-Engine は main `backend: gpu`、`visionBackend: gpu`、
-`speculativeDecodingConfig.mode: on`（MTP）とする。
+運用で更新し、特定版へのピン留めはしない。当面の配線既定は Hugging Face
+`litert-community` の LFM2.5-VL-1.6B
+`https://huggingface.co/litert-community/LFM2.5-VL-1.6B/resolve/main/LFM2.5-VL-1.6B_int4_fixB.litertlm`
+（認証不要。おおよそ 1.30 GB。製品としての採用確定は代表パネル写真セットで完全 ≥ 60% かつ部分成功 ≥ 85% を満たしたあと）。
+Engine は Android で main `backend: gpu`、`visionBackend: cpu`、
+iOS で main/vision とも `cpu`、`speculativeDecodingConfig.mode: off`（MTP OFF）とする。
+LFM Open License v1.0。商業利用は権利主体の年間売上 USD 10,000,000 未満で無料枠。
+閾値超過時は Liquid AI の有償ライセンスが必要。アプリの OSS ライセンス一覧に LFM モデル条項を載せ、利用者が辿れるようにする。
 
 ## iOS
 
@@ -103,28 +104,28 @@ Foundation Models ほかの要件に合わせ iOS 18 未満にしない（LiteRT
 | `IPHONEOS_DEPLOYMENT_TARGET` | `18.0` |
 | Podfile `platform :ios` | `18.0` |
 
-Gemma E2B 経路は LiteRT-LM（Swift Package `https://github.com/google-ai-edge/LiteRT-LM`、
+LFM VL 経路は LiteRT-LM（Swift Package `https://github.com/google-ai-edge/LiteRT-LM`、
 product `LiteRTLM`）を使う。CocoaPods だけでは LiteRTLM がリンクされないため、
 アプリの Xcode / Flutter SPM 側で依存を解決する（`infra_gemma_meter_mobile` の
 README・podspec コメントを参照。`Runner.xcodeproj` にも LiteRTLM をリンクする）。
 LiteRT-LM を OSS ライセンス一覧（`extraOssLicenses`）の対象に含める。
 モデルはアプリ同梱せず、Android と同じ Hugging Face `litert-community`
-Gemma 4 E2B の単一 `.litertlm`（おおよそ 2.59 GB）をダウンロードする。
-置き場所は Documents/Models/`gemma_meter/` とし、OS バックアップから除外する。
-旧 CoreMLLLM ツリー（Documents/Models/`gemma4-e2b/`）が残っていれば prepare /
+LFM2.5-VL-1.6B の単一 `.litertlm`（`LFM2.5-VL-1.6B_int4_fixB.litertlm`、おおよそ 1.30 GB）をダウンロードする。
+置き場所は Documents/Models/`lfm_meter/` とし、OS バックアップから除外する。
+旧ツリー（Documents/Models/`gemma_meter/` および `gemma4-e2b/`）が残っていれば prepare /
 availability 時に削除する。空き容量は推定取得量＋余裕（一時／キャッシュ用、
 おおよそ 500 MB）を要求する（モデル実体の二重サイズは見ない）。版は運用追従
-（アプリに特定 SHA を埋め込まない）。Engine は main `backend: gpu`、
-`visionBackend: gpu`、`speculativeDecodingConfig.mode: on`（MTP）。
+（アプリに特定 SHA を埋め込まない）。Engine は main `backend: cpu`、
+`visionBackend: cpu`、`speculativeDecodingConfig.mode: off`（MTP OFF）。
 availability の `ready` は当該プロセスで `Engine.initialize()` が成功していること
 （prepare の warm-load または getAvailability 時の初期化を含む）。永続化した
 過去の成功だけでは ready にしない。取得後のファイルは最小妥当サイズ未満なら
 未完了扱いとし、デバイス固有の初期化失敗では妥当サイズの成果物を消さない。
 コンテナ破損や MTP 非対応と判定できる初期化失敗では成果物を消し、次回 prepare で
-再取得する。artifact generation stamp（`litert-mtp-gpu-v1`）は取得完了時に付け、
+再取得する。artifact generation stamp（`litert-lfm25-vl-int4-fixB-v1`）は取得完了時に付け、
 初期化成功とは別とする。stamp が無い／違う既存ファイルは一度だけ再取得する。
-GPU 初期化失敗後も現行世代の成果物は保持・再利用する。
-デバッグ表示の backend / visionBackend は設定どおり `gpu` / `gpu`。
+デバイス固有の初期化失敗後も現行世代の成果物は保持・再利用する。
+デバッグ表示の backend / visionBackend は設定どおり（Android `gpu` / `cpu`、iOS `cpu` / `cpu`）。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 
