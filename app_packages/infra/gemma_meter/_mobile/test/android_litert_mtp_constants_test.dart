@@ -44,10 +44,7 @@ void main() {
     expect(source, contains('"backend" to "gpu"'));
     expect(source, contains('"visionBackend" to "cpu"'));
     expect(source, contains('MODEL_DIR = "lfm_meter"'));
-    expect(
-      source,
-      contains('LFM2.5-VL-1.6B_int4_fixB.litertlm'),
-    );
+    expect(source, contains('LFM2.5-VL-1.6B_int4_fixB.litertlm'));
     expect(
       source,
       contains(
