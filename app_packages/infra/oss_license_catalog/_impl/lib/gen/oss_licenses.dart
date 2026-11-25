@@ -40594,7 +40594,7 @@ const _tutorial_coach_mark = Package(
     version: '1.3.4',
     spdxIdentifiers: ['MIT'],
     isMarkdown: false,
-    isSdk: true,
+    isSdk: false,
     dependencies: [PackageRef('flutter')],
     devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
     license: '''MIT License

@@ -83,7 +83,6 @@ final class CoachMarkLauncher {
       paddingFocus: 4,
       enableOverlayTab: false,
       enableTargetTab: false,
-      enableTargetPassThrough: step.allowTargetInteraction,
       contents: [
         TargetContent(
           align: contentAlignFor(hole: hole, screenSize: size),
@@ -104,11 +103,8 @@ final class CoachMarkLauncher {
       paddingFocus: 4,
       focusAnimationDuration: const Duration(milliseconds: 300),
       unFocusAnimationDuration: const Duration(milliseconds: 200),
-      // PopScope で戻るを握る（モーダルルートは使わない）。
+      // OS 戻るをライブラリ側で無効化する。
       disableBackButton: true,
-      onSystemBack: step.blockSystemBack
-          ? null
-          : () => complete(CoachMarkDismissReason.systemBack),
       onFinish: () {
         // finish() 経由で外されたとき、未完了なら primary 相当として閉じる。
         final pending = _activeCompleter;
@@ -155,6 +151,8 @@ final class CoachMarkLauncher {
 
   /// 完了理由を確定し、オーバーレイを外す。
   ///
+  /// 未挿入時は上流の `Future.delayed(Duration.zero)` のあとに外す。
+  ///
   /// Example:
   /// ```dart
   /// _finishActive(CoachMarkDismissReason.primary);
@@ -164,8 +162,17 @@ final class CoachMarkLauncher {
     final tutorial = _active;
     _activeCompleter = null;
     _active = null;
-    // 未挿入（postFrame 待ち）でもキャンセルして遅延挿入を止める。
-    tutorial?.removeOverlayEntry();
+    if (tutorial != null) {
+      // 未挿入なら上流の Future.delayed(Duration.zero) のあとに外す。
+      // 先に remove/closeHiddenView すると disableBackButton 経路が _contextTutorial! で落ちる。
+      if (tutorial.isShowing) {
+        tutorial.removeOverlayEntry();
+      } else {
+        Future.delayed(Duration.zero, () {
+          tutorial.removeOverlayEntry();
+        });
+      }
+    }
     if (completer != null && !completer.isCompleted) {
       completer.complete(reason);
     }

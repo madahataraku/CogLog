@@ -277,7 +277,6 @@ CoachMarkStep _mainCoachMarkStep(TutorialMainStep step) {
       body: strings.screen_feature_top_tutorial_main_3_body,
       primaryLabel: strings.view_coach_mark_next,
       secondaryLabel: strings.view_coach_mark_skip,
-      blockSystemBack: false,
     ),
     TutorialMainStep.meterRecommend => CoachMarkStep(
       targetId: CoachMarkTargetId.navMeterCapture,

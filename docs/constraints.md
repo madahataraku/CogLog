@@ -19,8 +19,7 @@
 
 ## tutorial_coach_mark
 
-- チュートリアルのハイライトは `tutorial_coach_mark` を用いる。実効バージョンはルート `pubspec.yaml` の `dependency_overrides` で固定する。
-- 目標設定文脈で穴下のフォームへポインタを通すため、`app_packages_fork/tutorial_coach_mark` を path 上書きする（上流 1.3.4 ベース。`TargetFocus.enableTargetPassThrough`、遅延 show のキャンセル、`PopScope` による戻る捕捉を追加）。
+- チュートリアルのハイライトは `tutorial_coach_mark` を用いる。実効バージョンはルート `pubspec.yaml` の `dependency_overrides` で pub 版を固定する（path フォークしない）。
 - 依存は OSS ライセンス一覧の再生成対象に含める。
 
 ## フレーバー

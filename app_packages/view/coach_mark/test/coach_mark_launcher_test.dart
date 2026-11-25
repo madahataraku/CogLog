@@ -65,7 +65,10 @@ void main() {
       ),
     );
     CoachMarkLauncher.dismissActive();
+    // 上流の遅延 insert と、その直後の tearDown を進める。
     await tester.pump();
+    await tester.pump(Duration.zero);
+    await tester.pump(Duration.zero);
     await tester.pump(const Duration(milliseconds: 800));
     expect(await future, CoachMarkDismissReason.forced);
     expect(find.text('破棄'), findsNothing);

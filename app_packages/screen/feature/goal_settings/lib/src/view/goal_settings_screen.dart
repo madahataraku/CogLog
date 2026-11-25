@@ -64,24 +64,18 @@ class GoalSettingsScreen extends HookConsumerWidget {
             title: strings.screen_feature_goal_settings_tutorial_1_title,
             body: strings.screen_feature_goal_settings_tutorial_1_body,
             primaryLabel: LocalizeStringDelegate.get('view_coach_mark_next'),
-            allowTargetInteraction: true,
-            blockSystemBack: false,
           ),
           CoachMarkStep(
             targetId: CoachMarkTargetId.goalWeeklyDays,
             title: strings.screen_feature_goal_settings_tutorial_2_title,
             body: strings.screen_feature_goal_settings_tutorial_2_body,
             primaryLabel: LocalizeStringDelegate.get('view_coach_mark_next'),
-            allowTargetInteraction: true,
-            blockSystemBack: false,
           ),
           CoachMarkStep(
             targetId: CoachMarkTargetId.goalAutoUpdate,
             title: strings.screen_feature_goal_settings_tutorial_3_title,
             body: strings.screen_feature_goal_settings_tutorial_3_body,
             primaryLabel: LocalizeStringDelegate.get('view_coach_mark_close'),
-            allowTargetInteraction: true,
-            blockSystemBack: false,
           ),
         ];
         for (final step in steps) {
