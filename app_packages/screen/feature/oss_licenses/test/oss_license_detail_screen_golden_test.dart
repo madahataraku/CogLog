@@ -54,6 +54,12 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void goToMeterCaptureTab() {}
+
+  @override
+  void goToTrendsTab() {}
+
+  @override
+  void goToExerciseHistoryTab() {}
 }
 
 final class _FakeLoadOssLicensesUsecase implements LoadOssLicensesUsecase {

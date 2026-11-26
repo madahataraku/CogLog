@@ -207,6 +207,36 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     navigation.goToGoalSettingsTab();
   }
 
+  /// メーター記録タブへ切り替える（段階4用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.goToMeterCaptureTab();
+  /// ```
+  void goToMeterCaptureTab() {
+    navigation.goToMeterCaptureTab();
+  }
+
+  /// 推移タブへ切り替える（段階5用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.goToTrendsTab();
+  /// ```
+  void goToTrendsTab() {
+    navigation.goToTrendsTab();
+  }
+
+  /// 運動履歴タブへ切り替える（段階6用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.goToExerciseHistoryTab();
+  /// ```
+  void goToExerciseHistoryTab() {
+    navigation.goToExerciseHistoryTab();
+  }
+
   /// アチーブメント文脈の要否を評価する。
   ///
   /// Example:
