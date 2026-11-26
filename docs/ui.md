@@ -98,7 +98,7 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - ハイライト表示は `tutorial_coach_mark`（`TutorialCoachMark` / `TargetFocus`）を pub 依存で使う。`showFDialog` は使わない。
 - 実効版はルート `dependency_overrides` で固定する（path フォークしない）。
 - ハイライト対象は `CoachMarkTarget` で `CoachMarkTargetId` を登録し、表示時の矩形を `TargetPosition` に渡す。キー未解決時は画面中央の矩形にフォールバックする。
-- 吹き出し（タイトル・本文・主／副ボタン）は `TargetContent` の子として `view_coach_mark` が描く。穴が画面下半分なら上、さもなくば下に置く。ライブラリ標準の SKIP は隠す。
+- 吹き出し（タイトル・本文・主／副ボタン）は `TargetContent` の子として `view_coach_mark` が描く。穴の外に十分な余白があれば、穴が下寄りなら上・上寄りなら下に置く。撮影プレビューやグラフなど大きな穴で余白が足りないときは、画面内に収まるよう `ContentAlign.custom` で端に固定し、主／副ボタンを操作できる位置を確保する。ライブラリ標準の SKIP は隠す。
 - 外側タップ・ハイライト外タップ・背面スクロール・穴下のフォーム操作は無効。メイン段階3のスキップはメイン完了扱い。表示中の OS 戻るはライブラリにより無効。
 - 読み取り中モーダル表示中はコーチマークを出さない／隠す。提示済みにはしない。
 - チュートリアル表示中はモデル未ダウンロード誘導を出さない。抑止では誘導の提示済みにしない。

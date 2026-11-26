@@ -5,6 +5,7 @@ import 'package:screen_feature_top/src/viewmodel/delegate/on_acknowledge_gemma_m
 import 'package:screen_feature_top/src/viewmodel/delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_evaluate_gemma_meter_guidance_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_initialize_delegate.dart';
+import 'package:screen_feature_top/src/viewmodel/delegate/on_park_tutorial_main_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_select_metric_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/top_screen_state_to_entity_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/state/top_screen_state.dart';
@@ -14,6 +15,7 @@ import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 final class _Load implements LoadTopScreenUsecase {
@@ -219,6 +221,33 @@ void main() {
 
     expect(load.calls, 2);
     expect(advice.calls, 2);
+  });
+
+  test('再初期化は進行中のメイン段階を消さない', () async {
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          pendingTutorialMain: true,
+          tutorialMainStep: TutorialMainStep.goalProgressIntro,
+          pendingModelDownloadGuidance: true,
+          pendingGemmaMeterGuidance: true,
+          pendingTutorialAchievement: true,
+        ),
+      );
+    });
+    await _runInitialize(state: state);
+    expect(state.state.pendingTutorialMain, isTrue);
+    expect(state.state.tutorialMainStep, TutorialMainStep.goalProgressIntro);
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.pendingGemmaMeterGuidance, isFalse);
+    expect(state.state.pendingTutorialAchievement, isFalse);
+  });
+
+  test('OnParkTutorialMain は pending と step を戻す', () async {
+    await OnParkTutorialMainDelegate(state: state)
+        .execute(TutorialMainStep.goalRecommend);
+    expect(state.state.pendingTutorialMain, isTrue);
+    expect(state.state.tutorialMainStep, TutorialMainStep.goalRecommend);
   });
 
   test('未ダウンロードかつ未提示なら pending true', () async {

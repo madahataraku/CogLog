@@ -172,6 +172,16 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     return OnAcknowledgeTutorialMainDelegate(state: state).execute();
   }
 
+  /// 連鎖を中断し、[step] からホーム復帰時に再開できるよう pending を戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onParkTutorialMain(TutorialMainStep.goalProgressIntro);
+  /// ```
+  Future<void> onParkTutorialMain(TutorialMainStep step) {
+    return OnParkTutorialMainDelegate(state: state).execute(step);
+  }
+
   /// メイン段階を進める。
   ///
   /// Example:
@@ -184,8 +194,17 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     return OnAdvanceTutorialMainDelegate(
       state: state,
       advanceUsecase: advanceTutorialMainUsecase,
-      navigation: navigation,
     ).execute(request);
+  }
+
+  /// 目標設定タブへ切り替える（段階3の次へ用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.goToGoalSettingsTab();
+  /// ```
+  void goToGoalSettingsTab() {
+    navigation.goToGoalSettingsTab();
   }
 
   /// アチーブメント文脈の要否を評価する。
