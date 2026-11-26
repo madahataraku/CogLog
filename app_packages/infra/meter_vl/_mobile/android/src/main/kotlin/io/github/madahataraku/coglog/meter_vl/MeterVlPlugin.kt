@@ -34,6 +34,7 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
   private var prepareEvents: EventChannel.EventSink? = null
   private val executor = Executors.newSingleThreadExecutor()
   private val preparing = AtomicBoolean(false)
+  private val generating = AtomicBoolean(false)
   private var engine: Engine? = null
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -99,6 +100,12 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
           }
         }
       }
+      "deleteDownloadedModels" -> {
+        executor.execute { deleteDownloadedModels(result) }
+      }
+      "isOperationBusy" -> {
+        result.success(preparing.get() || generating.get())
+      }
       else -> result.notImplemented()
     }
   }
@@ -137,8 +144,19 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
   }
 
   private fun prepareModel(result: Result) {
-    if (!preparing.compareAndSet(false, true)) {
-      runOnMain { result.success(null) }
+    if (generating.get() || !preparing.compareAndSet(false, true)) {
+      runOnMain {
+        prepareEvents?.error(
+          "busy",
+          "LFM VL meter operation is in progress.",
+          null,
+        )
+        result.error(
+          "busy",
+          "LFM VL meter operation is in progress.",
+          null,
+        )
+      }
       return
     }
     try {
@@ -272,23 +290,61 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
     imageBytes: ByteArray,
     requireReady: Boolean,
   ): String {
-    val model = modelFile()
-    if (model == null || !model.isFile || model.length() == 0L) {
-      if (requireReady) {
-        throw IllegalStateException("LFM VL meter model is not ready.")
-      }
-      throw IllegalStateException("LFM VL meter model is not downloaded.")
+    if (preparing.get()) {
+      throw IllegalStateException("LFM VL meter prepare is running.")
     }
-    val active = ensureEngine(model)
-    active.createConversation().use { conversation ->
-      val response =
-        conversation.sendMessage(
-          Contents.of(
-            Content.ImageBytes(imageBytes),
-            Content.Text(prompt),
-          ),
-        )
-      return response.toString()
+    if (!generating.compareAndSet(false, true)) {
+      throw IllegalStateException("LFM VL meter generate is already running.")
+    }
+    try {
+      val model = modelFile()
+      if (model == null || !model.isFile || model.length() == 0L) {
+        if (requireReady) {
+          throw IllegalStateException("LFM VL meter model is not ready.")
+        }
+        throw IllegalStateException("LFM VL meter model is not downloaded.")
+      }
+      val active = ensureEngine(model)
+      active.createConversation().use { conversation ->
+        val response =
+          conversation.sendMessage(
+            Contents.of(
+              Content.ImageBytes(imageBytes),
+              Content.Text(prompt),
+            ),
+          )
+        return response.toString()
+      }
+    } finally {
+      generating.set(false)
+    }
+  }
+
+  private fun deleteDownloadedModels(result: Result) {
+    if (generating.get() || !preparing.compareAndSet(false, true)) {
+      runOnMain {
+        result.error("busy", "LFM VL meter operation is in progress.", null)
+      }
+      return
+    }
+    try {
+      closeEngine()
+      clearEngineStamp()
+      val ctx = appContext
+      if (ctx != null) {
+        val dir = File(ctx.noBackupFilesDir, MODEL_DIR)
+        if (dir.exists()) {
+          dir.deleteRecursively()
+        }
+      }
+      removeLegacyGemmaModelIfPresent()
+      runOnMain { result.success(null) }
+    } catch (error: Exception) {
+      runOnMain {
+        result.error("generic", safeMessage(error), null)
+      }
+    } finally {
+      preparing.set(false)
     }
   }
 
@@ -385,7 +441,12 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
   }
 
   private fun clearEngineStamp() {
-    prefs().edit().remove(ENGINE_STAMP_KEY).apply()
+    val context = appContext ?: return
+    context
+      .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+      .edit()
+      .remove(ENGINE_STAMP_KEY)
+      .apply()
   }
 
   /**

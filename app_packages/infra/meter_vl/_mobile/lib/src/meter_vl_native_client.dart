@@ -63,4 +63,20 @@ abstract interface class MeterVlNativeClient {
   /// }
   /// ```
   Stream<double> prepareModel();
+
+  /// モデル成果物・stamp・engine・legacy Gemma を削除する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await client.deleteDownloadedModels();
+  /// ```
+  Future<void> deleteDownloadedModels();
+
+  /// prepare / generate 実行中なら true。
+  ///
+  /// Example:
+  /// ```dart
+  /// await client.isOperationBusy;
+  /// ```
+  Future<bool> get isOperationBusy;
 }

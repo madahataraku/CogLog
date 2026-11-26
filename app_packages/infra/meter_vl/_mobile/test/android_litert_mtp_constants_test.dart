@@ -53,5 +53,8 @@ void main() {
     );
     expect(source, contains('LEGACY_MODEL_DIR = "gemma_meter"'));
     expect(source, contains('removeLegacyGemmaModelIfPresent'));
+    expect(source, contains('deleteDownloadedModels'));
+    expect(source, contains('isOperationBusy'));
+    expect(source, contains('private val generating = AtomicBoolean(false)'));
   });
 }

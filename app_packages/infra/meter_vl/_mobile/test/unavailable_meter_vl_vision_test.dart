@@ -23,4 +23,10 @@ void main() {
     );
     await expectLater(meterVl.prepareModel().toList(), throwsStateError);
   });
+
+  test('deleteDownloadedModels は no-op、isOperationBusy は false', () async {
+    const meterVl = UnavailableMeterVlVision();
+    await meterVl.deleteDownloadedModels();
+    expect(await meterVl.isOperationBusy, isFalse);
+  });
 }

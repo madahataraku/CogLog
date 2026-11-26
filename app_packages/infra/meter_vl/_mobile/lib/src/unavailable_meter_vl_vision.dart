@@ -94,4 +94,22 @@ final class UnavailableMeterVlVision implements MeterVlVision {
   Stream<double> prepareModel() {
     return Stream.error(StateError('MeterVlVision is unavailable'));
   }
+
+  /// ネイティブ未接続のため削除対象は無く、成功として何もしない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableMeterVlVision().deleteDownloadedModels();
+  /// ```
+  @override
+  Future<void> deleteDownloadedModels() async {}
+
+  /// ネイティブ未接続のため prepare／generate は走らず、常に非 busy。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableMeterVlVision().isOperationBusy;
+  /// ```
+  @override
+  Future<bool> get isOperationBusy async => false;
 }

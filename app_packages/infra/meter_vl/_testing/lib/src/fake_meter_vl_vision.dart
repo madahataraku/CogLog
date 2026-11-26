@@ -28,6 +28,8 @@ final class FakeMeterVlVision implements MeterVlVision {
     this.throwOnAvailabilitySnapshot = false,
     this.hangOnPrepare = false,
     this.prepareFailureKind,
+    this.operationBusy = false,
+    this.throwOnDelete = false,
     MeterVlAvailabilitySnapshot? availabilitySnapshot,
   }) : availabilitySnapshotValue =
            availabilitySnapshot ??
@@ -66,11 +68,20 @@ final class FakeMeterVlVision implements MeterVlVision {
   /// 非 null のとき [prepareModel] が [MeterVlPrepareException] を投げる。
   final MeterVlPrepareFailureKind? prepareFailureKind;
 
+  /// テストが [isOperationBusy] の真偽を切り替えるための値。
+  bool operationBusy;
+
+  /// true のとき [deleteDownloadedModels] が [MeterVlPrepareException] を投げる。
+  final bool throwOnDelete;
+
   /// [generateWithImage] が呼ばれた回数。
   int generateWithImageCallCount = 0;
 
   /// [prepareModel] が呼ばれた回数。
   int prepareModelCallCount = 0;
+
+  /// テストが削除経路の呼出回数を検証するためのカウンタ。
+  int deleteDownloadedModelsCallCount = 0;
 
   /// [hangOnPrepare] 時に購読が解除された回数。
   int prepareCancelCount = 0;
@@ -171,4 +182,27 @@ final class FakeMeterVlVision implements MeterVlVision {
     }
     return Stream<double>.value(1.0);
   }
+
+  /// 呼出回数を増やし、[throwOnDelete] なら失敗させる。readiness は変えない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await FakeMeterVlVision(throwOnDelete: true).deleteDownloadedModels();
+  /// ```
+  @override
+  Future<void> deleteDownloadedModels() async {
+    deleteDownloadedModelsCallCount++;
+    if (throwOnDelete) {
+      throw const MeterVlPrepareException(MeterVlPrepareFailureKind.generic);
+    }
+  }
+
+  /// [operationBusy] をそのまま返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await FakeMeterVlVision(operationBusy: true).isOperationBusy;
+  /// ```
+  @override
+  Future<bool> get isOperationBusy async => operationBusy;
 }

@@ -47,6 +47,31 @@ void main() {
     expect(meterVl.prepareModelCallCount, 1);
   });
 
+  test('deleteDownloadedModels はカウンタと throwOnDelete', () async {
+    final meterVl = FakeMeterVlVision();
+    await meterVl.deleteDownloadedModels();
+    expect(meterVl.deleteDownloadedModelsCallCount, 1);
+
+    final failing = FakeMeterVlVision(throwOnDelete: true);
+    await expectLater(
+      failing.deleteDownloadedModels(),
+      throwsA(
+        isA<MeterVlPrepareException>().having(
+          (e) => e.kind,
+          'kind',
+          MeterVlPrepareFailureKind.generic,
+        ),
+      ),
+    );
+  });
+
+  test('isOperationBusy は operationBusy を返す', () async {
+    final meterVl = FakeMeterVlVision(operationBusy: true);
+    expect(await meterVl.isOperationBusy, isTrue);
+    meterVl.operationBusy = false;
+    expect(await meterVl.isOperationBusy, isFalse);
+  });
+
   test('generateWithImage は固定文を返す', () async {
     final meterVl = FakeMeterVlVision(response: 'DISTANCE_KM=2');
     expect(

@@ -36,6 +36,7 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.meter_vl")
   private var prepareEvents: FlutterEventSink?
   private var preparing = false
+  private var generating = false
   private var lastEmittedProgressBucket = -1
   #if canImport(LiteRTLM)
   private var engine: Engine?
@@ -72,6 +73,10 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       }
     case "prepareModel":
       queue.async { self.prepareModel(result: result) }
+    case "deleteDownloadedModels":
+      queue.async { self.deleteDownloadedModels(result: result) }
+    case "isOperationBusy":
+      result(self.preparing || self.generating)
     case "generateWithImage", "diagnoseGenerateWithImage":
       let prompt = args["prompt"] as? String ?? ""
       let imageBytes = (args["imageBytes"] as? FlutterStandardTypedData)?.data ?? Data()
@@ -147,12 +152,12 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
   private func prepareModel(result: @escaping FlutterResult) {
     #if canImport(LiteRTLM)
-    if preparing {
+    if preparing || generating {
       DispatchQueue.main.async {
         result(
           FlutterError(
-            code: "generic",
-            message: "LFM VL meter prepare is already running.",
+            code: "busy",
+            message: "LFM VL meter operation is in progress.",
             details: nil
           )
         )
@@ -203,8 +208,71 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     #endif
   }
 
+  private func deleteDownloadedModels(result: @escaping FlutterResult) {
+    if preparing || generating {
+      DispatchQueue.main.async {
+        result(
+          FlutterError(
+            code: "busy",
+            message: "LFM VL meter operation is in progress.",
+            details: nil
+          )
+        )
+      }
+      return
+    }
+    preparing = true
+    defer { preparing = false }
+    #if canImport(LiteRTLM)
+    do {
+      markLoadFailed()
+      clearEngineStamp()
+      if let modelDir = modelDirectoryURL(),
+        FileManager.default.fileExists(atPath: modelDir.path)
+      {
+        try FileManager.default.removeItem(at: modelDir)
+      }
+      removeLegacyCoreMLModelIfPresent()
+      removeLegacyGemmaLiteRtModelIfPresent()
+      DispatchQueue.main.async { result(nil) }
+    } catch {
+      DispatchQueue.main.async {
+        result(
+          FlutterError(
+            code: "generic",
+            message: Self.safeMessage(error),
+            details: nil
+          )
+        )
+      }
+    }
+    #else
+    let message =
+      "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM."
+    DispatchQueue.main.async {
+      result(FlutterError(code: "generic", message: message, details: nil))
+    }
+    #endif
+  }
+
   #if canImport(LiteRTLM)
   private func generate(prompt: String, imageBytes: Data, requireReady: Bool) throws -> String {
+    if preparing {
+      throw NSError(
+        domain: "MeterVl",
+        code: 2,
+        userInfo: [NSLocalizedDescriptionKey: "LFM VL meter prepare is running."]
+      )
+    }
+    if generating {
+      throw NSError(
+        domain: "MeterVl",
+        code: 2,
+        userInfo: [NSLocalizedDescriptionKey: "LFM VL meter generate is already running."]
+      )
+    }
+    generating = true
+    defer { generating = false }
     if !isModelDownloaded() {
       throw NSError(
         domain: "MeterVl",

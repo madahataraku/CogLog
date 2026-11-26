@@ -59,5 +59,8 @@ void main() {
     expect(source, isNot(contains('import CoreMLLLM')));
     expect(source, isNot(contains('mlboydaisuke')));
     expect(source, contains('modelFolderName = "lfm_meter"'));
+    expect(source, contains('deleteDownloadedModels'));
+    expect(source, contains('isOperationBusy'));
+    expect(source, contains('private var generating = false'));
   });
 }

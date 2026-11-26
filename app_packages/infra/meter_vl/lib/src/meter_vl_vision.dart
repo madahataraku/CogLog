@@ -79,6 +79,25 @@ abstract interface class MeterVlVision {
   /// }
   /// ```
   Stream<double> prepareModel();
+
+  /// 保持中の LFM VL 成果物と Gemma 時代の旧成果物を削除する。
+  ///
+  /// 未保持なら成功（no-op）。prepare / generate 実行中は失敗する。
+  /// 誘導の提示済みフラグは変更しない。
+  ///
+  /// Example:
+  /// ```dart
+  /// await meterVl.deleteDownloadedModels();
+  /// ```
+  Future<void> deleteDownloadedModels();
+
+  /// prepare または generate がネイティブで実行中なら true。
+  ///
+  /// Example:
+  /// ```dart
+  /// await meterVl.isOperationBusy;
+  /// ```
+  Future<bool> get isOperationBusy;
 }
 
 /// メーター VL 経路の注入点。未接続のときは失敗する。
