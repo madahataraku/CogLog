@@ -119,10 +119,11 @@ void main() {
   });
 
   // テスト対象:
-  // 撮影タブ離脱相当の無差別 dismissActive がホーム連鎖を壊すこと
+  // ホーム段階1表示中に無差別 dismissActive した場合の連鎖停止
   //
   // テスト内容:
-  // 段階1表示中の forced 破棄で連鎖が止まり、段階2は出ない。
+  // forced 破棄で連鎖が止まり段階2は出ない（撮影タブが main を閉じた旧不具合の症状）。
+  // 撮影タブ側は shouldDismissCoachMarkForMeterTutorial(main)==false で閉じない。
   testWidgets('表示中の forced 破棄で連鎖が止まる', (tester) async {
     final registry = CoachMarkRegistry();
     late BuildContext savedContext;

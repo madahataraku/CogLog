@@ -14,6 +14,7 @@ import '../viewmodel/meter_capture_screen_view_model.dart';
 import '../viewmodel/state/meter_capture_step.dart';
 import 'meter_capture_screen_body.dart';
 import 'meter_capture_screen_providers.dart';
+import 'meter_tutorial_dismiss_policy.dart';
 
 /// メーターパネル写真から運動履歴を作成する画面。
 ///
@@ -63,7 +64,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
       if (!selected) {
         unawaited(viewModel.onLeaveMeterTab());
         final kind = tutorialSession.activeKind;
-        if (kind == TutorialKind.camera || kind == TutorialKind.meterEdit) {
+        if (shouldDismissCoachMarkForMeterTutorial(kind)) {
           CoachMarkLauncher.dismissActive();
           tutorialSession.clearActive();
         }
@@ -96,7 +97,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
       }
       // 読み取り中は撮影／編集文脈だけ隠し、提示済みにしない。
       final kind = tutorialSession.activeKind;
-      if (kind == TutorialKind.camera || kind == TutorialKind.meterEdit) {
+      if (shouldDismissCoachMarkForMeterTutorial(kind)) {
         CoachMarkLauncher.dismissActive();
       }
       unawaited(viewModel.onSuppressTutorialForReading());

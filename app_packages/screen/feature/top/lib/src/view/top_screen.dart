@@ -155,10 +155,8 @@ class TopScreen extends HookConsumerWidget {
             return;
           }
           if (reason == CoachMarkDismissReason.forced) {
-            // 外部破棄でもホーム前面なら同じ段階から再開する。
-            if (canShowOnHome()) {
-              await viewModel.onParkTutorialMain(step);
-            }
+            // ホーム離脱・背面と重なっても同じ段階を pending に残し、復帰で再開する。
+            await viewModel.onParkTutorialMain(step);
             return;
           }
           if (reason == CoachMarkDismissReason.secondary ||
