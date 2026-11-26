@@ -116,7 +116,7 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  padding: const EdgeInsets.only(top: 16),
                   child: Text(
                     strings
                         .screen_feature_exercise_history_detail_page_position(
@@ -164,7 +164,7 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
                         return const Center(child: FCircularProgress());
                       }
                       return SingleChildScrollView(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.only(bottom: 16),
                         child: _DetailFields(entity: entity),
                       );
                     },
@@ -194,7 +194,7 @@ class ExerciseHistoryDetailScreenBody extends HookConsumerWidget {
               ),
             )
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(bottom: 16),
               child: _DetailFields(entity: entity),
             ),
     );

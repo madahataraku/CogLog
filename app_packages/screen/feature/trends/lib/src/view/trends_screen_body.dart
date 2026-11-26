@@ -123,10 +123,15 @@ class TrendsScreenBody extends ConsumerWidget {
             Expanded(
               child: CoachMarkTarget(
                 id: CoachMarkTargetId.trendsChart,
-                child: TrendsChart(
-                  loading: entity.loading,
-                  buckets: screenState.buckets,
-                  series: entity.visibleSeries,
+                child: FCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: TrendsChart(
+                      loading: entity.loading,
+                      buckets: screenState.buckets,
+                      series: entity.visibleSeries,
+                    ),
+                  ),
                 ),
               ),
             ),
