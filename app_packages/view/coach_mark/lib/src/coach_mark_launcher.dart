@@ -277,26 +277,51 @@ final class CoachMarkLauncher {
     final tutorial = _active;
     _activeCompleter = null;
     _active = null;
-    if (tutorial != null) {
-      // 未挿入なら上流の Future.delayed(Duration.zero) のあとに外す。
-      // 先に remove/closeHiddenView すると disableBackButton 経路が _contextTutorial! で落ちる。
-      if (tutorial.isShowing) {
-        tutorial.removeOverlayEntry();
-      } else {
-        Future.delayed(Duration.zero, () {
-          tutorial.removeOverlayEntry();
-        });
+
+    void completeLater() {
+      if (completer == null || completer.isCompleted) {
+        return;
       }
-    }
-    if (completer != null && !completer.isCompleted) {
       // removeRoute 同期処理のあとに積まれる Focus 微タスクより後へ回す。
       // 同期 complete だと呼び出し側の連鎖 show が Navigator.push と競合し、
-      // ホーム初回の段階1→2 などで次段階が出ない。
+      // 目標設定文脈の 3 手やホーム段階連鎖などで次段階が出ない。
       scheduleMicrotask(() {
         if (!completer.isCompleted) {
           completer.complete(reason);
         }
       });
+    }
+
+    if (tutorial != null) {
+      // 未挿入なら上流の Future.delayed(Duration.zero) のあとに外す。
+      // 先に remove/closeHiddenView すると disableBackButton 経路が _contextTutorial! で落ちる。
+      // 未挿入経路では遅延削除のあとで complete し、直後の再 show と競合させない。
+      // 呼び出し元 Widget の dispose 中は Navigator 祖先が不安定なため失敗を握る。
+      if (tutorial.isShowing) {
+        _removeOverlayQuietly(tutorial);
+        completeLater();
+      } else {
+        Future.delayed(Duration.zero, () {
+          _removeOverlayQuietly(tutorial);
+          completeLater();
+        });
+      }
+      return;
+    }
+    completeLater();
+  }
+
+  /// [removeOverlayEntry] を試し、deactivate 済み context では失敗を握る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _removeOverlayQuietly(tutorial);
+  /// ```
+  static void _removeOverlayQuietly(TutorialCoachMark tutorial) {
+    try {
+      tutorial.removeOverlayEntry();
+    } on Object {
+      // dispose 中の Navigator.of 失敗など。参照は呼び出し側で既に外している。
     }
   }
 

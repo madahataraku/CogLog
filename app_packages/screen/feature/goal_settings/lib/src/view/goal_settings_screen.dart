@@ -51,6 +51,7 @@ class GoalSettingsScreen extends HookConsumerWidget {
       if (!tabSelected || !entity.loaded) {
         return null;
       }
+      var cancelled = false;
       bool isGoalTabSelected() =>
           (ShellTabIndexScope.maybeOf(context) ?? -1) == 4;
       void rollbackSession() {
@@ -59,7 +60,7 @@ class GoalSettingsScreen extends HookConsumerWidget {
       }
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!context.mounted || !isGoalTabSelected()) {
+        if (cancelled || !context.mounted || !isGoalTabSelected()) {
           return;
         }
         final decision = await evaluate.execute(
@@ -68,9 +69,11 @@ class GoalSettingsScreen extends HookConsumerWidget {
         if (!decision.shouldShow) {
           return;
         }
-        // 出すときだけレイアウトを待ち、出さない経路では Timer／余剰フレームを残さない。
+        // 出すときだけレイアウトと Navigator 後始末を待ち、出さない経路では
+        // Timer／余剰フレームを残さない。
         await WidgetsBinding.instance.endOfFrame;
-        if (!context.mounted || !isGoalTabSelected()) {
+        await Future<void>.delayed(Duration.zero);
+        if (cancelled || !context.mounted || !isGoalTabSelected()) {
           rollbackSession();
           return;
         }
@@ -94,26 +97,47 @@ class GoalSettingsScreen extends HookConsumerWidget {
             primaryLabel: LocalizeStringDelegate.get('view_coach_mark_close'),
           ),
         ];
-        for (final step in steps) {
-          if (!context.mounted || !isGoalTabSelected()) {
+        try {
+          for (var i = 0; i < steps.length; i++) {
+            if (cancelled || !context.mounted || !isGoalTabSelected()) {
+              rollbackSession();
+              return;
+            }
+            final reason = await CoachMarkLauncher.show(
+              context,
+              step: steps[i],
+            );
+            if (reason == CoachMarkDismissReason.forced) {
+              rollbackSession();
+              return;
+            }
+            // 3手の直後連鎖で disableBackButton の removeRoute と次 show の
+            // Navigator.push が競合しないよう、フレーム境界を挟む。
+            if (i < steps.length - 1) {
+              await WidgetsBinding.instance.endOfFrame;
+            }
+          }
+          if (cancelled || !context.mounted || !isGoalTabSelected()) {
             rollbackSession();
             return;
           }
-          final reason = await CoachMarkLauncher.show(context, step: step);
-          if (reason == CoachMarkDismissReason.forced) {
-            rollbackSession();
-            return;
-          }
-        }
-        if (!context.mounted || !isGoalTabSelected()) {
+          await markSeen.execute(
+            const MarkTutorialContextSeenRequest(
+              kind: TutorialKind.goalSettings,
+            ),
+          );
+        } on Object {
           rollbackSession();
-          return;
         }
-        await markSeen.execute(
-          const MarkTutorialContextSeenRequest(kind: TutorialKind.goalSettings),
-        );
       });
-      return null;
+      return () {
+        cancelled = true;
+        // タブ切替・破棄時に所有中オーバーレイが残らないよう閉じ、session を戻す。
+        if (session.activeKind == TutorialKind.goalSettings) {
+          CoachMarkLauncher.dismissActive();
+          rollbackSession();
+        }
+      };
     }, [tabSelected, entity.loaded, evaluate, markSeen, session]);
 
     return const GoalSettingsScreenBody();
