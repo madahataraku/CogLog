@@ -1009,6 +1009,96 @@ abstract class L10n {
   /// **'reason'**
   String get screen_feature_debug_reason_label;
 
+  /// 確認本文
+  ///
+  /// In ja, this message translates to:
+  /// **'端末上の LFM VL（および旧 Gemma モデル）を削除し、Wi-Fi 経由で再取得します。モバイル回線では開始できません。'**
+  String get screen_feature_debug_redownload_confirm_body;
+
+  /// 確認のキャンセル
+  ///
+  /// In ja, this message translates to:
+  /// **'キャンセル'**
+  String get screen_feature_debug_redownload_confirm_cancel;
+
+  /// 確認の確定
+  ///
+  /// In ja, this message translates to:
+  /// **'再ダウンロード'**
+  String get screen_feature_debug_redownload_confirm_ok;
+
+  /// 確認ダイアログ見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'LFM VL を再ダウンロードしますか？'**
+  String get screen_feature_debug_redownload_confirm_title;
+
+  /// 競合
+  ///
+  /// In ja, this message translates to:
+  /// **'メーター読み取りまたはモデル準備の完了を待ってから再度お試しください。'**
+  String get screen_feature_debug_redownload_disabled_busy;
+
+  /// 二重開始
+  ///
+  /// In ja, this message translates to:
+  /// **'再ダウンロードの実行中です。'**
+  String get screen_feature_debug_redownload_disabled_running;
+
+  /// 非対応
+  ///
+  /// In ja, this message translates to:
+  /// **'この端末では LFM VL を利用できません。'**
+  String get screen_feature_debug_redownload_disabled_unavailable;
+
+  /// 共通失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'LFM VL の再ダウンロードに失敗しました。しばらくしてから再度お試しください。'**
+  String get screen_feature_debug_redownload_failed;
+
+  /// 通信失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'通信に失敗しました。接続を確認してから再度お試しください。'**
+  String get screen_feature_debug_redownload_failed_network;
+
+  /// 容量不足
+  ///
+  /// In ja, this message translates to:
+  /// **'空き容量が足りません。容量を確保してから再度お試しください。'**
+  String get screen_feature_debug_redownload_failed_storage;
+
+  /// Wi-Fi 以外
+  ///
+  /// In ja, this message translates to:
+  /// **'Wi-Fiに接続してから再度お試しください。'**
+  String get screen_feature_debug_redownload_failed_wifi;
+
+  /// LFM VL 強制再ダウンロードボタン
+  ///
+  /// In ja, this message translates to:
+  /// **'LFM VL を再ダウンロード'**
+  String get screen_feature_debug_redownload_meter_vl;
+
+  /// ボタン説明
+  ///
+  /// In ja, this message translates to:
+  /// **'保持中のモデルを削除してから再取得します'**
+  String get screen_feature_debug_redownload_meter_vl_description;
+
+  /// 実行中表示
+  ///
+  /// In ja, this message translates to:
+  /// **'LFM VL を再ダウンロード中…'**
+  String get screen_feature_debug_redownload_running;
+
+  /// 成功
+  ///
+  /// In ja, this message translates to:
+  /// **'LFM VL の再ダウンロードが完了しました。'**
+  String get screen_feature_debug_redownload_success;
+
   /// 診断再実行ボタン
   ///
   /// In ja, this message translates to:

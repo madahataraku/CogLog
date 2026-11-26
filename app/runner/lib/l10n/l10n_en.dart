@@ -557,6 +557,63 @@ class L10nEn extends L10n {
   String get screen_feature_debug_reason_label => 'reason';
 
   @override
+  String get screen_feature_debug_redownload_confirm_body =>
+      'This deletes on-device LFM VL (and legacy Gemma models) and downloads again over Wi-Fi. It will not start on mobile data.';
+
+  @override
+  String get screen_feature_debug_redownload_confirm_cancel => 'Cancel';
+
+  @override
+  String get screen_feature_debug_redownload_confirm_ok => 'Re-download';
+
+  @override
+  String get screen_feature_debug_redownload_confirm_title =>
+      'Re-download LFM VL?';
+
+  @override
+  String get screen_feature_debug_redownload_disabled_busy =>
+      'Wait until meter reading or model prepare finishes.';
+
+  @override
+  String get screen_feature_debug_redownload_disabled_running =>
+      'Re-download is already running.';
+
+  @override
+  String get screen_feature_debug_redownload_disabled_unavailable =>
+      'LFM VL is not available on this device.';
+
+  @override
+  String get screen_feature_debug_redownload_failed =>
+      'LFM VL re-download failed. Please try again later.';
+
+  @override
+  String get screen_feature_debug_redownload_failed_network =>
+      'Network error. Check your connection and try again.';
+
+  @override
+  String get screen_feature_debug_redownload_failed_storage =>
+      'Not enough storage. Free up space and try again.';
+
+  @override
+  String get screen_feature_debug_redownload_failed_wifi =>
+      'Connect to Wi-Fi and try again.';
+
+  @override
+  String get screen_feature_debug_redownload_meter_vl => 'Re-download LFM VL';
+
+  @override
+  String get screen_feature_debug_redownload_meter_vl_description =>
+      'Deletes the kept model and downloads it again';
+
+  @override
+  String get screen_feature_debug_redownload_running =>
+      'Re-downloading LFM VL…';
+
+  @override
+  String get screen_feature_debug_redownload_success =>
+      'LFM VL re-download finished.';
+
+  @override
   String get screen_feature_debug_run_diagnose => 'Re-diagnose';
 
   @override

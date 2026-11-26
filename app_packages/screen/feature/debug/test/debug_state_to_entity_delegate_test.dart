@@ -22,8 +22,7 @@ void main() {
 
   test('結果とログを写す', () {
     final entity = const DebugStateToEntityDelegate().execute(
-      DebugScreenState(
-        running: false,
+      DebugScreenState.initial.copyWith(
         result: const DiagnoseOnDeviceLlmResult(
           snapshot: OnDeviceLlmAvailabilitySnapshot(
             readiness: OnDeviceLlmReadiness.ready,
@@ -71,11 +70,7 @@ void main() {
 
   test('古い行が先（3件）', () {
     final entity = const DebugStateToEntityDelegate().execute(
-      DebugScreenState(
-        running: false,
-        result: null,
-        meterVlResult: null,
-        preferLfmVlOverOsLlm: false,
+      DebugScreenState.initial.copyWith(
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 1),
@@ -106,11 +101,7 @@ void main() {
   test('長文が省略されない', () {
     final longMessage = 'x' * 5000;
     final entity = const DebugStateToEntityDelegate().execute(
-      DebugScreenState(
-        running: false,
-        result: null,
-        meterVlResult: null,
-        preferLfmVlOverOsLlm: false,
+      DebugScreenState.initial.copyWith(
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 0),
@@ -127,11 +118,7 @@ void main() {
   test('改行を正規化しない', () {
     const multilineMessage = 'line1\nline2';
     final entity = const DebugStateToEntityDelegate().execute(
-      DebugScreenState(
-        running: false,
-        result: null,
-        meterVlResult: null,
-        preferLfmVlOverOsLlm: false,
+      DebugScreenState.initial.copyWith(
         logs: [
           AppLogEntry(
             at: DateTime.utc(2026, 1, 1, 12, 0, 0),

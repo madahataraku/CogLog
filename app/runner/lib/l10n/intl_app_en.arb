@@ -613,6 +613,66 @@
   "@screen_feature_debug_reason_label": {
     "description": "reason ラベル"
   },
+  "screen_feature_debug_redownload_confirm_body": "This deletes on-device LFM VL (and legacy Gemma models) and downloads again over Wi-Fi. It will not start on mobile data.",
+  "@screen_feature_debug_redownload_confirm_body": {
+    "description": "確認本文"
+  },
+  "screen_feature_debug_redownload_confirm_cancel": "Cancel",
+  "@screen_feature_debug_redownload_confirm_cancel": {
+    "description": "確認のキャンセル"
+  },
+  "screen_feature_debug_redownload_confirm_ok": "Re-download",
+  "@screen_feature_debug_redownload_confirm_ok": {
+    "description": "確認の確定"
+  },
+  "screen_feature_debug_redownload_confirm_title": "Re-download LFM VL?",
+  "@screen_feature_debug_redownload_confirm_title": {
+    "description": "確認ダイアログ見出し"
+  },
+  "screen_feature_debug_redownload_disabled_busy": "Wait until meter reading or model prepare finishes.",
+  "@screen_feature_debug_redownload_disabled_busy": {
+    "description": "競合"
+  },
+  "screen_feature_debug_redownload_disabled_running": "Re-download is already running.",
+  "@screen_feature_debug_redownload_disabled_running": {
+    "description": "二重開始"
+  },
+  "screen_feature_debug_redownload_disabled_unavailable": "LFM VL is not available on this device.",
+  "@screen_feature_debug_redownload_disabled_unavailable": {
+    "description": "非対応"
+  },
+  "screen_feature_debug_redownload_failed": "LFM VL re-download failed. Please try again later.",
+  "@screen_feature_debug_redownload_failed": {
+    "description": "共通失敗"
+  },
+  "screen_feature_debug_redownload_failed_network": "Network error. Check your connection and try again.",
+  "@screen_feature_debug_redownload_failed_network": {
+    "description": "通信失敗"
+  },
+  "screen_feature_debug_redownload_failed_storage": "Not enough storage. Free up space and try again.",
+  "@screen_feature_debug_redownload_failed_storage": {
+    "description": "容量不足"
+  },
+  "screen_feature_debug_redownload_failed_wifi": "Connect to Wi-Fi and try again.",
+  "@screen_feature_debug_redownload_failed_wifi": {
+    "description": "Wi-Fi 以外"
+  },
+  "screen_feature_debug_redownload_meter_vl": "Re-download LFM VL",
+  "@screen_feature_debug_redownload_meter_vl": {
+    "description": "LFM VL 強制再ダウンロードボタン"
+  },
+  "screen_feature_debug_redownload_meter_vl_description": "Deletes the kept model and downloads it again",
+  "@screen_feature_debug_redownload_meter_vl_description": {
+    "description": "ボタン説明"
+  },
+  "screen_feature_debug_redownload_running": "Re-downloading LFM VL…",
+  "@screen_feature_debug_redownload_running": {
+    "description": "実行中表示"
+  },
+  "screen_feature_debug_redownload_success": "LFM VL re-download finished.",
+  "@screen_feature_debug_redownload_success": {
+    "description": "成功"
+  },
   "screen_feature_debug_run_diagnose": "Re-diagnose",
   "@screen_feature_debug_run_diagnose": {
     "description": "診断再実行ボタン"

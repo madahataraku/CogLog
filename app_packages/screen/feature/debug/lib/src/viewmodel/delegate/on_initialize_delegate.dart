@@ -56,12 +56,11 @@ final class OnInitializeDelegate {
   Future<void> execute() async {
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
-        DebugScreenState(
+        current.copyWith(
           running: true,
-          result: null,
-          meterVlResult: null,
+          clearResult: true,
+          clearMeterVlResult: true,
           logs: log.entries,
-          preferLfmVlOverOsLlm: current.preferLfmVlOverOsLlm,
         ),
       );
     });
@@ -69,12 +68,11 @@ final class OnInitializeDelegate {
     final meterVlResult = await diagnoseMeterVlUsecase.execute();
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
-        DebugScreenState(
+        current.copyWith(
           running: false,
           result: result,
           meterVlResult: meterVlResult,
           logs: log.entries,
-          preferLfmVlOverOsLlm: current.preferLfmVlOverOsLlm,
         ),
       );
     });

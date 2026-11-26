@@ -8,11 +8,15 @@ import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_diagnose_meter_vl/usecase_diagnose_meter_vl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
 
 import 'delegate/debug_state_to_entity_delegate.dart';
+import 'delegate/on_acknowledge_redownload_diagnose_refresh_delegate.dart';
 import 'delegate/on_back_delegate.dart';
 import 'delegate/on_clear_logs_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
+import 'delegate/on_redownload_meter_vl_delegate.dart';
+import 'delegate/on_redownload_session_sync_delegate.dart';
 import 'delegate/on_refresh_logs_delegate.dart';
 import 'delegate/on_toggle_prefer_lfm_vl_delegate.dart';
 import 'entity/debug_screen_entity.dart';
@@ -40,13 +44,13 @@ final class DebugScreenViewModel {
       final sessionPreference = ref.watch(
         meterReadingEngineSessionPreferenceProvider,
       );
+      final redownloadSession = ref.watch(MeterVlRedownloadSession.provider);
+      final redownloadUsecase = ref.watch(
+        RedownloadMeterVlModelUsecase.provider,
+      );
       final result = DebugScreenViewModel._(
         state: MutableStateStream(
-          DebugScreenState(
-            running: false,
-            result: null,
-            meterVlResult: null,
-            logs: [],
+          DebugScreenState.initial.copyWith(
             preferLfmVlOverOsLlm: sessionPreference.preferLfmVlOverOsLlm,
           ),
         ),
@@ -56,14 +60,23 @@ final class DebugScreenViewModel {
         sessionPreference: sessionPreference,
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const DebugStateToEntityDelegate(),
+        redownloadSession: redownloadSession,
+        redownloadUsecase: redownloadUsecase,
       );
       void onLogChanged() {
         unawaited(result.onRefreshLogs());
       }
 
       log.addListener(onLogChanged);
+      unawaited(result.onRedownloadSessionSync(redownloadSession.state.state));
+      final redownloadSub = redownloadSession.state.stream.listen((
+        sessionState,
+      ) {
+        unawaited(result.onRedownloadSessionSync(sessionState));
+      });
       ref.onDispose(() {
         log.removeListener(onLogChanged);
+        unawaited(redownloadSub.cancel());
         unawaited(result._close());
       });
       return result;
@@ -74,6 +87,8 @@ final class DebugScreenViewModel {
       appLogStoreProvider,
       meterReadingEngineSessionPreferenceProvider,
       screenNavigationProvider,
+      MeterVlRedownloadSession.provider,
+      RedownloadMeterVlModelUsecase.provider,
     ],
   );
 
@@ -105,6 +120,14 @@ final class DebugScreenViewModel {
   @visibleForTesting
   final DebugStateToEntityDelegate stateToEntity;
 
+  /// LFM VL 再ダウンロードのプロセス内セッション。
+  @visibleForTesting
+  final MeterVlRedownloadSession redownloadSession;
+
+  /// 削除→再準備を実行する Usecase。
+  @visibleForTesting
+  final RedownloadMeterVlModelUsecase redownloadUsecase;
+
   /// 注入された依存から ViewModel を作る。
   ///
   /// Example:
@@ -119,6 +142,8 @@ final class DebugScreenViewModel {
     required this.sessionPreference,
     required this.navigation,
     required this.stateToEntity,
+    required this.redownloadSession,
+    required this.redownloadUsecase,
   });
 
   /// 表示に使う文字列。

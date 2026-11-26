@@ -28,3 +28,18 @@ probe_skipped_label,probe skipped,probe skipped,プローブ省略理由ラベ�
 running,診断中…,Diagnosing…,診断中表示
 yes,はい,Yes,真の表示
 no,いいえ,No,偽の表示
+redownload_meter_vl,LFM VL を再ダウンロード,Re-download LFM VL,LFM VL 強制再ダウンロードボタン
+redownload_meter_vl_description,保持中のモデルを削除してから再取得します,Deletes the kept model and downloads it again,ボタン説明
+redownload_confirm_title,LFM VL を再ダウンロードしますか？,Re-download LFM VL?,確認ダイアログ見出し
+redownload_confirm_body,端末上の LFM VL（および旧 Gemma モデル）を削除し、Wi-Fi 経由で再取得します。モバイル回線では開始できません。,This deletes on-device LFM VL (and legacy Gemma models) and downloads again over Wi-Fi. It will not start on mobile data.,確認本文
+redownload_confirm_ok,再ダウンロード,Re-download,確認の確定
+redownload_confirm_cancel,キャンセル,Cancel,確認のキャンセル
+redownload_running,LFM VL を再ダウンロード中…,Re-downloading LFM VL…,実行中表示
+redownload_success,LFM VL の再ダウンロードが完了しました。,LFM VL re-download finished.,成功
+redownload_failed,LFM VL の再ダウンロードに失敗しました。しばらくしてから再度お試しください。,LFM VL re-download failed. Please try again later.,共通失敗
+redownload_failed_wifi,Wi-Fiに接続してから再度お試しください。,Connect to Wi-Fi and try again.,Wi-Fi 以外
+redownload_failed_storage,空き容量が足りません。容量を確保してから再度お試しください。,Not enough storage. Free up space and try again.,容量不足
+redownload_failed_network,通信に失敗しました。接続を確認してから再度お試しください。,Network error. Check your connection and try again.,通信失敗
+redownload_disabled_unavailable,この端末では LFM VL を利用できません。,LFM VL is not available on this device.,非対応
+redownload_disabled_busy,メーター読み取りまたはモデル準備の完了を待ってから再度お試しください。,Wait until meter reading or model prepare finishes.,競合
+redownload_disabled_running,再ダウンロードの実行中です。,Re-download is already running.,二重開始

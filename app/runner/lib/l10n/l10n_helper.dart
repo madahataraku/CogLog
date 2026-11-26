@@ -658,6 +658,66 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_reason_label;
       },
+      'screen_feature_debug_redownload_confirm_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_confirm_body;
+      },
+      'screen_feature_debug_redownload_confirm_cancel': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_confirm_cancel;
+      },
+      'screen_feature_debug_redownload_confirm_ok': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_confirm_ok;
+      },
+      'screen_feature_debug_redownload_confirm_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_confirm_title;
+      },
+      'screen_feature_debug_redownload_disabled_busy': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_disabled_busy;
+      },
+      'screen_feature_debug_redownload_disabled_running': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_disabled_running;
+      },
+      'screen_feature_debug_redownload_disabled_unavailable': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_disabled_unavailable;
+      },
+      'screen_feature_debug_redownload_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_failed;
+      },
+      'screen_feature_debug_redownload_failed_network': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_failed_network;
+      },
+      'screen_feature_debug_redownload_failed_storage': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_failed_storage;
+      },
+      'screen_feature_debug_redownload_failed_wifi': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_failed_wifi;
+      },
+      'screen_feature_debug_redownload_meter_vl': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_meter_vl;
+      },
+      'screen_feature_debug_redownload_meter_vl_description': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_meter_vl_description;
+      },
+      'screen_feature_debug_redownload_running': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_running;
+      },
+      'screen_feature_debug_redownload_success': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_redownload_success;
+      },
       'screen_feature_debug_run_diagnose': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_run_diagnose;

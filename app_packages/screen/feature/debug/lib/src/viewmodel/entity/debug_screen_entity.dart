@@ -1,6 +1,9 @@
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
+
 /// View が診断・プローブ・ログを描画するときに参照する不変スナップショット。
 ///
 /// 文字列フィールドの空・未取得は State から Entity へ写すとき `'-'` に揃える。
+/// 再ダウンロードの拒否理由・ステータスは空文字（`-` は使わない）。
 ///
 /// Example:
 /// ```dart
@@ -32,10 +35,17 @@
 ///   meterVlProbeSkipped: '-',
 ///   preferLfmVlOverOsLlm: false,
 ///   logLines: [],
+///   redownloadEnabled: true,
+///   redownloadDisabledReason: '',
+///   redownloadPhase: MeterVlRedownloadPhase.idle,
+///   redownloadProgress: 0,
+///   redownloadFailureKind: null,
+///   diagnoseRefreshPending: false,
+///   redownloadStatusText: '',
 /// );
 /// ```
 final class DebugScreenEntity {
-  /// 診断ラベル用の文字列、`canGenerate`、ログ行をまとめて保持する。
+  /// 診断ラベル用の文字列、`canGenerate`、ログ行・再ダウンロード表示をまとめて保持する。
   ///
   /// Example:
   /// ```dart
@@ -67,6 +77,13 @@ final class DebugScreenEntity {
   ///   meterVlProbeSkipped: '-',
   ///   preferLfmVlOverOsLlm: true,
   ///   logLines: ['line'],
+  ///   redownloadEnabled: false,
+  ///   redownloadDisabledReason: '',
+  ///   redownloadPhase: MeterVlRedownloadPhase.idle,
+  ///   redownloadProgress: 0,
+  ///   redownloadFailureKind: null,
+  ///   diagnoseRefreshPending: false,
+  ///   redownloadStatusText: '',
   /// );
   /// ```
   const DebugScreenEntity({
@@ -97,6 +114,13 @@ final class DebugScreenEntity {
     required this.meterVlProbeSkipped,
     required this.preferLfmVlOverOsLlm,
     required this.logLines,
+    required this.redownloadEnabled,
+    required this.redownloadDisabledReason,
+    required this.redownloadPhase,
+    required this.redownloadProgress,
+    required this.redownloadFailureKind,
+    required this.diagnoseRefreshPending,
+    required this.redownloadStatusText,
   });
 
   /// いま診断ユースケースが走っているとき true。
@@ -179,4 +203,32 @@ final class DebugScreenEntity {
 
   /// 古い行が先（上が古い）になるログ文字列。各要素は 1 エントリ分。
   final List<String> logLines;
+
+  /// 再ダウンロードボタンを押せるとき true。
+  ///
+  /// diagnose running / phase==running / readiness unavailable のみ false。
+  /// conflict 中は true（理由文言は [redownloadDisabledReason] で出す）。
+  final bool redownloadEnabled;
+
+  /// 拒否理由の表示文言。無ければ空文字（`-` は使わない）。
+  ///
+  /// conflict 時も文言を出すが、[redownloadEnabled] は true のまま。
+  final String redownloadDisabledReason;
+
+  /// [MeterVlRedownloadPhase] の表示用（idle/running/success/failure）。
+  final MeterVlRedownloadPhase redownloadPhase;
+
+  /// 0.0〜1.0。
+  final double redownloadProgress;
+
+  /// 失敗種別。成功・実行中は null。
+  final MeterVlPrepareFailureKind? redownloadFailureKind;
+
+  /// 診断自動更新がまだなら true。
+  final bool diagnoseRefreshPending;
+
+  /// 成功／失敗／実行中のステータス文言。無ければ空。
+  ///
+  /// Body はこの文字列だけを出し、phase から文言を再合成しない。
+  final String redownloadStatusText;
 }

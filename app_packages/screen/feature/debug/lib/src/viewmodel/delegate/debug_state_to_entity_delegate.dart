@@ -1,5 +1,132 @@
+import 'package:meta/meta.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
+
+import '../../strings.dart';
 import '../entity/debug_screen_entity.dart';
 import '../state/debug_screen_state.dart';
+
+/// 再ダウンロードボタンを押せるかを決める。
+///
+/// false になるのは phase==running / 診断実行中 / readiness unavailable
+/// のみ。[DebugRedownloadDisabledReason.conflict] は理由表示用なのでここでは無視する（再試行可）。
+///
+/// Example:
+/// ```dart
+/// resolveRedownloadEnabled(DebugScreenState.initial);
+/// ```
+@visibleForTesting
+bool resolveRedownloadEnabled(DebugScreenState state) {
+  if (state.redownloadPhase == MeterVlRedownloadPhase.running) {
+    return false;
+  }
+  if (state.running) {
+    return false;
+  }
+  final readinessName = state.meterVlResult?.snapshot.readiness.name;
+  if (readinessName == 'unavailable') {
+    return false;
+  }
+  return true;
+}
+
+/// State から再ダウンロードの拒否理由（表示用）を決める。
+///
+/// ハード無効（running / diagnose / unavailable）を先に見る。
+/// それらが無いときだけ [DebugRedownloadDisabledReason.conflict]（session.start の live 拒否）を返す。
+/// conflict は [resolveRedownloadEnabled] には影響しない。
+///
+/// Example:
+/// ```dart
+/// resolveRedownloadDisabledReason(DebugScreenState.initial);
+/// ```
+@visibleForTesting
+DebugRedownloadDisabledReason? resolveRedownloadDisabledReason(
+  DebugScreenState state,
+) {
+  if (state.redownloadPhase == MeterVlRedownloadPhase.running) {
+    return DebugRedownloadDisabledReason.redownloadRunning;
+  }
+  if (state.running) {
+    return DebugRedownloadDisabledReason.diagnoseRunning;
+  }
+  final readinessName = state.meterVlResult?.snapshot.readiness.name;
+  if (readinessName == 'unavailable') {
+    return DebugRedownloadDisabledReason.unavailable;
+  }
+  if (state.redownloadDisabledReason ==
+      DebugRedownloadDisabledReason.conflict) {
+    return DebugRedownloadDisabledReason.conflict;
+  }
+  return state.redownloadDisabledReason;
+}
+
+/// 再ダウンロード開始拒否理由をデバッグ画面の文言へ写す。
+///
+/// null のときは空文字（`-` は使わない）。
+///
+/// Example:
+/// ```dart
+/// mapDisabledReason(DebugRedownloadDisabledReason.conflict);
+/// ```
+@visibleForTesting
+String mapDisabledReason(DebugRedownloadDisabledReason? reason) {
+  return switch (reason) {
+    DebugRedownloadDisabledReason.unavailable =>
+      strings.screen_feature_debug_redownload_disabled_unavailable,
+    DebugRedownloadDisabledReason.diagnoseRunning =>
+      strings.screen_feature_debug_redownload_disabled_busy,
+    DebugRedownloadDisabledReason.redownloadRunning =>
+      strings.screen_feature_debug_redownload_disabled_running,
+    DebugRedownloadDisabledReason.conflict =>
+      strings.screen_feature_debug_redownload_disabled_busy,
+    null => '',
+  };
+}
+
+/// 再ダウンロード失敗種別をデバッグ画面の文言へ写す。
+///
+/// Wi-Fi / 容量 / 通信は個別文言。その他と null は共通失敗文言。
+///
+/// Example:
+/// ```dart
+/// mapMeterVlRedownloadError(MeterVlPrepareFailureKind.wifiRequired);
+/// ```
+@visibleForTesting
+String mapMeterVlRedownloadError(MeterVlPrepareFailureKind? kind) {
+  return switch (kind) {
+    MeterVlPrepareFailureKind.wifiRequired =>
+      strings.screen_feature_debug_redownload_failed_wifi,
+    MeterVlPrepareFailureKind.insufficientStorage =>
+      strings.screen_feature_debug_redownload_failed_storage,
+    MeterVlPrepareFailureKind.network =>
+      strings.screen_feature_debug_redownload_failed_network,
+    MeterVlPrepareFailureKind.generic ||
+    null => strings.screen_feature_debug_redownload_failed,
+  };
+}
+
+/// 再ダウンロードの相をステータス文言へ写す。
+///
+/// running / success は専用文言。failure は [mapMeterVlRedownloadError]。
+/// idle は空文字。
+///
+/// Example:
+/// ```dart
+/// mapStatusText(DebugScreenState.initial);
+/// ```
+@visibleForTesting
+String mapStatusText(DebugScreenState state) {
+  return switch (state.redownloadPhase) {
+    MeterVlRedownloadPhase.idle => '',
+    MeterVlRedownloadPhase.running =>
+      strings.screen_feature_debug_redownload_running,
+    MeterVlRedownloadPhase.success =>
+      strings.screen_feature_debug_redownload_success,
+    MeterVlRedownloadPhase.failure => mapMeterVlRedownloadError(
+      state.redownloadFailureKind,
+    ),
+  };
+}
 
 /// State を表示用 Entity へ写す。
 ///
@@ -30,6 +157,7 @@ final class DebugStateToEntityDelegate {
     final snapshot = result?.snapshot;
     final meterVl = state.meterVlResult;
     final meterVlSnapshot = meterVl?.snapshot;
+    final disabled = resolveRedownloadDisabledReason(state);
     // ラベル行の未取得表示を画面全体で揃える。
     String dash(String? value) {
       if (value == null || value.isEmpty) {
@@ -76,6 +204,13 @@ final class DebugStateToEntityDelegate {
       meterVlProbeSkipped: dash(meterVl?.probeSkippedReason),
       preferLfmVlOverOsLlm: state.preferLfmVlOverOsLlm,
       logLines: logLines,
+      redownloadEnabled: resolveRedownloadEnabled(state),
+      redownloadDisabledReason: mapDisabledReason(disabled),
+      redownloadPhase: state.redownloadPhase,
+      redownloadProgress: state.redownloadProgress,
+      redownloadFailureKind: state.redownloadFailureKind,
+      diagnoseRefreshPending: state.diagnoseRefreshPending,
+      redownloadStatusText: mapStatusText(state),
     );
   }
 }
