@@ -202,9 +202,8 @@ class TopScreen extends HookConsumerWidget {
           }
           if (reason == CoachMarkDismissReason.secondary ||
               reason == CoachMarkDismissReason.systemBack) {
-            await viewModel.onAdvanceTutorialMain(
-              const AdvanceTutorialMainRequest.skip(),
-            );
+            // スキップ経路は無い。想定外の副ボタン／戻るは同じ段階を再開用に残す。
+            await viewModel.onParkTutorialMain(step);
             return;
           }
           final result = await viewModel.onAdvanceTutorialMain(
@@ -212,19 +211,27 @@ class TopScreen extends HookConsumerWidget {
           );
           switch (result) {
             case final AdvanceTutorialMainShowResult show:
-              if (show.navigateToGoalTab) {
-                // 段階3オーバーレイ／disableBackButton ルートの破棄を待ってから遷移する。
+              if (show.navigation != AdvanceTutorialMainNavigation.none) {
+                // オーバーレイ／disableBackButton ルートの破棄を待ってから遷移する。
                 await Future<void>.delayed(const Duration(milliseconds: 300));
                 if (!context.mounted) {
                   return;
                 }
-                viewModel.goToGoalSettingsTab();
+                await _navigateAfterMain(viewModel, show.navigation);
                 return;
               }
               step = show.step;
               // Launcher が removeRoute 後に complete するが、フレーム境界も挟んでから次へ進む。
               await WidgetsBinding.instance.endOfFrame;
-            case AdvanceTutorialMainCompletedResult():
+            case final AdvanceTutorialMainCompletedResult completed:
+              if (completed.navigation != AdvanceTutorialMainNavigation.none) {
+                await Future<void>.delayed(const Duration(milliseconds: 300));
+                if (!context.mounted) {
+                  return;
+                }
+                await _navigateAfterMain(viewModel, completed.navigation);
+              }
+              return;
             case AdvanceTutorialMainNoopResult():
               return;
           }
@@ -326,6 +333,35 @@ class TopScreen extends HookConsumerWidget {
   }
 }
 
+/// メイン段階の主ボタン後にタブ／アチーブメントへ遷移する。
+///
+/// Example:
+/// ```dart
+/// await _navigateAfterMain(
+///   viewModel,
+///   AdvanceTutorialMainNavigation.meterCaptureTab,
+/// );
+/// ```
+Future<void> _navigateAfterMain(
+  TopScreenViewModel viewModel,
+  AdvanceTutorialMainNavigation navigation,
+) async {
+  switch (navigation) {
+    case AdvanceTutorialMainNavigation.none:
+      return;
+    case AdvanceTutorialMainNavigation.goalSettingsTab:
+      viewModel.goToGoalSettingsTab();
+    case AdvanceTutorialMainNavigation.meterCaptureTab:
+      viewModel.goToMeterCaptureTab();
+    case AdvanceTutorialMainNavigation.trendsTab:
+      viewModel.goToTrendsTab();
+    case AdvanceTutorialMainNavigation.exerciseHistoryTab:
+      viewModel.goToExerciseHistoryTab();
+    case AdvanceTutorialMainNavigation.achievements:
+      await viewModel.onOpenAchievements();
+  }
+}
+
 /// メイン段階に対応するコーチマーク step。
 ///
 /// Example:
@@ -351,7 +387,6 @@ CoachMarkStep _mainCoachMarkStep(TutorialMainStep step) {
       title: strings.screen_feature_top_tutorial_main_3_title,
       body: strings.screen_feature_top_tutorial_main_3_body,
       primaryLabel: strings.view_coach_mark_next,
-      secondaryLabel: strings.view_coach_mark_skip,
     ),
     TutorialMainStep.meterRecommend => CoachMarkStep(
       targetId: CoachMarkTargetId.navMeterCapture,

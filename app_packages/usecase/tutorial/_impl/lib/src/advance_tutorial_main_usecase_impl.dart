@@ -45,7 +45,6 @@ final class AdvanceTutorialMainUsecaseImpl
     return switch (request) {
       AdvanceTutorialMainStartRequest() => _startOrResume(),
       AdvanceTutorialMainNextRequest() => _next(),
-      AdvanceTutorialMainSkipRequest() => _skip(),
       AdvanceTutorialMainGoalSavedRequest() =>
         const AdvanceTutorialMainResult.noop(),
     };
@@ -67,23 +66,35 @@ final class AdvanceTutorialMainUsecaseImpl
       return const AdvanceTutorialMainResult.noop();
     }
     if (progress.mainReachedStep < 3) {
-      return _show(TutorialMainStep.homeIntro, navigateToGoalTab: false);
+      return _show(
+        TutorialMainStep.homeIntro,
+        navigation: AdvanceTutorialMainNavigation.none,
+      );
     }
     if (progress.mainReachedStep == 3 && progress.goalSettingsContextSeen) {
-      return _show(TutorialMainStep.meterRecommend, navigateToGoalTab: false);
+      return _show(
+        TutorialMainStep.meterRecommend,
+        navigation: AdvanceTutorialMainNavigation.none,
+      );
     }
     if (progress.mainReachedStep == 4 &&
         progress.cameraContextSeen &&
         progress.meterEditContextSeen) {
-      return _show(TutorialMainStep.trendsRecommend, navigateToGoalTab: false);
+      return _show(
+        TutorialMainStep.trendsRecommend,
+        navigation: AdvanceTutorialMainNavigation.none,
+      );
     }
     if (progress.mainReachedStep == 5 && progress.trendsContextSeen) {
-      return _show(TutorialMainStep.historyRecommend, navigateToGoalTab: false);
+      return _show(
+        TutorialMainStep.historyRecommend,
+        navigation: AdvanceTutorialMainNavigation.none,
+      );
     }
     if (progress.mainReachedStep == 6 && progress.historyContextSeen) {
       return _show(
         TutorialMainStep.achievementRecommend,
-        navigateToGoalTab: false,
+        navigation: AdvanceTutorialMainNavigation.none,
       );
     }
     return const AdvanceTutorialMainResult.noop();
@@ -98,26 +109,32 @@ final class AdvanceTutorialMainUsecaseImpl
     return switch (step) {
       TutorialMainStep.homeIntro => _show(
         TutorialMainStep.goalProgressIntro,
-        navigateToGoalTab: false,
+        navigation: AdvanceTutorialMainNavigation.none,
       ),
       TutorialMainStep.goalProgressIntro => _show(
         TutorialMainStep.goalRecommend,
-        navigateToGoalTab: false,
+        navigation: AdvanceTutorialMainNavigation.none,
       ),
       TutorialMainStep.goalRecommend => _enterGoalContext(),
-      TutorialMainStep.meterRecommend => _persistReached(4),
-      TutorialMainStep.trendsRecommend => _persistReached(5),
-      TutorialMainStep.historyRecommend => _persistReached(6),
-      TutorialMainStep.achievementRecommend => _completeMain(),
+      TutorialMainStep.meterRecommend => _persistReachedAndNavigate(
+        4,
+        TutorialMainStep.meterRecommend,
+        AdvanceTutorialMainNavigation.meterCaptureTab,
+      ),
+      TutorialMainStep.trendsRecommend => _persistReachedAndNavigate(
+        5,
+        TutorialMainStep.trendsRecommend,
+        AdvanceTutorialMainNavigation.trendsTab,
+      ),
+      TutorialMainStep.historyRecommend => _persistReachedAndNavigate(
+        6,
+        TutorialMainStep.historyRecommend,
+        AdvanceTutorialMainNavigation.exerciseHistoryTab,
+      ),
+      TutorialMainStep.achievementRecommend => _completeMain(
+        navigation: AdvanceTutorialMainNavigation.achievements,
+      ),
     };
-  }
-
-  /// 段階3スキップでメイン完了。
-  Future<AdvanceTutorialMainResult> _skip() async {
-    if (session.mainStep != TutorialMainStep.goalRecommend) {
-      return const AdvanceTutorialMainResult.noop();
-    }
-    return _completeMain();
   }
 
   /// 段階3の次へ: 到達3を永続し目標タブへ。文脈へ引き継ぐ。
@@ -131,48 +148,52 @@ final class AdvanceTutorialMainUsecaseImpl
     session.clearActive();
     return const AdvanceTutorialMainResult.show(
       step: TutorialMainStep.goalRecommend,
-      navigateToGoalTab: true,
+      navigation: AdvanceTutorialMainNavigation.goalSettingsTab,
     );
   }
 
-  /// 段階4〜6を閉じたあと到達段階を残す（メイン未完了のまま）。
-  Future<AdvanceTutorialMainResult> _persistReached(int step) async {
+  /// 段階4〜6を閉じたあと到達段階を残し、対応タブへ誘導する。
+  Future<AdvanceTutorialMainResult> _persistReachedAndNavigate(
+    int reached,
+    TutorialMainStep step,
+    AdvanceTutorialMainNavigation navigation,
+  ) async {
     try {
       final current = await repository.read();
-      await repository.write(current.copyWith(mainReachedStep: step));
+      await repository.write(current.copyWith(mainReachedStep: reached));
     } on Object {
       session.suppressMainAutoStartThisProcess = true;
     }
     session.clearActive();
-    return const AdvanceTutorialMainResult.noop();
+    return AdvanceTutorialMainResult.show(step: step, navigation: navigation);
   }
 
   /// session を更新して show を返す。
   Future<AdvanceTutorialMainResult> _show(
     TutorialMainStep step, {
-    required bool navigateToGoalTab,
+    required AdvanceTutorialMainNavigation navigation,
   }) async {
     session.activeKind = TutorialKind.main;
     session.mainStep = step;
-    return AdvanceTutorialMainResult.show(
-      step: step,
-      navigateToGoalTab: navigateToGoalTab,
-    );
+    return AdvanceTutorialMainResult.show(step: step, navigation: navigation);
   }
 
   /// mainCompleted を書き、失敗時は suppress。
-  Future<AdvanceTutorialMainResult> _completeMain() async {
+  Future<AdvanceTutorialMainResult> _completeMain({
+    AdvanceTutorialMainNavigation navigation =
+        AdvanceTutorialMainNavigation.none,
+  }) async {
     try {
       final current = await repository.read();
       await repository.write(
         current.copyWith(mainCompleted: true, mainReachedStep: 7),
       );
       session.clearActive();
-      return const AdvanceTutorialMainResult.completed();
+      return AdvanceTutorialMainResult.completed(navigation: navigation);
     } on Object {
       session.suppressMainAutoStartThisProcess = true;
       session.clearActive();
-      return const AdvanceTutorialMainResult.completed();
+      return AdvanceTutorialMainResult.completed(navigation: navigation);
     }
   }
 }

@@ -40,7 +40,11 @@ void main() {
       result,
       isA<AdvanceTutorialMainShowResult>()
           .having((e) => e.step, 'step', TutorialMainStep.homeIntro)
-          .having((e) => e.navigateToGoalTab, 'nav', isFalse),
+          .having(
+            (e) => e.navigation,
+            'nav',
+            AdvanceTutorialMainNavigation.none,
+          ),
     );
     expect(session.mainStep, TutorialMainStep.homeIntro);
   });
@@ -77,7 +81,7 @@ void main() {
       (r3 as AdvanceTutorialMainShowResult).step,
       TutorialMainStep.goalRecommend,
     );
-    expect(r3.navigateToGoalTab, isFalse);
+    expect(r3.navigation, AdvanceTutorialMainNavigation.none);
   });
 
   test('段階3 next で到達3・目標タブ誘導', () async {
@@ -86,23 +90,15 @@ void main() {
     await u.execute(const AdvanceTutorialMainRequest.next());
     await u.execute(const AdvanceTutorialMainRequest.next());
     final r = await u.execute(const AdvanceTutorialMainRequest.next());
-    expect((r as AdvanceTutorialMainShowResult).navigateToGoalTab, isTrue);
+    expect(
+      (r as AdvanceTutorialMainShowResult).navigation,
+      AdvanceTutorialMainNavigation.goalSettingsTab,
+    );
     expect((await repository.read()).mainReachedStep, 3);
     expect(session.isShowing, isFalse);
   });
 
-  test('skip で completed + write', () async {
-    final u = usecase();
-    await u.execute(const AdvanceTutorialMainRequest.start());
-    await u.execute(const AdvanceTutorialMainRequest.next());
-    await u.execute(const AdvanceTutorialMainRequest.next());
-    final r = await u.execute(const AdvanceTutorialMainRequest.skip());
-    expect(r, isA<AdvanceTutorialMainCompletedResult>());
-    expect((await repository.read()).mainCompleted, isTrue);
-    expect(session.isShowing, isFalse);
-  });
-
-  test('write 失敗で suppress', () async {
+  test('段階3 write 失敗で suppress', () async {
     session = TutorialRuntimeSession();
     final failing = AdvanceTutorialMainUsecaseImpl(
       repository: _FailingTutorialRepository(),
@@ -111,8 +107,11 @@ void main() {
     await failing.execute(const AdvanceTutorialMainRequest.start());
     await failing.execute(const AdvanceTutorialMainRequest.next());
     await failing.execute(const AdvanceTutorialMainRequest.next());
-    final r = await failing.execute(const AdvanceTutorialMainRequest.skip());
-    expect(r, isA<AdvanceTutorialMainCompletedResult>());
+    final r = await failing.execute(const AdvanceTutorialMainRequest.next());
+    expect(
+      (r as AdvanceTutorialMainShowResult).navigation,
+      AdvanceTutorialMainNavigation.goalSettingsTab,
+    );
     expect(session.suppressMainAutoStartThisProcess, isTrue);
   });
 
@@ -130,7 +129,7 @@ void main() {
     );
   });
 
-  test('段階4 next は到達4・未完了', () async {
+  test('段階4 next は到達4・メータータブ誘導・未完了', () async {
     await repository.write(
       TutorialProgress.initial.copyWith(
         mainReachedStep: 3,
@@ -140,13 +139,51 @@ void main() {
     final u = usecase();
     await u.execute(const AdvanceTutorialMainRequest.start());
     final r = await u.execute(const AdvanceTutorialMainRequest.next());
-    expect(r, isA<AdvanceTutorialMainNoopResult>());
+    expect(
+      (r as AdvanceTutorialMainShowResult).navigation,
+      AdvanceTutorialMainNavigation.meterCaptureTab,
+    );
     final progress = await repository.read();
     expect(progress.mainReachedStep, 4);
     expect(progress.mainCompleted, isFalse);
   });
 
-  test('段階7 next で completed', () async {
+  test('段階5 next は到達5・推移タブ誘導', () async {
+    await repository.write(
+      TutorialProgress.initial.copyWith(
+        mainReachedStep: 4,
+        cameraContextSeen: true,
+        meterEditContextSeen: true,
+      ),
+    );
+    final u = usecase();
+    await u.execute(const AdvanceTutorialMainRequest.start());
+    final r = await u.execute(const AdvanceTutorialMainRequest.next());
+    expect(
+      (r as AdvanceTutorialMainShowResult).navigation,
+      AdvanceTutorialMainNavigation.trendsTab,
+    );
+    expect((await repository.read()).mainReachedStep, 5);
+  });
+
+  test('段階6 next は到達6・履歴タブ誘導', () async {
+    await repository.write(
+      TutorialProgress.initial.copyWith(
+        mainReachedStep: 5,
+        trendsContextSeen: true,
+      ),
+    );
+    final u = usecase();
+    await u.execute(const AdvanceTutorialMainRequest.start());
+    final r = await u.execute(const AdvanceTutorialMainRequest.next());
+    expect(
+      (r as AdvanceTutorialMainShowResult).navigation,
+      AdvanceTutorialMainNavigation.exerciseHistoryTab,
+    );
+    expect((await repository.read()).mainReachedStep, 6);
+  });
+
+  test('段階7 next で completed・アチーブメント誘導', () async {
     await repository.write(
       TutorialProgress.initial.copyWith(
         mainReachedStep: 6,
@@ -160,7 +197,14 @@ void main() {
       TutorialMainStep.achievementRecommend,
     );
     final r = await u.execute(const AdvanceTutorialMainRequest.next());
-    expect(r, isA<AdvanceTutorialMainCompletedResult>());
+    expect(
+      r,
+      isA<AdvanceTutorialMainCompletedResult>().having(
+        (e) => e.navigation,
+        'nav',
+        AdvanceTutorialMainNavigation.achievements,
+      ),
+    );
     expect((await repository.read()).mainCompleted, isTrue);
   });
 }

@@ -43,7 +43,7 @@ final class TutorialProgress {
     achievementContextSeen: false,
   );
 
-  /// メイン導線が完了またはスキップ済みか。
+  /// メイン導線が完了済みか。
   final bool mainCompleted;
 
   /// メイン導線の到達段階（0〜7）。ホームでの段階4〜7再開に使う。
