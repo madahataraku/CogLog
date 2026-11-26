@@ -21,6 +21,7 @@ dart run forui theme create
 1. `lightColors` / `darkColors` の `primary` を `#F6AD49`、`primaryForeground` を `#1D1D16` にする。
 2. `darkColors` の `destructiveForeground` と `errorForeground` をどちらも `#171717` に戻す。
 3. 再生成後の `theme.dart` には選択色の設定が無いので、現在の `_bottomNavigationBarStyle` を復元し、`lightTheme` と `darkTheme` の両方へ渡す。アイコンと文字の選択色はどちらも `foreground` にする。
+4. 同じく `_toasterStyle` を復元し、両方のテーマへ渡す（トーストは下中央。ボトムナビと重ならない下余白）。
 
 ## アプリの根
 
@@ -31,6 +32,12 @@ dart run forui theme create
 3. `FLocalizations.delegate` を同じリストに含める。
 4. `builder` で `FTheme`、`FToaster`、`FTooltipGroup` の順に子を包む。明暗はプラットフォームの明るさに合わせ、`lightTheme` と `darkTheme` を使う。
 5. 画面の入れ物は `FScaffold` を使う。
+
+## トースト
+
+- 表示位置はアプリ全体で画面下中央（`FToastAlignment.bottomCenter`）。個別の `showFToast` では `alignment` を渡さない。
+- Forui のタッチ既定（上中央）は使わない。`app/lib/theme/theme.dart` の `_toasterStyle` で `FToasterStyle.toastAlignment` を上書きする。
+- `FToaster` は SafeArea 内に載るがボトムナビは SafeArea 外のフッタにあるため、ナビ（アイコン・ラベル・余白）と 16 論理ピクセルの間隔を足した下余白を `FToasterStyle.padding` に加える。
 
 ## ボトムナビゲーション
 
