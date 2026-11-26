@@ -136,6 +136,13 @@ Future<void> _pumpDebugGolden(
     ),
   );
   await tester.pumpAndSettle();
+  // 再ダウンロード欄は診断ブロックより下のため、Golden 前に可視領域へ寄せる。
+  await tester.scrollUntilVisible(
+    find.text('LFM VL を再ダウンロード'),
+    200,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.pumpAndSettle();
 }
 
 void main() {
