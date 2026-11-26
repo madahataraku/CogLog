@@ -52,7 +52,8 @@ class MeterCaptureScreenBody extends ConsumerWidget {
           debugPlaceholder: debugCameraPlaceholder,
         ),
         MeterCaptureStep.edit => SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          // 登録／撮り直す下とボトムナビのあいだに余白を確保する。
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
           child: MeterCaptureStep2View(state: state, entity: entity),
         ),
       },

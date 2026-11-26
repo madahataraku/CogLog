@@ -428,20 +428,23 @@ class _PeriodBox extends StatelessWidget {
     final labelStyle = context.theme.typography.body.xs.copyWith(
       color: context.theme.colors.mutedForeground,
     );
-    return SizedBox(
-      height: 148,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: labelStyle),
-            Expanded(
-              child: Center(
-                child: _HeroValue(value: value, metric: metric),
+    // 外カード内でも期間ごとの個別カード枠を残す。
+    return FCard(
+      child: SizedBox(
+        height: 148,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: labelStyle),
+              Expanded(
+                child: Center(
+                  child: _HeroValue(value: value, metric: metric),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

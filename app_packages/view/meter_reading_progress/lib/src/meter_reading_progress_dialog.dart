@@ -34,7 +34,7 @@ final class MeterReadingProgressDialog extends StatelessWidget {
   });
 
   /// 内容外周の余白（論理ピクセル）。
-  static const double contentPadding = 8;
+  static const double contentPadding = 16;
 
   /// ダイアログスタイル。
   final FDialogStyle style;
