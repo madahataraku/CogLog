@@ -172,6 +172,16 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     return OnAcknowledgeTutorialMainDelegate(state: state).execute();
   }
 
+  /// 連鎖を中断し、[step] からホーム復帰時に再開できるよう pending を戻す。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.onParkTutorialMain(TutorialMainStep.goalProgressIntro);
+  /// ```
+  Future<void> onParkTutorialMain(TutorialMainStep step) {
+    return OnParkTutorialMainDelegate(state: state).execute(step);
+  }
+
   /// メイン段階を進める。
   ///
   /// Example:

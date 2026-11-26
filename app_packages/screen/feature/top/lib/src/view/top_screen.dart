@@ -129,9 +129,22 @@ class TopScreen extends HookConsumerWidget {
         if (!context.mounted || initialStep == null) {
           return;
         }
+        bool canShowOnHome() {
+          final stillHome = (ShellTabIndexScope.maybeOf(context) ?? 0) == 0;
+          final life = WidgetsBinding.instance.lifecycleState;
+          final stillForeground =
+              life == null || life == AppLifecycleState.resumed;
+          return stillHome && stillForeground;
+        }
+
         var step = initialStep;
         while (true) {
           if (!context.mounted) {
+            return;
+          }
+          if (!canShowOnHome()) {
+            // ホーム以外／背面なら連鎖を止め、復帰時に同じ段階から再開する。
+            await viewModel.onParkTutorialMain(step);
             return;
           }
           final reason = await CoachMarkLauncher.show(

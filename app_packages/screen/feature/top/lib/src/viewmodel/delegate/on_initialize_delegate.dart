@@ -125,7 +125,7 @@ final class OnInitializeDelegate {
         ),
       );
       // 期間合計と助言は誘導判定を待たず先に出す。
-      // 再初期化で進行中のメイン段階を消さない。
+      // メイン段階だけ残し、他の案内 pending は下で条件から付け直す。
       await emitter.emit(
         current.copyWith(
           loaded: true,
@@ -140,6 +140,9 @@ final class OnInitializeDelegate {
           weeklyAchievementDays: result.weeklyAchievementDays,
           weekGoalAchievementDayCount: result.weekGoalAchievementDayCount,
           showWeeklyGoalGuidance: result.showWeeklyGoalGuidance,
+          pendingModelDownloadGuidance: false,
+          pendingGemmaMeterGuidance: false,
+          pendingTutorialAchievement: false,
         ),
       );
     });

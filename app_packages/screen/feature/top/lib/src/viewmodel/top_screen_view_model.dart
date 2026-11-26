@@ -26,6 +26,7 @@ import 'delegate/on_evaluate_tutorial_main_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_open_achievements_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
+import 'delegate/on_park_tutorial_main_delegate.dart';
 import 'delegate/on_prepare_gemma_meter_guidance_delegate.dart';
 import 'delegate/on_prepare_model_download_guidance_delegate.dart';
 import 'delegate/on_select_metric_delegate.dart';
