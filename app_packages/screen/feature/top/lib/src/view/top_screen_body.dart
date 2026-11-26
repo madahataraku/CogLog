@@ -131,7 +131,7 @@ class TopScreenBody extends HookConsumerWidget {
           spacing: 16,
           children: [
             CoachMarkTarget(
-              id: CoachMarkTargetId.homeMetricSelect,
+              id: CoachMarkTargetId.homePeriodTotals,
               child: FCard(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
@@ -169,17 +169,14 @@ class TopScreenBody extends HookConsumerWidget {
                             ),
                         ],
                       ),
-                      CoachMarkTarget(
-                        id: CoachMarkTargetId.homePeriodTotals,
-                        child: _PeriodTotalsRow(
-                          todayLabel: strings.screen_feature_top_today,
-                          weekLabel: strings.screen_feature_top_this_week,
-                          monthLabel: strings.screen_feature_top_this_month,
-                          todayValue: entity.todayText,
-                          weekValue: entity.weekText,
-                          monthValue: entity.monthText,
-                          metric: entity.metric,
-                        ),
+                      _PeriodTotalsRow(
+                        todayLabel: strings.screen_feature_top_today,
+                        weekLabel: strings.screen_feature_top_this_week,
+                        monthLabel: strings.screen_feature_top_this_month,
+                        todayValue: entity.todayText,
+                        weekValue: entity.weekText,
+                        monthValue: entity.monthText,
+                        metric: entity.metric,
                       ),
                     ],
                   ),
@@ -192,20 +189,20 @@ class TopScreenBody extends HookConsumerWidget {
                 tone: entity.adviceTone,
                 semanticsLabel: strings.screen_feature_top_advisor_semantics,
               ),
-            FCard(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: 12,
-                  children: [
-                    Text(
-                      strings.screen_feature_top_achievement_title,
-                      style: titleStyle,
-                    ),
-                    CoachMarkTarget(
-                      id: CoachMarkTargetId.homeGoalRings,
-                      child: Row(
+            CoachMarkTarget(
+              id: CoachMarkTargetId.homeGoalRings,
+              child: FCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: 12,
+                    children: [
+                      Text(
+                        strings.screen_feature_top_achievement_title,
+                        style: titleStyle,
+                      ),
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 8,
                         children: [
@@ -229,24 +226,24 @@ class TopScreenBody extends HookConsumerWidget {
                           ),
                         ],
                       ),
-                    ),
-                    FCard(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: WeeklyGoalAchievementBar(
-                          title: strings
-                              .screen_feature_top_weekly_achievement_title,
-                          showGuidance: showGuidance,
-                          guidanceText: strings
-                              .screen_feature_top_weekly_achievement_guidance,
-                          ratioText: ratioText,
-                          statusText: statusText,
-                          progress: entity.weeklyProgress,
-                          semanticsLabel: semanticsLabel,
+                      FCard(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: WeeklyGoalAchievementBar(
+                            title: strings
+                                .screen_feature_top_weekly_achievement_title,
+                            showGuidance: showGuidance,
+                            guidanceText: strings
+                                .screen_feature_top_weekly_achievement_guidance,
+                            ratioText: ratioText,
+                            statusText: statusText,
+                            progress: entity.weeklyProgress,
+                            semanticsLabel: semanticsLabel,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
