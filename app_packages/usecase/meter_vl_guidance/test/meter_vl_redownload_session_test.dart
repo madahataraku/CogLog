@@ -145,7 +145,40 @@ void main() {
         session.start(usecase: usecase),
         throwsA(isA<ArgumentError>()),
       );
-      expect(session.state.state.phase, MeterVlRedownloadPhase.running);
+      expect(session.state.state.phase, MeterVlRedownloadPhase.failure);
+      expect(
+        session.state.state.failureKind,
+        MeterVlPrepareFailureKind.generic,
+      );
+      expect(session.state.state.diagnoseRefreshPending, isTrue);
+
+      final restarted = await session.start(
+        usecase: FakeRedownloadMeterVlModelUsecase(),
+      );
+      // diagnoseRefreshPending 中は新規 start を拒む。
+      expect(restarted, isFalse);
+
+      await session.acknowledgeDiagnoseRefresh();
+      final afterAck = await session.start(
+        usecase: FakeRedownloadMeterVlModelUsecase(),
+      );
+      expect(afterAck, isTrue);
+      expect(session.state.state.phase, MeterVlRedownloadPhase.success);
+      await session.close();
+    });
+
+    test('diagnoseRefreshPending 中は start を拒む', () async {
+      final session = MeterVlRedownloadSession(meterVl: FakeMeterVlVision());
+      await session.start(usecase: FakeRedownloadMeterVlModelUsecase());
+      expect(session.state.state.diagnoseRefreshPending, isTrue);
+
+      final second = await session.start(
+        usecase: FakeRedownloadMeterVlModelUsecase(),
+      );
+
+      expect(second, isFalse);
+      expect(session.state.state.phase, MeterVlRedownloadPhase.success);
+      expect(session.state.state.diagnoseRefreshPending, isTrue);
       await session.close();
     });
 

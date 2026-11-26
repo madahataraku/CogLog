@@ -34,6 +34,8 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private static let engineStampValue = "litert-lfm25-vl-int4-fixB-v1"
 
   private let queue = DispatchQueue(label: "io.github.madahataraku.coglog.meter_vl")
+  /// Protects [preparing] / [generating] across the channel handler and worker queue.
+  private let stateLock = NSLock()
   private var prepareEvents: FlutterEventSink?
   private var preparing = false
   private var generating = false
@@ -72,16 +74,52 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         DispatchQueue.main.async { result(map) }
       }
     case "prepareModel":
+      // Reserve before queueing so a queued delete cannot run after prepare.
+      if !tryBeginPreparing() {
+        result(
+          FlutterError(
+            code: "busy",
+            message: "LFM VL meter operation is in progress.",
+            details: nil
+          )
+        )
+        return
+      }
       queue.async { self.prepareModel(result: result) }
     case "deleteDownloadedModels":
+      // Reserve before queueing so delete cannot wait behind prepare then succeed.
+      if !tryBeginPreparing() {
+        result(
+          FlutterError(
+            code: "busy",
+            message: "LFM VL meter operation is in progress.",
+            details: nil
+          )
+        )
+        return
+      }
       queue.async { self.deleteDownloadedModels(result: result) }
     case "isOperationBusy":
-      result(self.preparing || self.generating)
+      stateLock.lock()
+      let busy = preparing || generating
+      stateLock.unlock()
+      result(busy)
     case "generateWithImage", "diagnoseGenerateWithImage":
       let prompt = args["prompt"] as? String ?? ""
       let imageBytes = (args["imageBytes"] as? FlutterStandardTypedData)?.data ?? Data()
       let requireReady = call.method == "generateWithImage"
+      if !tryBeginGenerating() {
+        result(
+          FlutterError(
+            code: "busy",
+            message: "LFM VL meter operation is in progress.",
+            details: nil
+          )
+        )
+        return
+      }
       queue.async {
+        defer { self.clearGenerating() }
         do {
           let text = try self.generate(
             prompt: prompt,
@@ -104,6 +142,40 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     default:
       result(FlutterMethodNotImplemented)
     }
+  }
+
+  /// Reserves [preparing] under [stateLock]. Returns false when already busy.
+  private func tryBeginPreparing() -> Bool {
+    stateLock.lock()
+    defer { stateLock.unlock() }
+    if preparing || generating {
+      return false
+    }
+    preparing = true
+    return true
+  }
+
+  /// Reserves [generating] under [stateLock]. Returns false when already busy.
+  private func tryBeginGenerating() -> Bool {
+    stateLock.lock()
+    defer { stateLock.unlock() }
+    if preparing || generating {
+      return false
+    }
+    generating = true
+    return true
+  }
+
+  private func clearPreparing() {
+    stateLock.lock()
+    preparing = false
+    stateLock.unlock()
+  }
+
+  private func clearGenerating() {
+    stateLock.lock()
+    generating = false
+    stateLock.unlock()
   }
 
   private func configuredBackendFields() -> [String: String] {
@@ -150,21 +222,9 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     #endif
   }
 
+  /// Runs prepare after [preparing] was reserved on the calling thread.
   private func prepareModel(result: @escaping FlutterResult) {
     #if canImport(LiteRTLM)
-    if preparing || generating {
-      DispatchQueue.main.async {
-        result(
-          FlutterError(
-            code: "busy",
-            message: "LFM VL meter operation is in progress.",
-            details: nil
-          )
-        )
-      }
-      return
-    }
-    preparing = true
     emitProgress(0)
     do {
       removeLegacyCoreMLModelIfPresent()
@@ -173,13 +233,13 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       try excludeDownloadedModelFromBackup()
       _ = try ensureEngine()
       emitProgress(1)
-      preparing = false
+      clearPreparing()
       DispatchQueue.main.async {
         self.prepareEvents?(FlutterEndOfEventStream)
         result(nil)
       }
     } catch {
-      preparing = false
+      clearPreparing()
       // Keep a plausible on-disk artifact across device-specific init failures;
       // only reclaim truncated / clearly invalid files for retry.
       if isModelDownloaded() {
@@ -197,6 +257,7 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       }
     }
     #else
+    clearPreparing()
     let message =
       "LiteRTLM Swift package is not linked. Add https://github.com/google-ai-edge/LiteRT-LM."
     DispatchQueue.main.async {
@@ -208,21 +269,9 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     #endif
   }
 
+  /// Runs delete after [preparing] was reserved on the calling thread.
   private func deleteDownloadedModels(result: @escaping FlutterResult) {
-    if preparing || generating {
-      DispatchQueue.main.async {
-        result(
-          FlutterError(
-            code: "busy",
-            message: "LFM VL meter operation is in progress.",
-            details: nil
-          )
-        )
-      }
-      return
-    }
-    preparing = true
-    defer { preparing = false }
+    defer { clearPreparing() }
     #if canImport(LiteRTLM)
     do {
       markLoadFailed()
@@ -232,8 +281,8 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       {
         try FileManager.default.removeItem(at: modelDir)
       }
-      removeLegacyCoreMLModelIfPresent()
-      removeLegacyGemmaLiteRtModelIfPresent()
+      try removeLegacyCoreMLModelOrThrow()
+      try removeLegacyGemmaLiteRtModelOrThrow()
       DispatchQueue.main.async { result(nil) }
     } catch {
       DispatchQueue.main.async {
@@ -256,23 +305,8 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   #if canImport(LiteRTLM)
+  /// Runs generate after [generating] was reserved on the calling thread.
   private func generate(prompt: String, imageBytes: Data, requireReady: Bool) throws -> String {
-    if preparing {
-      throw NSError(
-        domain: "MeterVl",
-        code: 2,
-        userInfo: [NSLocalizedDescriptionKey: "LFM VL meter prepare is running."]
-      )
-    }
-    if generating {
-      throw NSError(
-        domain: "MeterVl",
-        code: 2,
-        userInfo: [NSLocalizedDescriptionKey: "LFM VL meter generate is already running."]
-      )
-    }
-    generating = true
-    defer { generating = false }
     if !isModelDownloaded() {
       throw NSError(
         domain: "MeterVl",
@@ -519,13 +553,18 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     modelsRootURL()?.appendingPathComponent(Self.legacyCoreMLFolderName, isDirectory: true)
   }
 
-  /// Deletes Documents/Models/gemma4-e2b from the CoreMLLLM era if still present.
+  /// Best-effort cleanup for availability / prepare (ignore delete failures).
   private func removeLegacyCoreMLModelIfPresent() {
+    try? removeLegacyCoreMLModelOrThrow()
+  }
+
+  /// Explicit delete path: missing directory is success; failed delete throws.
+  private func removeLegacyCoreMLModelOrThrow() throws {
     let fm = FileManager.default
     guard let legacy = legacyCoreMLDirectoryURL(), fm.fileExists(atPath: legacy.path) else {
       return
     }
-    try? fm.removeItem(at: legacy)
+    try fm.removeItem(at: legacy)
     // Drop CoreML-era readiness prefs so they cannot resurrect as ready.
     UserDefaults.standard.removeObject(forKey: "gemmaMeter.loadSucceeded")
     UserDefaults.standard.removeObject(forKey: "gemmaMeter.activeBackend")
@@ -537,13 +576,18 @@ public class MeterVlPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     modelsRootURL()?.appendingPathComponent(Self.legacyGemmaLiteRtFolderName, isDirectory: true)
   }
 
-  /// Deletes Documents/Models/gemma_meter from the Gemma LiteRT era if still present.
+  /// Best-effort cleanup for availability / prepare (ignore delete failures).
   private func removeLegacyGemmaLiteRtModelIfPresent() {
+    try? removeLegacyGemmaLiteRtModelOrThrow()
+  }
+
+  /// Explicit delete path: missing directory is success; failed delete throws.
+  private func removeLegacyGemmaLiteRtModelOrThrow() throws {
     let fm = FileManager.default
     guard let legacy = legacyGemmaLiteRtDirectoryURL(), fm.fileExists(atPath: legacy.path) else {
       return
     }
-    try? fm.removeItem(at: legacy)
+    try fm.removeItem(at: legacy)
   }
 
   private func removeIncompleteModel() throws {

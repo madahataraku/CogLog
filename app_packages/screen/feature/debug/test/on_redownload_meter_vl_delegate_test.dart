@@ -77,4 +77,27 @@ void main() {
     );
     await session.close();
   });
+
+  test('state が閉じているとき書き込まず started を返す', () async {
+    final session = MeterVlRedownloadSession(meterVl: FakeMeterVlVision());
+    final state = MutableStateStream(
+      DebugScreenState.initial.copyWith(
+        redownloadDisabledReason: DebugRedownloadDisabledReason.conflict,
+      ),
+    );
+    await state.close();
+
+    final started = await OnRedownloadMeterVlDelegate(
+      session: session,
+      usecase: FakeRedownloadMeterVlModelUsecase(),
+      state: state,
+    ).execute();
+
+    expect(started, isTrue);
+    expect(
+      state.state.redownloadDisabledReason,
+      DebugRedownloadDisabledReason.conflict,
+    );
+    await session.close();
+  });
 }

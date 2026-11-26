@@ -56,13 +56,16 @@ final class MeterVlRedownloadSession {
   /// 現在の相が running なら true（二重開始判定用）。
   bool get isRunning => state.state.phase == MeterVlRedownloadPhase.running;
 
-  /// 二重開始・busy なら false。開始コミットしたら true（結果が failure でも true）。
+  /// 二重開始・busy・診断更新待ちなら false。開始コミットしたら true（結果が failure でも true）。
   ///
   /// 手順（この順序を崩さない）:
   /// 1. `await _meterVl.isOperationBusy` が true なら false（phase は変えない）
-  /// 2. `updateWithLock` 内で `phase==running` なら **emit せず** false
+  /// 2. `updateWithLock` 内で `phase==running` または
+  ///    `diagnoseRefreshPending` なら **emit せず** false
+  ///    （先行完了の診断要求を、後続 start のクリア／確認で消さない）
   /// 3. さもなくば running を emit してコミット
   /// 4. コミット後に `usecase.execute()` を走らせ進捗を写す
+  /// 5. 想定外の [Error] は `failure` へ戻してから再 throw（running のまま残さない）
   ///
   /// Example:
   /// ```dart
@@ -74,8 +77,9 @@ final class MeterVlRedownloadSession {
     }
     var committed = false;
     await state.updateWithLock((current, emitter) async {
-      if (current.phase == MeterVlRedownloadPhase.running) {
-        // 並行 start: emit しない。
+      if (current.phase == MeterVlRedownloadPhase.running ||
+          current.diagnoseRefreshPending) {
+        // 並行 start / 診断更新待ち: emit しない。
         return;
       }
       await emitter.emit(
@@ -116,7 +120,7 @@ final class MeterVlRedownloadSession {
       });
       return true;
     } on Exception catch (error) {
-      // Exception のみ session failure に畳む。Error は想定外として再 throw。
+      // Exception のみ session failure に畳む。
       final kind = error is MeterVlPrepareException
           ? error.kind
           : MeterVlPrepareFailureKind.generic;
@@ -131,6 +135,19 @@ final class MeterVlRedownloadSession {
         );
       });
       return true; // 開始はした（結果は failure）
+    } catch (error, stackTrace) {
+      // 想定外 Error: running のまま残すと同一セッションで再 start できない。
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(
+          MeterVlRedownloadSessionState(
+            phase: MeterVlRedownloadPhase.failure,
+            progress: current.progress,
+            failureKind: MeterVlPrepareFailureKind.generic,
+            diagnoseRefreshPending: true,
+          ),
+        );
+      });
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 

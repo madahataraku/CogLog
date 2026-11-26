@@ -53,6 +53,10 @@ final class OnRedownloadMeterVlDelegate {
   /// ```
   Future<bool> execute() async {
     final started = await session.start(usecase: usecase);
+    // 画面離脱後は ViewModel state が閉じているので書き込まない。
+    if (!state.isNotClosed) {
+      return started;
+    }
     if (!started) {
       final reason = session.isRunning
           ? DebugRedownloadDisabledReason.redownloadRunning
