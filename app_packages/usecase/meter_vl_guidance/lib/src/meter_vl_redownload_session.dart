@@ -38,10 +38,9 @@ final class MeterVlRedownloadSession {
   /// MeterVlRedownloadSession(meterVl: fakeMeterVl);
   /// ```
   MeterVlRedownloadSession({
-    required MeterVlVision meterVl,
+    required this._meterVl,
     MutableStateStream<MeterVlRedownloadSessionState>? state,
-  }) : _meterVl = meterVl,
-       state =
+  }) : state =
            state ?? MutableStateStream(MeterVlRedownloadSessionState.initial);
 
   /// start 前の live busy 判定に使う [MeterVlVision]。

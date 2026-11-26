@@ -11,9 +11,8 @@ void main() {
     await session.start(usecase: FakeRedownloadMeterVlModelUsecase());
     expect(session.state.state.diagnoseRefreshPending, isTrue);
 
-    await OnAcknowledgeRedownloadDiagnoseRefreshDelegate(
-      session: session,
-    ).execute();
+    await OnAcknowledgeRedownloadDiagnoseRefreshDelegate(session: session)
+        .execute();
 
     expect(session.state.state.diagnoseRefreshPending, isFalse);
     await session.close();

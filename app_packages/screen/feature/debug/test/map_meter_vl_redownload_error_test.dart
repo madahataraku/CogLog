@@ -19,9 +19,7 @@ void main() {
       'Wi-Fiに接続してから再度お試しください。',
     );
     expect(
-      mapMeterVlRedownloadError(
-        MeterVlPrepareFailureKind.insufficientStorage,
-      ),
+      mapMeterVlRedownloadError(MeterVlPrepareFailureKind.insufficientStorage),
       '空き容量が足りません。容量を確保してから再度お試しください。',
     );
     expect(

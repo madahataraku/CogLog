@@ -304,10 +304,7 @@ void main() {
       final log = AppLogStore(clock: () => DateTime.utc(2026, 11, 10, 6, 0, 0));
       await _pumpDebugBody(tester, log: log);
       await _scrollToRedownload(tester);
-      expect(
-        find.text('保持中のモデルを削除してから再取得します'),
-        findsOneWidget,
-      );
+      expect(find.text('保持中のモデルを削除してから再取得します'), findsOneWidget);
     });
 
     testWidgets('確認キャンセルでは session を開始しない', (tester) async {
@@ -359,12 +356,7 @@ void main() {
       });
       await tester.pumpAndSettle();
       await _scrollToRedownload(tester);
-      expect(
-        find.text(
-          'メーター読み取りまたはモデル準備の完了を待ってから再度お試しください。',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text('メーター読み取りまたはモデル準備の完了を待ってから再度お試しください。'), findsOneWidget);
       final button = tester.widget<FButton>(
         find.widgetWithText(FButton, 'LFM VL を再ダウンロード'),
       );

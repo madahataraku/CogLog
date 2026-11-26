@@ -1,4 +1,3 @@
-import 'package:infra_meter_vl/infra_meter_vl.dart';
 import 'package:screen_feature_debug/src/viewmodel/delegate/on_redownload_session_sync_delegate.dart';
 import 'package:screen_feature_debug/src/viewmodel/state/debug_screen_state.dart';
 import 'package:state_stream/state_stream.dart';
@@ -29,7 +28,8 @@ void main() {
   test('phase success のあと redownloadRunning 理由をクリアする', () async {
     final state = MutableStateStream(
       DebugScreenState.initial.copyWith(
-        redownloadDisabledReason: DebugRedownloadDisabledReason.redownloadRunning,
+        redownloadDisabledReason:
+            DebugRedownloadDisabledReason.redownloadRunning,
         redownloadPhase: MeterVlRedownloadPhase.running,
       ),
     );
@@ -50,7 +50,8 @@ void main() {
   test('phase failure のあと redownloadRunning 理由をクリアする', () async {
     final state = MutableStateStream(
       DebugScreenState.initial.copyWith(
-        redownloadDisabledReason: DebugRedownloadDisabledReason.redownloadRunning,
+        redownloadDisabledReason:
+            DebugRedownloadDisabledReason.redownloadRunning,
         redownloadPhase: MeterVlRedownloadPhase.running,
       ),
     );
@@ -65,8 +66,10 @@ void main() {
     );
 
     expect(state.state.redownloadPhase, MeterVlRedownloadPhase.failure);
-    expect(state.state.redownloadFailureKind,
-        MeterVlPrepareFailureKind.insufficientStorage);
+    expect(
+      state.state.redownloadFailureKind,
+      MeterVlPrepareFailureKind.insufficientStorage,
+    );
     expect(state.state.redownloadDisabledReason, isNull);
   });
 

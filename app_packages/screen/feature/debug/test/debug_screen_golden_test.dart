@@ -4,7 +4,6 @@ import 'package:forui/forui.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:infra_meter_vl/infra_meter_vl.dart';
 import 'package:infra_meter_vl_testing/infra_meter_vl_testing.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';

@@ -174,10 +174,7 @@ void main() {
       ),
     );
     expect(entity.redownloadEnabled, isFalse);
-    expect(
-      entity.redownloadDisabledReason,
-      'この端末では LFM VL を利用できません。',
-    );
+    expect(entity.redownloadDisabledReason, 'この端末では LFM VL を利用できません。');
   });
 
   test('診断実行中で再ダウンロード無効', () {
@@ -223,10 +220,7 @@ void main() {
         redownloadPhase: MeterVlRedownloadPhase.success,
       ),
     );
-    expect(
-      success.redownloadStatusText,
-      'LFM VL の再ダウンロードが完了しました。',
-    );
+    expect(success.redownloadStatusText, 'LFM VL の再ダウンロードが完了しました。');
 
     final failure = const DebugStateToEntityDelegate().execute(
       DebugScreenState.initial.copyWith(
@@ -234,10 +228,7 @@ void main() {
         redownloadFailureKind: MeterVlPrepareFailureKind.insufficientStorage,
       ),
     );
-    expect(
-      failure.redownloadStatusText,
-      '空き容量が足りません。容量を確保してから再度お試しください。',
-    );
+    expect(failure.redownloadStatusText, '空き容量が足りません。容量を確保してから再度お試しください。');
   });
 
   test('success 後 redownloadRunning 理由は残らない', () async {
