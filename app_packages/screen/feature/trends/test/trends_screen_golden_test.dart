@@ -153,9 +153,12 @@ final class _MarkTutorialNever implements MarkTutorialContextSeenUsecase {
   Future<void> execute(MarkTutorialContextSeenRequest request) async {}
 }
 
-Future<void> _prepareSurface(WidgetTester tester) async {
+Future<void> _prepareSurface(
+  WidgetTester tester, {
+  Brightness brightness = Brightness.light,
+}) async {
   debugDefaultTargetPlatformOverride = TargetPlatform.android;
-  tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+  tester.platformDispatcher.platformBrightnessTestValue = brightness;
   addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
   tester.platformDispatcher.localesTestValue = const [Locale('ja')];
   addTearDown(tester.platformDispatcher.clearLocalesTestValue);
@@ -170,16 +173,24 @@ Future<void> _prepareSurface(WidgetTester tester) async {
   addTearDown(LocalizeStringDelegate.resetDelegateForTest);
 }
 
-Widget _wrap(Widget child) => ShellTabIndexScope(
-  index: 2,
-  child: MaterialApp(
-    locale: const Locale('ja'),
-    home: FTheme(
-      data: FThemeData(touch: true, colors: FColors.neutralLight),
-      child: child,
+Widget _wrap(Widget child, {Brightness brightness = Brightness.light}) {
+  final colors = brightness == Brightness.light
+      ? FColors.neutralLight
+      : FColors.neutralDark;
+  final theme = FThemeData(touch: true, colors: colors);
+  return ShellTabIndexScope(
+    index: 2,
+    child: MaterialApp(
+      locale: const Locale('ja'),
+      theme: theme.toApproximateMaterialTheme(),
+      darkTheme: theme.toApproximateMaterialTheme(),
+      themeMode: brightness == Brightness.light
+          ? ThemeMode.light
+          : ThemeMode.dark,
+      home: FTheme(data: theme, child: child),
     ),
-  ),
-);
+  );
+}
 
 void main() {
   testWidgets('推移 運動・空点 / ja / Android / light', (tester) async {
@@ -235,6 +246,25 @@ void main() {
       await expectLater(
         find.byType(TrendsScreen),
         matchesGoldenFile('goldens/trends_screen_with_points.png'),
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('推移 運動・点あり / ja / Android / dark', (tester) async {
+    await _prepareSurface(tester, brightness: Brightness.dark);
+    try {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _overrides(_withPointsResult()),
+          child: _wrap(const TrendsScreen(), brightness: Brightness.dark),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await expectLater(
+        find.byType(TrendsScreen),
+        matchesGoldenFile('goldens/trends_screen_with_points_dark.png'),
       );
     } finally {
       debugDefaultTargetPlatformOverride = null;

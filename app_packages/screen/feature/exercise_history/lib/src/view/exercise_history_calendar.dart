@@ -69,6 +69,7 @@ class ExerciseHistoryCalendar extends StatelessWidget {
               ),
           ],
         ),
+        const SizedBox(height: 4),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -90,7 +91,7 @@ class ExerciseHistoryCalendar extends StatelessWidget {
               child: GestureDetector(
                 onTap: cell.isTappable ? () => onDayPressed(cell.day!) : null,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text('${cell.day}', style: theme.typography.body.sm),
                     if (cell.stampCount > 0)
