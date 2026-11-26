@@ -97,6 +97,7 @@ class TopScreen extends HookConsumerWidget {
     }, [viewModel, homeTabSelected, locale, lifecycle]);
 
     // 初回未 Ready のみ読み込み中ダイアログを出す。
+    // showFDialog は inherited を読むため、initHook 中ではなく post-frame で開く。
     useEffect(() {
       if (entity.loaded) {
         final completer = initialLoadReady.value;
@@ -114,13 +115,18 @@ class TopScreen extends HookConsumerWidget {
       initialLoadDialogStarted.value = true;
       final ready = Completer<void>();
       initialLoadReady.value = ready;
-      unawaited(
-        TopHomeLoadingLauncher.show(
-          context,
-          untilReady: ready.future,
-          onRetry: runInitialize,
-        ),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted) {
+          return;
+        }
+        unawaited(
+          TopHomeLoadingLauncher.show(
+            context,
+            untilReady: ready.future,
+            onRetry: runInitialize,
+          ),
+        );
+      });
       return null;
     }, [viewModel, homeTabSelected, foreground, entity.loaded, locale]);
 
