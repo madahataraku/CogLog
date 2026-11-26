@@ -4,6 +4,8 @@ import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import '../../strings.dart';
 import '../can_submit_exercise_history_edit.dart';
 import '../entity/exercise_history_edit_screen_entity.dart';
+import '../state/edit_camera_ui.dart';
+import '../state/exercise_history_edit_phase.dart';
 import '../state/exercise_history_edit_screen_state.dart';
 
 /// 編集 State を入力欄の表示文字列へ変える。
@@ -118,8 +120,10 @@ final class ExerciseHistoryEditStateToEntityDelegate {
     }
 
     final duration = state.duration;
-    final busy = state.reading || state.saving;
+    final onForm = state.phase == ExerciseHistoryEditPhase.form;
+    final busy = state.reading || state.saving || state.cameraCapturing;
     final canSave =
+        onForm &&
         !busy &&
         state.dirty &&
         !state.inputsInvalid &&
@@ -168,9 +172,21 @@ final class ExerciseHistoryEditStateToEntityDelegate {
       permissionDeniedText: permissionText,
       showOpenSettings: permissionText != null,
       photoPath: state.photoPath,
-      showPhotoBytes: hasBytes,
-      showPhotoPath: !hasBytes && hasPath,
-      showPhotoError: !hasBytes && !hasPath,
+      showPhotoBytes: onForm && hasBytes,
+      showPhotoPath: onForm && !hasBytes && hasPath,
+      showPhotoError: onForm && !hasBytes && !hasPath,
+      showCameraPhase: state.phase == ExerciseHistoryEditPhase.camera,
+      cameraReady: state.cameraUi == EditCameraUi.ready,
+      cameraPermissionDenied: state.cameraUi == EditCameraUi.permissionDenied,
+      cameraFailed: state.cameraUi == EditCameraUi.failed,
+      cameraStarting: state.cameraUi == EditCameraUi.starting,
+      shutterEnabled:
+          state.cameraUi == EditCameraUi.ready &&
+          !state.cameraCapturing &&
+          !state.reading &&
+          !state.saving,
+      cameraPreviewAspectRatio: state.cameraPreviewAspectRatio,
+      cameraCaptureFailed: state.cameraCaptureFailed,
     );
   }
 

@@ -854,6 +854,18 @@
   "@screen_feature_exercise_history_edit_calories": {
     "description": "入力ラベル"
   },
+  "screen_feature_exercise_history_edit_camera_failed": "撮影に失敗しました",
+  "@screen_feature_exercise_history_edit_camera_failed": {
+    "description": "撮影失敗"
+  },
+  "screen_feature_exercise_history_edit_camera_shutter": "シャッター",
+  "@screen_feature_exercise_history_edit_camera_shutter": {
+    "description": "撮影シャッター"
+  },
+  "screen_feature_exercise_history_edit_camera_title": "カメラ",
+  "@screen_feature_exercise_history_edit_camera_title": {
+    "description": "アプリ内カメラ画面のタイトル"
+  },
   "screen_feature_exercise_history_edit_discard_body": "保存していない変更は失われます。",
   "@screen_feature_exercise_history_edit_discard_body": {
     "description": "破棄確認本文"

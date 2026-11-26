@@ -763,6 +763,16 @@ class L10nEn extends L10n {
   String get screen_feature_exercise_history_edit_calories => 'Calories (kcal)';
 
   @override
+  String get screen_feature_exercise_history_edit_camera_failed =>
+      'Couldn\'t take the photo';
+
+  @override
+  String get screen_feature_exercise_history_edit_camera_shutter => 'Shutter';
+
+  @override
+  String get screen_feature_exercise_history_edit_camera_title => 'Camera';
+
+  @override
   String get screen_feature_exercise_history_edit_discard_body =>
       'Unsaved changes will be lost.';
 

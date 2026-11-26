@@ -86,6 +86,14 @@ final class ExerciseHistoryEditScreenEntity {
     required this.showPhotoBytes,
     required this.showPhotoPath,
     required this.showPhotoError,
+    this.showCameraPhase = false,
+    this.cameraReady = false,
+    this.cameraPermissionDenied = false,
+    this.cameraFailed = false,
+    this.cameraStarting = false,
+    this.shutterEnabled = false,
+    this.cameraPreviewAspectRatio,
+    this.cameraCaptureFailed = false,
   });
 
   /// 読込スピナーを出すか。
@@ -156,4 +164,28 @@ final class ExerciseHistoryEditScreenEntity {
 
   /// 写真が無いときのエラー文言を出すか。
   final bool showPhotoError;
+
+  /// アプリ内カメラ phase を出すか。
+  final bool showCameraPhase;
+
+  /// プレビュー可能か。
+  final bool cameraReady;
+
+  /// カメラ権限拒否案内を出すか。
+  final bool cameraPermissionDenied;
+
+  /// カメラ初期化失敗案内を出すか。
+  final bool cameraFailed;
+
+  /// カメラ初期化中か。
+  final bool cameraStarting;
+
+  /// シャッターを押せるか。
+  final bool shutterEnabled;
+
+  /// プレビュー縦横比。未取得なら null。
+  final double? cameraPreviewAspectRatio;
+
+  /// シャッター失敗文言を出すか。
+  final bool cameraCaptureFailed;
 }

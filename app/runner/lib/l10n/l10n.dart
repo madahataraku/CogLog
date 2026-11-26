@@ -1354,6 +1354,24 @@ abstract class L10n {
   /// **'消費カロリー (kcal)'**
   String get screen_feature_exercise_history_edit_calories;
 
+  /// 撮影失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'撮影に失敗しました'**
+  String get screen_feature_exercise_history_edit_camera_failed;
+
+  /// 撮影シャッター
+  ///
+  /// In ja, this message translates to:
+  /// **'シャッター'**
+  String get screen_feature_exercise_history_edit_camera_shutter;
+
+  /// アプリ内カメラ画面のタイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'カメラ'**
+  String get screen_feature_exercise_history_edit_camera_title;
+
   /// 破棄確認本文
   ///
   /// In ja, this message translates to:

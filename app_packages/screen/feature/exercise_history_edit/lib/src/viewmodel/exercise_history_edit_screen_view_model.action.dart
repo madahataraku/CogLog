@@ -76,7 +76,7 @@ extension ExerciseHistoryEditScreenViewModelActions
     return OnCancelEditReadingDelegate(state: state).execute();
   }
 
-  /// カメラで写真を撮り直す。
+  /// 同一画面のアプリ内カメラ phase を開始する。
   ///
   /// Example:
   /// ```dart
@@ -85,8 +85,35 @@ extension ExerciseHistoryEditScreenViewModelActions
   Future<void> onRetakePhoto() {
     return OnRetakePhotoDelegate(
       state: state,
+      controlMeterInAppCameraUsecase: controlMeterInAppCameraUsecase,
+    ).execute();
+  }
+
+  /// アプリ内カメラを止めて form に戻る。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onCancelEditCamera();
+  /// ```
+  Future<void> onCancelEditCamera() {
+    return OnCancelEditCameraDelegate(
+      state: state,
+      controlMeterInAppCameraUsecase: controlMeterInAppCameraUsecase,
+    ).execute();
+  }
+
+  /// アプリ内カメラのシャッターで撮影する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onCaptureEditCamera();
+  /// ```
+  Future<void> onCaptureEditCamera() {
+    return OnCaptureEditCameraDelegate(
+      state: state,
       obtainMeterPhotoUsecase: obtainMeterPhotoUsecase,
       readMeterPanelUsecase: readMeterPanelUsecase,
+      controlMeterInAppCameraUsecase: controlMeterInAppCameraUsecase,
     ).execute();
   }
 
