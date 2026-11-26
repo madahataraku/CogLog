@@ -2572,8 +2572,14 @@ abstract class L10n {
   /// 身体を含む比較の許可リクエスト
   ///
   /// In ja, this message translates to:
-  /// **'ヘルスケアを許可'**
+  /// **'ヘルスケアの表示連携'**
   String get screen_feature_trends_request_health_permission;
+
+  /// 身体を含む比較の許可リクエスト説明
+  ///
+  /// In ja, this message translates to:
+  /// **'端末のヘルスケア情報に保存されている、体重や体脂肪率をグラフ上にプロットします。'**
+  String get screen_feature_trends_request_health_permission_subtitle;
 
   /// 系列の再読取
   ///
