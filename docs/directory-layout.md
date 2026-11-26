@@ -66,7 +66,6 @@ Firebase のクライアント設定は手元に置く。Git では追跡しな�
 │   │   └── _test/
 │   └── view/
 │       └── designkit/
-├── app_packages_fork/                     # フォークしたライブラリ
 ├── docs/
 ├── templates/
 └── tool/

@@ -3,7 +3,7 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import '../state/top_screen_state.dart';
 
-/// アチーブメント文脈を閉じ、表示済みにする。
+/// 旧アチーブメント文脈閉じ。案内はメイン段階7へ移したため pending だけ下ろす。
 ///
 /// Example:
 /// ```dart
@@ -30,19 +30,16 @@ final class OnDismissTutorialAchievementDelegate {
   /// 画面状態。
   final MutableStateStream<TopScreenState> state;
 
-  /// 文脈表示済み。
+  /// 文脈表示済み（未使用）。
   final MarkTutorialContextSeenUsecase markSeen;
 
-  /// MarkSeen し pending を下ろす。
+  /// pendingTutorialAchievement を下ろす。
   ///
   /// Example:
   /// ```dart
   /// await delegate.execute();
   /// ```
   Future<void> execute() async {
-    await markSeen.execute(
-      const MarkTutorialContextSeenRequest(kind: TutorialKind.achievement),
-    );
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(current.copyWith(pendingTutorialAchievement: false));
     });

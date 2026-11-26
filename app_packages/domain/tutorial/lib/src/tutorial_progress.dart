@@ -1,16 +1,18 @@
-/// チュートリアルのメイン完了と各文脈の表示済み。
+/// チュートリアルのメイン完了と各文脈の表示済み、メイン到達段階。
 ///
 /// Example:
 /// ```dart
 /// TutorialProgress.initial;
 /// ```
 final class TutorialProgress {
-  /// メイン完了と文脈ごとの表示済みをまとめる。
+  /// メイン完了・到達段階・文脈ごとの表示済みをまとめる。
   ///
   /// Example:
   /// ```dart
   /// const TutorialProgress(
   ///   mainCompleted: false,
+  ///   mainReachedStep: 0,
+  ///   goalSettingsContextSeen: false,
   ///   cameraContextSeen: false,
   ///   meterEditContextSeen: false,
   ///   trendsContextSeen: false,
@@ -20,6 +22,8 @@ final class TutorialProgress {
   /// ```
   const TutorialProgress({
     required this.mainCompleted,
+    required this.mainReachedStep,
+    required this.goalSettingsContextSeen,
     required this.cameraContextSeen,
     required this.meterEditContextSeen,
     required this.trendsContextSeen,
@@ -30,6 +34,8 @@ final class TutorialProgress {
   /// キー無し・未保存相当。すべて未完了／未表示。
   static const initial = TutorialProgress(
     mainCompleted: false,
+    mainReachedStep: 0,
+    goalSettingsContextSeen: false,
     cameraContextSeen: false,
     meterEditContextSeen: false,
     trendsContextSeen: false,
@@ -39,6 +45,12 @@ final class TutorialProgress {
 
   /// メイン導線が完了またはスキップ済みか。
   final bool mainCompleted;
+
+  /// メイン導線の到達段階（0〜7）。ホームでの段階4〜7再開に使う。
+  final int mainReachedStep;
+
+  /// 目標設定文脈を表示済みか。
+  final bool goalSettingsContextSeen;
 
   /// 撮影画面文脈を表示済みか。
   final bool cameraContextSeen;
@@ -52,7 +64,7 @@ final class TutorialProgress {
   /// 運動履歴文脈を表示済みか。
   final bool historyContextSeen;
 
-  /// アチーブメント文脈を表示済みか。
+  /// 旧アチーブメント文脈の表示済み（互換用。案内はメイン段階7へ移した）。
   final bool achievementContextSeen;
 
   /// すべて未表示の [initial] を返す。
@@ -75,6 +87,8 @@ final class TutorialProgress {
   /// ```
   TutorialProgress copyWith({
     bool? mainCompleted,
+    int? mainReachedStep,
+    bool? goalSettingsContextSeen,
     bool? cameraContextSeen,
     bool? meterEditContextSeen,
     bool? trendsContextSeen,
@@ -82,6 +96,9 @@ final class TutorialProgress {
     bool? achievementContextSeen,
   }) => TutorialProgress(
     mainCompleted: mainCompleted ?? this.mainCompleted,
+    mainReachedStep: mainReachedStep ?? this.mainReachedStep,
+    goalSettingsContextSeen:
+        goalSettingsContextSeen ?? this.goalSettingsContextSeen,
     cameraContextSeen: cameraContextSeen ?? this.cameraContextSeen,
     meterEditContextSeen: meterEditContextSeen ?? this.meterEditContextSeen,
     trendsContextSeen: trendsContextSeen ?? this.trendsContextSeen,
@@ -90,7 +107,7 @@ final class TutorialProgress {
         achievementContextSeen ?? this.achievementContextSeen,
   );
 
-  /// 6 フラグがすべて同じなら等しい。
+  /// 永続フィールドがすべて同じなら等しい。
   ///
   /// Example:
   /// ```dart
@@ -101,13 +118,15 @@ final class TutorialProgress {
       identical(this, other) ||
       other is TutorialProgress &&
           mainCompleted == other.mainCompleted &&
+          mainReachedStep == other.mainReachedStep &&
+          goalSettingsContextSeen == other.goalSettingsContextSeen &&
           cameraContextSeen == other.cameraContextSeen &&
           meterEditContextSeen == other.meterEditContextSeen &&
           trendsContextSeen == other.trendsContextSeen &&
           historyContextSeen == other.historyContextSeen &&
           achievementContextSeen == other.achievementContextSeen;
 
-  /// 6 フラグに基づくハッシュ。
+  /// 永続フィールドに基づくハッシュ。
   ///
   /// Example:
   /// ```dart
@@ -116,6 +135,8 @@ final class TutorialProgress {
   @override
   int get hashCode => Object.hash(
     mainCompleted,
+    mainReachedStep,
+    goalSettingsContextSeen,
     cameraContextSeen,
     meterEditContextSeen,
     trendsContextSeen,

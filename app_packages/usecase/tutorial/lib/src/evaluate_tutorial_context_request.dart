@@ -7,24 +7,14 @@ import 'tutorial_kind.dart';
 /// const EvaluateTutorialContextRequest(kind: TutorialKind.camera);
 /// ```
 final class EvaluateTutorialContextRequest {
-  /// [kind] は camera / meterEdit / trends / history / achievement。
-  /// achievement のとき [unlockedAchievementCount] が必須。
+  /// [kind] は goalSettings / camera / meterEdit / trends / history。
   ///
   /// Example:
   /// ```dart
-  /// const EvaluateTutorialContextRequest(
-  ///   kind: TutorialKind.achievement,
-  ///   unlockedAchievementCount: 1,
-  /// );
+  /// const EvaluateTutorialContextRequest(kind: TutorialKind.goalSettings);
   /// ```
-  const EvaluateTutorialContextRequest({
-    required this.kind,
-    this.unlockedAchievementCount,
-  });
+  const EvaluateTutorialContextRequest({required this.kind});
 
   /// 判定する文脈。main は呼び出さない。
   final TutorialKind kind;
-
-  /// achievement のみ必須。獲得件数。
-  final int? unlockedAchievementCount;
 }

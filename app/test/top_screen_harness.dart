@@ -26,6 +26,8 @@ const _advisorTones = ['fun', 'confused', 'happy', 'realized'];
 /// ナビ／指標テストでコーチマークが操作を遮らないよう、進捗を完了済みにする。
 const _completedTutorialProgressJson = {
   'mainCompleted': true,
+  'mainReachedStep': 7,
+  'goalSettingsContextSeen': true,
   'cameraContextSeen': true,
   'meterEditContextSeen': true,
   'trendsContextSeen': true,

@@ -21,6 +21,8 @@ void main() {
     final repository = SharedPreferencesTutorialRepository(preferences);
     const progress = TutorialProgress(
       mainCompleted: true,
+      mainReachedStep: 7,
+      goalSettingsContextSeen: true,
       cameraContextSeen: true,
       meterEditContextSeen: false,
       trendsContextSeen: true,
@@ -54,5 +56,37 @@ void main() {
     final preferences = await SharedPreferences.getInstance();
     final repository = SharedPreferencesTutorialRepository(preferences);
     expect(await repository.read(), TutorialProgress.initial);
+  });
+
+  test('mainReachedStep 範囲外は initial', () async {
+    SharedPreferences.setMockInitialValues({
+      'tutorial_progress': jsonEncode({
+        'mainCompleted': false,
+        'mainReachedStep': 8,
+        'goalSettingsContextSeen': false,
+        'cameraContextSeen': false,
+        'meterEditContextSeen': false,
+        'trendsContextSeen': false,
+        'historyContextSeen': false,
+        'achievementContextSeen': false,
+      }),
+    });
+    final preferences = await SharedPreferences.getInstance();
+    final repository = SharedPreferencesTutorialRepository(preferences);
+    expect(await repository.read(), TutorialProgress.initial);
+  });
+
+  test('mainReachedStep 0 と 7 は読める', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final repository = SharedPreferencesTutorialRepository(preferences);
+    await repository.write(
+      TutorialProgress.initial.copyWith(mainReachedStep: 0),
+    );
+    expect((await repository.read()).mainReachedStep, 0);
+    await repository.write(
+      TutorialProgress.initial.copyWith(mainReachedStep: 7),
+    );
+    expect((await repository.read()).mainReachedStep, 7);
   });
 }

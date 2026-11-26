@@ -19,30 +19,19 @@ import 'goal_settings_screen_providers.dart';
 /// ```
 @internal
 class GoalSettingsScreenBody extends HookConsumerWidget {
-  /// 本文を作る。[onSaveSucceeded] は保存成功時のみ（チュートリアル段階3用）。
+  /// 本文を作る。
   ///
   /// Example:
   /// ```dart
-  /// GoalSettingsScreenBody(
-  ///   onSaveSucceeded: () async {},
-  /// );
+  /// const GoalSettingsScreenBody();
   /// ```
-  const GoalSettingsScreenBody({this.onSaveSucceeded, super.key});
-
-  /// 保存成功後の追加処理（段階4への進行など）。
-  ///
-  /// null のときは保存後に追加処理しない。
-  final Future<void> Function()? onSaveSucceeded;
+  const GoalSettingsScreenBody({super.key});
 
   /// 各欄の controller を Entity と同期し、保存ボタンで ViewModel へ渡す。
   ///
-  /// 保存成功時は [onSaveSucceeded] があれば呼ぶ。
-  ///
   /// Example:
   /// ```dart
-  /// GoalSettingsScreenBody(
-  ///   onSaveSucceeded: () async {},
-  /// ).build(context, ref);
+  /// const GoalSettingsScreenBody().build(context, ref);
   /// ```
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -163,63 +152,76 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
                 ],
               ),
             ),
-            FSelect<String>(
-              enabled: entity.loaded && !saving.value,
-              label: Text(
-                strings.screen_feature_goal_settings_weekly_days_label,
-              ),
-              description: Text(
-                strings.screen_feature_goal_settings_weekly_days_description,
-              ),
-              control: .lifted(
-                value: weeklyAchievementDays.value,
-                onChange: (days) {
-                  if (days == null ||
-                      days == weeklyAchievementDays.value ||
-                      saving.value) {
-                    return;
-                  }
-                  weeklyAchievementDays.value = days;
+            CoachMarkTarget(
+              id: CoachMarkTargetId.goalWeeklyDays,
+              child: FSelect<String>(
+                enabled: entity.loaded && !saving.value,
+                label: Text(
+                  strings.screen_feature_goal_settings_weekly_days_label,
+                ),
+                description: Text(
+                  strings.screen_feature_goal_settings_weekly_days_description,
+                ),
+                control: .lifted(
+                  value: weeklyAchievementDays.value,
+                  onChange: (days) {
+                    if (days == null ||
+                        days == weeklyAchievementDays.value ||
+                        saving.value) {
+                      return;
+                    }
+                    weeklyAchievementDays.value = days;
+                  },
+                ),
+                items: {
+                  strings.screen_feature_goal_settings_weekly_days_unset: '',
+                  for (var day = 1; day <= 7; day++) '$day': '$day',
                 },
               ),
-              items: {
-                strings.screen_feature_goal_settings_weekly_days_unset: '',
-                for (var day = 1; day <= 7; day++) '$day': '$day',
-              },
             ),
-            FSwitch(
-              label: Text(
-                strings.screen_feature_goal_settings_auto_update_enabled,
+            CoachMarkTarget(
+              id: CoachMarkTargetId.goalAutoUpdate,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 16,
+                children: [
+                  FSwitch(
+                    label: Text(
+                      strings.screen_feature_goal_settings_auto_update_enabled,
+                    ),
+                    description: Text(
+                      strings
+                          .screen_feature_goal_settings_auto_update_description,
+                    ),
+                    value: autoUpdateEnabled.value,
+                    onChange: entity.loaded && !saving.value
+                        ? (value) => autoUpdateEnabled.value = value
+                        : null,
+                    enabled: entity.loaded && !saving.value,
+                  ),
+                  FSelect<DailyGoalAutoUpdateLevel>(
+                    enabled: entity.loaded && !saving.value,
+                    label: Text(
+                      strings.screen_feature_goal_settings_auto_update_level,
+                    ),
+                    control: .lifted(
+                      value: autoUpdateLevel.value,
+                      onChange: (level) {
+                        if (level == null ||
+                            level == autoUpdateLevel.value ||
+                            saving.value) {
+                          return;
+                        }
+                        autoUpdateLevel.value = level;
+                      },
+                    ),
+                    items: {
+                      for (final level in DailyGoalAutoUpdateLevel.values)
+                        _autoUpdateLevelLabel(level): level,
+                    },
+                  ),
+                ],
               ),
-              description: Text(
-                strings.screen_feature_goal_settings_auto_update_description,
-              ),
-              value: autoUpdateEnabled.value,
-              onChange: entity.loaded && !saving.value
-                  ? (value) => autoUpdateEnabled.value = value
-                  : null,
-              enabled: entity.loaded && !saving.value,
-            ),
-            FSelect<DailyGoalAutoUpdateLevel>(
-              enabled: entity.loaded && !saving.value,
-              label: Text(
-                strings.screen_feature_goal_settings_auto_update_level,
-              ),
-              control: .lifted(
-                value: autoUpdateLevel.value,
-                onChange: (level) {
-                  if (level == null ||
-                      level == autoUpdateLevel.value ||
-                      saving.value) {
-                    return;
-                  }
-                  autoUpdateLevel.value = level;
-                },
-              ),
-              items: {
-                for (final level in DailyGoalAutoUpdateLevel.values)
-                  _autoUpdateLevelLabel(level): level,
-              },
             ),
             Text(
               strings.screen_feature_goal_settings_unset_hint,
@@ -267,9 +269,6 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
                             GoalSettingsSaveOutcome.saveFailed => .destructive,
                           },
                         );
-                        if (outcome == GoalSettingsSaveOutcome.success) {
-                          await onSaveSucceeded?.call();
-                        }
                       } finally {
                         saving.value = false;
                       }

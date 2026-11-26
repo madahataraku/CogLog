@@ -1441,16 +1441,16 @@ abstract class L10n {
   /// **'運動履歴'**
   String get screen_feature_exercise_history_title;
 
-  /// 段階8本文
+  /// 運動履歴文脈本文
   ///
   /// In ja, this message translates to:
-  /// **'黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。'**
+  /// **'黄色い丸のスタンプが運動した日です。タップすると内容の確認と、運動履歴の編集・削除が行えます。'**
   String get screen_feature_exercise_history_tutorial_body;
 
-  /// 段階8タイトル
+  /// 運動履歴文脈タイトル
   ///
   /// In ja, this message translates to:
-  /// **'運動した日のスタンプ'**
+  /// **'運動履歴の確認や編集を行おう'**
   String get screen_feature_exercise_history_tutorial_title;
 
   /// カレンダー曜日（金曜）
@@ -1608,6 +1608,42 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'目標設定'**
   String get screen_feature_goal_settings_title;
+
+  /// 目標設定文脈①本文
+  ///
+  /// In ja, this message translates to:
+  /// **'まずは1日あたりに目指したい運動時間、消費カロリー、距離を入力してみましょう。初めての場合、20分、200kcal、5kmあたりから始めるのがおすすめです。'**
+  String get screen_feature_goal_settings_tutorial_1_body;
+
+  /// 目標設定文脈①タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'目標設定のやり方①'**
+  String get screen_feature_goal_settings_tutorial_1_title;
+
+  /// 目標設定文脈②本文
+  ///
+  /// In ja, this message translates to:
+  /// **'1日あたりの運動目標を設定したら、次は1週間のうち何日運動するかを決めましょう。3日くらいの軽い目標から徐々に増やしていくのが続けやすくおすすめです。'**
+  String get screen_feature_goal_settings_tutorial_2_body;
+
+  /// 目標設定文脈②タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'目標設定のやり方②（週間の運動目標日数）'**
+  String get screen_feature_goal_settings_tutorial_2_title;
+
+  /// 目標設定文脈③本文
+  ///
+  /// In ja, this message translates to:
+  /// **'目標を連続して達成しているとき、徐々に目標値を自動的に上方更新することもできます。増える度合いも3種類から選べるので、自分のペースで設定してみてください。'**
+  String get screen_feature_goal_settings_tutorial_3_body;
+
+  /// 目標設定文脈③タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'目標設定のやり方③（自動更新）'**
+  String get screen_feature_goal_settings_tutorial_3_title;
 
   /// 未設定の説明
   ///
@@ -1824,28 +1860,28 @@ abstract class L10n {
   /// **'メーター記録'**
   String get screen_feature_meter_capture_title;
 
-  /// 段階5本文
+  /// メーター記録文脈・撮影本文
   ///
   /// In ja, this message translates to:
-  /// **'カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。'**
+  /// **'カメラでメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを自動的に読み取ります。ライブラリから撮影済みの写真を選ぶこともできます。'**
   String get screen_feature_meter_capture_tutorial_camera_body;
 
-  /// 段階5タイトル
+  /// メーター記録文脈・撮影タイトル
   ///
   /// In ja, this message translates to:
-  /// **'メーターを撮影'**
+  /// **'エアロバイクのメーターを撮影して記録しよう'**
   String get screen_feature_meter_capture_tutorial_camera_title;
 
-  /// 段階6本文
+  /// メーター記録文脈・結果本文
   ///
   /// In ja, this message translates to:
-  /// **'走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。'**
+  /// **'アプリが自動的に読み取った走行距離・運動時間・消費カロリーを確認し、誤りがあれば修整してください。登録ボタンを押すと記録されます。また、登録時ヘルスケアと連携しておくと、運動データをヘルスケア側にも記録することができます。'**
   String get screen_feature_meter_capture_tutorial_meter_edit_body;
 
-  /// 段階6タイトル
+  /// メーター記録文脈・結果タイトル
   ///
   /// In ja, this message translates to:
-  /// **'読み取り結果の確認'**
+  /// **'撮影結果について'**
   String get screen_feature_meter_capture_tutorial_meter_edit_title;
 
   /// 戻るボタンの代替テキスト
@@ -2172,65 +2208,101 @@ abstract class L10n {
   /// **'本日'**
   String get screen_feature_top_today;
 
-  /// アチーブメント文脈本文
+  /// 段階7互換キー
   ///
   /// In ja, this message translates to:
-  /// **'獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。'**
+  /// **'アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。'**
   String get screen_feature_top_tutorial_achievement_body;
 
-  /// アチーブメント文脈タイトル
+  /// 段階7互換キー
   ///
   /// In ja, this message translates to:
-  /// **'アチーブメント'**
+  /// **'たくさんの称号を取得しよう'**
   String get screen_feature_top_tutorial_achievement_title;
 
   /// 段階1本文
   ///
   /// In ja, this message translates to:
-  /// **'本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。'**
+  /// **'本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。'**
   String get screen_feature_top_tutorial_main_1_body;
 
   /// 段階1タイトル
   ///
   /// In ja, this message translates to:
-  /// **'ホームの見かた'**
+  /// **'ホーム画面の見かた'**
   String get screen_feature_top_tutorial_main_1_title;
 
   /// 段階2本文
   ///
   /// In ja, this message translates to:
-  /// **'メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。'**
+  /// **'目標設定画面で設定した目標に対し、現在の進捗状況を確認できます。目標は1日あたりの目標と、1週間あたり何日運動するのかを設定できます。'**
   String get screen_feature_top_tutorial_main_2_body;
 
   /// 段階2タイトル
   ///
   /// In ja, this message translates to:
-  /// **'各タブの役割'**
+  /// **'目標進捗率の見かた'**
   String get screen_feature_top_tutorial_main_2_title;
 
   /// 段階3本文
   ///
   /// In ja, this message translates to:
-  /// **'一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。'**
+  /// **'目標設定タブから、先ほどの目標進捗率で表示する目標の設定ができます。まずは目標から設定してみましょう。'**
   String get screen_feature_top_tutorial_main_3_body;
 
   /// 段階3タイトル
   ///
   /// In ja, this message translates to:
-  /// **'目標を設定しましょう'**
+  /// **'目標設定をしましょう'**
   String get screen_feature_top_tutorial_main_3_title;
 
   /// 段階4本文
   ///
   /// In ja, this message translates to:
-  /// **'メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。'**
+  /// **'目標を設定したら、早速運動の記録をつけましょう。メーター記録タブから、エアロバイクのメーターパネルを撮影するだけで簡単に運動データを記録できます。'**
   String get screen_feature_top_tutorial_main_4_body;
 
   /// 段階4タイトル
   ///
   /// In ja, this message translates to:
-  /// **'メーター記録で撮影'**
+  /// **'メーター記録を行いましょう'**
   String get screen_feature_top_tutorial_main_4_title;
+
+  /// 段階5本文
+  ///
+  /// In ja, this message translates to:
+  /// **'推移タブから、記録した運動データと体重・体脂肪率などの相関関係を確認できます。（別途ヘルスケア連携が必要です）'**
+  String get screen_feature_top_tutorial_main_5_body;
+
+  /// 段階5タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'運動の結果を振り返りましょう'**
+  String get screen_feature_top_tutorial_main_5_title;
+
+  /// 段階6本文
+  ///
+  /// In ja, this message translates to:
+  /// **'運動履歴タブからは、過去の運動データの確認、修整、削除が行えます。'**
+  String get screen_feature_top_tutorial_main_6_body;
+
+  /// 段階6タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'過去の記録を確認しましょう'**
+  String get screen_feature_top_tutorial_main_6_title;
+
+  /// 段階7本文
+  ///
+  /// In ja, this message translates to:
+  /// **'アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。'**
+  String get screen_feature_top_tutorial_main_7_body;
+
+  /// 段階7タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'たくさんの称号を取得しよう'**
+  String get screen_feature_top_tutorial_main_7_title;
 
   /// 目標未設定時の設定促進
   ///
@@ -2392,16 +2464,16 @@ abstract class L10n {
   /// **'推移'**
   String get screen_feature_trends_title;
 
-  /// 段階7本文
+  /// 推移文脈本文
   ///
   /// In ja, this message translates to:
-  /// **'消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。'**
+  /// **'消費カロリーと体脂肪率などの関係をグラフで確認できます。どのカットで推移を確認するかを選べます。また、体脂肪率・体重などの身体データはヘルスケアの読み取り連携が必要です。'**
   String get screen_feature_trends_tutorial_body;
 
-  /// 段階7タイトル
+  /// 推移文脈タイトル
   ///
   /// In ja, this message translates to:
-  /// **'運動と身体の関係'**
+  /// **'運動データの推移の確認'**
   String get screen_feature_trends_tutorial_title;
 
   /// 単位

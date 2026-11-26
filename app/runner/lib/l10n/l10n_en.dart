@@ -819,11 +819,11 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_exercise_history_tutorial_body =>
-      'Yellow stamps mark days you exercised. Tap a day to review, edit, or delete.';
+      'Yellow stamps mark days you exercised. Tap a day to review details or edit and delete history.';
 
   @override
   String get screen_feature_exercise_history_tutorial_title =>
-      'Exercise day stamps';
+      'Review and edit history';
 
   @override
   String get screen_feature_exercise_history_weekday_fri => 'Fri';
@@ -907,6 +907,30 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_goal_settings_title => 'Goals';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_1_body =>
+      'Start by entering your daily targets for duration, calories, and distance. For beginners, about 20 min, 200 kcal, and 5 km is a good start.';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_1_title =>
+      'How to set goals 1';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_2_body =>
+      'After daily targets, choose how many days per week to exercise. Starting around 3 days and increasing gradually is easier to keep up.';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_2_title =>
+      'How to set goals 2 (weekly days)';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_3_body =>
+      'When you hit goals in a row you can auto-raise them. Pick one of three increase levels to match your pace.';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_3_title =>
+      'How to set goals 3 (auto-update)';
 
   @override
   String get screen_feature_goal_settings_unset_hint =>
@@ -1039,19 +1063,19 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_meter_capture_tutorial_camera_body =>
-      'Photograph the meter panel to read distance, duration, and calories. Health write permission may be requested when saving.';
+      'Photograph the meter panel to read distance, duration, and calories automatically. You can also pick an existing photo from your library.';
 
   @override
   String get screen_feature_meter_capture_tutorial_camera_title =>
-      'Photograph the meter';
+      'Photograph the bike meter to log';
 
   @override
   String get screen_feature_meter_capture_tutorial_meter_edit_body =>
-      'Distance, duration, and calories are filled in automatically. Correct any mistakes by hand before saving.';
+      'Check the distance, duration, and calories the app read, and fix any mistakes. Tap Save to log them. Linking Health when saving also writes the workout there.';
 
   @override
   String get screen_feature_meter_capture_tutorial_meter_edit_title =>
-      'Review the reading';
+      'About the reading';
 
   @override
   String get screen_feature_notification_settings_back_semantics => 'Back';
@@ -1261,38 +1285,63 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_tutorial_achievement_body =>
-      'Open trophies here. A dot appears when you have new unlocks.';
+      'From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.';
 
   @override
-  String get screen_feature_top_tutorial_achievement_title => 'Achievements';
+  String get screen_feature_top_tutorial_achievement_title =>
+      'Earn many trophies';
 
   @override
   String get screen_feature_top_tutorial_main_1_body =>
-      'You can check today, this week, and this month totals and progress toward your goals. Switch metrics as needed.';
+      'You can check the total exercise values for today, this week, and this month. Use the dropdown to switch among calories, distance, and duration.';
 
   @override
   String get screen_feature_top_tutorial_main_1_title => 'Getting around Home';
 
   @override
   String get screen_feature_top_tutorial_main_2_body =>
-      'Meter capture reads from photos. Trends relate exercise and body metrics. History lets you review and edit by day. Goals set daily targets and weekly exercise days.';
+      'See progress against the goals set on the Goals screen. You can set daily targets and how many days per week to exercise.';
 
   @override
-  String get screen_feature_top_tutorial_main_2_title => 'What each tab is for';
+  String get screen_feature_top_tutorial_main_2_title =>
+      'Reading goal progress';
 
   @override
   String get screen_feature_top_tutorial_main_3_body =>
-      'Setting daily duration, calories, and distance makes progress clearer. Save when you are done.';
+      'From the Goals tab you can set the targets shown in the progress section. Start by setting your goals.';
 
   @override
-  String get screen_feature_top_tutorial_main_3_title => 'Set your goals';
+  String get screen_feature_top_tutorial_main_3_title =>
+      'Let\'s set your goals';
 
   @override
   String get screen_feature_top_tutorial_main_4_body =>
-      'From the Meter tab, photograph the meter panel to read distance, duration, and calories.';
+      'After setting goals, log your exercise. From the Meter tab you can photograph the bike meter panel to record data easily.';
 
   @override
-  String get screen_feature_top_tutorial_main_4_title => 'Capture with Meter';
+  String get screen_feature_top_tutorial_main_4_title =>
+      'Log with Meter capture';
+
+  @override
+  String get screen_feature_top_tutorial_main_5_body =>
+      'From the Trends tab you can see how logged exercise relates to weight and body fat (Health access required separately).';
+
+  @override
+  String get screen_feature_top_tutorial_main_5_title => 'Review your results';
+
+  @override
+  String get screen_feature_top_tutorial_main_6_body =>
+      'From the History tab you can review, edit, and delete past exercise data.';
+
+  @override
+  String get screen_feature_top_tutorial_main_6_title => 'Check past records';
+
+  @override
+  String get screen_feature_top_tutorial_main_7_body =>
+      'From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.';
+
+  @override
+  String get screen_feature_top_tutorial_main_7_title => 'Earn many trophies';
 
   @override
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
@@ -1389,11 +1438,10 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_tutorial_body =>
-      'See how calories relate to body fat and more on the chart. Body fat and weight need Health read access.';
+      'See how calories relate to body fat and more on the chart. Choose which cut to view. Body metrics such as body fat and weight need Health read access.';
 
   @override
-  String get screen_feature_trends_tutorial_title =>
-      'Exercise and body metrics';
+  String get screen_feature_trends_tutorial_title => 'Review exercise trends';
 
   @override
   String get screen_feature_trends_unit_kcal => 'kcal';

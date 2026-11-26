@@ -12,10 +12,7 @@ import 'coach_mark_target_id.dart';
 /// );
 /// ```
 final class CoachMarkStep {
-  /// ターゲットと文言、操作可否を束ねる。
-  ///
-  /// [allowTargetInteraction] が true のときハイライト内のポインタを透過する。
-  /// [blockSystemBack] が false のとき OS 戻るを呼び出し側がスキップ扱いできる。
+  /// ターゲットと文言を束ねる。
   ///
   /// Example:
   /// ```dart
@@ -25,8 +22,6 @@ final class CoachMarkStep {
   ///   body: 'b',
   ///   primaryLabel: '次へ',
   ///   secondaryLabel: 'スキップ',
-  ///   allowTargetInteraction: true,
-  ///   blockSystemBack: false,
   /// );
   /// ```
   const CoachMarkStep({
@@ -35,8 +30,6 @@ final class CoachMarkStep {
     required this.body,
     required this.primaryLabel,
     this.secondaryLabel,
-    this.allowTargetInteraction = false,
-    this.blockSystemBack = true,
   });
 
   /// ハイライト対象。
@@ -53,10 +46,4 @@ final class CoachMarkStep {
 
   /// 副ボタン（スキップ等）。null なら出さない。
   final String? secondaryLabel;
-
-  /// true のときハイライト内のポインタを透過（段階3）。
-  final bool allowTargetInteraction;
-
-  /// true のとき OS 戻るを握りつぶす（段階3は false）。
-  final bool blockSystemBack;
 }

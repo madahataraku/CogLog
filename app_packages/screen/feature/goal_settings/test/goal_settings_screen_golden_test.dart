@@ -23,6 +23,18 @@ final class _AdvanceTutorial implements AdvanceTutorialMainUsecase {
   }
 }
 
+final class _EvaluateTutorialNever implements EvaluateTutorialContextUsecase {
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async => const EvaluateTutorialContextResult(shouldShow: false);
+}
+
+final class _MarkTutorialNever implements MarkTutorialContextSeenUsecase {
+  @override
+  Future<void> execute(MarkTutorialContextSeenRequest request) async {}
+}
+
 void main() {
   testWidgets('目標設定の未設定空状態 / ja / Android / light', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
@@ -54,6 +66,12 @@ void main() {
             ),
             AdvanceTutorialMainUsecase.provider.overrideWith(
               (ref) => _AdvanceTutorial(),
+            ),
+            EvaluateTutorialContextUsecase.provider.overrideWith(
+              (ref) => _EvaluateTutorialNever(),
+            ),
+            MarkTutorialContextSeenUsecase.provider.overrideWith(
+              (ref) => _MarkTutorialNever(),
             ),
             tutorialRuntimeSessionProvider.overrideWith(
               (ref) => TutorialRuntimeSession(),

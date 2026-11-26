@@ -42,6 +42,14 @@ final class CoachMarkRegistry {
     }
   }
 
+  /// [id] に登録した [GlobalKey]。未登録は null。
+  ///
+  /// Example:
+  /// ```dart
+  /// registry.keyFor(CoachMarkTargetId.navHome);
+  /// ```
+  GlobalKey? keyFor(CoachMarkTargetId id) => _keys[id];
+
   /// [id] の画面座標矩形。取得失敗時は null。
   ///
   /// [overlayContext] は Overlay 側の文脈。座標はグローバル原点基準。

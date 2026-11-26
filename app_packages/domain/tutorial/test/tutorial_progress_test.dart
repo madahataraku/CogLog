@@ -2,65 +2,79 @@ import 'package:domain_tutorial/domain_tutorial.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('TutorialProgress', () {
-    test('initial はすべて false', () {
-      expect(TutorialProgress.initial.mainCompleted, isFalse);
-      expect(TutorialProgress.initial.cameraContextSeen, isFalse);
-      expect(TutorialProgress.initial.meterEditContextSeen, isFalse);
-      expect(TutorialProgress.initial.trendsContextSeen, isFalse);
-      expect(TutorialProgress.initial.historyContextSeen, isFalse);
-      expect(TutorialProgress.initial.achievementContextSeen, isFalse);
-    });
+  // テスト対象:
+  // TutorialProgress.initial
+  //
+  // テスト内容:
+  // 初期値は未完了・到達0・全文脈未表示である。
+  test('TutorialProgress initial はすべて未完了', () {
+    const p = TutorialProgress.initial;
+    expect(p.mainCompleted, isFalse);
+    expect(p.mainReachedStep, 0);
+    expect(p.goalSettingsContextSeen, isFalse);
+    expect(p.cameraContextSeen, isFalse);
+    expect(p.meterEditContextSeen, isFalse);
+    expect(p.trendsContextSeen, isFalse);
+    expect(p.historyContextSeen, isFalse);
+    expect(p.achievementContextSeen, isFalse);
+  });
 
-    test('reset は initial を返す', () {
-      final progressed = TutorialProgress.initial.copyWith(
-        mainCompleted: true,
-        cameraContextSeen: true,
-      );
-      expect(progressed.reset(), TutorialProgress.initial);
-    });
+  // テスト対象:
+  // TutorialProgress.reset
+  //
+  // テスト内容:
+  // reset は initial を返す。
+  test('TutorialProgress reset は initial を返す', () {
+    final p = TutorialProgress.initial.copyWith(
+      mainCompleted: true,
+      mainReachedStep: 7,
+      goalSettingsContextSeen: true,
+    );
+    expect(p.reset(), TutorialProgress.initial);
+  });
 
-    test('copyWith は指定フィールドだけ差し替える', () {
-      final updated = TutorialProgress.initial.copyWith(
-        mainCompleted: true,
-        trendsContextSeen: true,
-      );
-      expect(updated.mainCompleted, isTrue);
-      expect(updated.trendsContextSeen, isTrue);
-      expect(updated.cameraContextSeen, isFalse);
-      expect(updated.meterEditContextSeen, isFalse);
-      expect(updated.historyContextSeen, isFalse);
-      expect(updated.achievementContextSeen, isFalse);
-    });
+  // テスト対象:
+  // TutorialProgress.copyWith
+  //
+  // テスト内容:
+  // 指定フィールドだけ差し替える。
+  test('TutorialProgress copyWith は指定フィールドだけ差し替える', () {
+    final p = TutorialProgress.initial.copyWith(
+      mainReachedStep: 3,
+      goalSettingsContextSeen: true,
+    );
+    expect(p.mainReachedStep, 3);
+    expect(p.goalSettingsContextSeen, isTrue);
+    expect(p.mainCompleted, isFalse);
+  });
 
-    test('== と hashCode は 6 フラグで決まる', () {
-      const a = TutorialProgress(
-        mainCompleted: true,
-        cameraContextSeen: false,
-        meterEditContextSeen: true,
-        trendsContextSeen: false,
-        historyContextSeen: true,
-        achievementContextSeen: false,
-      );
-      const b = TutorialProgress(
-        mainCompleted: true,
-        cameraContextSeen: false,
-        meterEditContextSeen: true,
-        trendsContextSeen: false,
-        historyContextSeen: true,
-        achievementContextSeen: false,
-      );
-      const c = TutorialProgress(
-        mainCompleted: true,
-        cameraContextSeen: false,
-        meterEditContextSeen: true,
-        trendsContextSeen: false,
-        historyContextSeen: true,
-        achievementContextSeen: true,
-      );
-      expect(a, b);
-      expect(a.hashCode, b.hashCode);
-      expect(a, isNot(c));
-    });
+  // テスト対象:
+  // TutorialProgress == / hashCode
+  //
+  // テスト内容:
+  // 全永続フィールドで等価が決まる。
+  test('TutorialProgress == と hashCode は永続フィールドで決まる', () {
+    const a = TutorialProgress(
+      mainCompleted: true,
+      mainReachedStep: 4,
+      goalSettingsContextSeen: true,
+      cameraContextSeen: true,
+      meterEditContextSeen: false,
+      trendsContextSeen: false,
+      historyContextSeen: false,
+      achievementContextSeen: false,
+    );
+    const b = TutorialProgress(
+      mainCompleted: true,
+      mainReachedStep: 4,
+      goalSettingsContextSeen: true,
+      cameraContextSeen: true,
+      meterEditContextSeen: false,
+      trendsContextSeen: false,
+      historyContextSeen: false,
+      achievementContextSeen: false,
+    );
+    expect(a, b);
+    expect(a.hashCode, b.hashCode);
   });
 }

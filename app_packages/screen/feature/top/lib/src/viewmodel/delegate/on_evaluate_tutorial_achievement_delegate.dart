@@ -4,7 +4,7 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import '../state/top_screen_state.dart';
 
-/// アチーブメント文脈の表示要否を見て pending を立てる。
+/// 旧アチーブメント文脈用。案内はメイン段階7へ移したため常に何もしない。
 ///
 /// Example:
 /// ```dart
@@ -16,7 +16,7 @@ import '../state/top_screen_state.dart';
 /// ).execute();
 /// ```
 final class OnEvaluateTutorialAchievementDelegate {
-  /// 依存を受け取る。
+  /// 依存を受け取る（互換のためシグネチャ維持）。
   ///
   /// Example:
   /// ```dart
@@ -37,44 +37,20 @@ final class OnEvaluateTutorialAchievementDelegate {
   /// 画面状態。
   final MutableStateStream<TopScreenState> state;
 
-  /// 獲得件数取得。
+  /// 獲得件数取得（未使用）。
   final LoadAchievementsUsecase loadAchievements;
 
-  /// 文脈判定。
+  /// 文脈判定（未使用）。
   final EvaluateTutorialContextUsecase evaluateContext;
 
-  /// 一覧読込の基準時刻。
+  /// 一覧読込の基準時刻（未使用）。
   final DateTime Function() now;
 
-  /// 獲得 1 件以上かつ条件成立なら pendingTutorialAchievement を立てる。
+  /// 何もしない。
   ///
   /// Example:
   /// ```dart
   /// await delegate.execute();
   /// ```
-  Future<void> execute() async {
-    if (!state.state.loaded) {
-      return;
-    }
-    final loaded = await loadAchievements.execute(
-      LoadAchievementsRequest(now: now()),
-    );
-    final unlocked = switch (loaded) {
-      LoadAchievementsSuccess(:final rows) =>
-        rows.where((e) => e.unlocked).length,
-      _ => 0,
-    };
-    final decision = await evaluateContext.execute(
-      EvaluateTutorialContextRequest(
-        kind: TutorialKind.achievement,
-        unlockedAchievementCount: unlocked,
-      ),
-    );
-    if (!decision.shouldShow) {
-      return;
-    }
-    await state.updateWithLock((current, emitter) async {
-      await emitter.emit(current.copyWith(pendingTutorialAchievement: true));
-    });
-  }
+  Future<void> execute() async {}
 }

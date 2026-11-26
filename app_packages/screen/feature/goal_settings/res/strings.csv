@@ -23,3 +23,9 @@ unset_hint,未設定の欄は空のまま保存できます,Leave fields empty t
 save_success,目標を保存しました,Goals saved,保存成功の通知
 save_invalid_input,入力内容を確認してください,Check your input values,入力不正の通知
 save_failed,目標を保存できませんでした,Could not save goals,永続化失敗の通知
+tutorial_1_title,目標設定のやり方①,How to set goals 1,目標設定文脈①タイトル
+tutorial_1_body,まずは1日あたりに目指したい運動時間、消費カロリー、距離を入力してみましょう。初めての場合、20分、200kcal、5kmあたりから始めるのがおすすめです。,"Start by entering your daily targets for duration, calories, and distance. For beginners, about 20 min, 200 kcal, and 5 km is a good start.",目標設定文脈①本文
+tutorial_2_title,目標設定のやり方②（週間の運動目標日数）,How to set goals 2 (weekly days),目標設定文脈②タイトル
+tutorial_2_body,1日あたりの運動目標を設定したら、次は1週間のうち何日運動するかを決めましょう。3日くらいの軽い目標から徐々に増やしていくのが続けやすくおすすめです。,"After daily targets, choose how many days per week to exercise. Starting around 3 days and increasing gradually is easier to keep up.",目標設定文脈②本文
+tutorial_3_title,目標設定のやり方③（自動更新）,How to set goals 3 (auto-update),目標設定文脈③タイトル
+tutorial_3_body,目標を連続して達成しているとき、徐々に目標値を自動的に上方更新することもできます。増える度合いも3種類から選べるので、自分のペースで設定してみてください。,When you hit goals in a row you can auto-raise them. Pick one of three increase levels to match your pace.,目標設定文脈③本文

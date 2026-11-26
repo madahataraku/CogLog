@@ -2,13 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import 'coach_mark_bubble.dart';
 import 'coach_mark_dismiss_reason.dart';
-import 'coach_mark_overlay.dart';
 import 'coach_mark_providers.dart';
 import 'coach_mark_step.dart';
 
-/// コーチマークの表示／破棄。
+/// コーチマークの表示／破棄（`tutorial_coach_mark` 経由）。
 ///
 /// Example:
 /// ```dart
@@ -31,8 +33,8 @@ final class CoachMarkLauncher {
   /// ```
   const CoachMarkLauncher._();
 
-  /// 表示中の Entry。
-  static OverlayEntry? _activeEntry;
+  /// 表示中のコントローラ。
+  static TutorialCoachMark? _active;
 
   /// 表示中の完了待ち。
   static Completer<CoachMarkDismissReason>? _activeCompleter;
@@ -53,25 +55,68 @@ final class CoachMarkLauncher {
     final completer = Completer<CoachMarkDismissReason>();
     _activeCompleter = completer;
 
-    final overlay = Overlay.of(context, rootOverlay: true);
     final container = ProviderScope.containerOf(context);
     final registry = container.read(CoachMarkProviders.registry);
+    final size = MediaQuery.sizeOf(context);
+    final hole = registry.rectFor(step.targetId, context);
+    // Overlay 上でも吹き出しがテーマを読めるよう、呼び出し側の FTheme を運ぶ。
+    final theme = context.theme;
 
-    late final OverlayEntry entry;
-    entry = OverlayEntry(
-      builder: (overlayContext) {
-        final hole = registry.rectFor(step.targetId, overlayContext);
-        return CoachMarkOverlay(
-          step: step,
-          hole: hole,
-          onDismiss: (reason) {
-            _removeActive(reason);
-          },
-        );
+    void complete(CoachMarkDismissReason reason) {
+      _finishActive(reason);
+    }
+
+    // keyTarget ではなく表示時点の矩形を渡す（root Overlay でも座標解決できる）。
+    final fallback = TargetPosition(
+      Size(size.width * 0.6, 48),
+      Offset(size.width * 0.2, size.height * 0.4),
+    );
+    final position = hole == null
+        ? fallback
+        : TargetPosition(hole.size, hole.topLeft);
+
+    final target = TargetFocus(
+      identify: step.targetId.name,
+      targetPosition: position,
+      shape: ShapeLightFocus.RRect,
+      radius: 8,
+      paddingFocus: 4,
+      enableOverlayTab: false,
+      enableTargetTab: false,
+      contents: [
+        TargetContent(
+          align: contentAlignFor(hole: hole, screenSize: size),
+          padding: EdgeInsets.zero,
+          child: FTheme(
+            data: theme,
+            child: CoachMarkBubble(step: step, onDismiss: complete),
+          ),
+        ),
+      ],
+    );
+
+    final tutorial = TutorialCoachMark(
+      targets: [target],
+      hideSkip: true,
+      pulseEnable: false,
+      opacityShadow: 0.6,
+      paddingFocus: 4,
+      focusAnimationDuration: const Duration(milliseconds: 300),
+      unFocusAnimationDuration: const Duration(milliseconds: 200),
+      // OS 戻るをライブラリ側で無効化する。
+      disableBackButton: true,
+      onFinish: () {
+        // finish() 経由で外されたとき、未完了なら primary 相当として閉じる。
+        final pending = _activeCompleter;
+        if (pending != null && !pending.isCompleted) {
+          pending.complete(CoachMarkDismissReason.primary);
+        }
+        _clearActiveRefs();
       },
     );
-    _activeEntry = entry;
-    overlay.insert(entry);
+    _active = tutorial;
+    tutorial.show(context: context, rootOverlay: true);
+
     return completer.future;
   }
 
@@ -82,23 +127,65 @@ final class CoachMarkLauncher {
   /// CoachMarkLauncher.dismissActive();
   /// ```
   static void dismissActive() {
-    _removeActive(CoachMarkDismissReason.forced);
+    _finishActive(CoachMarkDismissReason.forced);
   }
 
-  /// 表示中 Entry を外し Completer を完了する。
+  /// 穴が画面下半分なら上、さもなくば下に吹き出しを置く。
   ///
   /// Example:
   /// ```dart
-  /// _removeActive(CoachMarkDismissReason.primary);
+  /// CoachMarkLauncher.contentAlignFor(hole: null, screenSize: Size.zero);
   /// ```
-  static void _removeActive(CoachMarkDismissReason reason) {
-    final entry = _activeEntry;
+  @visibleForTesting
+  static ContentAlign contentAlignFor({
+    required Rect? hole,
+    required Size screenSize,
+  }) {
+    if (hole == null || screenSize.height <= 0) {
+      return ContentAlign.bottom;
+    }
+    return hole.center.dy > screenSize.height * 0.55
+        ? ContentAlign.top
+        : ContentAlign.bottom;
+  }
+
+  /// 完了理由を確定し、オーバーレイを外す。
+  ///
+  /// 未挿入時は上流の `Future.delayed(Duration.zero)` のあとに外す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _finishActive(CoachMarkDismissReason.primary);
+  /// ```
+  static void _finishActive(CoachMarkDismissReason reason) {
     final completer = _activeCompleter;
-    _activeEntry = null;
+    final tutorial = _active;
     _activeCompleter = null;
-    entry?.remove();
+    _active = null;
+    if (tutorial != null) {
+      // 未挿入なら上流の Future.delayed(Duration.zero) のあとに外す。
+      // 先に remove/closeHiddenView すると disableBackButton 経路が _contextTutorial! で落ちる。
+      if (tutorial.isShowing) {
+        tutorial.removeOverlayEntry();
+      } else {
+        Future.delayed(Duration.zero, () {
+          tutorial.removeOverlayEntry();
+        });
+      }
+    }
     if (completer != null && !completer.isCompleted) {
       completer.complete(reason);
     }
+  }
+
+  /// [_active] / Completer 参照だけ消す（onFinish 用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// _clearActiveRefs();
+  /// ```
+  static void _clearActiveRefs() {
+    _active = null;
+    _activeCompleter = null;
   }
 }

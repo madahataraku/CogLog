@@ -17,8 +17,8 @@ advice_over_300_3,驚異的な伸びです！調子が良くても、回復の�
 advice_over_200_1,今日は大きく目標を超えることができました！素晴らしい成果です。もし、簡単なら、より高い目標を設定してみましょう！,"You clearly beat your goals today—great work! If it felt easy, try setting a higher target.",条件付き over_200 1
 advice_over_200_2,目標の2倍を超えています。調子が良い証拠です。余裕があるなら、目標を少し上げてみるのもおすすめです。,"You're past double your goals. That's a strong sign. If you have room, nudge the goals up a bit.",条件付き over_200 2
 advice_over_200_3,大きく上振れできましたね。この調子なら、次はもう一段高い目標にも挑戦できそうです。,"A big overshoot today. At this pace, the next step up in goals looks reachable.",条件付き over_200 3
-advice_streak_goals_1,今日も目標を達成できました！継続は力なり、さらに高い目標を設定してもいいかも知れません。目標の自動更新機能も試してみてね。,"You hit your goals again today! Consistency pays off—raising them a bit may be fine. Try auto-update too.",条件付き streak_goals 1
-advice_streak_goals_2,連日の目標達成、すばらしいです。積み重ねが力になります。自動更新で目標を伸ばすのもありですよ。,"Goals met several days in a row—wonderful. Stacking days builds strength. Auto-update can raise them for you.",条件付き streak_goals 2
+advice_streak_goals_1,今日も目標を達成できました！継続は力なり、さらに高い目標を設定してもいいかも知れません。目標の自動更新機能も試してみてね。,You hit your goals again today! Consistency pays off—raising them a bit may be fine. Try auto-update too.,条件付き streak_goals 1
+advice_streak_goals_2,連日の目標達成、すばらしいです。積み重ねが力になります。自動更新で目標を伸ばすのもありですよ。,Goals met several days in a row—wonderful. Stacking days builds strength. Auto-update can raise them for you.,条件付き streak_goals 2
 advice_streak_goals_3,また目標をクリアできました。続いている今がチャンスです。目標の自動更新も活用してみてください。,"Another clear day. While the streak holds, try goal auto-update as well.",条件付き streak_goals 3
 advice_all_perfect_1,パーフェクト！今日の目標は達成です！毎日コツコツ運動するのが大切です。明日もまた頑張りましょう！,Perfect—today's goals are done! Steady daily movement matters. Let's go again tomorrow.,条件付き all_perfect 1
 advice_all_perfect_2,今日の目標、しっかり達成できました。小さな積み重ねが効いてきます。明日もこのペースでいきましょう。,You solidly met today's goals. Small stacks add up. Keep this pace tomorrow.,条件付き all_perfect 2
@@ -50,13 +50,19 @@ advisor_semantics,アドバイザー,Advisor,アドバイスキャラクター�
 achievements_semantics,アチーブメント,Achievements,ホーム右上
 achievements_new_semantics,新規アチーブメントあり,New achievements available,ホーム trophy の新規ドット a11y
 settings_semantics,アプリ設定,App settings,ホーム右上の設定ボタンの代替テキスト
-tutorial_main_1_title,ホームの見かた,Getting around Home,段階1タイトル
-tutorial_main_1_body,本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。,"You can check today, this week, and this month totals and progress toward your goals. Switch metrics as needed.",段階1本文
-tutorial_main_2_title,各タブの役割,What each tab is for,段階2タイトル
-tutorial_main_2_body,メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。,Meter capture reads from photos. Trends relate exercise and body metrics. History lets you review and edit by day. Goals set daily targets and weekly exercise days.,段階2本文
-tutorial_main_3_title,目標を設定しましょう,Set your goals,段階3タイトル
-tutorial_main_3_body,一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。,"Setting daily duration, calories, and distance makes progress clearer. Save when you are done.",段階3本文
-tutorial_main_4_title,メーター記録で撮影,Capture with Meter,段階4タイトル
-tutorial_main_4_body,メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。,"From the Meter tab, photograph the meter panel to read distance, duration, and calories.",段階4本文
-tutorial_achievement_title,アチーブメント,Achievements,アチーブメント文脈タイトル
-tutorial_achievement_body,獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。,Open trophies here. A dot appears when you have new unlocks.,アチーブメント文脈本文
+tutorial_main_1_title,ホーム画面の見かた,Getting around Home,段階1タイトル
+tutorial_main_1_body,本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。,"You can check the total exercise values for today, this week, and this month. Use the dropdown to switch among calories, distance, and duration.",段階1本文
+tutorial_main_2_title,目標進捗率の見かた,Reading goal progress,段階2タイトル
+tutorial_main_2_body,目標設定画面で設定した目標に対し、現在の進捗状況を確認できます。目標は1日あたりの目標と、1週間あたり何日運動するのかを設定できます。,See progress against the goals set on the Goals screen. You can set daily targets and how many days per week to exercise.,段階2本文
+tutorial_main_3_title,目標設定をしましょう,Let's set your goals,段階3タイトル
+tutorial_main_3_body,目標設定タブから、先ほどの目標進捗率で表示する目標の設定ができます。まずは目標から設定してみましょう。,From the Goals tab you can set the targets shown in the progress section. Start by setting your goals.,段階3本文
+tutorial_main_4_title,メーター記録を行いましょう,Log with Meter capture,段階4タイトル
+tutorial_main_4_body,目標を設定したら、早速運動の記録をつけましょう。メーター記録タブから、エアロバイクのメーターパネルを撮影するだけで簡単に運動データを記録できます。,"After setting goals, log your exercise. From the Meter tab you can photograph the bike meter panel to record data easily.",段階4本文
+tutorial_main_5_title,運動の結果を振り返りましょう,Review your results,段階5タイトル
+tutorial_main_5_body,推移タブから、記録した運動データと体重・体脂肪率などの相関関係を確認できます。（別途ヘルスケア連携が必要です）,From the Trends tab you can see how logged exercise relates to weight and body fat (Health access required separately).,段階5本文
+tutorial_main_6_title,過去の記録を確認しましょう,Check past records,段階6タイトル
+tutorial_main_6_body,運動履歴タブからは、過去の運動データの確認、修整、削除が行えます。,"From the History tab you can review, edit, and delete past exercise data.",段階6本文
+tutorial_main_7_title,たくさんの称号を取得しよう,Earn many trophies,段階7タイトル
+tutorial_main_7_body,アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。,From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.,段階7本文
+tutorial_achievement_title,たくさんの称号を取得しよう,Earn many trophies,段階7互換キー
+tutorial_achievement_body,アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。,From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.,段階7互換キー

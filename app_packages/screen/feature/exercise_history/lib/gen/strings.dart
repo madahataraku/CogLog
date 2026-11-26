@@ -54,13 +54,13 @@ mixin class L10nStringsMixin {
   String get screen_feature_exercise_history_title =>
       LocalizeStringDelegate.get('screen_feature_exercise_history_title');
 
-  /// 段階8本文
+  /// 運動履歴文脈本文
   String get screen_feature_exercise_history_tutorial_body =>
       LocalizeStringDelegate.get(
         'screen_feature_exercise_history_tutorial_body',
       );
 
-  /// 段階8タイトル
+  /// 運動履歴文脈タイトル
   String get screen_feature_exercise_history_tutorial_title =>
       LocalizeStringDelegate.get(
         'screen_feature_exercise_history_tutorial_title',

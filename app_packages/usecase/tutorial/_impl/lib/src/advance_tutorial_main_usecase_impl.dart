@@ -1,5 +1,4 @@
 import 'package:data_repository_tutorial/data_repository_tutorial.dart';
-import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 /// メイン導線の段階遷移と完了永続。
@@ -9,25 +8,22 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 /// AdvanceTutorialMainUsecaseImpl(
 ///   repository: repository,
 ///   session: session,
-///   loadDailyGoal: loadDailyGoal,
 /// );
 /// ```
 final class AdvanceTutorialMainUsecaseImpl
     implements AdvanceTutorialMainUsecase {
-  /// [repository]・[session]・[loadDailyGoal] を使う。
+  /// [repository]・[session] を使う。
   ///
   /// Example:
   /// ```dart
   /// AdvanceTutorialMainUsecaseImpl(
   ///   repository: repository,
   ///   session: session,
-  ///   loadDailyGoal: loadDailyGoal,
   /// );
   /// ```
   AdvanceTutorialMainUsecaseImpl({
     required this.repository,
     required this.session,
-    required this.loadDailyGoal,
   });
 
   /// チュートリアル進捗。
@@ -35,9 +31,6 @@ final class AdvanceTutorialMainUsecaseImpl
 
   /// プロセス内実行状態。
   final TutorialRuntimeSession session;
-
-  /// 段階2→3/4 分岐用の一日あたり目標。
-  final LoadDailyGoalUsecase loadDailyGoal;
 
   /// [request] に応じて session を更新し結果を返す。
   ///
@@ -50,35 +43,49 @@ final class AdvanceTutorialMainUsecaseImpl
     AdvanceTutorialMainRequest request,
   ) async {
     return switch (request) {
-      AdvanceTutorialMainStartRequest() => _start(),
+      AdvanceTutorialMainStartRequest() => _startOrResume(),
       AdvanceTutorialMainNextRequest() => _next(),
       AdvanceTutorialMainSkipRequest() => _skip(),
-      AdvanceTutorialMainGoalSavedRequest() => _goalSaved(),
+      AdvanceTutorialMainGoalSavedRequest() =>
+        const AdvanceTutorialMainResult.noop(),
     };
   }
 
-  /// 段階1を開始する。
-  ///
-  /// Example:
-  /// ```dart
-  /// await _start();
-  /// ```
-  Future<AdvanceTutorialMainResult> _start() async {
+  /// 未完了なら段階1〜3開始、または段階4〜7を再開する。
+  Future<AdvanceTutorialMainResult> _startOrResume() async {
     session.manualStartGuard = false;
-    session.activeKind = TutorialKind.main;
-    session.mainStep = TutorialMainStep.homeIntro;
-    return const AdvanceTutorialMainResult.show(
-      step: TutorialMainStep.homeIntro,
-      navigateToGoalTab: false,
-    );
+    final progress = await repository.read();
+    // 読込み待ち中に文脈が始まっていれば、メインは状態を上書きしない。
+    if (session.activeKind != null && session.activeKind != TutorialKind.main) {
+      return const AdvanceTutorialMainResult.noop();
+    }
+    if (progress.mainCompleted) {
+      return const AdvanceTutorialMainResult.noop();
+    }
+    if (progress.mainReachedStep < 3) {
+      return _show(TutorialMainStep.homeIntro, navigateToGoalTab: false);
+    }
+    if (progress.mainReachedStep == 3 && progress.goalSettingsContextSeen) {
+      return _show(TutorialMainStep.meterRecommend, navigateToGoalTab: false);
+    }
+    if (progress.mainReachedStep == 4 &&
+        progress.cameraContextSeen &&
+        progress.meterEditContextSeen) {
+      return _show(TutorialMainStep.trendsRecommend, navigateToGoalTab: false);
+    }
+    if (progress.mainReachedStep == 5 && progress.trendsContextSeen) {
+      return _show(TutorialMainStep.historyRecommend, navigateToGoalTab: false);
+    }
+    if (progress.mainReachedStep == 6 && progress.historyContextSeen) {
+      return _show(
+        TutorialMainStep.achievementRecommend,
+        navigateToGoalTab: false,
+      );
+    }
+    return const AdvanceTutorialMainResult.noop();
   }
 
   /// 主ボタン進行。
-  ///
-  /// Example:
-  /// ```dart
-  /// await _next();
-  /// ```
   Future<AdvanceTutorialMainResult> _next() async {
     final step = session.mainStep;
     if (step == null || session.activeKind != TutorialKind.main) {
@@ -86,36 +93,22 @@ final class AdvanceTutorialMainUsecaseImpl
     }
     return switch (step) {
       TutorialMainStep.homeIntro => _show(
-        TutorialMainStep.tabOverview,
+        TutorialMainStep.goalProgressIntro,
         navigateToGoalTab: false,
       ),
-      TutorialMainStep.tabOverview => _fromTabOverview(),
-      TutorialMainStep.goalRecommend => const AdvanceTutorialMainResult.noop(),
-      TutorialMainStep.meterRecommend => _completeMain(),
+      TutorialMainStep.goalProgressIntro => _show(
+        TutorialMainStep.goalRecommend,
+        navigateToGoalTab: false,
+      ),
+      TutorialMainStep.goalRecommend => _enterGoalContext(),
+      TutorialMainStep.meterRecommend => _persistReached(4),
+      TutorialMainStep.trendsRecommend => _persistReached(5),
+      TutorialMainStep.historyRecommend => _persistReached(6),
+      TutorialMainStep.achievementRecommend => _completeMain(),
     };
   }
 
-  /// 段階2から目標有無で 3 か 4 へ。
-  ///
-  /// Example:
-  /// ```dart
-  /// await _fromTabOverview();
-  /// ```
-  Future<AdvanceTutorialMainResult> _fromTabOverview() async {
-    final result = await loadDailyGoal.execute(const LoadDailyGoalRequest());
-    final goal = result.goal;
-    if (goal.hasDuration && goal.hasCalories && goal.hasDistance) {
-      return _show(TutorialMainStep.meterRecommend, navigateToGoalTab: false);
-    }
-    return _show(TutorialMainStep.goalRecommend, navigateToGoalTab: true);
-  }
-
   /// 段階3スキップでメイン完了。
-  ///
-  /// Example:
-  /// ```dart
-  /// await _skip();
-  /// ```
   Future<AdvanceTutorialMainResult> _skip() async {
     if (session.mainStep != TutorialMainStep.goalRecommend) {
       return const AdvanceTutorialMainResult.noop();
@@ -123,25 +116,34 @@ final class AdvanceTutorialMainUsecaseImpl
     return _completeMain();
   }
 
-  /// 段階3保存成功で段階4（指標成否不問）。
-  ///
-  /// Example:
-  /// ```dart
-  /// await _goalSaved();
-  /// ```
-  Future<AdvanceTutorialMainResult> _goalSaved() async {
-    if (session.mainStep != TutorialMainStep.goalRecommend) {
-      return const AdvanceTutorialMainResult.noop();
+  /// 段階3の次へ: 到達3を永続し目標タブへ。文脈へ引き継ぐ。
+  Future<AdvanceTutorialMainResult> _enterGoalContext() async {
+    try {
+      final current = await repository.read();
+      await repository.write(current.copyWith(mainReachedStep: 3));
+    } on Object {
+      session.suppressMainAutoStartThisProcess = true;
     }
-    return _show(TutorialMainStep.meterRecommend, navigateToGoalTab: false);
+    session.clearActive();
+    return const AdvanceTutorialMainResult.show(
+      step: TutorialMainStep.goalRecommend,
+      navigateToGoalTab: true,
+    );
+  }
+
+  /// 段階4〜6を閉じたあと到達段階を残す（メイン未完了のまま）。
+  Future<AdvanceTutorialMainResult> _persistReached(int step) async {
+    try {
+      final current = await repository.read();
+      await repository.write(current.copyWith(mainReachedStep: step));
+    } on Object {
+      session.suppressMainAutoStartThisProcess = true;
+    }
+    session.clearActive();
+    return const AdvanceTutorialMainResult.noop();
   }
 
   /// session を更新して show を返す。
-  ///
-  /// Example:
-  /// ```dart
-  /// await _show(TutorialMainStep.homeIntro, navigateToGoalTab: false);
-  /// ```
   Future<AdvanceTutorialMainResult> _show(
     TutorialMainStep step, {
     required bool navigateToGoalTab,
@@ -155,15 +157,12 @@ final class AdvanceTutorialMainUsecaseImpl
   }
 
   /// mainCompleted を書き、失敗時は suppress。
-  ///
-  /// Example:
-  /// ```dart
-  /// await _completeMain();
-  /// ```
   Future<AdvanceTutorialMainResult> _completeMain() async {
     try {
       final current = await repository.read();
-      await repository.write(current.copyWith(mainCompleted: true));
+      await repository.write(
+        current.copyWith(mainCompleted: true, mainReachedStep: 7),
+      );
       session.clearActive();
       return const AdvanceTutorialMainResult.completed();
     } on Object {

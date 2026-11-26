@@ -53,6 +53,8 @@ CogsavDocument _document({
   ),
   TutorialProgress? tutorial = const TutorialProgress(
     mainCompleted: true,
+    mainReachedStep: 7,
+    goalSettingsContextSeen: false,
     cameraContextSeen: false,
     meterEditContextSeen: false,
     trendsContextSeen: false,

@@ -753,10 +753,10 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_exercise_history_tutorial_body =>
-      '黄色い丸のスタンプが運動した日です。タップすると振り返り・編集・削除ができます。';
+      '黄色い丸のスタンプが運動した日です。タップすると内容の確認と、運動履歴の編集・削除が行えます。';
 
   @override
-  String get screen_feature_exercise_history_tutorial_title => '運動した日のスタンプ';
+  String get screen_feature_exercise_history_tutorial_title => '運動履歴の確認や編集を行おう';
 
   @override
   String get screen_feature_exercise_history_weekday_fri => '金';
@@ -837,6 +837,28 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_goal_settings_title => '目標設定';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_1_body =>
+      'まずは1日あたりに目指したい運動時間、消費カロリー、距離を入力してみましょう。初めての場合、20分、200kcal、5kmあたりから始めるのがおすすめです。';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_1_title => '目標設定のやり方①';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_2_body =>
+      '1日あたりの運動目標を設定したら、次は1週間のうち何日運動するかを決めましょう。3日くらいの軽い目標から徐々に増やしていくのが続けやすくおすすめです。';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_2_title =>
+      '目標設定のやり方②（週間の運動目標日数）';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_3_body =>
+      '目標を連続して達成しているとき、徐々に目標値を自動的に上方更新することもできます。増える度合いも3種類から選べるので、自分のペースで設定してみてください。';
+
+  @override
+  String get screen_feature_goal_settings_tutorial_3_title => '目標設定のやり方③（自動更新）';
 
   @override
   String get screen_feature_goal_settings_unset_hint => '未設定の欄は空のまま保存できます';
@@ -963,18 +985,19 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_meter_capture_tutorial_camera_body =>
-      'カメラでメーターパネルを撮ると走行距離・運動時間・消費カロリーを読み取れます。保存時にヘルスへの書き込み許可が求められることがあります。';
+      'カメラでメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを自動的に読み取ります。ライブラリから撮影済みの写真を選ぶこともできます。';
 
   @override
-  String get screen_feature_meter_capture_tutorial_camera_title => 'メーターを撮影';
+  String get screen_feature_meter_capture_tutorial_camera_title =>
+      'エアロバイクのメーターを撮影して記録しよう';
 
   @override
   String get screen_feature_meter_capture_tutorial_meter_edit_body =>
-      '走行距離・運動時間・消費カロリーが自動入力されています。誤りがあれば手で直してから登録してください。';
+      'アプリが自動的に読み取った走行距離・運動時間・消費カロリーを確認し、誤りがあれば修整してください。登録ボタンを押すと記録されます。また、登録時ヘルスケアと連携しておくと、運動データをヘルスケア側にも記録することができます。';
 
   @override
   String get screen_feature_meter_capture_tutorial_meter_edit_title =>
-      '読み取り結果の確認';
+      '撮影結果について';
 
   @override
   String get screen_feature_notification_settings_back_semantics => '戻る';
@@ -1181,38 +1204,59 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_tutorial_achievement_body =>
-      '獲得した称号はここから見られます。新しい獲得があるときはドットが付きます。';
+      'アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。';
 
   @override
-  String get screen_feature_top_tutorial_achievement_title => 'アチーブメント';
+  String get screen_feature_top_tutorial_achievement_title => 'たくさんの称号を取得しよう';
 
   @override
   String get screen_feature_top_tutorial_main_1_body =>
-      '本日・今週・今月の合計と、目標に対する達成状況を確認できます。指標は切り替えて見られます。';
+      '本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。';
 
   @override
-  String get screen_feature_top_tutorial_main_1_title => 'ホームの見かた';
+  String get screen_feature_top_tutorial_main_1_title => 'ホーム画面の見かた';
 
   @override
   String get screen_feature_top_tutorial_main_2_body =>
-      'メーター記録は撮影から読み取り、推移は運動と身体の関係、運動履歴は日ごとの閲覧・編集、目標設定は一日あたり目標と週間の目標運動日数です。';
+      '目標設定画面で設定した目標に対し、現在の進捗状況を確認できます。目標は1日あたりの目標と、1週間あたり何日運動するのかを設定できます。';
 
   @override
-  String get screen_feature_top_tutorial_main_2_title => '各タブの役割';
+  String get screen_feature_top_tutorial_main_2_title => '目標進捗率の見かた';
 
   @override
   String get screen_feature_top_tutorial_main_3_body =>
-      '一日あたりの運動時間・消費カロリー・走行距離を設定すると、達成状況が分かりやすくなります。設定後に保存してください。';
+      '目標設定タブから、先ほどの目標進捗率で表示する目標の設定ができます。まずは目標から設定してみましょう。';
 
   @override
-  String get screen_feature_top_tutorial_main_3_title => '目標を設定しましょう';
+  String get screen_feature_top_tutorial_main_3_title => '目標設定をしましょう';
 
   @override
   String get screen_feature_top_tutorial_main_4_body =>
-      'メーター記録タブからメーターパネルを撮影すると、走行距離・運動時間・消費カロリーを読み取れます。';
+      '目標を設定したら、早速運動の記録をつけましょう。メーター記録タブから、エアロバイクのメーターパネルを撮影するだけで簡単に運動データを記録できます。';
 
   @override
-  String get screen_feature_top_tutorial_main_4_title => 'メーター記録で撮影';
+  String get screen_feature_top_tutorial_main_4_title => 'メーター記録を行いましょう';
+
+  @override
+  String get screen_feature_top_tutorial_main_5_body =>
+      '推移タブから、記録した運動データと体重・体脂肪率などの相関関係を確認できます。（別途ヘルスケア連携が必要です）';
+
+  @override
+  String get screen_feature_top_tutorial_main_5_title => '運動の結果を振り返りましょう';
+
+  @override
+  String get screen_feature_top_tutorial_main_6_body =>
+      '運動履歴タブからは、過去の運動データの確認、修整、削除が行えます。';
+
+  @override
+  String get screen_feature_top_tutorial_main_6_title => '過去の記録を確認しましょう';
+
+  @override
+  String get screen_feature_top_tutorial_main_7_body =>
+      'アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。';
+
+  @override
+  String get screen_feature_top_tutorial_main_7_title => 'たくさんの称号を取得しよう';
 
   @override
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';
@@ -1303,10 +1347,10 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_trends_tutorial_body =>
-      '消費カロリーと体脂肪率などの関係をグラフで確認できます。体脂肪率・体重はヘルスの読み取り連携が必要です。';
+      '消費カロリーと体脂肪率などの関係をグラフで確認できます。どのカットで推移を確認するかを選べます。また、体脂肪率・体重などの身体データはヘルスケアの読み取り連携が必要です。';
 
   @override
-  String get screen_feature_trends_tutorial_title => '運動と身体の関係';
+  String get screen_feature_trends_tutorial_title => '運動データの推移の確認';
 
   @override
   String get screen_feature_trends_unit_kcal => 'kcal';
