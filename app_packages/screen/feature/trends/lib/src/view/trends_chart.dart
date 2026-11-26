@@ -76,29 +76,41 @@ class TrendsChart extends StatelessWidget {
         break;
       }
     }
+    const noMajorGrid = MajorGridLines(width: 0);
+    final labelStyle = TextStyle(color: colors.foreground);
     final xAxis = buckets.isEmpty
-        ? const DateTimeAxis()
+        ? DateTimeAxis(majorGridLines: noMajorGrid, labelStyle: labelStyle)
         : DateTimeAxis(
             minimum: buckets.first.startInclusive,
             maximum: buckets.last.endExclusive,
+            majorGridLines: noMajorGrid,
+            labelStyle: labelStyle,
           );
     return SfCartesianChart(
+      plotAreaBorderWidth: 0,
+      backgroundColor: Colors.transparent,
+      plotAreaBackgroundColor: Colors.transparent,
       primaryXAxis: xAxis,
       primaryYAxis: NumericAxis(
         name: 'left',
-        title: AxisTitle(text: leftUnit),
+        title: AxisTitle(text: leftUnit, textStyle: labelStyle),
+        majorGridLines: noMajorGrid,
+        labelStyle: labelStyle,
       ),
       axes: [
         NumericAxis(
           name: 'right',
           opposedPosition: true,
-          title: AxisTitle(text: rightUnit),
+          title: AxisTitle(text: rightUnit, textStyle: labelStyle),
+          majorGridLines: noMajorGrid,
+          labelStyle: labelStyle,
         ),
       ],
-      legend: const Legend(
+      legend: Legend(
         isVisible: true,
         position: LegendPosition.top,
         toggleSeriesVisibility: false,
+        textStyle: labelStyle,
       ),
       tooltipBehavior: TooltipBehavior(
         enable: true,
@@ -121,6 +133,7 @@ class TrendsChart extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 child: Text(
                   '$title\n${formatTrendsChartDate(p.representativeDate)}: ${formatTrendsChartValue(p.value, metric: metric)}',
+                  style: labelStyle,
                 ),
               );
             },
