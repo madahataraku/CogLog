@@ -11,6 +11,8 @@ import 'package:data_repository_notification_settings/data_repository_notificati
 import 'package:data_repository_notification_settings_impl/data_repository_notification_settings_impl.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
 import 'package:data_repository_top_screen_metric_impl/data_repository_top_screen_metric_impl.dart';
+import 'package:data_repository_health_write_guidance/data_repository_health_write_guidance.dart';
+import 'package:data_repository_health_write_guidance_impl/data_repository_health_write_guidance_impl.dart';
 import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:data_repository_tutorial_impl/data_repository_tutorial_impl.dart';
 import 'package:riverpod/misc.dart';
@@ -44,6 +46,9 @@ List<Override> dataRepositoryOverrides({
   ),
   topScreenMetricRepositoryProvider.overrideWith(
     (ref) => SharedPreferencesTopScreenMetricRepository(preferences),
+  ),
+  healthWriteGuidanceRepositoryProvider.overrideWith(
+    (ref) => SharedPreferencesHealthWriteGuidanceRepository(preferences),
   ),
   dailyGoalRepositoryProvider.overrideWith(
     (ref) => SharedPreferencesDailyGoalRepository(preferences),

@@ -77,4 +77,13 @@ final class UnavailableHealthWorkoutWriter implements HealthWorkoutWriter {
     required DateTime start,
     required DateTime end,
   }) async => false;
+
+  /// 常に false を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await const UnavailableHealthWorkoutWriter().hasWritePermissionGranted();
+  /// ```
+  @override
+  Future<bool> hasWritePermissionGranted() async => false;
 }

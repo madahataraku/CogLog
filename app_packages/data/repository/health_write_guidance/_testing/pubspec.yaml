@@ -1,0 +1,14 @@
+name: data_repository_health_write_guidance_testing
+description: In-memory health write guidance flag for tests.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_health_write_guidance: any
+
+dev_dependencies:
+  flutter_lints: any

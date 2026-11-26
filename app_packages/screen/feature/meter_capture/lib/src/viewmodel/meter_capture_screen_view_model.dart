@@ -11,6 +11,7 @@ import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.da
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:usecase_health_write_guidance/usecase_health_write_guidance.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
@@ -77,6 +78,9 @@ final class MeterCaptureScreenViewModel {
         markTutorialContextSeenUsecase: ref.watch(
           MarkTutorialContextSeenUsecase.provider,
         ),
+        healthWriteGuidanceUsecase: ref.watch(
+          HealthWriteGuidanceUsecase.provider,
+        ),
         tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const MeterCaptureStateToEntityDelegate(),
@@ -104,6 +108,7 @@ final class MeterCaptureScreenViewModel {
       ModelDownloadGuidanceProviders.session,
       EvaluateTutorialContextUsecase.provider,
       MarkTutorialContextSeenUsecase.provider,
+      HealthWriteGuidanceUsecase.provider,
       tutorialRuntimeSessionProvider,
       screenNavigationProvider,
     ],
@@ -153,6 +158,10 @@ final class MeterCaptureScreenViewModel {
   @visibleForTesting
   final MarkTutorialContextSeenUsecase markTutorialContextSeenUsecase;
 
+  /// ヘルス書き込み案内の要否と提示済み。
+  @visibleForTesting
+  final HealthWriteGuidanceUsecase healthWriteGuidanceUsecase;
+
   /// プロセス内のチュートリアル実行状態。
   @visibleForTesting
   final TutorialRuntimeSession tutorialSession;
@@ -191,6 +200,7 @@ final class MeterCaptureScreenViewModel {
     required this.guidanceSession,
     required this.evaluateTutorialContextUsecase,
     required this.markTutorialContextSeenUsecase,
+    required this.healthWriteGuidanceUsecase,
     required this.tutorialSession,
     required this.navigation,
     required this.stateToEntity,

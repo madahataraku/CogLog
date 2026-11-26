@@ -1878,6 +1878,24 @@ abstract class L10n {
   /// **'目標が自動更新されました'**
   String get screen_feature_meter_capture_goal_auto_updated;
 
+  /// ヘルス書き込み案内本文
+  ///
+  /// In ja, this message translates to:
+  /// **'端末のヘルスケア情報と連携すると、運動の記録をヘルスケア側にも保存することができます。連携する場合は次の画面で、すべて許可してください。'**
+  String get screen_feature_meter_capture_health_write_guidance_body;
+
+  /// ヘルス書き込み案内の続行
+  ///
+  /// In ja, this message translates to:
+  /// **'続ける'**
+  String get screen_feature_meter_capture_health_write_guidance_continue;
+
+  /// ヘルス書き込み案内タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'ヘルスケア連携'**
+  String get screen_feature_meter_capture_health_write_guidance_title;
+
   /// 設定アプリ導線
   ///
   /// In ja, this message translates to:

@@ -1278,6 +1278,18 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_meter_capture_goal_auto_updated;
       },
+      'screen_feature_meter_capture_health_write_guidance_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_health_write_guidance_body;
+      },
+      'screen_feature_meter_capture_health_write_guidance_continue': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_health_write_guidance_continue;
+      },
+      'screen_feature_meter_capture_health_write_guidance_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_health_write_guidance_title;
+      },
       'screen_feature_meter_capture_open_settings': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_open_settings;

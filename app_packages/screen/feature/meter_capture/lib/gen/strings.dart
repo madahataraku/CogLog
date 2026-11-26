@@ -78,6 +78,24 @@ mixin class L10nStringsMixin {
         'screen_feature_meter_capture_goal_auto_updated',
       );
 
+  /// ヘルス書き込み案内本文
+  String get screen_feature_meter_capture_health_write_guidance_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_health_write_guidance_body',
+      );
+
+  /// ヘルス書き込み案内の続行
+  String get screen_feature_meter_capture_health_write_guidance_continue =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_health_write_guidance_continue',
+      );
+
+  /// ヘルス書き込み案内タイトル
+  String get screen_feature_meter_capture_health_write_guidance_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_health_write_guidance_title',
+      );
+
   /// 設定アプリ導線
   String get screen_feature_meter_capture_open_settings =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_open_settings');

@@ -86,6 +86,11 @@ final class HealthPackageWorkoutWriter implements HealthWorkoutWriter {
     if (!Platform.isAndroid) {
       return true;
     }
+    return _queryAllWritePermissionsGranted();
+  }
+
+  /// 権限要求なしで、候補型の WRITE がすべて true か問い合わせる。
+  Future<bool> _queryAllWritePermissionsGranted() async {
     final types = _writableTypes();
     if (types.isEmpty) {
       return false;
@@ -98,6 +103,26 @@ final class HealthPackageWorkoutWriter implements HealthWorkoutWriter {
       );
     }
     return allWritePermissionsGranted(grantedByType);
+  }
+
+  /// 権限ダイアログを出さず、WRITE が既に揃っているかだけを返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await HealthPackageWorkoutWriter().hasWritePermissionGranted();
+  /// ```
+  @override
+  Future<bool> hasWritePermissionGranted() async {
+    try {
+      await _ensureConfigured();
+      if (Platform.isAndroid && !await _ensureHealthConnectOnAndroid()) {
+        return false;
+      }
+      // iOS も明示 true のときだけ連携済みとする（null／false は未連携）。
+      return await _queryAllWritePermissionsGranted();
+    } on Object {
+      return false;
+    }
   }
 
   /// 準備済み前提でサイクリングを書き、成功時は外部 ID を返す。

@@ -76,6 +76,16 @@ abstract interface class HealthWorkoutWriter {
     required DateTime start,
     required DateTime end,
   });
+
+  /// サイクリング書き込みに必要な WRITE 権限が既に付与されているか。
+  ///
+  /// 権限ダイアログは出さない。未導入・不明・例外は false。
+  ///
+  /// Example:
+  /// ```dart
+  /// await writer.hasWritePermissionGranted();
+  /// ```
+  Future<bool> hasWritePermissionGranted();
 }
 
 /// ヘルス書き込みの注入点。未接続のときは失敗する。

@@ -20,6 +20,9 @@ read_missing_title,読み取れなかった値があります,Some values could 
 read_missing_subtitle,読み取れなかった項目は手入力して登録してください。,Enter any unread values by hand before saving.,読み取り不可FAlert本文
 retake,撮り直す,Retake,編集からカメラへ戻る
 save,登録,Save,登録ボタン
+health_write_guidance_title,ヘルスケア連携,Health linking,ヘルス書き込み案内タイトル
+health_write_guidance_body,端末のヘルスケア情報と連携すると、運動の記録をヘルスケア側にも保存することができます。連携する場合は次の画面で、すべて許可してください。,"If you link your device's Health data, workouts can also be saved to Health. To link, allow all permissions on the next screen.",ヘルス書き込み案内本文
+health_write_guidance_continue,続ける,Continue,ヘルス書き込み案内の続行
 save_failed,保存に失敗しました,Failed to save,保存失敗
 goal_auto_updated,目標が自動更新されました,Daily goals were auto-updated,目標自動更新の通知
 achievement_unlocked_title,{name},Unlocked: {name},単件トーストタイトル（name引数）

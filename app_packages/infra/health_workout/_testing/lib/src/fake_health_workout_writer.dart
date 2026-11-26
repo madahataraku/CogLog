@@ -15,10 +15,17 @@ final class FakeHealthWorkoutWriter implements HealthWorkoutWriter {
   /// ```dart
   /// FakeHealthWorkoutWriter();
   /// ```
-  FakeHealthWorkoutWriter({this.succeed = true, this.nextUpdateExternalId});
+  FakeHealthWorkoutWriter({
+    this.succeed = true,
+    this.writePermissionGranted = false,
+    this.nextUpdateExternalId,
+  });
 
   /// [writeCycling] / [updateCycling] / [deleteCycling] の成否。
   bool succeed;
+
+  /// [hasWritePermissionGranted] の戻り値。
+  bool writePermissionGranted;
 
   /// 更新成功時に返す外部 ID。null なら引数の [externalId] を返す。
   final String? nextUpdateExternalId;
@@ -139,4 +146,13 @@ final class FakeHealthWorkoutWriter implements HealthWorkoutWriter {
     lastEnd = end;
     return succeed;
   }
+
+  /// [writePermissionGranted] を返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await FakeHealthWorkoutWriter().hasWritePermissionGranted();
+  /// ```
+  @override
+  Future<bool> hasWritePermissionGranted() async => writePermissionGranted;
 }
