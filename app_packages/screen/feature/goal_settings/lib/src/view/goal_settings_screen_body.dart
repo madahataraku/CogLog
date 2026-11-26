@@ -83,6 +83,8 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
     return FScaffold(
       header: FHeader(title: Text(strings.screen_feature_goal_settings_title)),
       child: SingleChildScrollView(
+        // 保存ボタン下とボトムナビのあいだに余白を確保する。
+        padding: const EdgeInsets.only(bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 16,
