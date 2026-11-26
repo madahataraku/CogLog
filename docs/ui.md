@@ -65,9 +65,8 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 ## 運動履歴詳細・編集
 
 - 詳細ヘッダ右上（suffixes）に編集（pencil）と削除（trash）。処理中は無効。
-- 写真は本文最上部。高さは画面高の最大約 30%（ConstrainedBox）。写真（または写真エラー文言）の塊を外側の `FCard` で包む。内側の写真制約・余白方針は変えない（Card のために追加 Padding を足さない）。
-- 計測／記録は `FTileGroup`（カロリー・運動時間・距離・平均速度・運動した日時）を外側の `FCard` で包む。メタは別 `FTileGroup`（撮影・保存・作成開始）を別の外側 `FCard` で包む。内側の Tile 構成は変えない。Card 間の間隔は従来のグループ間 24 を維持する。
-- 同一日複数件の n/m（件数位置）はいずれの `FCard` の外側に置く。1 件のときは件数表示とめくりを出さない。
+- 写真は本文最上部。高さは画面高の最大約 30%（ConstrainedBox）。計測／記録は `FTileGroup`（カロリー・運動時間・距離・平均速度・運動した日時）。メタは別 `FTileGroup`（撮影・保存・作成開始）。グループ間 24。写真（または写真エラー文言）と両 `FTileGroup` を一つの外側 `FCard` で包む。内側の写真制約・Tile 構成・余白は変えない（Card のために追加 Padding を足さない）。
+- 同一日複数件の n/m（件数位置）は外 `FCard` の外側に置く。1 件のときは件数表示とめくりを出さない。
 - 日時は全文日時。編集の運動した日時は DateTime Picker（日付のあと時刻）。
 - 削除・編集の破棄は `view_confirm_dialog`（`showFDialog`、`barrierDismissible: false`）。
 - 編集は詳細の子ルート。遷移は `ScreenNavigation` のみ（`openExerciseHistoryEditAndWait`）。
