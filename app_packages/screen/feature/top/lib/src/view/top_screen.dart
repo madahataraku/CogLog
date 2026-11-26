@@ -183,7 +183,7 @@ class TopScreen extends HookConsumerWidget {
                 return;
               }
               step = show.step;
-              // 前段階の disableBackButton ルート破棄を待ってから次を出す。
+              // Launcher が removeRoute 後に complete するが、フレーム境界も挟んでから次へ進む。
               await WidgetsBinding.instance.endOfFrame;
             case AdvanceTutorialMainCompletedResult():
             case AdvanceTutorialMainNoopResult():

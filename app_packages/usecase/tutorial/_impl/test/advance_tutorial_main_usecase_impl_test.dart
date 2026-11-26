@@ -45,6 +45,15 @@ void main() {
     expect(session.mainStep, TutorialMainStep.homeIntro);
   });
 
+  test('メイン表示中の start は noop（二重連鎖防止）', () async {
+    await usecase().execute(const AdvanceTutorialMainRequest.start());
+    final second = await usecase().execute(
+      const AdvanceTutorialMainRequest.start(),
+    );
+    expect(second, isA<AdvanceTutorialMainNoopResult>());
+    expect(session.mainStep, TutorialMainStep.homeIntro);
+  });
+
   test('読込み後に文脈が有効なら start は noop', () async {
     session.activeKind = TutorialKind.camera;
     final result = await usecase().execute(

@@ -265,6 +265,8 @@ final class CoachMarkLauncher {
   /// 完了理由を確定し、オーバーレイを外す。
   ///
   /// 未挿入時は上流の `Future.delayed(Duration.zero)` のあとに外す。
+  /// 完了通知は [removeOverlayEntry]（`disableBackButton` の `removeRoute`）の
+  /// Navigator / Focus 後始末より後にし、直後の再 [show] の `push` と競合させない。
   ///
   /// Example:
   /// ```dart
@@ -287,7 +289,14 @@ final class CoachMarkLauncher {
       }
     }
     if (completer != null && !completer.isCompleted) {
-      completer.complete(reason);
+      // removeRoute 同期処理のあとに積まれる Focus 微タスクより後へ回す。
+      // 同期 complete だと呼び出し側の連鎖 show が Navigator.push と競合し、
+      // ホーム初回の段階1→2 などで次段階が出ない。
+      scheduleMicrotask(() {
+        if (!completer.isCompleted) {
+          completer.complete(reason);
+        }
+      });
     }
   }
 

@@ -47,6 +47,10 @@ final class EvaluateTutorialMainAutoStartUsecaseImpl
       return const EvaluateTutorialMainAutoStartResult(shouldStart: false);
     }
     final progress = await repository.read();
+    // read 待ち中に別経路で表示が始まっていれば二重 start しない。
+    if (session.isShowing) {
+      return const EvaluateTutorialMainAutoStartResult(shouldStart: false);
+    }
     if (progress.mainCompleted) {
       return const EvaluateTutorialMainAutoStartResult(shouldStart: false);
     }
