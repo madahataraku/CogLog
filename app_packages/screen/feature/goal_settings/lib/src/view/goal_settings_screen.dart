@@ -59,8 +59,6 @@ class GoalSettingsScreen extends HookConsumerWidget {
       }
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        // タブ切替直後のレイアウトと、段階3オーバーレイ破棄の残響を避ける。
-        await Future<void>.delayed(const Duration(milliseconds: 50));
         if (!context.mounted || !isGoalTabSelected()) {
           return;
         }
@@ -70,10 +68,7 @@ class GoalSettingsScreen extends HookConsumerWidget {
         if (!decision.shouldShow) {
           return;
         }
-        if (!context.mounted || !isGoalTabSelected()) {
-          rollbackSession();
-          return;
-        }
+        // 出すときだけレイアウトを待ち、出さない経路では Timer／余剰フレームを残さない。
         await WidgetsBinding.instance.endOfFrame;
         if (!context.mounted || !isGoalTabSelected()) {
           rollbackSession();
