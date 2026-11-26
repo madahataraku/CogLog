@@ -157,6 +157,12 @@ class TopScreen extends HookConsumerWidget {
           switch (result) {
             case final AdvanceTutorialMainShowResult show:
               if (show.navigateToGoalTab) {
+                // 段階3オーバーレイ／disableBackButton ルートの破棄を待ってから遷移する。
+                await Future<void>.delayed(const Duration(milliseconds: 300));
+                if (!context.mounted) {
+                  return;
+                }
+                viewModel.goToGoalSettingsTab();
                 return;
               }
               step = show.step;

@@ -9,6 +9,7 @@ import 'package:view_coach_mark/view_coach_mark.dart';
 import '../strings.dart';
 import '../viewmodel/goal_settings_screen_view_model.dart';
 import 'goal_settings_screen_body.dart';
+import 'goal_settings_screen_providers.dart';
 
 /// 一日あたり目標を入力・保存する画面。
 ///
@@ -35,29 +36,47 @@ class GoalSettingsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(GoalSettingsScreenViewModel.provider);
+    final entity = ref.watch(GoalSettingsScreenProviders.entity);
     final evaluate = ref.watch(EvaluateTutorialContextUsecase.provider);
     final markSeen = ref.watch(MarkTutorialContextSeenUsecase.provider);
+    final session = ref.watch(tutorialRuntimeSessionProvider);
     final tabSelected = (ShellTabIndexScope.maybeOf(context) ?? -1) == 4;
     useEffect(() {
       viewModel.onInitialize();
       return null;
     }, [viewModel]);
 
-    // IndexedStack 保持のため、目標タブ選択時に再評価する。
+    // IndexedStack 保持のため、目標タブ選択かつ読込後に再評価する。
     useEffect(() {
-      if (!tabSelected) {
+      if (!tabSelected || !entity.loaded) {
         return null;
       }
       bool isGoalTabSelected() =>
           (ShellTabIndexScope.maybeOf(context) ?? -1) == 4;
+      void rollbackSession() {
+        session.clearActive();
+        session.clearContextPresented(TutorialKind.goalSettings);
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // タブ切替直後のレイアウトと、段階3オーバーレイ破棄の残響を避ける。
+        await Future<void>.delayed(const Duration(milliseconds: 50));
         if (!context.mounted || !isGoalTabSelected()) {
           return;
         }
         final decision = await evaluate.execute(
           const EvaluateTutorialContextRequest(kind: TutorialKind.goalSettings),
         );
-        if (!decision.shouldShow || !context.mounted || !isGoalTabSelected()) {
+        if (!decision.shouldShow) {
+          return;
+        }
+        if (!context.mounted || !isGoalTabSelected()) {
+          rollbackSession();
+          return;
+        }
+        await WidgetsBinding.instance.endOfFrame;
+        if (!context.mounted || !isGoalTabSelected()) {
+          rollbackSession();
           return;
         }
         final steps = <CoachMarkStep>[
@@ -82,11 +101,17 @@ class GoalSettingsScreen extends HookConsumerWidget {
         ];
         for (final step in steps) {
           if (!context.mounted || !isGoalTabSelected()) {
+            rollbackSession();
             return;
           }
-          await CoachMarkLauncher.show(context, step: step);
+          final reason = await CoachMarkLauncher.show(context, step: step);
+          if (reason == CoachMarkDismissReason.forced) {
+            rollbackSession();
+            return;
+          }
         }
         if (!context.mounted || !isGoalTabSelected()) {
+          rollbackSession();
           return;
         }
         await markSeen.execute(
@@ -94,7 +119,7 @@ class GoalSettingsScreen extends HookConsumerWidget {
         );
       });
       return null;
-    }, [tabSelected, evaluate, markSeen]);
+    }, [tabSelected, entity.loaded, evaluate, markSeen, session]);
 
     return const GoalSettingsScreenBody();
   }

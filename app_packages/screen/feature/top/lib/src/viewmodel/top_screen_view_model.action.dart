@@ -184,8 +184,17 @@ extension TopScreenViewModelActions on TopScreenViewModel {
     return OnAdvanceTutorialMainDelegate(
       state: state,
       advanceUsecase: advanceTutorialMainUsecase,
-      navigation: navigation,
     ).execute(request);
+  }
+
+  /// 目標設定タブへ切り替える（段階3の次へ用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.goToGoalSettingsTab();
+  /// ```
+  void goToGoalSettingsTab() {
+    navigation.goToGoalSettingsTab();
   }
 
   /// アチーブメント文脈の要否を評価する。
