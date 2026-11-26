@@ -54,9 +54,7 @@ final class OnAdvanceTutorialMainDelegate {
       case AdvanceTutorialMainShowResult(:final step, :final navigateToGoalTab):
         if (navigateToGoalTab) {
           navigation.goToGoalSettingsTab();
-        }
-        // 段階3の次へは目標文脈へ渡すだけ。ホームの pending は立てない。
-        if (step == TutorialMainStep.goalRecommend && navigateToGoalTab) {
+          // 段階3の次へは目標文脈へ渡すだけ。ホームの pending は立てない。
           await state.updateWithLock((current, emitter) async {
             await emitter.emit(
               current.copyWith(
@@ -67,9 +65,14 @@ final class OnAdvanceTutorialMainDelegate {
           });
           break;
         }
+        // ホーム上の段階連鎖（1→2→3 など）は View 側ループが続ける。
+        // pending を立て直すと effect 再入で二重 show になるため、段階だけ残す。
         await state.updateWithLock((current, emitter) async {
           await emitter.emit(
-            current.copyWith(pendingTutorialMain: true, tutorialMainStep: step),
+            current.copyWith(
+              pendingTutorialMain: false,
+              tutorialMainStep: step,
+            ),
           );
         });
       case AdvanceTutorialMainCompletedResult():

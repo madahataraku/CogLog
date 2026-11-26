@@ -114,49 +114,60 @@ class TopScreen extends HookConsumerWidget {
       ],
     );
 
-    useEffect(
-      () {
-        if (!entity.pendingTutorialMain) {
-          return null;
+    // pending 立ち上がりだけを契機に表示を始める。段階1→2→3は同一コールバック内で
+    // 連鎖し、tutorialMainStep 変更による effect 再入と二重 show を避ける。
+    useEffect(() {
+      if (!entity.pendingTutorialMain) {
+        return null;
+      }
+      if (!homeTabSelected || !foreground) {
+        return null;
+      }
+      final initialStep = entity.tutorialMainStep;
+      unawaited(viewModel.onAcknowledgeTutorialMain());
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!context.mounted || initialStep == null) {
+          return;
         }
-        if (!homeTabSelected || !foreground) {
-          return null;
-        }
-        unawaited(viewModel.onAcknowledgeTutorialMain());
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
+        var step = initialStep;
+        while (true) {
           if (!context.mounted) {
             return;
           }
-          final step = entity.tutorialMainStep;
-          if (step == null) {
-            return;
-          }
-          final coachStep = _mainCoachMarkStep(step);
-          final reason = await CoachMarkLauncher.show(context, step: coachStep);
+          final reason = await CoachMarkLauncher.show(
+            context,
+            step: _mainCoachMarkStep(step),
+          );
           if (!context.mounted) {
             return;
           }
-          if (reason == CoachMarkDismissReason.primary) {
-            await viewModel.onAdvanceTutorialMain(
-              const AdvanceTutorialMainRequest.next(),
-            );
-          } else if (reason == CoachMarkDismissReason.secondary ||
+          if (reason == CoachMarkDismissReason.forced) {
+            return;
+          }
+          if (reason == CoachMarkDismissReason.secondary ||
               reason == CoachMarkDismissReason.systemBack) {
             await viewModel.onAdvanceTutorialMain(
               const AdvanceTutorialMainRequest.skip(),
             );
+            return;
           }
-        });
-        return null;
-      },
-      [
-        entity.pendingTutorialMain,
-        entity.tutorialMainStep,
-        viewModel,
-        homeTabSelected,
-        lifecycle,
-      ],
-    );
+          final result = await viewModel.onAdvanceTutorialMain(
+            const AdvanceTutorialMainRequest.next(),
+          );
+          switch (result) {
+            case final AdvanceTutorialMainShowResult show:
+              if (show.navigateToGoalTab) {
+                return;
+              }
+              step = show.step;
+            case AdvanceTutorialMainCompletedResult():
+            case AdvanceTutorialMainNoopResult():
+              return;
+          }
+        }
+      });
+      return null;
+    }, [entity.pendingTutorialMain, viewModel, homeTabSelected, lifecycle]);
 
     useEffect(
       () {

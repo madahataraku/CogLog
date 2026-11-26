@@ -14,6 +14,7 @@ import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 final class _Load implements LoadTopScreenUsecase {
@@ -219,6 +220,20 @@ void main() {
 
     expect(load.calls, 2);
     expect(advice.calls, 2);
+  });
+
+  test('再初期化は進行中のメイン段階を消さない', () async {
+    await state.updateWithLock((current, emitter) async {
+      await emitter.emit(
+        current.copyWith(
+          pendingTutorialMain: true,
+          tutorialMainStep: TutorialMainStep.goalProgressIntro,
+        ),
+      );
+    });
+    await _runInitialize(state: state);
+    expect(state.state.pendingTutorialMain, isTrue);
+    expect(state.state.tutorialMainStep, TutorialMainStep.goalProgressIntro);
   });
 
   test('未ダウンロードかつ未提示なら pending true', () async {
