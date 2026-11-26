@@ -19,9 +19,10 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 final class _Load implements LoadTopScreenUsecase {
-  _Load(this.result);
+  _Load(this.result, {this.error});
 
   final LoadTopScreenResult result;
+  final Object? error;
   var calls = 0;
   LoadTopScreenRequest? lastRequest;
 
@@ -29,6 +30,10 @@ final class _Load implements LoadTopScreenUsecase {
   Future<LoadTopScreenResult> execute(LoadTopScreenRequest request) async {
     calls += 1;
     lastRequest = request;
+    final error = this.error;
+    if (error != null) {
+      throw error;
+    }
     return result;
   }
 }
@@ -184,6 +189,7 @@ void main() {
     await _runInitialize(state: state, load: load, advice: advice);
 
     expect(state.state.loaded, isTrue);
+    expect(state.state.loadFailed, isFalse);
     expect(state.state.today.count, 1);
     expect(state.state.goal, DailyGoal.unset);
     expect(state.state.adviceText, '今日はまだ運動していません');
@@ -203,6 +209,45 @@ void main() {
     );
     expect(advice.lastRequest?.conditionalCatalog, _conditionalCatalog);
     expect(advice.lastRequest?.metricLabels, _metricLabels);
+  });
+
+  test('初期化失敗で loadFailed になり誘導は立たない', () async {
+    final load = _Load(_loadResult, error: Exception('load failed'));
+    final evaluateA = _Evaluate(shouldShow: true);
+    final evaluateB = _EvaluateMeterVl(shouldShow: true);
+    await _runInitialize(
+      state: state,
+      load: load,
+      evaluateA: evaluateA,
+      evaluateB: evaluateB,
+    );
+
+    expect(state.state.loaded, isFalse);
+    expect(state.state.loadFailed, isTrue);
+    expect(state.state.pendingModelDownloadGuidance, isFalse);
+    expect(state.state.pendingMeterVlGuidance, isFalse);
+    expect(evaluateA.calls, 0);
+    expect(evaluateB.calls, 0);
+  });
+
+  test('失敗後の再試行成功で loaded になる', () async {
+    final failing = _Load(_loadResult, error: Exception('load failed'));
+    await _runInitialize(state: state, load: failing);
+    expect(state.state.loadFailed, isTrue);
+
+    final load = _Load(_loadResult);
+    final advice = _Advice();
+    await _runInitialize(state: state, load: load, advice: advice);
+    expect(state.state.loaded, isTrue);
+    expect(state.state.loadFailed, isFalse);
+  });
+
+  test('失敗後の再試行失敗で再び loadFailed になる', () async {
+    final failing = _Load(_loadResult, error: Exception('load failed'));
+    await _runInitialize(state: state, load: failing);
+    await _runInitialize(state: state, load: failing);
+    expect(state.state.loaded, isFalse);
+    expect(state.state.loadFailed, isTrue);
   });
 
   test('Load と Advice で同じ now を渡す', () async {
@@ -352,6 +397,7 @@ void main() {
     state = MutableStateStream(
       const TopScreenState(
         loaded: true,
+        loadFailed: false,
         metric: PeriodTotalMetric.calories,
         today: PeriodAggregate.empty,
         week: PeriodAggregate.empty,
@@ -384,6 +430,7 @@ void main() {
     state = MutableStateStream(
       const TopScreenState(
         loaded: true,
+        loadFailed: false,
         metric: PeriodTotalMetric.calories,
         today: PeriodAggregate.empty,
         week: PeriodAggregate.empty,
@@ -427,6 +474,7 @@ void main() {
     state = MutableStateStream(
       const TopScreenState(
         loaded: true,
+        loadFailed: false,
         metric: PeriodTotalMetric.calories,
         today: PeriodAggregate(
           count: 1,
@@ -468,6 +516,7 @@ void main() {
     state = MutableStateStream(
       const TopScreenState(
         loaded: true,
+        loadFailed: false,
         metric: PeriodTotalMetric.calories,
         today: PeriodAggregate.empty,
         week: PeriodAggregate.empty,
@@ -502,6 +551,7 @@ void main() {
     final entity = delegate.execute(
       const TopScreenState(
         loaded: true,
+        loadFailed: false,
         metric: PeriodTotalMetric.calories,
         today: PeriodAggregate(
           count: 1,
@@ -538,6 +588,7 @@ void main() {
     final entity = const TopScreenStateToEntityDelegate().execute(
       const TopScreenState(
         loaded: true,
+        loadFailed: false,
         metric: PeriodTotalMetric.calories,
         today: PeriodAggregate(
           count: 1,
@@ -572,6 +623,7 @@ void main() {
     final entity = const TopScreenStateToEntityDelegate().execute(
       const TopScreenState(
         loaded: true,
+        loadFailed: false,
         metric: PeriodTotalMetric.calories,
         today: PeriodAggregate(
           count: 1,

@@ -1577,6 +1577,18 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_top_goal_label;
       },
+      'screen_feature_top_load_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_load_failed;
+      },
+      'screen_feature_top_loading': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_loading;
+      },
+      'screen_feature_top_retry': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_retry;
+      },
       'screen_feature_top_settings_semantics': (source) {
         // No Placeholders
         return l10n.screen_feature_top_settings_semantics;

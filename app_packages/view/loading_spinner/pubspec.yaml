@@ -1,0 +1,22 @@
+name: view_loading_spinner
+description: Shared indeterminate loading spinner (threeArchedCircle).
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  forui: any
+  loading_animation_widget: any
+  meta: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter
+  material_ui: any

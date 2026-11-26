@@ -81,6 +81,7 @@ final class OnInitializeDelegate {
 
   /// 期間合計とアドバイスを先に出し、誘導判定は後から反映する。
   ///
+  /// 失敗時は [TopScreenState.loadFailed] を立て、誘導評価は行わない。
   /// (A) を出さないときだけ、ここで (B) を評価する。(A) を出すときは
   /// ダイアログ完了後に [OnEvaluateMeterVlGuidanceDelegate] を呼ぶ。
   ///
@@ -104,62 +105,89 @@ final class OnInitializeDelegate {
     required ConditionalAdviceCatalog conditionalCatalog,
     required Map<ConditionalAdviceMetric, String> metricLabels,
   }) async {
-    await state.updateWithLock((current, emitter) async {
-      final now = DateTime.now();
-      final result = await loadTopScreenUsecase.execute(
-        LoadTopScreenRequest(now: now),
-      );
-      final advice = await generateTopAdviceUsecase.execute(
-        GenerateTopAdviceRequest(
-          histories: result.todayHistories,
-          locale: locale,
-          now: now,
-          goal: result.goal,
-          consecutiveExerciseDays: result.consecutiveExerciseDays,
-          consecutiveGoalAchievementDays: result.consecutiveGoalAchievementDays,
-          daysSincePreviousExerciseDay: result.daysSincePreviousExerciseDay,
-          noExercise: noExercise,
-          conditionalCatalog: conditionalCatalog,
-          metricLabels: metricLabels,
-          fallbackTemplates: fallbackTemplates,
-        ),
-      );
-      // 期間合計と助言は誘導判定を待たず先に出す。
-      // メイン段階だけ残し、他の案内 pending は下で条件から付け直す。
-      await emitter.emit(
-        current.copyWith(
-          loaded: true,
-          metric: result.metric,
-          today: result.today,
-          week: result.week,
-          month: result.month,
-          goal: result.goal,
-          adviceText: advice.advice,
-          adviceTone: advice.tone,
-          hasNewAchievements: result.hasNewAchievements,
-          weeklyAchievementDays: result.weeklyAchievementDays,
-          weekGoalAchievementDayCount: result.weekGoalAchievementDayCount,
-          showWeeklyGoalGuidance: result.showWeeklyGoalGuidance,
-          pendingModelDownloadGuidance: false,
-          pendingMeterVlGuidance: false,
-          pendingTutorialAchievement: false,
-        ),
-      );
-    });
+    try {
+      await state.updateWithLock((current, emitter) async {
+        await emitter.emit(current.copyWith(loadFailed: false));
+      });
+    } on StateStreamClosedException {
+      return;
+    }
+
+    try {
+      await state.updateWithLock((current, emitter) async {
+        final now = DateTime.now();
+        final result = await loadTopScreenUsecase.execute(
+          LoadTopScreenRequest(now: now),
+        );
+        final advice = await generateTopAdviceUsecase.execute(
+          GenerateTopAdviceRequest(
+            histories: result.todayHistories,
+            locale: locale,
+            now: now,
+            goal: result.goal,
+            consecutiveExerciseDays: result.consecutiveExerciseDays,
+            consecutiveGoalAchievementDays:
+                result.consecutiveGoalAchievementDays,
+            daysSincePreviousExerciseDay: result.daysSincePreviousExerciseDay,
+            noExercise: noExercise,
+            conditionalCatalog: conditionalCatalog,
+            metricLabels: metricLabels,
+            fallbackTemplates: fallbackTemplates,
+          ),
+        );
+        // 期間合計と助言は誘導判定を待たず先に出す。
+        // メイン段階だけ残し、他の案内 pending は下で条件から付け直す。
+        await emitter.emit(
+          current.copyWith(
+            loaded: true,
+            loadFailed: false,
+            metric: result.metric,
+            today: result.today,
+            week: result.week,
+            month: result.month,
+            goal: result.goal,
+            adviceText: advice.advice,
+            adviceTone: advice.tone,
+            hasNewAchievements: result.hasNewAchievements,
+            weeklyAchievementDays: result.weeklyAchievementDays,
+            weekGoalAchievementDayCount: result.weekGoalAchievementDayCount,
+            showWeeklyGoalGuidance: result.showWeeklyGoalGuidance,
+            pendingModelDownloadGuidance: false,
+            pendingMeterVlGuidance: false,
+            pendingTutorialAchievement: false,
+          ),
+        );
+      });
+    } on StateStreamClosedException {
+      return;
+    } on Object {
+      try {
+        await state.updateWithLock((current, emitter) async {
+          await emitter.emit(current.copyWith(loaded: false, loadFailed: true));
+        });
+      } on StateStreamClosedException {
+        return;
+      }
+      return;
+    }
 
     var pendingA = false;
     if (guidanceSession.shouldShow) {
       final decision = await evaluateOnDeviceLlmGuidanceUsecase.execute();
       if (decision.shouldShow && guidanceSession.shouldShow) {
-        await state.updateWithLock((current, emitter) async {
-          if (!guidanceSession.shouldShow) {
-            return;
-          }
-          pendingA = true;
-          await emitter.emit(
-            current.copyWith(pendingModelDownloadGuidance: true),
-          );
-        });
+        try {
+          await state.updateWithLock((current, emitter) async {
+            if (!guidanceSession.shouldShow) {
+              return;
+            }
+            pendingA = true;
+            await emitter.emit(
+              current.copyWith(pendingModelDownloadGuidance: true),
+            );
+          });
+        } on StateStreamClosedException {
+          return;
+        }
       }
     }
 

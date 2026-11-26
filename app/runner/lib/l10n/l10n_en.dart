@@ -1339,6 +1339,15 @@ class L10nEn extends L10n {
   String get screen_feature_top_goal_label => 'Goal';
 
   @override
+  String get screen_feature_top_load_failed => 'Failed to load home';
+
+  @override
+  String get screen_feature_top_loading => 'Loading…';
+
+  @override
+  String get screen_feature_top_retry => 'Retry';
+
+  @override
   String get screen_feature_top_settings_semantics => 'App settings';
 
   @override

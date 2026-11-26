@@ -35,6 +35,8 @@ final class TopScreenStateToEntityDelegate {
         : (n / m).clamp(0.0, 1.0).toDouble();
     final remaining = (m == null) ? 0 : (m - n < 0 ? 0 : m - n);
     return TopScreenEntity(
+      loaded: state.loaded,
+      loadFailed: state.loadFailed,
       metric: state.metric,
       todayText: PeriodTotalText.of(
         aggregate: state.today,
