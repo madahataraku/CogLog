@@ -139,6 +139,7 @@ List<Override> usecaseOverrides({
   HealthWriteGuidanceUsecase.provider.overrideWith(
     (ref) => HealthWriteGuidanceUsecaseImpl(
       guidance: ref.watch(healthWriteGuidanceRepositoryProvider),
+      health: ref.watch(healthWorkoutWriterProvider),
     ),
   ),
   LoadDailyGoalUsecase.provider.overrideWith(

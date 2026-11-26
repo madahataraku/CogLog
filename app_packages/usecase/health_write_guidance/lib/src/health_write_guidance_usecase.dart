@@ -12,7 +12,7 @@ abstract interface class HealthWriteGuidanceUsecase {
     (ref) => throw UnimplementedError('HealthWriteGuidanceUsecase.provider'),
   );
 
-  /// まだ出していなければ true。
+  /// 未提示かつ書き込み未連携なら true。
   ///
   /// Example:
   /// ```dart

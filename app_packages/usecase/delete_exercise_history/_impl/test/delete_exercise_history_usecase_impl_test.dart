@@ -84,6 +84,9 @@ final class _ThrowingDeleteHealth implements HealthWorkoutWriter {
     deleteCallCount += 1;
     throw StateError('health delete failed');
   }
+
+  @override
+  Future<bool> hasWritePermissionGranted() async => false;
 }
 
 void main() {

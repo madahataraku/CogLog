@@ -110,4 +110,16 @@ void main() {
       isFalse,
     );
   });
+
+  test('hasWritePermissionGranted は writePermissionGranted を返す', () async {
+    expect(
+      await FakeHealthWorkoutWriter().hasWritePermissionGranted(),
+      isFalse,
+    );
+    expect(
+      await FakeHealthWorkoutWriter(writePermissionGranted: true)
+          .hasWritePermissionGranted(),
+      isTrue,
+    );
+  });
 }

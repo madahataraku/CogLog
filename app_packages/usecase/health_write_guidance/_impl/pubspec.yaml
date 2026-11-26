@@ -9,9 +9,11 @@ environment:
 
 dependencies:
   data_repository_health_write_guidance: any
+  infra_health_workout: any
   usecase_health_write_guidance: any
 
 dev_dependencies:
   data_repository_health_write_guidance_testing: any
   flutter_lints: any
+  infra_health_workout_testing: any
   test: any

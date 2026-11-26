@@ -35,4 +35,11 @@ void main() {
       isFalse,
     );
   });
+
+  test('hasWritePermissionGranted は常に false', () async {
+    expect(
+      await const UnavailableHealthWorkoutWriter().hasWritePermissionGranted(),
+      isFalse,
+    );
+  });
 }
