@@ -96,21 +96,32 @@ class MeterCaptureStep1View extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: FButton(
-                      onPress: libraryEnabled
-                          ? viewModel.onPickLibraryPhoto
-                          : null,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          strings.screen_feature_meter_capture_pick_library,
-                          maxLines: 1,
-                          softWrap: false,
+                  child: FButton(
+                    // FButton 内部の Row は非 Flex 子に固有幅を許すため、
+                    // FittedBox だけでは縮まない。Flexible で幅を渡す。
+                    mainAxisAlignment: .start,
+                    builder:
+                        (
+                          context,
+                          style,
+                          textStyle,
+                          iconStyle,
+                          progressStyle,
+                          child,
+                        ) => Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: child,
+                          ),
                         ),
-                      ),
+                    onPress: libraryEnabled
+                        ? viewModel.onPickLibraryPhoto
+                        : null,
+                    child: Text(
+                      strings.screen_feature_meter_capture_pick_library,
+                      maxLines: 1,
+                      softWrap: false,
                     ),
                   ),
                 ),
