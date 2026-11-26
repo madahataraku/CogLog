@@ -200,20 +200,25 @@ class MeterCaptureStep2View extends HookConsumerWidget {
             aspectRatio: 4 / 3,
             child: Image.memory(photoBytes, fit: BoxFit.cover),
           ),
-        if (entity.showReadSuccessMessage)
-          Text(
-            strings.screen_feature_meter_capture_read_success,
-            textAlign: TextAlign.center,
-          ),
         if (entity.showReadCautionMessage)
-          Text(
-            strings.screen_feature_meter_capture_read_caution,
-            textAlign: TextAlign.center,
+          FAlert(
+            variant: .primary,
+            title: Text(
+              strings.screen_feature_meter_capture_read_complete_title,
+            ),
+            subtitle: Text(
+              strings.screen_feature_meter_capture_read_complete_subtitle,
+            ),
           ),
         if (entity.showHandEntryGuidance)
-          Text(
-            strings.screen_feature_meter_capture_hand_entry_guidance,
-            textAlign: TextAlign.center,
+          FAlert(
+            variant: .primary,
+            title: Text(
+              strings.screen_feature_meter_capture_read_missing_title,
+            ),
+            subtitle: Text(
+              strings.screen_feature_meter_capture_read_missing_subtitle,
+            ),
           ),
         CoachMarkTarget(
           id: CoachMarkTargetId.meterEditFields,
@@ -324,64 +329,79 @@ class MeterCaptureStep2View extends HookConsumerWidget {
               color: context.theme.colors.destructive,
             ),
           ),
-        FButton(
-          onPress: busy ? null : viewModel.onBackToStep1,
-          child: Text(strings.screen_feature_meter_capture_retake),
-        ),
-        FButton(
-          onPress: !canSubmit || busy
-              ? null
-              : () async {
-                  final success = await viewModel.onSave();
-                  if (success == null) {
-                    return;
-                  }
-                  if (success.goalAutoUpdated && context.mounted) {
-                    showFToast(
-                      context: context,
-                      title: Text(
-                        strings.screen_feature_meter_capture_goal_auto_updated,
-                      ),
-                    );
-                  }
-                  final newly = success.newlyUnlockedAchievements;
-                  if (newly.isNotEmpty && context.mounted) {
-                    if (newly.length == 1) {
-                      final id = newly.first.id;
-                      showFToast(
-                        context: context,
-                        title: Text(
-                          strings
-                              .screen_feature_meter_capture_achievement_unlocked_title(
-                                name: resolveAchievementName(id),
+        Row(
+          spacing: 8,
+          children: [
+            Expanded(
+              child: FButton(
+                variant: .secondary,
+                onPress: busy ? null : viewModel.onBackToStep1,
+                child: Text(strings.screen_feature_meter_capture_retake),
+              ),
+            ),
+            Expanded(
+              child: FButton(
+                onPress: !canSubmit || busy
+                    ? null
+                    : () async {
+                        final success = await viewModel.onSave();
+                        if (success == null) {
+                          return;
+                        }
+                        if (success.goalAutoUpdated && context.mounted) {
+                          showFToast(
+                            context: context,
+                            title: Text(
+                              strings
+                                  .screen_feature_meter_capture_goal_auto_updated,
+                            ),
+                          );
+                        }
+                        final newly = success.newlyUnlockedAchievements;
+                        if (newly.isNotEmpty && context.mounted) {
+                          if (newly.length == 1) {
+                            final id = newly.first.id;
+                            showFToast(
+                              context: context,
+                              title: Text(
+                                strings
+                                    .screen_feature_meter_capture_achievement_unlocked_title(
+                                      name: resolveAchievementName(id),
+                                    ),
                               ),
-                        ),
-                        description: Text(
-                          strings
-                              .screen_feature_meter_capture_achievement_unlocked_body(
-                                condition: resolveAchievementCondition(id),
+                              description: Text(
+                                strings
+                                    .screen_feature_meter_capture_achievement_unlocked_body(
+                                      condition: resolveAchievementCondition(
+                                        id,
+                                      ),
+                                    ),
                               ),
-                        ),
-                      );
-                    } else {
-                      final ordered = sortAchievementsByCatalogOrder(newly);
-                      showFToast(
-                        context: context,
-                        title: Text(
-                          strings
-                              .screen_feature_meter_capture_achievement_unlocked_summary_title(
-                                count: '${ordered.length}',
-                                firstName: resolveAchievementName(
-                                  ordered.first.id,
-                                ),
+                            );
+                          } else {
+                            final ordered = sortAchievementsByCatalogOrder(
+                              newly,
+                            );
+                            showFToast(
+                              context: context,
+                              title: Text(
+                                strings
+                                    .screen_feature_meter_capture_achievement_unlocked_summary_title(
+                                      count: '${ordered.length}',
+                                      firstName: resolveAchievementName(
+                                        ordered.first.id,
+                                      ),
+                                    ),
                               ),
-                        ),
-                      );
-                    }
-                  }
-                  viewModel.goToHomeTab();
-                },
-          child: Text(strings.screen_feature_meter_capture_save),
+                            );
+                          }
+                        }
+                        viewModel.goToHomeTab();
+                      },
+                child: Text(strings.screen_feature_meter_capture_save),
+              ),
+            ),
+          ],
         ),
       ],
     );

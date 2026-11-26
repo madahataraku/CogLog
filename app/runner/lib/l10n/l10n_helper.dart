@@ -1038,6 +1038,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_goal_settings_calories_unit;
       },
+      'screen_feature_goal_settings_daily_goals_card_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_goal_settings_daily_goals_card_title;
+      },
       'screen_feature_goal_settings_distance_label': (source) {
         // No Placeholders
         return l10n.screen_feature_goal_settings_distance_label;
@@ -1214,10 +1218,6 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_meter_capture_goal_auto_updated;
       },
-      'screen_feature_meter_capture_hand_entry_guidance': (source) {
-        // No Placeholders
-        return l10n.screen_feature_meter_capture_hand_entry_guidance;
-      },
       'screen_feature_meter_capture_open_settings': (source) {
         // No Placeholders
         return l10n.screen_feature_meter_capture_open_settings;
@@ -1234,13 +1234,21 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_meter_capture_pick_library;
       },
-      'screen_feature_meter_capture_read_caution': (source) {
+      'screen_feature_meter_capture_read_complete_subtitle': (source) {
         // No Placeholders
-        return l10n.screen_feature_meter_capture_read_caution;
+        return l10n.screen_feature_meter_capture_read_complete_subtitle;
       },
-      'screen_feature_meter_capture_read_success': (source) {
+      'screen_feature_meter_capture_read_complete_title': (source) {
         // No Placeholders
-        return l10n.screen_feature_meter_capture_read_success;
+        return l10n.screen_feature_meter_capture_read_complete_title;
+      },
+      'screen_feature_meter_capture_read_missing_subtitle': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_read_missing_subtitle;
+      },
+      'screen_feature_meter_capture_read_missing_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_meter_capture_read_missing_title;
       },
       'screen_feature_meter_capture_recorded_at': (source) {
         // No Placeholders
@@ -1593,6 +1601,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_top_unset_prompt;
       },
+      'screen_feature_top_weekly_achievement_done': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_weekly_achievement_done;
+      },
       'screen_feature_top_weekly_achievement_guidance': (source) {
         // No Placeholders
         return l10n.screen_feature_top_weekly_achievement_guidance;
@@ -1605,6 +1617,13 @@ final class L10nHelper {
         String m = source.arguments[index];
         index++;
         return l10n.screen_feature_top_weekly_achievement_ratio(n, m);
+      },
+      'screen_feature_top_weekly_achievement_remaining': (source) {
+        // Has Placeholders
+        var index = 0;
+        String x = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_weekly_achievement_remaining(x);
       },
       'screen_feature_top_weekly_achievement_semantics': (source) {
         // Has Placeholders
@@ -1620,6 +1639,15 @@ final class L10nHelper {
           m,
           remaining,
         );
+      },
+      'screen_feature_top_weekly_achievement_semantics_done': (source) {
+        // Has Placeholders
+        var index = 0;
+        String n = source.arguments[index];
+        index++;
+        String m = source.arguments[index];
+        index++;
+        return l10n.screen_feature_top_weekly_achievement_semantics_done(n, m);
       },
       'screen_feature_top_weekly_achievement_title': (source) {
         // No Placeholders

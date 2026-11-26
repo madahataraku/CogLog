@@ -41,9 +41,12 @@ advice_no_positive_goal_3,記録おつかれさまです。正の目標を設定
 achievement_title,目標達成率,Goal progress,目標達成率セクションの見出し
 unset_prompt,目標設定で一日あたりの目標を設定しましょう,Set a daily goal in Goals,目標未設定時の設定促進
 weekly_achievement_title,今週の目標達成日数,Goal days this week,週間達成見出し
-weekly_achievement_ratio,{n}/{m},{n}/{m},達成日数比
+weekly_achievement_ratio,達成日数:{n}日 / 目標日数:{m}日,Days met:{n} / Target days:{m},達成日数比
+weekly_achievement_remaining,目標達成まであと{x}日！,{x} day(s) left to hit this week's goal!,残り日数
+weekly_achievement_done,今週は目標達成済！,This week's goal is done!,達成済
 weekly_achievement_guidance,目標設定で週間の目標運動日数と一日あたりの目標を設定しましょう,Set weekly target exercise days and daily goals in Goals,誘導
 weekly_achievement_semantics,今週の目標達成は{n}日、目標は{m}日、残り{remaining}日,This week {n} of {m} goal days; {remaining} remaining,semantics
+weekly_achievement_semantics_done,今週の目標達成は{n}日、目標は{m}日、達成済,This week {n} of {m} goal days; goal met,達成済semantics
 actual_label,実績,Actual,実績のラベル
 goal_label,目標,Goal,目標のラベル
 advisor_semantics,アドバイザー,Advisor,アドバイスキャラクターの代替テキスト
@@ -51,7 +54,7 @@ achievements_semantics,アチーブメント,Achievements,ホーム右上
 achievements_new_semantics,新規アチーブメントあり,New achievements available,ホーム trophy の新規ドット a11y
 settings_semantics,アプリ設定,App settings,ホーム右上の設定ボタンの代替テキスト
 tutorial_main_1_title,ホーム画面の見かた,Getting around Home,段階1タイトル
-tutorial_main_1_body,本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。,"You can check the total exercise values for today, this week, and this month. Use the dropdown to switch among calories, distance, and duration.",段階1本文
+tutorial_main_1_body,本日・今週・今月の運動記録の合計値を確認できます。タブから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。,"You can check the total exercise values for today, this week, and this month. Use the tabs to switch among calories, distance, and duration.",段階1本文
 tutorial_main_2_title,目標進捗率の見かた,Reading goal progress,段階2タイトル
 tutorial_main_2_body,目標設定画面で設定した目標に対し、現在の進捗状況を確認できます。目標は1日あたりの目標と、1週間あたり何日運動するのかを設定できます。,See progress against the goals set on the Goals screen. You can set daily targets and how many days per week to exercise.,段階2本文
 tutorial_main_3_title,目標設定をしましょう,Let's set your goals,段階3タイトル
