@@ -1512,7 +1512,11 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_trends_request_health_permission =>
-      'Allow Health access';
+      'Link Health for display';
+
+  @override
+  String get screen_feature_trends_request_health_permission_subtitle =>
+      'Plots weight and body fat percentage from your device\'s Health data on the chart.';
 
   @override
   String get screen_feature_trends_retry_load => 'Retry';

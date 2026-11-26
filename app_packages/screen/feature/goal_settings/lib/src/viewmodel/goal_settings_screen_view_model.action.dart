@@ -57,4 +57,12 @@ extension GoalSettingsScreenViewModelActions on GoalSettingsScreenViewModel {
       now: DateTime.now(),
     );
   }
+
+  /// ホームタブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.goToHomeTab();
+  /// ```
+  void goToHomeTab() => navigation.goToHomeTab();
 }

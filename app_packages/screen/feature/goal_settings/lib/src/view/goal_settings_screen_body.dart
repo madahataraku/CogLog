@@ -302,6 +302,11 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
                             GoalSettingsSaveOutcome.saveFailed => .destructive,
                           },
                         );
+                        if (outcome == GoalSettingsSaveOutcome.success) {
+                          ref
+                              .read(GoalSettingsScreenViewModel.provider)
+                              .goToHomeTab();
+                        }
                       } finally {
                         saving.value = false;
                       }

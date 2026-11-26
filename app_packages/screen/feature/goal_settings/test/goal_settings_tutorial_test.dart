@@ -54,6 +54,52 @@ final class _AdvanceTutorial implements AdvanceTutorialMainUsecase {
   }
 }
 
+final class _Nav implements ScreenNavigation {
+  @override
+  void openExerciseHistoryDetail({required String id}) {}
+
+  @override
+  Future<ExerciseHistoryEditPopResult?> openExerciseHistoryEditAndWait({
+    required String id,
+  }) async => null;
+
+  @override
+  void openAppSettings() {}
+
+  @override
+  Future<void> openAchievements() async {}
+
+  @override
+  void openDebug() {}
+
+  @override
+  void openNotificationSettings() {}
+
+  @override
+  void openDataManagement() {}
+
+  @override
+  void openOssLicenses() {}
+
+  @override
+  void openOssLicenseDetail({required String packageName}) {}
+
+  @override
+  void pop() {}
+
+  @override
+  void popWithResult<T extends Object?>(T result) {}
+
+  @override
+  void goToHomeTab() {}
+
+  @override
+  void goToGoalSettingsTab() {}
+
+  @override
+  void goToMeterCaptureTab() {}
+}
+
 Future<void> _pumpFrames(WidgetTester tester, {int count = 12}) async {
   for (var i = 0; i < count; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -106,6 +152,7 @@ void main() {
           CoachMarkProviders.registry.overrideWith(
             (ref) => CoachMarkRegistry(),
           ),
+          screenNavigationProvider.overrideWith((ref) => _Nav()),
         ],
         child: MaterialApp(
           home: FTheme(
@@ -162,6 +209,7 @@ void main() {
             CoachMarkProviders.registry.overrideWith(
               (ref) => CoachMarkRegistry(),
             ),
+            screenNavigationProvider.overrideWith((ref) => _Nav()),
           ],
           child: MaterialApp(
             home: FTheme(
@@ -226,6 +274,7 @@ void main() {
           CoachMarkProviders.registry.overrideWith(
             (ref) => CoachMarkRegistry(),
           ),
+          screenNavigationProvider.overrideWith((ref) => _Nav()),
         ],
         child: MaterialApp(
           home: FTheme(

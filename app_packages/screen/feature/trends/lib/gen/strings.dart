@@ -95,6 +95,12 @@ mixin class L10nStringsMixin {
         'screen_feature_trends_request_health_permission',
       );
 
+  /// 身体を含む比較の許可リクエスト説明
+  String get screen_feature_trends_request_health_permission_subtitle =>
+      LocalizeStringDelegate.get(
+        'screen_feature_trends_request_health_permission_subtitle',
+      );
+
   /// 系列の再読取
   String get screen_feature_trends_retry_load =>
       LocalizeStringDelegate.get('screen_feature_trends_retry_load');

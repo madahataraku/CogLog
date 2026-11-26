@@ -84,11 +84,24 @@ class TrendsScreenBody extends ConsumerWidget {
               onChanged: viewModel.onSelectComparison,
             ),
             if (entity.showRequestPermissionButton)
-              FButton(
-                onPress: viewModel.onRequestHealthPermission,
-                child: Text(
-                  strings.screen_feature_trends_request_health_permission,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 8,
+                children: [
+                  FButton(
+                    onPress: viewModel.onRequestHealthPermission,
+                    child: Text(
+                      strings.screen_feature_trends_request_health_permission,
+                    ),
+                  ),
+                  Text(
+                    strings
+                        .screen_feature_trends_request_health_permission_subtitle,
+                    style: context.theme.typography.body.sm.copyWith(
+                      color: context.theme.colors.mutedForeground,
+                    ),
+                  ),
+                ],
               ),
             if (entity.showRequestHistoryButton)
               FButton(

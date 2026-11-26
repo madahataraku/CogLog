@@ -7,12 +7,59 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_goal_settings/screen_feature_goal_settings.dart';
+import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_daily_goal/usecase_load_daily_goal.dart';
 import 'package:usecase_load_daily_goal_impl/usecase_load_daily_goal_impl.dart';
 import 'package:usecase_save_daily_goal/usecase_save_daily_goal.dart';
 import 'package:usecase_save_daily_goal_impl/usecase_save_daily_goal_impl.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_coach_mark/view_coach_mark.dart';
+
+final class _Nav implements ScreenNavigation {
+  @override
+  void openExerciseHistoryDetail({required String id}) {}
+
+  @override
+  Future<ExerciseHistoryEditPopResult?> openExerciseHistoryEditAndWait({
+    required String id,
+  }) async => null;
+
+  @override
+  void openAppSettings() {}
+
+  @override
+  Future<void> openAchievements() async {}
+
+  @override
+  void openDebug() {}
+
+  @override
+  void openNotificationSettings() {}
+
+  @override
+  void openDataManagement() {}
+
+  @override
+  void openOssLicenses() {}
+
+  @override
+  void openOssLicenseDetail({required String packageName}) {}
+
+  @override
+  void pop() {}
+
+  @override
+  void popWithResult<T extends Object?>(T result) {}
+
+  @override
+  void goToHomeTab() {}
+
+  @override
+  void goToGoalSettingsTab() {}
+
+  @override
+  void goToMeterCaptureTab() {}
+}
 
 final class _AdvanceTutorial implements AdvanceTutorialMainUsecase {
   @override
@@ -79,6 +126,7 @@ void main() {
             CoachMarkProviders.registry.overrideWith(
               (ref) => CoachMarkRegistry(),
             ),
+            screenNavigationProvider.overrideWith((ref) => _Nav()),
           ],
           child: MaterialApp(
             locale: const Locale('ja'),

@@ -20,7 +20,8 @@ unit_kg,kg,kg,単位
 unit_percent,%,%,単位
 unit_minutes,分,min,単位
 unit_km,km,km,単位
-request_health_permission,ヘルスケアを許可,Allow Health access,身体を含む比較の許可リクエスト
+request_health_permission,ヘルスケアの表示連携,Link Health for display,身体を含む比較の許可リクエスト
+request_health_permission_subtitle,端末のヘルスケア情報に保存されている、体重や体脂肪率をグラフ上にプロットします。,"Plots weight and body fat percentage from your device's Health data on the chart.",身体を含む比較の許可リクエスト説明
 request_health_history,ヘルスの履歴データを許可,Allow health history,Android 履歴許可の再要求
 open_os_settings,設定を開く,Open Settings,永久拒否時に OS 設定を開く
 retry_load,再試行,Retry,系列の再読取

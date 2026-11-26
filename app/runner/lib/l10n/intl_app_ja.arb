@@ -1770,9 +1770,13 @@
   "@screen_feature_trends_request_health_history": {
     "description": "Android 履歴許可の再要求"
   },
-  "screen_feature_trends_request_health_permission": "ヘルスケアを許可",
+  "screen_feature_trends_request_health_permission": "ヘルスケアの表示連携",
   "@screen_feature_trends_request_health_permission": {
     "description": "身体を含む比較の許可リクエスト"
+  },
+  "screen_feature_trends_request_health_permission_subtitle": "端末のヘルスケア情報に保存されている、体重や体脂肪率をグラフ上にプロットします。",
+  "@screen_feature_trends_request_health_permission_subtitle": {
+    "description": "身体を含む比較の許可リクエスト説明"
   },
   "screen_feature_trends_retry_load": "再試行",
   "@screen_feature_trends_retry_load": {

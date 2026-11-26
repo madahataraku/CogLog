@@ -1789,6 +1789,10 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_trends_request_health_permission;
       },
+      'screen_feature_trends_request_health_permission_subtitle': (source) {
+        // No Placeholders
+        return l10n.screen_feature_trends_request_health_permission_subtitle;
+      },
       'screen_feature_trends_retry_load': (source) {
         // No Placeholders
         return l10n.screen_feature_trends_retry_load;

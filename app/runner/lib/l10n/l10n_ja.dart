@@ -1418,7 +1418,11 @@ class L10nJa extends L10n {
   String get screen_feature_trends_request_health_history => 'ヘルスの履歴データを許可';
 
   @override
-  String get screen_feature_trends_request_health_permission => 'ヘルスケアを許可';
+  String get screen_feature_trends_request_health_permission => 'ヘルスケアの表示連携';
+
+  @override
+  String get screen_feature_trends_request_health_permission_subtitle =>
+      '端末のヘルスケア情報に保存されている、体重や体脂肪率をグラフ上にプロットします。';
 
   @override
   String get screen_feature_trends_retry_load => '再試行';

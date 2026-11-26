@@ -39,6 +39,7 @@ final class GoalSettingsScreenViewModel {
         state: MutableStateStream(GoalSettingsScreenState.initial),
         loadDailyGoalUsecase: ref.watch(LoadDailyGoalUsecase.provider),
         saveDailyGoalUsecase: ref.watch(SaveDailyGoalUsecase.provider),
+        navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const GoalSettingsStateToEntityDelegate(),
       );
       ref.onDispose(() {
@@ -50,6 +51,7 @@ final class GoalSettingsScreenViewModel {
       appDataImportRefreshProvider,
       LoadDailyGoalUsecase.provider,
       SaveDailyGoalUsecase.provider,
+      screenNavigationProvider,
     ],
   );
 
@@ -65,6 +67,10 @@ final class GoalSettingsScreenViewModel {
   @visibleForTesting
   final SaveDailyGoalUsecase saveDailyGoalUsecase;
 
+  /// タブ遷移。
+  @visibleForTesting
+  final ScreenNavigation navigation;
+
   /// State から入力欄の初期文字列への変換。
   @visibleForTesting
   final GoalSettingsStateToEntityDelegate stateToEntity;
@@ -79,6 +85,7 @@ final class GoalSettingsScreenViewModel {
     required this.state,
     required this.loadDailyGoalUsecase,
     required this.saveDailyGoalUsecase,
+    required this.navigation,
     required this.stateToEntity,
   });
 
