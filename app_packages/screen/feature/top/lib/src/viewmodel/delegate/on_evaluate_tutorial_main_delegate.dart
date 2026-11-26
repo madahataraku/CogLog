@@ -53,6 +53,10 @@ final class OnEvaluateTutorialMainDelegate {
     if (!decision.shouldStart) {
       return;
     }
+    // 判定待ち中に別 evaluate が pending を立てていれば二重起動しない。
+    if (state.state.pendingTutorialMain) {
+      return;
+    }
     final advanced = await advanceUsecase.execute(
       const AdvanceTutorialMainRequest.start(),
     );

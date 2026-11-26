@@ -155,6 +155,8 @@ class TopScreen extends HookConsumerWidget {
             return;
           }
           if (reason == CoachMarkDismissReason.forced) {
+            // ホーム離脱・背面と重なっても同じ段階を pending に残し、復帰で再開する。
+            await viewModel.onParkTutorialMain(step);
             return;
           }
           if (reason == CoachMarkDismissReason.secondary ||
@@ -179,6 +181,8 @@ class TopScreen extends HookConsumerWidget {
                 return;
               }
               step = show.step;
+              // Launcher が removeRoute 後に complete するが、フレーム境界も挟んでから次へ進む。
+              await WidgetsBinding.instance.endOfFrame;
             case AdvanceTutorialMainCompletedResult():
             case AdvanceTutorialMainNoopResult():
               return;

@@ -250,6 +250,14 @@ void main() {
     expect(state.state.tutorialMainStep, TutorialMainStep.goalRecommend);
   });
 
+  // forced（ホーム離脱・背面との競合含む）でも同じ段階を pending に残す。
+  test('OnParkTutorialMain は homeIntro も再開用に残す', () async {
+    await OnParkTutorialMainDelegate(state: state)
+        .execute(TutorialMainStep.homeIntro);
+    expect(state.state.pendingTutorialMain, isTrue);
+    expect(state.state.tutorialMainStep, TutorialMainStep.homeIntro);
+  });
+
   test('未ダウンロードかつ未提示なら pending true', () async {
     await _runInitialize(state: state, evaluateA: _Evaluate(shouldShow: true));
     expect(state.state.loaded, isTrue);

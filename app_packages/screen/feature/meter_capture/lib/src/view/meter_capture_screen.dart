@@ -14,6 +14,7 @@ import '../viewmodel/meter_capture_screen_view_model.dart';
 import '../viewmodel/state/meter_capture_step.dart';
 import 'meter_capture_screen_body.dart';
 import 'meter_capture_screen_providers.dart';
+import 'meter_tutorial_dismiss_policy.dart';
 
 /// メーターパネル写真から運動履歴を作成する画面。
 ///
@@ -58,12 +59,13 @@ class MeterCaptureScreen extends HookConsumerWidget {
         lifecycle == null || lifecycle == AppLifecycleState.resumed;
 
     // 離脱は selected 変化時のみ。世代更新を依存に含めると離脱が再帰する。
+    // 撮影／編集文脈だけ閉じる。ホームのメイン連鎖など他画面のコーチマークは触らない。
     useEffect(() {
       if (!selected) {
         unawaited(viewModel.onLeaveMeterTab());
-        CoachMarkLauncher.dismissActive();
         final kind = tutorialSession.activeKind;
-        if (kind == TutorialKind.camera || kind == TutorialKind.meterEdit) {
+        if (shouldDismissCoachMarkForMeterTutorial(kind)) {
+          CoachMarkLauncher.dismissActive();
           tutorialSession.clearActive();
         }
       }
@@ -93,8 +95,11 @@ class MeterCaptureScreen extends HookConsumerWidget {
       if (!reading) {
         return null;
       }
-      // 読み取り中はコーチマークを隠し、提示済みにしない。
-      CoachMarkLauncher.dismissActive();
+      // 読み取り中は撮影／編集文脈だけ隠し、提示済みにしない。
+      final kind = tutorialSession.activeKind;
+      if (shouldDismissCoachMarkForMeterTutorial(kind)) {
+        CoachMarkLauncher.dismissActive();
+      }
       unawaited(viewModel.onSuppressTutorialForReading());
       final dismiss = Completer<void>();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -112,7 +117,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
           dismiss.complete();
         }
       };
-    }, [reading, viewModel]);
+    }, [reading, viewModel, tutorialSession]);
 
     // 段階5: 撮影タブ・前面・非読み取りで初回文脈。
     useEffect(() {

@@ -59,6 +59,10 @@ final class AdvanceTutorialMainUsecaseImpl
     if (session.activeKind != null && session.activeKind != TutorialKind.main) {
       return const AdvanceTutorialMainResult.noop();
     }
+    // 既にメイン表示中なら段階1へ戻さず、二重連鎖を避ける。
+    if (session.activeKind == TutorialKind.main) {
+      return const AdvanceTutorialMainResult.noop();
+    }
     if (progress.mainCompleted) {
       return const AdvanceTutorialMainResult.noop();
     }
