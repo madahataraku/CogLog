@@ -212,12 +212,12 @@ class TopScreen extends HookConsumerWidget {
           switch (result) {
             case final AdvanceTutorialMainShowResult show:
               if (show.navigation != AdvanceTutorialMainNavigation.none) {
-                // オーバーレイ／disableBackButton ルートの破棄を待ってから遷移する。
-                await Future<void>.delayed(const Duration(milliseconds: 300));
-                if (!context.mounted) {
-                  return;
-                }
-                await _navigateAfterMain(viewModel, show.navigation);
+                await _navigateAfterMainWhenReady(
+                  context: context,
+                  viewModel: viewModel,
+                  navigation: show.navigation,
+                  canNavigateFromHome: canShowOnHome,
+                );
                 return;
               }
               step = show.step;
@@ -225,11 +225,12 @@ class TopScreen extends HookConsumerWidget {
               await WidgetsBinding.instance.endOfFrame;
             case final AdvanceTutorialMainCompletedResult completed:
               if (completed.navigation != AdvanceTutorialMainNavigation.none) {
-                await Future<void>.delayed(const Duration(milliseconds: 300));
-                if (!context.mounted) {
-                  return;
-                }
-                await _navigateAfterMain(viewModel, completed.navigation);
+                await _navigateAfterMainWhenReady(
+                  context: context,
+                  viewModel: viewModel,
+                  navigation: completed.navigation,
+                  canNavigateFromHome: canShowOnHome,
+                );
               }
               return;
             case AdvanceTutorialMainNoopResult():
@@ -331,6 +332,36 @@ class TopScreen extends HookConsumerWidget {
     );
     return const TopScreenImpl();
   }
+}
+
+/// オーバーレイ破棄を待ち、ホーム前面のときだけ [navigation] へ進む。
+///
+/// 遅延後にホーム以外／背面なら遷移しない（到達段階は既に永続済み）。
+///
+/// Example:
+/// ```dart
+/// await _navigateAfterMainWhenReady(
+///   context: context,
+///   viewModel: viewModel,
+///   navigation: AdvanceTutorialMainNavigation.meterCaptureTab,
+///   canNavigateFromHome: () => true,
+/// );
+/// ```
+Future<void> _navigateAfterMainWhenReady({
+  required BuildContext context,
+  required TopScreenViewModel viewModel,
+  required AdvanceTutorialMainNavigation navigation,
+  required bool Function() canNavigateFromHome,
+}) async {
+  // オーバーレイ／disableBackButton ルートの破棄を待ってから遷移する。
+  await Future<void>.delayed(const Duration(milliseconds: 300));
+  if (!context.mounted) {
+    return;
+  }
+  if (!canNavigateFromHome()) {
+    return;
+  }
+  await _navigateAfterMain(viewModel, navigation);
 }
 
 /// メイン段階の主ボタン後にタブ／アチーブメントへ遷移する。
