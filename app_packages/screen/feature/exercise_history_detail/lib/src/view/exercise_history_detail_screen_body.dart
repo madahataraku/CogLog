@@ -220,77 +220,87 @@ final class _DetailFields extends StatelessWidget {
           const SizedBox(height: 16),
         ],
         if (entity.showPhoto)
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: maxPhotoHeight),
-            child: Image.file(
-              File(entity.photoPath!),
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => Text(
-                strings.screen_feature_exercise_history_detail_photo_error,
+          FCard(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxPhotoHeight),
+              child: Image.file(
+                File(entity.photoPath!),
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => Text(
+                  strings.screen_feature_exercise_history_detail_photo_error,
+                ),
               ),
             ),
           )
         else if (entity.showPhotoError)
-          Text(strings.screen_feature_exercise_history_detail_photo_error),
+          FCard(
+            child: Text(
+              strings.screen_feature_exercise_history_detail_photo_error,
+            ),
+          ),
         const SizedBox(height: 16),
-        FTileGroup(
-          children: [
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_calories,
+        FCard(
+          child: FTileGroup(
+            children: [
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_calories,
+                ),
+                subtitle: Text(entity.caloriesText),
               ),
-              subtitle: Text(entity.caloriesText),
-            ),
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_duration,
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_duration,
+                ),
+                subtitle: Text(entity.durationText),
               ),
-              subtitle: Text(entity.durationText),
-            ),
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_distance,
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_distance,
+                ),
+                subtitle: Text(entity.distanceText),
               ),
-              subtitle: Text(entity.distanceText),
-            ),
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_average_speed,
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_average_speed,
+                ),
+                subtitle: Text(entity.averageSpeedText),
               ),
-              subtitle: Text(entity.averageSpeedText),
-            ),
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_recorded_at,
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_recorded_at,
+                ),
+                subtitle: Text(
+                  '${entity.recordedAtText}${entity.recordedAtEditedSuffix}',
+                ),
               ),
-              subtitle: Text(
-                '${entity.recordedAtText}${entity.recordedAtEditedSuffix}',
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 24),
-        FTileGroup(
-          children: [
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_captured_at,
+        FCard(
+          child: FTileGroup(
+            children: [
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_captured_at,
+                ),
+                subtitle: Text(entity.capturedAtText),
               ),
-              subtitle: Text(entity.capturedAtText),
-            ),
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_saved_at,
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_saved_at,
+                ),
+                subtitle: Text(entity.savedAtText),
               ),
-              subtitle: Text(entity.savedAtText),
-            ),
-            FTile(
-              title: Text(
-                strings.screen_feature_exercise_history_detail_created_at,
+              FTile(
+                title: Text(
+                  strings.screen_feature_exercise_history_detail_created_at,
+                ),
+                subtitle: Text(entity.createdAtText),
               ),
-              subtitle: Text(entity.createdAtText),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
