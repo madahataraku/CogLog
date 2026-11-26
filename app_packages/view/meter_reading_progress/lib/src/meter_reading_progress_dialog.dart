@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:meta/meta.dart';
+import 'package:view_loading_spinner/view_loading_spinner.dart';
 
 import 'strings.dart';
 
@@ -66,7 +67,7 @@ final class MeterReadingProgressDialog extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: contentPadding,
             children: [
-              const Center(child: FCircularProgress()),
+              const Center(child: AppLoadingSpinner()),
               Semantics(
                 container: true,
                 liveRegion: true,

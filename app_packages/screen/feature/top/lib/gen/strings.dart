@@ -212,6 +212,18 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_goal_label =>
       LocalizeStringDelegate.get('screen_feature_top_goal_label');
 
+  /// ホーム初回読込失敗
+  String get screen_feature_top_load_failed =>
+      LocalizeStringDelegate.get('screen_feature_top_load_failed');
+
+  /// ホーム初回読込中ダイアログ
+  String get screen_feature_top_loading =>
+      LocalizeStringDelegate.get('screen_feature_top_loading');
+
+  /// ホーム初回読込の再試行
+  String get screen_feature_top_retry =>
+      LocalizeStringDelegate.get('screen_feature_top_retry');
+
   /// ホーム右上の設定ボタンの代替テキスト
   String get screen_feature_top_settings_semantics =>
       LocalizeStringDelegate.get('screen_feature_top_settings_semantics');

@@ -2304,6 +2304,24 @@ abstract class L10n {
   /// **'目標'**
   String get screen_feature_top_goal_label;
 
+  /// ホーム初回読込失敗
+  ///
+  /// In ja, this message translates to:
+  /// **'ホームの読み込みに失敗しました'**
+  String get screen_feature_top_load_failed;
+
+  /// ホーム初回読込中ダイアログ
+  ///
+  /// In ja, this message translates to:
+  /// **'読み込み中です…'**
+  String get screen_feature_top_loading;
+
+  /// ホーム初回読込の再試行
+  ///
+  /// In ja, this message translates to:
+  /// **'再試行'**
+  String get screen_feature_top_retry;
+
   /// ホーム右上の設定ボタンの代替テキスト
   ///
   /// In ja, this message translates to:

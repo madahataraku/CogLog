@@ -69,3 +69,6 @@ tutorial_main_7_title,たくさんの称号を取得しよう,Earn many trophies
 tutorial_main_7_body,アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。,From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.,段階7本文
 tutorial_achievement_title,たくさんの称号を取得しよう,Earn many trophies,段階7互換キー
 tutorial_achievement_body,アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。,From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.,段階7互換キー
+loading,読み込み中です…,Loading…,ホーム初回読込中ダイアログ
+load_failed,ホームの読み込みに失敗しました,Failed to load home,ホーム初回読込失敗
+retry,再試行,Retry,ホーム初回読込の再試行

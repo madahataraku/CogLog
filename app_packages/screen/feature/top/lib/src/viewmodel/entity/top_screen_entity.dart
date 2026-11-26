@@ -75,6 +75,8 @@ final class TopScreenEntity {
   /// );
   /// ```
   const TopScreenEntity({
+    required this.loaded,
+    required this.loadFailed,
     required this.metric,
     required this.todayText,
     required this.weekText,
@@ -96,6 +98,12 @@ final class TopScreenEntity {
     required this.calories,
     required this.distance,
   });
+
+  /// 読み込み成功後に true。
+  final bool loaded;
+
+  /// 初回読み込み失敗時に true。
+  final bool loadFailed;
 
   /// 選択中の指標。
   final PeriodTotalMetric metric;

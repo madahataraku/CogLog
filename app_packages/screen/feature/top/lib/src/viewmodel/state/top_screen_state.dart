@@ -20,6 +20,7 @@ final class TopScreenState {
   /// ```
   const TopScreenState({
     required this.loaded,
+    required this.loadFailed,
     required this.metric,
     required this.today,
     required this.week,
@@ -41,6 +42,7 @@ final class TopScreenState {
   /// まだ読み込んでいない状態。指標は消費カロリー。
   static const initial = TopScreenState(
     loaded: false,
+    loadFailed: false,
     metric: PeriodTotalMetric.calories,
     today: PeriodAggregate.empty,
     week: PeriodAggregate.empty,
@@ -61,6 +63,9 @@ final class TopScreenState {
 
   /// 読み込みが成功したあとに true。
   final bool loaded;
+
+  /// 初回読み込みが失敗したとき true。再試行開始で false に戻す。
+  final bool loadFailed;
 
   /// 3 期間で共有する指標。
   final PeriodTotalMetric metric;
@@ -120,6 +125,7 @@ final class TopScreenState {
   /// ```
   TopScreenState copyWith({
     bool? loaded,
+    bool? loadFailed,
     PeriodTotalMetric? metric,
     PeriodAggregate? today,
     PeriodAggregate? week,
@@ -141,6 +147,7 @@ final class TopScreenState {
   }) {
     return TopScreenState(
       loaded: loaded ?? this.loaded,
+      loadFailed: loadFailed ?? this.loadFailed,
       metric: metric ?? this.metric,
       today: today ?? this.today,
       week: week ?? this.week,
