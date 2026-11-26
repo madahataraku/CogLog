@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_meter_capture/src/view/meter_tutorial_dismiss_policy.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
