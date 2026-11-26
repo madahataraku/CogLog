@@ -59,7 +59,7 @@ void main() {
       advanceUsecase: _Advance(
         const AdvanceTutorialMainResult.show(
           step: TutorialMainStep.goalProgressIntro,
-          navigateToGoalTab: false,
+          navigation: AdvanceTutorialMainNavigation.none,
         ),
       ),
     ).execute(const AdvanceTutorialMainRequest.next());
@@ -77,7 +77,25 @@ void main() {
       advanceUsecase: _Advance(
         const AdvanceTutorialMainResult.show(
           step: TutorialMainStep.goalRecommend,
-          navigateToGoalTab: true,
+          navigation: AdvanceTutorialMainNavigation.goalSettingsTab,
+        ),
+      ),
+    ).execute(const AdvanceTutorialMainRequest.next());
+
+    expect(state.state.pendingTutorialMain, isFalse);
+    expect(state.state.tutorialMainStep, isNull);
+  });
+
+  test('メータータブ誘導時も pending を下ろし step を消す', () async {
+    final state = MutableStateStream(
+      _baseState(tutorialMainStep: TutorialMainStep.meterRecommend),
+    );
+    await OnAdvanceTutorialMainDelegate(
+      state: state,
+      advanceUsecase: _Advance(
+        const AdvanceTutorialMainResult.show(
+          step: TutorialMainStep.meterRecommend,
+          navigation: AdvanceTutorialMainNavigation.meterCaptureTab,
         ),
       ),
     ).execute(const AdvanceTutorialMainRequest.next());

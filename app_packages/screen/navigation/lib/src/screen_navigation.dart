@@ -136,6 +136,22 @@ abstract interface class ScreenNavigation {
   /// navigation.goToMeterCaptureTab();
   /// ```
   void goToMeterCaptureTab();
+
+  /// 推移タブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToTrendsTab();
+  /// ```
+  void goToTrendsTab();
+
+  /// 運動履歴タブへ切り替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// navigation.goToExerciseHistoryTab();
+  /// ```
+  void goToExerciseHistoryTab();
 }
 
 /// 画面遷移の注入点。未接続のときは失敗する。

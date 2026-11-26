@@ -1,3 +1,4 @@
+import 'advance_tutorial_main_navigation.dart';
 import 'tutorial_main_step.dart';
 
 part 'advance_tutorial_main_completed_result.dart';
@@ -25,22 +26,25 @@ sealed class AdvanceTutorialMainResult {
   /// ```dart
   /// const AdvanceTutorialMainResult.show(
   ///   step: TutorialMainStep.homeIntro,
-  ///   navigateToGoalTab: false,
+  ///   navigation: AdvanceTutorialMainNavigation.none,
   /// );
   /// ```
   const factory AdvanceTutorialMainResult.show({
     required TutorialMainStep step,
-    required bool navigateToGoalTab,
+    required AdvanceTutorialMainNavigation navigation,
   }) = AdvanceTutorialMainShowResult;
 
   /// メイン完了（永続成功または抑止付き完了相当）。
   ///
   /// Example:
   /// ```dart
-  /// const AdvanceTutorialMainResult.completed();
+  /// const AdvanceTutorialMainResult.completed(
+  ///   navigation: AdvanceTutorialMainNavigation.achievements,
+  /// );
   /// ```
-  const factory AdvanceTutorialMainResult.completed() =
-      AdvanceTutorialMainCompletedResult;
+  const factory AdvanceTutorialMainResult.completed({
+    AdvanceTutorialMainNavigation navigation,
+  }) = AdvanceTutorialMainCompletedResult;
 
   /// 何もしない。
   ///

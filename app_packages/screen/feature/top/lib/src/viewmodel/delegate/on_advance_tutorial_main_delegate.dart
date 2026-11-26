@@ -5,7 +5,7 @@ import '../state/top_screen_state.dart';
 
 /// メイン段階を進め、結果を State に反映する。
 ///
-/// 目標タブへの遷移は View がコーチマーク破棄後に行う。
+/// タブ／アチーブメントへの遷移は View がコーチマーク破棄後に行う。
 ///
 /// Example:
 /// ```dart
@@ -46,10 +46,9 @@ final class OnAdvanceTutorialMainDelegate {
   ) async {
     final result = await advanceUsecase.execute(request);
     switch (result) {
-      case AdvanceTutorialMainShowResult(:final step, :final navigateToGoalTab):
-        if (navigateToGoalTab) {
-          // 段階3の次へは目標文脈へ渡すだけ。ホームの pending は立てない。
-          // タブ遷移は View がオーバーレイ破棄後に行う。
+      case AdvanceTutorialMainShowResult(:final step, :final navigation):
+        if (navigation != AdvanceTutorialMainNavigation.none) {
+          // 段階3〜6の誘導はホームの pending を立てない。遷移は View が行う。
           await state.updateWithLock((current, emitter) async {
             await emitter.emit(
               current.copyWith(
