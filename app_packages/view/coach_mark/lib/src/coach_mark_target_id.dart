@@ -5,13 +5,10 @@
 /// CoachMarkTargetId.homePeriodTotals;
 /// ```
 enum CoachMarkTargetId {
-  /// ホーム: 指標切替。
-  homeMetricSelect,
-
-  /// ホーム: 期間合計ブロック。
+  /// ホーム: 期間集計と指標切替の外カード（メイン段階1）。
   homePeriodTotals,
 
-  /// ホーム: 目標達成リング。
+  /// ホーム: 目標達成率と週間達成の外カード（メイン段階2）。
   homeGoalRings,
 
   /// ホーム: アチーブメント（trophy）。
