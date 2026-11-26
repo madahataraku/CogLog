@@ -296,18 +296,33 @@ final class CoachMarkLauncher {
       // 未挿入なら上流の Future.delayed(Duration.zero) のあとに外す。
       // 先に remove/closeHiddenView すると disableBackButton 経路が _contextTutorial! で落ちる。
       // 未挿入経路では遅延削除のあとで complete し、直後の再 show と競合させない。
+      // 呼び出し元 Widget の dispose 中は Navigator 祖先が不安定なため失敗を握る。
       if (tutorial.isShowing) {
-        tutorial.removeOverlayEntry();
+        _removeOverlayQuietly(tutorial);
         completeLater();
       } else {
         Future.delayed(Duration.zero, () {
-          tutorial.removeOverlayEntry();
+          _removeOverlayQuietly(tutorial);
           completeLater();
         });
       }
       return;
     }
     completeLater();
+  }
+
+  /// [removeOverlayEntry] を試し、deactivate 済み context では失敗を握る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _removeOverlayQuietly(tutorial);
+  /// ```
+  static void _removeOverlayQuietly(TutorialCoachMark tutorial) {
+    try {
+      tutorial.removeOverlayEntry();
+    } on Object {
+      // dispose 中の Navigator.of 失敗など。参照は呼び出し側で既に外している。
+    }
   }
 
   /// [_active] / Completer 参照だけ消す（onFinish 用）。

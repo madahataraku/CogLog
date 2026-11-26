@@ -186,7 +186,10 @@ void main() {
 
     expect(find.text('目標設定のやり方①'), findsNothing);
     expect(session.activeKind, isNull);
-    expect(session.hasContextPresentedThisProcess(TutorialKind.goalSettings), isFalse);
+    expect(
+      session.hasContextPresentedThisProcess(TutorialKind.goalSettings),
+      isFalse,
+    );
   });
 
   // テスト対象:
