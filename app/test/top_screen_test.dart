@@ -1,4 +1,3 @@
-import 'package:forui/forui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,19 +59,11 @@ void main() {
     expect(find.text('Today'), findsOneWidget);
     expect(find.text('This week'), findsOneWidget);
     expect(find.text('This month'), findsOneWidget);
-    // 指標 Select と達成率リング見出しの双方に出る。
     expect(find.text('Calories'), findsAtLeastNWidgets(1));
-    await tester.tap(find.text('Calories').first);
+    expect(find.text('Distance'), findsAtLeastNWidgets(1));
+    expect(find.text('Exercise time'), findsAtLeastNWidgets(1));
+    await tester.tap(find.text('Distance').first);
     await tester.pumpAndSettle();
-    final menu = find.byType(FPopover);
-    expect(
-      find.descendant(of: menu, matching: find.text('Distance')),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: menu, matching: find.text('Exercise time')),
-      findsOneWidget,
-    );
   });
 
   testWidgets('他タブからホームへ戻ると目標を再読み込みする', (tester) async {
@@ -102,14 +93,6 @@ Future<void> _chooseMetric(
   String current,
   String label,
 ) async {
-  // Select 欄が先頭。達成率リング見出しと同文言がある。
-  await tester.tap(find.text(current).first);
-  await tester.pumpAndSettle();
-  final menuOption = find.descendant(
-    of: find.byType(FPopover),
-    matching: find.text(label),
-  );
-  expect(menuOption, findsOneWidget);
-  await tester.tap(menuOption);
+  await tester.tap(find.text(label).first);
   await tester.pumpAndSettle();
 }

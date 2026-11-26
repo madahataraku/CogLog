@@ -300,6 +300,10 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_unset_prompt =>
       LocalizeStringDelegate.get('screen_feature_top_unset_prompt');
 
+  /// 達成済
+  String get screen_feature_top_weekly_achievement_done =>
+      LocalizeStringDelegate.get('screen_feature_top_weekly_achievement_done');
+
   /// 誘導
   String get screen_feature_top_weekly_achievement_guidance =>
       LocalizeStringDelegate.get(
@@ -315,6 +319,13 @@ mixin class L10nStringsMixin {
     arguments: [n, m],
   );
 
+  /// 残り日数
+  String screen_feature_top_weekly_achievement_remaining({required String x}) =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_weekly_achievement_remaining',
+        arguments: [x],
+      );
+
   /// semantics
   String screen_feature_top_weekly_achievement_semantics({
     required String n,
@@ -323,6 +334,15 @@ mixin class L10nStringsMixin {
   }) => LocalizeStringDelegate.get(
     'screen_feature_top_weekly_achievement_semantics',
     arguments: [n, m, remaining],
+  );
+
+  /// 達成済semantics
+  String screen_feature_top_weekly_achievement_semantics_done({
+    required String n,
+    required String m,
+  }) => LocalizeStringDelegate.get(
+    'screen_feature_top_weekly_achievement_semantics_done',
+    arguments: [n, m],
   );
 
   /// 週間達成見出し

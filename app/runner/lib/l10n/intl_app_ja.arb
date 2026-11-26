@@ -999,6 +999,10 @@
   "@screen_feature_goal_settings_calories_unit": {
     "description": "消費カロリーの単位"
   },
+  "screen_feature_goal_settings_daily_goals_card_title": "1日あたりの運動目標",
+  "@screen_feature_goal_settings_daily_goals_card_title": {
+    "description": "一日あたり目標カードタイトル"
+  },
   "screen_feature_goal_settings_distance_label": "走行距離",
   "@screen_feature_goal_settings_distance_label": {
     "description": "一日あたり走行距離の欄"
@@ -1067,7 +1071,7 @@
   "@screen_feature_goal_settings_tutorial_3_title": {
     "description": "目標設定文脈③タイトル"
   },
-  "screen_feature_goal_settings_unset_hint": "未設定の欄は空のまま保存できます",
+  "screen_feature_goal_settings_unset_hint": "未設定の欄は空のまま保存できます。",
   "@screen_feature_goal_settings_unset_hint": {
     "description": "未設定の説明"
   },
@@ -1173,10 +1177,6 @@
   "@screen_feature_meter_capture_goal_auto_updated": {
     "description": "目標自動更新の通知"
   },
-  "screen_feature_meter_capture_hand_entry_guidance": "読み取れなかった項目は手入力してください。",
-  "@screen_feature_meter_capture_hand_entry_guidance": {
-    "description": "読み取り不完全時の手打ち案内"
-  },
   "screen_feature_meter_capture_open_settings": "設定を開く",
   "@screen_feature_meter_capture_open_settings": {
     "description": "設定アプリ導線"
@@ -1193,13 +1193,21 @@
   "@screen_feature_meter_capture_pick_library": {
     "description": "写真ライブラリ"
   },
-  "screen_feature_meter_capture_read_caution": "自動読み取りした値は誤っている場合があるため、その場合手動で修正してください。",
-  "@screen_feature_meter_capture_read_caution": {
-    "description": "読み取り値の注意（完全・不完全）"
+  "screen_feature_meter_capture_read_complete_subtitle": "自動読み取りした値は誤りが含まれている場合があります。内容を確認してから登録を行ってください。",
+  "@screen_feature_meter_capture_read_complete_subtitle": {
+    "description": "完了FAlert本文"
   },
-  "screen_feature_meter_capture_read_success": "エアロバイクのメーター内容を読み取りました。",
-  "@screen_feature_meter_capture_read_success": {
-    "description": "自動読み取り完全時の成功"
+  "screen_feature_meter_capture_read_complete_title": "メーターの自動読み取りが完了しました",
+  "@screen_feature_meter_capture_read_complete_title": {
+    "description": "完了FAlertタイトル"
+  },
+  "screen_feature_meter_capture_read_missing_subtitle": "読み取れなかった項目は手入力して登録してください。",
+  "@screen_feature_meter_capture_read_missing_subtitle": {
+    "description": "読み取り不可FAlert本文"
+  },
+  "screen_feature_meter_capture_read_missing_title": "読み取れなかった値があります",
+  "@screen_feature_meter_capture_read_missing_title": {
+    "description": "読み取り不可FAlertタイトル"
   },
   "screen_feature_meter_capture_recorded_at": "運動した日時",
   "@screen_feature_meter_capture_recorded_at": {
@@ -1510,7 +1518,7 @@
   "@screen_feature_top_tutorial_achievement_title": {
     "description": "段階7互換キー"
   },
-  "screen_feature_top_tutorial_main_1_body": "本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。",
+  "screen_feature_top_tutorial_main_1_body": "本日・今週・今月の運動記録の合計値を確認できます。タブから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。",
   "@screen_feature_top_tutorial_main_1_body": {
     "description": "段階1本文"
   },
@@ -1570,11 +1578,15 @@
   "@screen_feature_top_unset_prompt": {
     "description": "目標未設定時の設定促進"
   },
+  "screen_feature_top_weekly_achievement_done": "今週は目標達成済！",
+  "@screen_feature_top_weekly_achievement_done": {
+    "description": "達成済"
+  },
   "screen_feature_top_weekly_achievement_guidance": "目標設定で週間の目標運動日数と一日あたりの目標を設定しましょう",
   "@screen_feature_top_weekly_achievement_guidance": {
     "description": "誘導"
   },
-  "screen_feature_top_weekly_achievement_ratio": "{n}/{m}",
+  "screen_feature_top_weekly_achievement_ratio": "達成日数:{n}日 / 目標日数:{m}日",
   "@screen_feature_top_weekly_achievement_ratio": {
     "placeholders": {
       "n": {
@@ -1585,6 +1597,15 @@
       }
     },
     "description": "達成日数比"
+  },
+  "screen_feature_top_weekly_achievement_remaining": "目標達成まであと{x}日！",
+  "@screen_feature_top_weekly_achievement_remaining": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    },
+    "description": "残り日数"
   },
   "screen_feature_top_weekly_achievement_semantics": "今週の目標達成は{n}日、目標は{m}日、残り{remaining}日",
   "@screen_feature_top_weekly_achievement_semantics": {
@@ -1600,6 +1621,18 @@
       }
     },
     "description": "semantics"
+  },
+  "screen_feature_top_weekly_achievement_semantics_done": "今週の目標達成は{n}日、目標は{m}日、達成済",
+  "@screen_feature_top_weekly_achievement_semantics_done": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      }
+    },
+    "description": "達成済semantics"
   },
   "screen_feature_top_weekly_achievement_title": "今週の目標達成日数",
   "@screen_feature_top_weekly_achievement_title": {

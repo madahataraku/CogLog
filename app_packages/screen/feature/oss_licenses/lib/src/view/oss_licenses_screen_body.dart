@@ -54,6 +54,9 @@ class OssLicensesScreenBody extends ConsumerWidget {
               ),
             )
           : ListView(
+              // FScaffold の childPad とヘッダで余白を持つため、ListView 既定の
+              // MediaQuery top padding による AppBar 直下の空きを抑える。
+              padding: EdgeInsets.zero,
               children: [
                 FTileGroup(
                   children: [
