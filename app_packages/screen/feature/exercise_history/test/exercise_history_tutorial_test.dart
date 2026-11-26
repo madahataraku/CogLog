@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data_repository_exercise_history_testing/data_repository_exercise_history_testing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,10 +15,11 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_coach_mark/view_coach_mark.dart';
 
 final class _EvaluateTutorial implements EvaluateTutorialContextUsecase {
-  _EvaluateTutorial({required this.shouldShow, this.session});
+  _EvaluateTutorial({required this.shouldShow, this.session, this.delay});
 
   final bool shouldShow;
   final TutorialRuntimeSession? session;
+  final Future<void>? delay;
   var calls = 0;
 
   @override
@@ -25,6 +28,10 @@ final class _EvaluateTutorial implements EvaluateTutorialContextUsecase {
   ) async {
     calls += 1;
     expect(request.kind, TutorialKind.history);
+    final wait = delay;
+    if (wait != null) {
+      await wait;
+    }
     if (shouldShow) {
       session?.activeKind = TutorialKind.history;
       session?.markContextPresented(TutorialKind.history);
@@ -217,6 +224,176 @@ void main() {
       session.hasContextPresentedThisProcess(TutorialKind.history),
       isFalse,
     );
+    expect(markSeen.calls, 0);
+  });
+
+  // テスト対象:
+  // Evaluate 完了前のタブ離脱
+  //
+  // テスト内容:
+  // 離脱後に完了した Evaluate は session を残さない。
+  testWidgets('離脱後に完了した Evaluate は session を破棄する', (tester) async {
+    final session = TutorialRuntimeSession();
+    final gate = Completer<void>();
+    final evaluate = _EvaluateTutorial(
+      shouldShow: true,
+      session: session,
+      delay: gate.future,
+    );
+    final markSeen = _MarkTutorialSeen();
+
+    Future<void> pumpAtTab(int index) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            LoadExerciseHistoryMonthUsecase.provider.overrideWith(
+              (ref) => LoadExerciseHistoryMonthUsecaseImpl(
+                histories: const FixedExerciseHistoryRepository([]),
+              ),
+            ),
+            EvaluateTutorialContextUsecase.provider.overrideWith(
+              (ref) => evaluate,
+            ),
+            MarkTutorialContextSeenUsecase.provider.overrideWith(
+              (ref) => markSeen,
+            ),
+            tutorialRuntimeSessionProvider.overrideWith((ref) => session),
+            CoachMarkProviders.registry.overrideWith(
+              (ref) => CoachMarkRegistry(),
+            ),
+            screenNavigationProvider.overrideWith((ref) => _Nav()),
+          ],
+          child: MaterialApp(
+            home: FTheme(
+              data: FThemeData(touch: true, colors: FColors.neutralLight),
+              child: ShellTabIndexScope(
+                index: index,
+                child: const ExerciseHistoryScreen(),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    await pumpAtTab(3);
+    await _pumpFrames(tester, count: 6);
+    expect(evaluate.calls, greaterThanOrEqualTo(1));
+    expect(find.text('運動履歴の確認や編集を行おう'), findsNothing);
+
+    await pumpAtTab(0);
+    await _pumpFrames(tester, count: 2);
+    gate.complete();
+    await _pumpFrames(tester);
+
+    expect(session.activeKind, isNull);
+    expect(
+      session.hasContextPresentedThisProcess(TutorialKind.history),
+      isFalse,
+    );
+    expect(find.text('運動履歴の確認や編集を行おう'), findsNothing);
+    expect(markSeen.calls, 0);
+  });
+
+  // テスト対象:
+  // 主ボタンでの閉じる
+  //
+  // テスト内容:
+  // 閉じるタップで MarkSeen する。
+  testWidgets('主ボタンで閉じると MarkSeen する', (tester) async {
+    final session = TutorialRuntimeSession();
+    final evaluate = _EvaluateTutorial(shouldShow: true, session: session);
+    final markSeen = _MarkTutorialSeen();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          LoadExerciseHistoryMonthUsecase.provider.overrideWith(
+            (ref) => LoadExerciseHistoryMonthUsecaseImpl(
+              histories: const FixedExerciseHistoryRepository([]),
+            ),
+          ),
+          EvaluateTutorialContextUsecase.provider.overrideWith(
+            (ref) => evaluate,
+          ),
+          MarkTutorialContextSeenUsecase.provider.overrideWith(
+            (ref) => markSeen,
+          ),
+          tutorialRuntimeSessionProvider.overrideWith((ref) => session),
+          CoachMarkProviders.registry.overrideWith(
+            (ref) => CoachMarkRegistry(),
+          ),
+          screenNavigationProvider.overrideWith((ref) => _Nav()),
+        ],
+        child: MaterialApp(
+          home: FTheme(
+            data: FThemeData(touch: true, colors: FColors.neutralLight),
+            child: ShellTabIndexScope(
+              index: 3,
+              child: const ExerciseHistoryScreen(),
+            ),
+          ),
+        ),
+      ),
+    );
+    await _pumpFrames(tester);
+    expect(find.text('運動履歴の確認や編集を行おう'), findsOneWidget);
+
+    await tester.tap(find.text('閉じる'));
+    await _pumpFrames(tester);
+
+    expect(markSeen.calls, 1);
+    expect(find.text('運動履歴の確認や編集を行おう'), findsNothing);
+  });
+
+  // テスト対象:
+  // forced 破棄
+  //
+  // テスト内容:
+  // dismissActive では MarkSeen せず session を戻す。
+  testWidgets('forced 破棄では MarkSeen せず session を戻す', (tester) async {
+    final session = TutorialRuntimeSession();
+    final evaluate = _EvaluateTutorial(shouldShow: true, session: session);
+    final markSeen = _MarkTutorialSeen();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          LoadExerciseHistoryMonthUsecase.provider.overrideWith(
+            (ref) => LoadExerciseHistoryMonthUsecaseImpl(
+              histories: const FixedExerciseHistoryRepository([]),
+            ),
+          ),
+          EvaluateTutorialContextUsecase.provider.overrideWith(
+            (ref) => evaluate,
+          ),
+          MarkTutorialContextSeenUsecase.provider.overrideWith(
+            (ref) => markSeen,
+          ),
+          tutorialRuntimeSessionProvider.overrideWith((ref) => session),
+          CoachMarkProviders.registry.overrideWith(
+            (ref) => CoachMarkRegistry(),
+          ),
+          screenNavigationProvider.overrideWith((ref) => _Nav()),
+        ],
+        child: MaterialApp(
+          home: FTheme(
+            data: FThemeData(touch: true, colors: FColors.neutralLight),
+            child: ShellTabIndexScope(
+              index: 3,
+              child: const ExerciseHistoryScreen(),
+            ),
+          ),
+        ),
+      ),
+    );
+    await _pumpFrames(tester);
+    expect(find.text('運動履歴の確認や編集を行おう'), findsOneWidget);
+
+    CoachMarkLauncher.dismissActive();
+    await _pumpFrames(tester);
+
+    // forced では永続化しない。同一タブ滞在中は1回だけ再評価しうる。
     expect(markSeen.calls, 0);
   });
 

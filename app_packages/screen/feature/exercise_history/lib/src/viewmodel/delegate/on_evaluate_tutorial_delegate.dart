@@ -1,6 +1,7 @@
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 
+import '../rollback_history_tutorial_session.dart';
 import '../state/exercise_history_screen_state.dart';
 
 /// 運動履歴文脈（段階8）の表示要否を見て pending を立てる。
@@ -76,7 +77,6 @@ final class OnEvaluateTutorialDelegate {
 
   /// Evaluate が付けた history の提示済み／表示中だけを捨てる。
   void _rollbackPresented() {
-    session.clearActive();
-    session.clearContextPresented(TutorialKind.history);
+    rollbackHistoryTutorialSession(session);
   }
 }
