@@ -24,6 +24,9 @@ workspace:
   - app_packages/data/repository/top_screen_metric
   - app_packages/data/repository/top_screen_metric/_impl
   - app_packages/data/repository/top_screen_metric/_testing
+  - app_packages/data/repository/health_write_guidance
+  - app_packages/data/repository/health_write_guidance/_impl
+  - app_packages/data/repository/health_write_guidance/_testing
   - app_packages/data/repository/notification_settings
   - app_packages/data/repository/notification_settings/_impl
   - app_packages/data/repository/notification_settings/_testing
@@ -153,6 +156,8 @@ workspace:
   - app_packages/usecase/delete_exercise_history/_impl
   - app_packages/usecase/save_top_screen_metric
   - app_packages/usecase/save_top_screen_metric/_impl
+  - app_packages/usecase/health_write_guidance
+  - app_packages/usecase/health_write_guidance/_impl
   - app_packages/usecase/sync_exercise_reminder
   - app_packages/usecase/sync_exercise_reminder/_impl
   - app_packages/usecase/tutorial

@@ -5,6 +5,7 @@ import 'package:data_repository_daily_goal/data_repository_daily_goal.dart';
 import 'package:data_repository_exercise_history/data_repository_exercise_history.dart';
 import 'package:data_repository_notification_settings/data_repository_notification_settings.dart';
 import 'package:data_repository_top_screen_metric/data_repository_top_screen_metric.dart';
+import 'package:data_repository_health_write_guidance/data_repository_health_write_guidance.dart';
 import 'package:data_repository_tutorial/data_repository_tutorial.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
@@ -84,6 +85,8 @@ import 'package:usecase_save_notification_settings/usecase_save_notification_set
 import 'package:usecase_save_notification_settings_impl/usecase_save_notification_settings_impl.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
 import 'package:usecase_save_top_screen_metric_impl/usecase_save_top_screen_metric_impl.dart';
+import 'package:usecase_health_write_guidance/usecase_health_write_guidance.dart';
+import 'package:usecase_health_write_guidance_impl/usecase_health_write_guidance_impl.dart';
 import 'package:usecase_sync_exercise_reminder/usecase_sync_exercise_reminder.dart';
 import 'package:usecase_sync_exercise_reminder_impl/usecase_sync_exercise_reminder_impl.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
@@ -131,6 +134,12 @@ List<Override> usecaseOverrides({
   SaveTopScreenMetricUsecase.provider.overrideWith(
     (ref) => SaveTopScreenMetricUsecaseImpl(
       metrics: ref.watch(topScreenMetricRepositoryProvider),
+    ),
+  ),
+  HealthWriteGuidanceUsecase.provider.overrideWith(
+    (ref) => HealthWriteGuidanceUsecaseImpl(
+      guidance: ref.watch(healthWriteGuidanceRepositoryProvider),
+      health: ref.watch(healthWorkoutWriterProvider),
     ),
   ),
   LoadDailyGoalUsecase.provider.overrideWith(

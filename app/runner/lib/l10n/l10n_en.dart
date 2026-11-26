@@ -1090,6 +1090,18 @@ class L10nEn extends L10n {
       'Daily goals were auto-updated';
 
   @override
+  String get screen_feature_meter_capture_health_write_guidance_body =>
+      'If you link your device\'s Health data, workouts can also be saved to Health. To link, allow all permissions on the next screen.';
+
+  @override
+  String get screen_feature_meter_capture_health_write_guidance_continue =>
+      'Continue';
+
+  @override
+  String get screen_feature_meter_capture_health_write_guidance_title =>
+      'Health linking';
+
+  @override
   String get screen_feature_meter_capture_open_settings => 'Open settings';
 
   @override

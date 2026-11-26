@@ -22,6 +22,7 @@ import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.da
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 import 'package:usecase_save_meter_capture/usecase_save_meter_capture.dart';
+import 'package:usecase_health_write_guidance/usecase_health_write_guidance.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_coach_mark/view_coach_mark.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
@@ -116,6 +117,14 @@ final class _PrepareNever implements PrepareOnDeviceLlmModelUsecase {
   Future<void> execute() async {}
 }
 
+final class _HealthWriteGuidanceNever implements HealthWriteGuidanceUsecase {
+  @override
+  Future<bool> shouldShow() async => false;
+
+  @override
+  Future<void> markSeen() async {}
+}
+
 final class _ControlCamera implements ControlMeterInAppCameraUsecase {
   final _controller = StreamController<MeterInAppCameraUiStatus>.broadcast();
   MeterInAppCameraUiStatus _current = const MeterInAppCameraUiIdle();
@@ -168,6 +177,9 @@ List<Override> _baseOverrides() => [
   ),
   MarkTutorialContextSeenUsecase.provider.overrideWith(
     (ref) => _MarkTutorialNever(),
+  ),
+  HealthWriteGuidanceUsecase.provider.overrideWith(
+    (ref) => _HealthWriteGuidanceNever(),
   ),
   tutorialRuntimeSessionProvider.overrideWith(
     (ref) => TutorialRuntimeSession(),

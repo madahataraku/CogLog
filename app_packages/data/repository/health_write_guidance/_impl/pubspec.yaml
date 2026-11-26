@@ -1,0 +1,20 @@
+name: data_repository_health_write_guidance_impl
+description: SharedPreferences storage for health write guidance seen flag.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
+
+dependencies:
+  data_repository_health_write_guidance: any
+  flutter:
+    sdk: flutter
+  shared_preferences: any
+
+dev_dependencies:
+  flutter_lints: any
+  flutter_test:
+    sdk: flutter

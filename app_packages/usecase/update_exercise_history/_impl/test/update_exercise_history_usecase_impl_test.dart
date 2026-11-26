@@ -111,6 +111,9 @@ final class _ThrowingHealth implements HealthWorkoutWriter {
     required DateTime start,
     required DateTime end,
   }) async => false;
+
+  @override
+  Future<bool> hasWritePermissionGranted() async => false;
 }
 
 void main() {

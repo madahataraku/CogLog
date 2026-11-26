@@ -106,6 +106,7 @@ class MeterCaptureStep2View extends HookConsumerWidget {
     final averageSpeedController = useTextEditingController();
     final caloriesController = useTextEditingController();
     final busy = state.reading || state.saving;
+    final saveFlowInFlight = useRef(false);
     final canSubmit =
         canSubmitMeterCapture(
           distanceKm: state.distanceKm,
@@ -344,59 +345,82 @@ class MeterCaptureStep2View extends HookConsumerWidget {
                 onPress: !canSubmit || busy
                     ? null
                     : () async {
-                        final success = await viewModel.onSave();
-                        if (success == null) {
+                        if (saveFlowInFlight.value) {
                           return;
                         }
-                        if (success.goalAutoUpdated && context.mounted) {
-                          showFToast(
-                            context: context,
-                            title: Text(
-                              strings
-                                  .screen_feature_meter_capture_goal_auto_updated,
-                            ),
-                          );
-                        }
-                        final newly = success.newlyUnlockedAchievements;
-                        if (newly.isNotEmpty && context.mounted) {
-                          if (newly.length == 1) {
-                            final id = newly.first.id;
+                        saveFlowInFlight.value = true;
+                        try {
+                          if (await viewModel.shouldShowHealthWriteGuidance()) {
+                            if (!context.mounted) {
+                              return;
+                            }
+                            final continued =
+                                await _showHealthWriteGuidanceDialog(context);
+                            if (!continued) {
+                              return;
+                            }
+                            try {
+                              await viewModel.markHealthWriteGuidanceSeen();
+                            } on Object {
+                              // 提示済み保存失敗でも登録は進める（次回再表示しうる）。
+                            }
+                          }
+                          final success = await viewModel.onSave();
+                          if (success == null) {
+                            return;
+                          }
+                          if (success.goalAutoUpdated && context.mounted) {
                             showFToast(
                               context: context,
                               title: Text(
                                 strings
-                                    .screen_feature_meter_capture_achievement_unlocked_title(
-                                      name: resolveAchievementName(id),
-                                    ),
-                              ),
-                              description: Text(
-                                strings
-                                    .screen_feature_meter_capture_achievement_unlocked_body(
-                                      condition: resolveAchievementCondition(
-                                        id,
-                                      ),
-                                    ),
-                              ),
-                            );
-                          } else {
-                            final ordered = sortAchievementsByCatalogOrder(
-                              newly,
-                            );
-                            showFToast(
-                              context: context,
-                              title: Text(
-                                strings
-                                    .screen_feature_meter_capture_achievement_unlocked_summary_title(
-                                      count: '${ordered.length}',
-                                      firstName: resolveAchievementName(
-                                        ordered.first.id,
-                                      ),
-                                    ),
+                                    .screen_feature_meter_capture_goal_auto_updated,
                               ),
                             );
                           }
+                          final newly = success.newlyUnlockedAchievements;
+                          if (newly.isNotEmpty && context.mounted) {
+                            if (newly.length == 1) {
+                              final id = newly.first.id;
+                              showFToast(
+                                context: context,
+                                title: Text(
+                                  strings
+                                      .screen_feature_meter_capture_achievement_unlocked_title(
+                                        name: resolveAchievementName(id),
+                                      ),
+                                ),
+                                description: Text(
+                                  strings
+                                      .screen_feature_meter_capture_achievement_unlocked_body(
+                                        condition: resolveAchievementCondition(
+                                          id,
+                                        ),
+                                      ),
+                                ),
+                              );
+                            } else {
+                              final ordered = sortAchievementsByCatalogOrder(
+                                newly,
+                              );
+                              showFToast(
+                                context: context,
+                                title: Text(
+                                  strings
+                                      .screen_feature_meter_capture_achievement_unlocked_summary_title(
+                                        count: '${ordered.length}',
+                                        firstName: resolveAchievementName(
+                                          ordered.first.id,
+                                        ),
+                                      ),
+                                ),
+                              );
+                            }
+                          }
+                          viewModel.goToHomeTab();
+                        } finally {
+                          saveFlowInFlight.value = false;
                         }
-                        viewModel.goToHomeTab();
                       },
                 child: Text(strings.screen_feature_meter_capture_save),
               ),
@@ -406,4 +430,47 @@ class MeterCaptureStep2View extends HookConsumerWidget {
       ],
     );
   }
+}
+
+/// ヘルス書き込み案内を出し、続行なら true。
+Future<bool> _showHealthWriteGuidanceDialog(BuildContext context) async {
+  final result = await showFDialog<bool>(
+    context: context,
+    barrierDismissible: false,
+    builder: (context, style, animation) {
+      return FDialog(
+        style: style,
+        animation: animation,
+        builder: (context, style) {
+          const contentPadding = 16.0;
+          return Padding(
+            padding: const EdgeInsets.all(contentPadding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: contentPadding,
+              children: [
+                Text(
+                  strings
+                      .screen_feature_meter_capture_health_write_guidance_title,
+                ),
+                Text(
+                  strings
+                      .screen_feature_meter_capture_health_write_guidance_body,
+                ),
+                FButton(
+                  onPress: () => Navigator.of(context).pop(true),
+                  child: Text(
+                    strings
+                        .screen_feature_meter_capture_health_write_guidance_continue,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+  return result ?? false;
 }
