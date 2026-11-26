@@ -1,0 +1,17 @@
+name: usecase_health_write_guidance_impl
+description: Health write guidance via HealthWriteGuidanceRepository.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  data_repository_health_write_guidance: any
+  usecase_health_write_guidance: any
+
+dev_dependencies:
+  data_repository_health_write_guidance_testing: any
+  flutter_lints: any
+  test: any

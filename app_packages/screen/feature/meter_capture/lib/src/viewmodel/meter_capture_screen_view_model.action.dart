@@ -349,4 +349,22 @@ extension MeterCaptureScreenViewModelActions on MeterCaptureScreenViewModel {
   /// viewModel.goToHomeTab();
   /// ```
   void goToHomeTab() => navigation.goToHomeTab();
+
+  /// ヘルス書き込み案内をまだ出していなければ true。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.shouldShowHealthWriteGuidance();
+  /// ```
+  Future<bool> shouldShowHealthWriteGuidance() =>
+      healthWriteGuidanceUsecase.shouldShow();
+
+  /// ヘルス書き込み案内を提示済みにする。
+  ///
+  /// Example:
+  /// ```dart
+  /// viewModel.markHealthWriteGuidanceSeen();
+  /// ```
+  Future<void> markHealthWriteGuidanceSeen() =>
+      healthWriteGuidanceUsecase.markSeen();
 }

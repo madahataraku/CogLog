@@ -1002,6 +1002,18 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_goal_auto_updated => '目標が自動更新されました';
 
   @override
+  String get screen_feature_meter_capture_health_write_guidance_body =>
+      '端末のヘルスケア情報と連携すると、運動の記録をヘルスケア側にも保存することができます。連携する場合は次の画面で、すべて許可してください。';
+
+  @override
+  String get screen_feature_meter_capture_health_write_guidance_continue =>
+      '続ける';
+
+  @override
+  String get screen_feature_meter_capture_health_write_guidance_title =>
+      'ヘルスケア連携';
+
+  @override
   String get screen_feature_meter_capture_open_settings => '設定を開く';
 
   @override

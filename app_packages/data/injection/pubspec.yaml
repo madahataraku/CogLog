@@ -20,6 +20,8 @@ dependencies:
   data_repository_notification_settings_impl: any
   data_repository_top_screen_metric: any
   data_repository_top_screen_metric_impl: any
+  data_repository_health_write_guidance: any
+  data_repository_health_write_guidance_impl: any
   data_repository_tutorial: any
   data_repository_tutorial_impl: any
   flutter:
