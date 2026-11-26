@@ -98,15 +98,17 @@ class MeterCaptureStep1View extends ConsumerWidget {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: FButton(
-                        onPress: libraryEnabled
-                            ? viewModel.onPickLibraryPhoto
-                            : null,
+                    child: FButton(
+                      onPress: libraryEnabled
+                          ? viewModel.onPickLibraryPhoto
+                          : null,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
                         child: Text(
                           strings.screen_feature_meter_capture_pick_library,
+                          maxLines: 1,
+                          softWrap: false,
                         ),
                       ),
                     ),

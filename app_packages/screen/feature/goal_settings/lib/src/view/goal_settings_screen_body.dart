@@ -45,6 +45,12 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
     final autoUpdateEnabled = useState(entity.autoUpdateEnabled);
     final autoUpdateLevel = useState(entity.autoUpdateLevel);
     final saving = useState(false);
+    final titleStyle = context.theme.typography.body.sm.copyWith(
+      fontWeight: FontWeight.w600,
+    );
+    final mutedStyle = context.theme.typography.body.sm.copyWith(
+      color: context.theme.colors.mutedForeground,
+    );
 
     useEffect(
       () {
@@ -83,150 +89,175 @@ class GoalSettingsScreenBody extends HookConsumerWidget {
           children: [
             CoachMarkTarget(
               id: CoachMarkTargetId.goalDailyInputs,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: 16,
-                children: [
-                  Text(strings.screen_feature_goal_settings_duration_label),
-                  Row(
-                    spacing: 8,
+              child: FCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: 16,
                     children: [
-                      Expanded(
-                        child: FTextField(
-                          control: .managed(controller: hoursController),
-                          label: Text(
-                            strings.screen_feature_goal_settings_hours_label,
-                          ),
-                          keyboardType: TextInputType.number,
-                          enabled: entity.loaded && !saving.value,
-                        ),
+                      Text(
+                        strings
+                            .screen_feature_goal_settings_daily_goals_card_title,
+                        style: titleStyle,
                       ),
-                      Expanded(
-                        child: FTextField(
-                          control: .managed(controller: minutesController),
-                          label: Text(
-                            strings.screen_feature_goal_settings_minutes_label,
+                      Text(strings.screen_feature_goal_settings_duration_label),
+                      Row(
+                        spacing: 8,
+                        children: [
+                          Expanded(
+                            child: FTextField(
+                              control: .managed(controller: hoursController),
+                              label: Text(
+                                strings
+                                    .screen_feature_goal_settings_hours_label,
+                              ),
+                              keyboardType: TextInputType.number,
+                              enabled: entity.loaded && !saving.value,
+                            ),
                           ),
-                          keyboardType: TextInputType.number,
-                          enabled: entity.loaded && !saving.value,
-                        ),
+                          Expanded(
+                            child: FTextField(
+                              control: .managed(controller: minutesController),
+                              label: Text(
+                                strings
+                                    .screen_feature_goal_settings_minutes_label,
+                              ),
+                              keyboardType: TextInputType.number,
+                              enabled: entity.loaded && !saving.value,
+                            ),
+                          ),
+                          Expanded(
+                            child: FTextField(
+                              control: .managed(controller: secondsController),
+                              label: Text(
+                                strings
+                                    .screen_feature_goal_settings_seconds_label,
+                              ),
+                              keyboardType: TextInputType.number,
+                              enabled: entity.loaded && !saving.value,
+                            ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: FTextField(
-                          control: .managed(controller: secondsController),
-                          label: Text(
-                            strings.screen_feature_goal_settings_seconds_label,
-                          ),
-                          keyboardType: TextInputType.number,
-                          enabled: entity.loaded && !saving.value,
+                      FTextField(
+                        control: .managed(controller: caloriesController),
+                        label: Text(
+                          strings.screen_feature_goal_settings_calories_label,
                         ),
+                        description: Text(
+                          strings.screen_feature_goal_settings_calories_unit,
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        enabled: entity.loaded && !saving.value,
+                      ),
+                      FTextField(
+                        control: .managed(controller: distanceController),
+                        label: Text(
+                          strings.screen_feature_goal_settings_distance_label,
+                        ),
+                        description: Text(
+                          strings.screen_feature_goal_settings_distance_unit,
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        enabled: entity.loaded && !saving.value,
+                      ),
+                      Text(
+                        strings.screen_feature_goal_settings_unset_hint,
+                        style: mutedStyle,
                       ),
                     ],
                   ),
-                  FTextField(
-                    control: .managed(controller: caloriesController),
-                    label: Text(
-                      strings.screen_feature_goal_settings_calories_label,
-                    ),
-                    description: Text(
-                      strings.screen_feature_goal_settings_calories_unit,
-                    ),
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    enabled: entity.loaded && !saving.value,
-                  ),
-                  FTextField(
-                    control: .managed(controller: distanceController),
-                    label: Text(
-                      strings.screen_feature_goal_settings_distance_label,
-                    ),
-                    description: Text(
-                      strings.screen_feature_goal_settings_distance_unit,
-                    ),
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    enabled: entity.loaded && !saving.value,
-                  ),
-                ],
+                ),
               ),
             ),
             CoachMarkTarget(
               id: CoachMarkTargetId.goalWeeklyDays,
-              child: FSelect<String>(
-                enabled: entity.loaded && !saving.value,
-                label: Text(
-                  strings.screen_feature_goal_settings_weekly_days_label,
+              child: FCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: FSelect<String>(
+                    enabled: entity.loaded && !saving.value,
+                    label: Text(
+                      strings.screen_feature_goal_settings_weekly_days_label,
+                    ),
+                    description: Text(
+                      strings
+                          .screen_feature_goal_settings_weekly_days_description,
+                    ),
+                    control: .lifted(
+                      value: weeklyAchievementDays.value,
+                      onChange: (days) {
+                        if (days == null ||
+                            days == weeklyAchievementDays.value ||
+                            saving.value) {
+                          return;
+                        }
+                        weeklyAchievementDays.value = days;
+                      },
+                    ),
+                    items: {
+                      strings.screen_feature_goal_settings_weekly_days_unset:
+                          '',
+                      for (var day = 1; day <= 7; day++) '$day': '$day',
+                    },
+                  ),
                 ),
-                description: Text(
-                  strings.screen_feature_goal_settings_weekly_days_description,
-                ),
-                control: .lifted(
-                  value: weeklyAchievementDays.value,
-                  onChange: (days) {
-                    if (days == null ||
-                        days == weeklyAchievementDays.value ||
-                        saving.value) {
-                      return;
-                    }
-                    weeklyAchievementDays.value = days;
-                  },
-                ),
-                items: {
-                  strings.screen_feature_goal_settings_weekly_days_unset: '',
-                  for (var day = 1; day <= 7; day++) '$day': '$day',
-                },
               ),
             ),
             CoachMarkTarget(
               id: CoachMarkTargetId.goalAutoUpdate,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: 16,
-                children: [
-                  FSwitch(
-                    label: Text(
-                      strings.screen_feature_goal_settings_auto_update_enabled,
-                    ),
-                    description: Text(
-                      strings
-                          .screen_feature_goal_settings_auto_update_description,
-                    ),
-                    value: autoUpdateEnabled.value,
-                    onChange: entity.loaded && !saving.value
-                        ? (value) => autoUpdateEnabled.value = value
-                        : null,
-                    enabled: entity.loaded && !saving.value,
+              child: FCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: 16,
+                    children: [
+                      FSwitch(
+                        label: Text(
+                          strings
+                              .screen_feature_goal_settings_auto_update_enabled,
+                        ),
+                        description: Text(
+                          strings
+                              .screen_feature_goal_settings_auto_update_description,
+                        ),
+                        value: autoUpdateEnabled.value,
+                        onChange: entity.loaded && !saving.value
+                            ? (value) => autoUpdateEnabled.value = value
+                            : null,
+                        enabled: entity.loaded && !saving.value,
+                      ),
+                      FSelect<DailyGoalAutoUpdateLevel>(
+                        enabled: entity.loaded && !saving.value,
+                        label: Text(
+                          strings
+                              .screen_feature_goal_settings_auto_update_level,
+                        ),
+                        control: .lifted(
+                          value: autoUpdateLevel.value,
+                          onChange: (level) {
+                            if (level == null ||
+                                level == autoUpdateLevel.value ||
+                                saving.value) {
+                              return;
+                            }
+                            autoUpdateLevel.value = level;
+                          },
+                        ),
+                        items: {
+                          for (final level in DailyGoalAutoUpdateLevel.values)
+                            _autoUpdateLevelLabel(level): level,
+                        },
+                      ),
+                    ],
                   ),
-                  FSelect<DailyGoalAutoUpdateLevel>(
-                    enabled: entity.loaded && !saving.value,
-                    label: Text(
-                      strings.screen_feature_goal_settings_auto_update_level,
-                    ),
-                    control: .lifted(
-                      value: autoUpdateLevel.value,
-                      onChange: (level) {
-                        if (level == null ||
-                            level == autoUpdateLevel.value ||
-                            saving.value) {
-                          return;
-                        }
-                        autoUpdateLevel.value = level;
-                      },
-                    ),
-                    items: {
-                      for (final level in DailyGoalAutoUpdateLevel.values)
-                        _autoUpdateLevelLabel(level): level,
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              strings.screen_feature_goal_settings_unset_hint,
-              style: context.theme.typography.body.sm.copyWith(
-                color: context.theme.colors.mutedForeground,
+                ),
               ),
             ),
             FButton(
