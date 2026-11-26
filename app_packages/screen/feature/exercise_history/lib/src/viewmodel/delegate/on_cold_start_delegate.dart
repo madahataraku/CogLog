@@ -52,15 +52,19 @@ final class OnColdStartDelegate {
     final month = local.month;
     late final int generation;
     final shouldLoad = await state.updateWithLock((current, emitter) async {
-      if (current.loading) {
+      // 初回（reloadGeneration == 0）は初期 loading でも進める。
+      // 進行中の再取得だけを弾く。
+      if (current.loading && current.reloadGeneration > 0) {
         return false;
       }
       generation = current.reloadGeneration + 1;
       await emitter.emit(
-        ExerciseHistoryScreenState.initial(
-          year: year,
-          month: month,
-        ).copyWith(loading: true, reloadGeneration: generation),
+        ExerciseHistoryScreenState.initial(year: year, month: month).copyWith(
+          loading: true,
+          reloadGeneration: generation,
+          // 表示予約中の cold start で pending を消さない。
+          pendingTutorial: current.pendingTutorial,
+        ),
       );
       return true;
     });

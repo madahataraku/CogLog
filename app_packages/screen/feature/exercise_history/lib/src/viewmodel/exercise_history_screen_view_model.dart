@@ -50,6 +50,7 @@ final class ExerciseHistoryScreenViewModel {
         markTutorialContextSeenUsecase: ref.watch(
           MarkTutorialContextSeenUsecase.provider,
         ),
+        tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const ExerciseHistoryStateToEntityDelegate(),
         clock: DateTime.now,
@@ -64,6 +65,7 @@ final class ExerciseHistoryScreenViewModel {
       LoadExerciseHistoryMonthUsecase.provider,
       EvaluateTutorialContextUsecase.provider,
       MarkTutorialContextSeenUsecase.provider,
+      tutorialRuntimeSessionProvider,
       screenNavigationProvider,
     ],
   );
@@ -83,6 +85,10 @@ final class ExerciseHistoryScreenViewModel {
   /// 文脈表示済みの永続化。
   @visibleForTesting
   final MarkTutorialContextSeenUsecase markTutorialContextSeenUsecase;
+
+  /// プロセス内の提示済みロールバック用。
+  @visibleForTesting
+  final TutorialRuntimeSession tutorialSession;
 
   /// 詳細への遷移。
   @visibleForTesting
@@ -107,6 +113,7 @@ final class ExerciseHistoryScreenViewModel {
     required this.loadMonthUsecase,
     required this.evaluateTutorialContextUsecase,
     required this.markTutorialContextSeenUsecase,
+    required this.tutorialSession,
     required this.navigation,
     required this.stateToEntity,
     required this.clock,

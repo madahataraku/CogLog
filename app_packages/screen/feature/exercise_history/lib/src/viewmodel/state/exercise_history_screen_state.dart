@@ -23,7 +23,9 @@ final class ExerciseHistoryScreenState {
     this.pendingTutorial = false,
   });
 
-  /// 指定月の未読込状態。
+  /// 指定月の未読込（読込中）状態。
+  ///
+  /// 推移画面と同様、初期は loading にして Ready 前の文脈評価を防ぐ。
   ///
   /// Example:
   /// ```dart
@@ -36,7 +38,7 @@ final class ExerciseHistoryScreenState {
     year: year,
     month: month,
     items: const [],
-    loading: false,
+    loading: true,
     loadError: null,
     reloadGeneration: 0,
   );

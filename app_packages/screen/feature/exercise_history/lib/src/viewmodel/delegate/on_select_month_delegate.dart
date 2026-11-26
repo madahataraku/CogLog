@@ -48,10 +48,12 @@ final class OnSelectMonthDelegate {
       }
       generation = current.reloadGeneration + 1;
       await emitter.emit(
-        ExerciseHistoryScreenState.initial(
-          year: year,
-          month: month,
-        ).copyWith(loading: true, reloadGeneration: generation),
+        ExerciseHistoryScreenState.initial(year: year, month: month).copyWith(
+          loading: true,
+          reloadGeneration: generation,
+          // 月切替中も表示予約を落とさない。
+          pendingTutorial: current.pendingTutorial,
+        ),
       );
       return true;
     });
