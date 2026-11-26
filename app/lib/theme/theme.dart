@@ -10,7 +10,8 @@ part 'icons.dart';
 ///
 /// Regenerate using "dart run forui theme create --preset eabbbc", then restore
 /// the hand edits documented in `docs/ui.md` (primary `#F6AD49`, dark
-/// destructive / error foregrounds, and `_bottomNavigationBarStyle`).
+/// destructive / error foregrounds, `_bottomNavigationBarStyle`, and
+/// `_toasterStyle`).
 ///
 /// Modify the generated function bodies to create your own custom style.
 /// Then, call the modified function and pass it to [FTheme].
@@ -46,6 +47,12 @@ FThemeData get lightTheme {
       typography: typography,
       style: style,
     ),
+    toasterStyle: _toasterStyle(
+      colors: colors,
+      typography: typography,
+      style: style,
+      touch: touch,
+    ),
   );
 }
 
@@ -71,6 +78,12 @@ FThemeData get darkTheme {
       colors: colors,
       typography: typography,
       style: style,
+    ),
+    toasterStyle: _toasterStyle(
+      colors: colors,
+      typography: typography,
+      style: style,
+      touch: touch,
     ),
   );
 }
@@ -114,5 +127,38 @@ FBottomNavigationBarStyle _bottomNavigationBarStyle({
             },
           ),
         ),
+  );
+}
+
+/// ボトムナビ本体の概算高さに、目標設定などと同じ 16 の間隔を足した値。
+///
+/// [FToaster] は SafeArea 内、ボトムナビはフッタ側のため、既定の下余白 15 にこれを加算する。
+const _toasterBottomNavClearance = 65.0;
+
+/// タッチ既定の上中央をやめ、ボトムナビの上へ下中央で出す。
+///
+/// Example:
+/// ```dart
+/// toasterStyle: _toasterStyle(
+///   colors: colors,
+///   typography: typography,
+///   style: style,
+///   touch: touch,
+/// );
+/// ```
+FToasterStyle _toasterStyle({
+  required FColors colors,
+  required FTypography typography,
+  required FStyle style,
+  required bool touch,
+}) {
+  return FToasterStyle.inherit(
+    colors: colors,
+    typography: typography,
+    style: style,
+    touch: touch,
+  ).copyWith(
+    toastAlignment: .bottomCenter,
+    padding: .add(const EdgeInsets.only(bottom: _toasterBottomNavClearance)),
   );
 }
