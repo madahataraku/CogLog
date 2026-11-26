@@ -7,7 +7,7 @@ void main() {
   // shouldDismissCoachMarkForMeterTutorial
   //
   // テスト内容:
-  // 撮影／編集だけ閉じ、メイン表示中の離脱では閉じない。
+  // 撮影／編集だけ閉じ、目標設定・メイン表示中の離脱では閉じない。
   test('撮影・編集文脈だけ dismiss 対象', () {
     expect(shouldDismissCoachMarkForMeterTutorial(TutorialKind.camera), isTrue);
     expect(

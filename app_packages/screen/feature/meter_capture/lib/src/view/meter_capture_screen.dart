@@ -59,7 +59,7 @@ class MeterCaptureScreen extends HookConsumerWidget {
         lifecycle == null || lifecycle == AppLifecycleState.resumed;
 
     // 離脱は selected 変化時のみ。世代更新を依存に含めると離脱が再帰する。
-    // 撮影／編集文脈だけ閉じる。ホームのメイン連鎖など他画面のコーチマークは触らない。
+    // 撮影／編集文脈だけ閉じる。目標設定文脈やホームのメイン連鎖など他画面のコーチマークは触らない。
     useEffect(() {
       if (!selected) {
         unawaited(viewModel.onLeaveMeterTab());
