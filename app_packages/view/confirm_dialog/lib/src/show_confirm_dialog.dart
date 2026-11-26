@@ -39,22 +39,28 @@ Future<bool> showConfirmDialog(
         style: style,
         animation: animation,
         builder: (context, style) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(title),
-              Text(body),
-              FButton(
-                variant: .secondary,
-                onPress: () => Navigator.of(context).pop(false),
-                child: Text(cancelLabel),
-              ),
-              FButton(
-                onPress: () => Navigator.of(context).pop(true),
-                child: Text(confirmLabel),
-              ),
-            ],
+          // 内容外周の余白（モデル未ダウンロード誘導・読み取り中と同値）。
+          const contentPadding = 16.0;
+          return Padding(
+            padding: const EdgeInsets.all(contentPadding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: contentPadding,
+              children: [
+                Text(title),
+                Text(body),
+                FButton(
+                  variant: .secondary,
+                  onPress: () => Navigator.of(context).pop(false),
+                  child: Text(cancelLabel),
+                ),
+                FButton(
+                  onPress: () => Navigator.of(context).pop(true),
+                  child: Text(confirmLabel),
+                ),
+              ],
+            ),
           );
         },
       );

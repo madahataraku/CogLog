@@ -61,7 +61,7 @@ final class ModelDownloadGuidanceDialog extends HookWidget {
   });
 
   /// 内容外周の余白（論理ピクセル）。枠への密着を防ぐ。
-  static const double contentPadding = 8;
+  static const double contentPadding = 16;
 
   /// ダイアログスタイル。
   final FDialogStyle style;
