@@ -13,6 +13,7 @@ import '../strings.dart';
 import '../viewmodel/top_screen_view_model.dart';
 import 'map_meter_vl_prepare_error.dart';
 import 'top_conditional_advice_catalog.dart';
+import 'top_home_loading_launcher.dart';
 import 'top_screen_impl.dart';
 import 'top_screen_providers.dart';
 
@@ -70,6 +71,18 @@ class TopScreen extends HookConsumerWidget {
     final lifecycle = useAppLifecycleState();
     final foreground =
         lifecycle == null || lifecycle == AppLifecycleState.resumed;
+    final initialLoadDialogStarted = useRef(false);
+    final initialLoadReady = useRef<Completer<void>?>(null);
+
+    Future<void> runInitialize() {
+      return viewModel.onInitialize(
+        locale: locale,
+        noExercise: noExercise,
+        fallbackTemplates: fallbackTemplates,
+        conditionalCatalog: conditionalCatalog,
+        metricLabels: metricLabels,
+      );
+    }
 
     useEffect(() {
       if (!homeTabSelected) {
@@ -79,15 +92,37 @@ class TopScreen extends HookConsumerWidget {
       if (!foreground) {
         return null;
       }
-      viewModel.onInitialize(
-        locale: locale,
-        noExercise: noExercise,
-        fallbackTemplates: fallbackTemplates,
-        conditionalCatalog: conditionalCatalog,
-        metricLabels: metricLabels,
-      );
+      unawaited(runInitialize());
       return null;
     }, [viewModel, homeTabSelected, locale, lifecycle]);
+
+    // 初回未 Ready のみ読み込み中ダイアログを出す。
+    useEffect(() {
+      if (entity.loaded) {
+        final completer = initialLoadReady.value;
+        if (completer != null && !completer.isCompleted) {
+          completer.complete();
+        }
+        return null;
+      }
+      if (initialLoadDialogStarted.value) {
+        return null;
+      }
+      if (!homeTabSelected || !foreground) {
+        return null;
+      }
+      initialLoadDialogStarted.value = true;
+      final ready = Completer<void>();
+      initialLoadReady.value = ready;
+      unawaited(
+        TopHomeLoadingLauncher.show(
+          context,
+          untilReady: ready.future,
+          onRetry: runInitialize,
+        ),
+      );
+      return null;
+    }, [viewModel, homeTabSelected, foreground, entity.loaded, locale]);
 
     // Ready × 前面でメイン自動開始（モデル誘導より優先）。
     // loaded 判定は Delegate 内の state を見る。initialize 完了後に再評価する。

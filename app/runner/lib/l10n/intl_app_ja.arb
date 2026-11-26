@@ -1554,6 +1554,18 @@
   "@screen_feature_top_goal_label": {
     "description": "目標のラベル"
   },
+  "screen_feature_top_load_failed": "ホームの読み込みに失敗しました",
+  "@screen_feature_top_load_failed": {
+    "description": "ホーム初回読込失敗"
+  },
+  "screen_feature_top_loading": "読み込み中です…",
+  "@screen_feature_top_loading": {
+    "description": "ホーム初回読込中ダイアログ"
+  },
+  "screen_feature_top_retry": "再試行",
+  "@screen_feature_top_retry": {
+    "description": "ホーム初回読込の再試行"
+  },
   "screen_feature_top_settings_semantics": "アプリ設定",
   "@screen_feature_top_settings_semantics": {
     "description": "ホーム右上の設定ボタンの代替テキスト"

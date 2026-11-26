@@ -52,7 +52,7 @@ void main() {
           ),
         ),
       );
-      // FCircularProgress は無限アニメのため settle しない。
+      // AppLoadingSpinner は無限アニメのため settle しない。
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       await expectLater(
