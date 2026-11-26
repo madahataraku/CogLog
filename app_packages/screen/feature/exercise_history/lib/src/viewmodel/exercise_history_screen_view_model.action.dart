@@ -109,6 +109,7 @@ extension ExerciseHistoryScreenViewModelActions
     return OnEvaluateTutorialDelegate(
       state: state,
       evaluateContext: evaluateTutorialContextUsecase,
+      session: tutorialSession,
     ).execute();
   }
 

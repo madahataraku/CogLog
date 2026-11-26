@@ -231,7 +231,7 @@ void main() {
     final empty = delegate.execute(
       ExerciseHistoryScreenState.initial(year: 2026, month: 11),
     );
-    expect(empty.showLoading, isFalse);
+    expect(empty.showLoading, isTrue);
     expect(empty.showError, isFalse);
     expect(empty.monthLabel, contains('2026'));
     expect(empty.monthLabel, contains('11'));
@@ -287,12 +287,20 @@ void main() {
 
   test('運動履歴文脈は Ready 後に pending を立てる', () async {
     final state = MutableStateStream(
-      ExerciseHistoryScreenState.initial(year: 2026, month: 11),
+      ExerciseHistoryScreenState.initial(
+        year: 2026,
+        month: 11,
+      ).copyWith(loading: false),
     );
-    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    final session = TutorialRuntimeSession();
+    final evaluate = _EvaluateTutorialContext(
+      shouldShow: true,
+      session: session,
+    );
     await OnEvaluateTutorialDelegate(
       state: state,
       evaluateContext: evaluate,
+      session: session,
     ).execute();
     expect(evaluate.calls, 1);
     expect(evaluate.lastKind, TutorialKind.history);
@@ -308,26 +316,85 @@ void main() {
 
   test('運動履歴文脈は loading 中は評価しない', () async {
     final state = MutableStateStream(
-      ExerciseHistoryScreenState.initial(
-        year: 2026,
-        month: 11,
-      ).copyWith(loading: true),
+      ExerciseHistoryScreenState.initial(year: 2026, month: 11),
     );
-    final evaluate = _EvaluateTutorialContext(shouldShow: true);
+    final session = TutorialRuntimeSession();
+    final evaluate = _EvaluateTutorialContext(
+      shouldShow: true,
+      session: session,
+    );
     await OnEvaluateTutorialDelegate(
       state: state,
       evaluateContext: evaluate,
+      session: session,
     ).execute();
     expect(evaluate.calls, 0);
     expect(state.state.pendingTutorial, isFalse);
     await state.close();
   });
+
+  test('Evaluate 待ち中に loading になったら提示済みを戻す', () async {
+    final state = MutableStateStream(
+      ExerciseHistoryScreenState.initial(
+        year: 2026,
+        month: 11,
+      ).copyWith(loading: false),
+    );
+    final session = TutorialRuntimeSession();
+    final evaluate = _EvaluateTutorialContext(
+      shouldShow: true,
+      session: session,
+      beforeReturn: () async {
+        await state.updateWithLock((current, emitter) async {
+          await emitter.emit(current.copyWith(loading: true));
+        });
+      },
+    );
+    await OnEvaluateTutorialDelegate(
+      state: state,
+      evaluateContext: evaluate,
+      session: session,
+    ).execute();
+    expect(evaluate.calls, 1);
+    expect(state.state.pendingTutorial, isFalse);
+    expect(session.activeKind, isNull);
+    expect(
+      session.hasContextPresentedThisProcess(TutorialKind.history),
+      isFalse,
+    );
+    await state.close();
+  });
+
+  test('ColdStart は pendingTutorial を残す', () async {
+    state = MutableStateStream(
+      ExerciseHistoryScreenState.initial(
+        year: 2026,
+        month: 10,
+      ).copyWith(loading: false, pendingTutorial: true),
+    );
+    final load = _LoadMonth(
+      (_) async => const LoadExerciseHistoryMonthResult(items: []),
+    );
+    await OnColdStartDelegate(
+      state: state,
+      loadMonthUsecase: load,
+      now: DateTime(2026, 11, 8),
+    ).execute();
+    expect(state.state.pendingTutorial, isTrue);
+    expect(state.state.loading, isFalse);
+  });
 }
 
 final class _EvaluateTutorialContext implements EvaluateTutorialContextUsecase {
-  _EvaluateTutorialContext({this.shouldShow = false});
+  _EvaluateTutorialContext({
+    this.shouldShow = false,
+    this.session,
+    this.beforeReturn,
+  });
 
   final bool shouldShow;
+  final TutorialRuntimeSession? session;
+  final Future<void> Function()? beforeReturn;
   var calls = 0;
   TutorialKind? lastKind;
 
@@ -337,6 +404,14 @@ final class _EvaluateTutorialContext implements EvaluateTutorialContextUsecase {
   ) async {
     calls += 1;
     lastKind = request.kind;
+    if (shouldShow) {
+      session?.activeKind = TutorialKind.history;
+      session?.markContextPresented(TutorialKind.history);
+    }
+    final hook = beforeReturn;
+    if (hook != null) {
+      await hook();
+    }
     return EvaluateTutorialContextResult(shouldShow: shouldShow);
   }
 }
