@@ -46,6 +46,8 @@ final class CoachMarkBubble extends StatelessWidget {
 
   /// 文言と主／副ボタンを描く。
   ///
+  /// 画面高さの約半分を上限にし、大きな穴の上に載せてもボタンが画面外へ出ない。
+  ///
   /// Example:
   /// ```dart
   /// bubble.build(context);
@@ -53,14 +55,16 @@ final class CoachMarkBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final secondary = step.secondaryLabel;
-    final maxWidth = MediaQuery.sizeOf(context).width - padding * 2;
+    final screen = MediaQuery.sizeOf(context);
+    final maxWidth = screen.width - padding * 2;
+    final maxHeight = screen.height * 0.45;
     return Semantics(
       label: step.title,
       liveRegion: true,
       child: Padding(
         padding: const EdgeInsets.all(padding),
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
+          constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: context.theme.colors.background,
@@ -68,25 +72,27 @@ final class CoachMarkBubble extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(padding),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: padding,
-                children: [
-                  Text(step.title),
-                  Text(step.body),
-                  if (secondary != null)
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: padding,
+                  children: [
+                    Text(step.title),
+                    Text(step.body),
+                    if (secondary != null)
+                      FButton(
+                        variant: .secondary,
+                        onPress: () =>
+                            onDismiss(CoachMarkDismissReason.secondary),
+                        child: Text(secondary),
+                      ),
                     FButton(
-                      variant: .secondary,
-                      onPress: () =>
-                          onDismiss(CoachMarkDismissReason.secondary),
-                      child: Text(secondary),
+                      onPress: () => onDismiss(CoachMarkDismissReason.primary),
+                      child: Text(step.primaryLabel),
                     ),
-                  FButton(
-                    onPress: () => onDismiss(CoachMarkDismissReason.primary),
-                    child: Text(step.primaryLabel),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,6 +34,16 @@ final class CoachMarkLauncher {
   /// ```
   const CoachMarkLauncher._();
 
+  /// ライブラリ top／bottom 配置で吹き出しが収まるための最小高さ。
+  @visibleForTesting
+  static const double minContentHeight = 160;
+
+  /// 吹き出しと穴・画面端のあいだの余白。
+  static const double _gap = 8;
+
+  /// [TutorialCoachMark] の focus padding（配置計算と揃える）。
+  static const double _focusPad = 4;
+
   /// 表示中のコントローラ。
   static TutorialCoachMark? _active;
 
@@ -58,6 +69,7 @@ final class CoachMarkLauncher {
     final container = ProviderScope.containerOf(context);
     final registry = container.read(CoachMarkProviders.registry);
     final size = MediaQuery.sizeOf(context);
+    final safePadding = MediaQuery.paddingOf(context);
     final hole = registry.rectFor(step.targetId, context);
     // Overlay 上でも吹き出しがテーマを読めるよう、呼び出し側の FTheme を運ぶ。
     final theme = context.theme;
@@ -75,17 +87,24 @@ final class CoachMarkLauncher {
         ? fallback
         : TargetPosition(hole.size, hole.topLeft);
 
+    final placement = resolveContentPlacement(
+      hole: hole,
+      screenSize: size,
+      safePadding: safePadding,
+    );
+
     final target = TargetFocus(
       identify: step.targetId.name,
       targetPosition: position,
       shape: ShapeLightFocus.RRect,
       radius: 8,
-      paddingFocus: 4,
+      paddingFocus: _focusPad,
       enableOverlayTab: false,
       enableTargetTab: false,
       contents: [
         TargetContent(
-          align: contentAlignFor(hole: hole, screenSize: size),
+          align: placement.align,
+          customPosition: placement.customPosition,
           padding: EdgeInsets.zero,
           child: FTheme(
             data: theme,
@@ -95,17 +114,22 @@ final class CoachMarkLauncher {
       ],
     );
 
-    final tutorial = TutorialCoachMark(
+    late final TutorialCoachMark tutorial;
+    tutorial = TutorialCoachMark(
       targets: [target],
       hideSkip: true,
       pulseEnable: false,
       opacityShadow: 0.6,
-      paddingFocus: 4,
+      paddingFocus: _focusPad,
       focusAnimationDuration: const Duration(milliseconds: 300),
       unFocusAnimationDuration: const Duration(milliseconds: 200),
       // OS 戻るをライブラリ側で無効化する。
       disableBackButton: true,
       onFinish: () {
+        // 旧インスタンスの finish が、次の表示の Completer を誤って完了させない。
+        if (!identical(_active, tutorial)) {
+          return;
+        }
         // finish() 経由で外されたとき、未完了なら primary 相当として閉じる。
         final pending = _activeCompleter;
         if (pending != null && !pending.isCompleted) {
@@ -130,7 +154,9 @@ final class CoachMarkLauncher {
     _finishActive(CoachMarkDismissReason.forced);
   }
 
-  /// 穴が画面下半分なら上、さもなくば下に吹き出しを置く。
+  /// 穴と画面サイズから吹き出しの [ContentAlign] を決める（余白十分時）。
+  ///
+  /// 大きな穴で画面外へ出る場合は [resolveContentPlacement] を使う。
   ///
   /// Example:
   /// ```dart
@@ -141,12 +167,99 @@ final class CoachMarkLauncher {
     required Rect? hole,
     required Size screenSize,
   }) {
+    return resolveContentPlacement(hole: hole, screenSize: screenSize).align;
+  }
+
+  /// 穴の外に十分な余白があれば top／bottom、なければ画面内へ custom 固定する。
+  ///
+  /// Example:
+  /// ```dart
+  /// CoachMarkLauncher.resolveContentPlacement(
+  ///   hole: Rect.fromLTWH(0, 0, 100, 400),
+  ///   screenSize: Size(360, 640),
+  /// );
+  /// ```
+  @visibleForTesting
+  static ({ContentAlign align, CustomTargetContentPosition? customPosition})
+  resolveContentPlacement({
+    required Rect? hole,
+    required Size screenSize,
+    EdgeInsets safePadding = EdgeInsets.zero,
+  }) {
     if (hole == null || screenSize.height <= 0) {
-      return ContentAlign.bottom;
+      return (align: ContentAlign.bottom, customPosition: null);
     }
-    return hole.center.dy > screenSize.height * 0.55
-        ? ContentAlign.top
-        : ContentAlign.bottom;
+
+    final centerY = hole.center.dy;
+    final haloH = hole.height * 0.6 + _focusPad;
+    final spaceIfBottom =
+        screenSize.height - (centerY + haloH) - safePadding.bottom;
+    final topBottomInset = haloH + (screenSize.height - centerY);
+    final spaceIfTop = screenSize.height - topBottomInset - safePadding.top;
+    final preferTop = centerY > screenSize.height * 0.55;
+
+    if (preferTop) {
+      if (spaceIfTop >= minContentHeight) {
+        return (align: ContentAlign.top, customPosition: null);
+      }
+      if (spaceIfBottom >= minContentHeight) {
+        return (align: ContentAlign.bottom, customPosition: null);
+      }
+    } else {
+      if (spaceIfBottom >= minContentHeight) {
+        return (align: ContentAlign.bottom, customPosition: null);
+      }
+      if (spaceIfTop >= minContentHeight) {
+        return (align: ContentAlign.top, customPosition: null);
+      }
+    }
+
+    final spaceAbove = math.max(0.0, hole.top - safePadding.top);
+    final spaceBelow = math.max(
+      0.0,
+      screenSize.height - hole.bottom - safePadding.bottom,
+    );
+
+    if (spaceBelow >= minContentHeight) {
+      return (
+        align: ContentAlign.custom,
+        customPosition: CustomTargetContentPosition(
+          left: 0,
+          right: 0,
+          top: hole.bottom + _gap,
+        ),
+      );
+    }
+    if (spaceAbove >= minContentHeight) {
+      return (
+        align: ContentAlign.custom,
+        customPosition: CustomTargetContentPosition(
+          left: 0,
+          right: 0,
+          bottom: screenSize.height - hole.top + _gap,
+        ),
+      );
+    }
+
+    // 穴がほぼ全画面: 端帯に載せてボタン操作を確保する。
+    if (spaceAbove >= spaceBelow) {
+      return (
+        align: ContentAlign.custom,
+        customPosition: CustomTargetContentPosition(
+          left: 0,
+          right: 0,
+          top: safePadding.top + _gap,
+        ),
+      );
+    }
+    return (
+      align: ContentAlign.custom,
+      customPosition: CustomTargetContentPosition(
+        left: 0,
+        right: 0,
+        bottom: safePadding.bottom + _gap,
+      ),
+    );
   }
 
   /// 完了理由を確定し、オーバーレイを外す。

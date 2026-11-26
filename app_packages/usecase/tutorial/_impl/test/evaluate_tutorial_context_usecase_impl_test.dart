@@ -72,4 +72,22 @@ void main() {
     );
     expect(result.shouldShow, isFalse);
   });
+
+  test('提示済みクリア後は goalSettings を再評価できる', () async {
+    await repository.write(
+      TutorialProgress.initial.copyWith(mainReachedStep: 3),
+    );
+    final first = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.goalSettings),
+    );
+    expect(first.shouldShow, isTrue);
+    session
+      ..clearActive()
+      ..clearContextPresented(TutorialKind.goalSettings);
+    final second = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.goalSettings),
+    );
+    expect(second.shouldShow, isTrue);
+    expect(session.activeKind, TutorialKind.goalSettings);
+  });
 }

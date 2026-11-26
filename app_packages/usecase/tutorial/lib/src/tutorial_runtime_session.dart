@@ -79,6 +79,16 @@ final class TutorialRuntimeSession {
     _presentedContextsThisProcess.add(kind);
   }
 
+  /// 文脈 [kind] のプロセス内提示済みだけを捨てる（表示失敗時の再試行用）。
+  ///
+  /// Example:
+  /// ```dart
+  /// session.clearContextPresented(TutorialKind.goalSettings);
+  /// ```
+  void clearContextPresented(TutorialKind kind) {
+    _presentedContextsThisProcess.remove(kind);
+  }
+
   /// このプロセスで [kind] を既に出したか。
   ///
   /// Example:

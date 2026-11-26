@@ -104,7 +104,7 @@ final class OnInitializeDelegate {
     required ConditionalAdviceCatalog conditionalCatalog,
     required Map<ConditionalAdviceMetric, String> metricLabels,
   }) async {
-    await state.updateWithLock((_, emitter) async {
+    await state.updateWithLock((current, emitter) async {
       final now = DateTime.now();
       final result = await loadTopScreenUsecase.execute(
         LoadTopScreenRequest(now: now),
@@ -125,8 +125,9 @@ final class OnInitializeDelegate {
         ),
       );
       // 期間合計と助言は誘導判定を待たず先に出す。
+      // メイン段階だけ残し、他の案内 pending は下で条件から付け直す。
       await emitter.emit(
-        TopScreenState(
+        current.copyWith(
           loaded: true,
           metric: result.metric,
           today: result.today,
@@ -135,15 +136,13 @@ final class OnInitializeDelegate {
           goal: result.goal,
           adviceText: advice.advice,
           adviceTone: advice.tone,
-          pendingModelDownloadGuidance: false,
-          pendingMeterVlGuidance: false,
-          pendingTutorialMain: false,
-          tutorialMainStep: null,
-          pendingTutorialAchievement: false,
           hasNewAchievements: result.hasNewAchievements,
           weeklyAchievementDays: result.weeklyAchievementDays,
           weekGoalAchievementDayCount: result.weekGoalAchievementDayCount,
           showWeeklyGoalGuidance: result.showWeeklyGoalGuidance,
+          pendingModelDownloadGuidance: false,
+          pendingMeterVlGuidance: false,
+          pendingTutorialAchievement: false,
         ),
       );
     });
