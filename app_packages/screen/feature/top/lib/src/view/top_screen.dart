@@ -209,6 +209,9 @@ class TopScreen extends HookConsumerWidget {
           final result = await viewModel.onAdvanceTutorialMain(
             const AdvanceTutorialMainRequest.next(),
           );
+          if (!context.mounted) {
+            return;
+          }
           switch (result) {
             case final AdvanceTutorialMainShowResult show:
               if (show.navigation != AdvanceTutorialMainNavigation.none) {
