@@ -854,6 +854,18 @@
   "@screen_feature_exercise_history_edit_calories": {
     "description": "入力ラベル"
   },
+  "screen_feature_exercise_history_edit_camera_failed": "Couldn't take the photo",
+  "@screen_feature_exercise_history_edit_camera_failed": {
+    "description": "撮影失敗"
+  },
+  "screen_feature_exercise_history_edit_camera_shutter": "Shutter",
+  "@screen_feature_exercise_history_edit_camera_shutter": {
+    "description": "撮影シャッター"
+  },
+  "screen_feature_exercise_history_edit_camera_title": "Camera",
+  "@screen_feature_exercise_history_edit_camera_title": {
+    "description": "アプリ内カメラ画面のタイトル"
+  },
   "screen_feature_exercise_history_edit_discard_body": "Unsaved changes will be lost.",
   "@screen_feature_exercise_history_edit_discard_body": {
     "description": "破棄確認本文"

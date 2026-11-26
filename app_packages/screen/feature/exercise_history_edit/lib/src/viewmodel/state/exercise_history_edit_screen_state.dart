@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 
+import 'edit_camera_ui.dart';
 import 'edit_reading_restore_snapshot.dart';
+import 'exercise_history_edit_phase.dart';
 
 /// 運動履歴編集画面の作業中状態。
 ///
@@ -47,6 +49,11 @@ final class ExerciseHistoryEditScreenState {
     required this.permissionDeniedKind,
     required this.photoSessionGeneration,
     required this.fieldsSyncGeneration,
+    this.phase = ExerciseHistoryEditPhase.form,
+    this.cameraUi = EditCameraUi.idle,
+    this.cameraPreviewAspectRatio,
+    this.cameraCapturing = false,
+    this.cameraCaptureFailed = false,
     this.readingRestoreSnapshot,
   });
 
@@ -176,6 +183,21 @@ final class ExerciseHistoryEditScreenState {
   /// 入力欄を Entity の値へ明示同期する世代。初期読込と写真再読取完了で増やす。
   final int fieldsSyncGeneration;
 
+  /// form かアプリ内カメラか。
+  final ExerciseHistoryEditPhase phase;
+
+  /// アプリ内カメラの UI 状態。
+  final EditCameraUi cameraUi;
+
+  /// プレビュー縦横比。未取得なら null。
+  final double? cameraPreviewAspectRatio;
+
+  /// シャッター処理中か。
+  final bool cameraCapturing;
+
+  /// シャッター失敗を示すか。
+  final bool cameraCaptureFailed;
+
   /// 読み取り中止時に戻す再アップロード開始前の値。無ければ null。
   final EditReadingRestoreSnapshot? readingRestoreSnapshot;
 
@@ -225,6 +247,12 @@ final class ExerciseHistoryEditScreenState {
     bool clearPermissionDeniedKind = false,
     int? photoSessionGeneration,
     int? fieldsSyncGeneration,
+    ExerciseHistoryEditPhase? phase,
+    EditCameraUi? cameraUi,
+    double? cameraPreviewAspectRatio,
+    bool clearCameraPreviewAspectRatio = false,
+    bool? cameraCapturing,
+    bool? cameraCaptureFailed,
     EditReadingRestoreSnapshot? readingRestoreSnapshot,
     bool clearReadingRestoreSnapshot = false,
   }) => ExerciseHistoryEditScreenState(
@@ -274,6 +302,13 @@ final class ExerciseHistoryEditScreenState {
     photoSessionGeneration:
         photoSessionGeneration ?? this.photoSessionGeneration,
     fieldsSyncGeneration: fieldsSyncGeneration ?? this.fieldsSyncGeneration,
+    phase: phase ?? this.phase,
+    cameraUi: cameraUi ?? this.cameraUi,
+    cameraPreviewAspectRatio: clearCameraPreviewAspectRatio
+        ? null
+        : (cameraPreviewAspectRatio ?? this.cameraPreviewAspectRatio),
+    cameraCapturing: cameraCapturing ?? this.cameraCapturing,
+    cameraCaptureFailed: cameraCaptureFailed ?? this.cameraCaptureFailed,
     readingRestoreSnapshot: clearReadingRestoreSnapshot
         ? null
         : (readingRestoreSnapshot ?? this.readingRestoreSnapshot),

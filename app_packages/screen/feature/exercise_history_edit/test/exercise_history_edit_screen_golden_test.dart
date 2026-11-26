@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,7 +10,13 @@ import 'package:hooks_riverpod/misc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_exercise_history_edit/screen_feature_exercise_history_edit.dart';
+import 'package:screen_feature_exercise_history_edit/src/view/exercise_history_edit_screen_body.dart';
+import 'package:screen_feature_exercise_history_edit/src/viewmodel/exercise_history_edit_screen_view_model.dart';
+import 'package:screen_feature_exercise_history_edit/src/viewmodel/state/edit_camera_ui.dart';
+import 'package:screen_feature_exercise_history_edit/src/viewmodel/state/exercise_history_edit_phase.dart';
+import 'package:screen_feature_exercise_history_edit/src/viewmodel/state/exercise_history_edit_screen_state.dart';
 import 'package:screen_navigation/screen_navigation.dart';
+import 'package:usecase_control_meter_in_app_camera/usecase_control_meter_in_app_camera.dart';
 import 'package:usecase_load_exercise_history_detail/usecase_load_exercise_history_detail.dart';
 import 'package:usecase_obtain_meter_photo/usecase_obtain_meter_photo.dart';
 import 'package:usecase_open_app_settings/usecase_open_app_settings.dart';
@@ -102,6 +110,24 @@ final class _NoopOpenSettings implements OpenAppSettingsUsecase {
   Future<void> execute() async {}
 }
 
+final class _ControlCamera implements ControlMeterInAppCameraUsecase {
+  @override
+  Stream<MeterInAppCameraUiStatus> watch() => const Stream.empty();
+
+  @override
+  Future<void> start() async {}
+
+  @override
+  Future<void> stop() async {}
+
+  @override
+  Widget buildPreview({Key? key}) => ColoredBox(
+    key: key,
+    color: const Color(0xFF336699),
+    child: const SizedBox.expand(),
+  );
+}
+
 ExerciseHistory _history({required String id}) {
   final at = DateTime(2026, 11, 5, 12, 30);
   return ExerciseHistory(
@@ -153,6 +179,9 @@ List<Override> _editOverrides({
   ReadMeterPanelUsecase.provider.overrideWith((ref) => _NoopRead()),
   UpdateExerciseHistoryUsecase.provider.overrideWith((ref) => _NoopUpdate()),
   OpenAppSettingsUsecase.provider.overrideWith((ref) => _NoopOpenSettings()),
+  ControlMeterInAppCameraUsecase.provider.overrideWith(
+    (ref) => _ControlCamera(),
+  ),
   screenNavigationProvider.overrideWithValue(_Nav()),
 ];
 
@@ -180,6 +209,98 @@ void main() {
       await expectLater(
         find.byType(ExerciseHistoryEditScreen),
         matchesGoldenFile('goldens/exercise_history_edit_initial.png'),
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('編集カメラ ready / ja / Android / light', (tester) async {
+    await _prepareSurface(tester);
+    final container = ProviderContainer(
+      overrides: _editOverrides(
+        detail: _FixedDetail(
+          LoadExerciseHistoryDetailSuccess(
+            history: _history(id: 'id'),
+            photoAbsolutePath: null,
+          ),
+        ),
+      ),
+    );
+    addTearDown(container.dispose);
+
+    try {
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: _wrap(
+            const ExerciseHistoryEditScreenBody(debugCameraPlaceholder: true),
+          ),
+        ),
+      );
+      final viewModel = container.read(
+        ExerciseHistoryEditScreenViewModel.provider,
+      );
+      await viewModel.state.updateWithLock((_, emitter) async {
+        await emitter.emit(
+          ExerciseHistoryEditScreenState.initial(id: 'id').copyWith(
+            phase: ExerciseHistoryEditPhase.camera,
+            cameraUi: EditCameraUi.ready,
+            cameraPreviewAspectRatio: 0.75,
+          ),
+        );
+      });
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await expectLater(
+        find.byType(ExerciseHistoryEditScreenBody),
+        matchesGoldenFile('goldens/exercise_history_edit_camera_ready.png'),
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('編集カメラ permission denied / ja / Android / light', (tester) async {
+    await _prepareSurface(tester);
+    final container = ProviderContainer(
+      overrides: _editOverrides(
+        detail: _FixedDetail(
+          LoadExerciseHistoryDetailSuccess(
+            history: _history(id: 'id'),
+            photoAbsolutePath: null,
+          ),
+        ),
+      ),
+    );
+    addTearDown(container.dispose);
+
+    try {
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: _wrap(const ExerciseHistoryEditScreenBody()),
+        ),
+      );
+      final viewModel = container.read(
+        ExerciseHistoryEditScreenViewModel.provider,
+      );
+      await viewModel.state.updateWithLock((_, emitter) async {
+        await emitter.emit(
+          ExerciseHistoryEditScreenState.initial(id: 'id').copyWith(
+            phase: ExerciseHistoryEditPhase.camera,
+            cameraUi: EditCameraUi.permissionDenied,
+            permissionDeniedKind: MeterPhotoPermissionKind.camera,
+          ),
+        );
+      });
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await expectLater(
+        find.byType(ExerciseHistoryEditScreenBody),
+        matchesGoldenFile(
+          'goldens/exercise_history_edit_camera_permission_denied.png',
+        ),
       );
     } finally {
       debugDefaultTargetPlatformOverride = null;

@@ -898,6 +898,18 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_exercise_history_edit_calories;
       },
+      'screen_feature_exercise_history_edit_camera_failed': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_camera_failed;
+      },
+      'screen_feature_exercise_history_edit_camera_shutter': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_camera_shutter;
+      },
+      'screen_feature_exercise_history_edit_camera_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_exercise_history_edit_camera_title;
+      },
       'screen_feature_exercise_history_edit_discard_body': (source) {
         // No Placeholders
         return l10n.screen_feature_exercise_history_edit_discard_body;

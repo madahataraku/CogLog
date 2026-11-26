@@ -65,11 +65,12 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 ## 運動履歴詳細・編集
 
 - 詳細ヘッダ右上（suffixes）に編集（pencil）と削除（trash）。処理中は無効。
-- 写真は本文最上部。高さは画面高の最大約 30%（ConstrainedBox）。
-- 計測／記録は `FTileGroup`（カロリー・運動時間・距離・平均速度・運動した日時）。メタは別 `FTileGroup`（撮影・保存・作成開始）。グループ間 24。
+- 写真は本文最上部。高さは画面高の最大約 30%（ConstrainedBox）。計測／記録は `FTileGroup`（カロリー・運動時間・距離・平均速度・運動した日時）。メタは別 `FTileGroup`（撮影・保存・作成開始）。グループ間 24。写真（または写真エラー文言）と両 `FTileGroup` を一つの外側 `FCard` で包む。`FCard` と内側（写真・`FTileGroup`）のあいだに 8 論理ピクセルの余白を置く。写真制約・Tile 構成・グループ間余白は変えない。
+- 同一日複数件の n/m（件数位置）は外 `FCard` の外側に置く。1 件のときは件数表示とめくりを出さない。
 - 日時は全文日時。編集の運動した日時は DateTime Picker（日付のあと時刻）。
 - 削除・編集の破棄は `view_confirm_dialog`（`showFDialog`、`barrierDismissible: false`）。
 - 編集は詳細の子ルート。遷移は `ScreenNavigation` のみ（`openExerciseHistoryEditAndWait`）。
+- 編集の「撮り直す」は同一編集画面内でアプリ内カメラ phase に切り替える（システムカメラは開かない。別スタック画面は開かない）。プレビューはヘッダー下〜操作列上を全面で埋め、表示縦横比を保ちレターボックスは作らない（メーター記録カメラと同じ埋め方）。操作列は丸いシャッターのみ（ライブラリは form phase の既存ボタン）。権限拒否時はプレビューを出さず設定案内を出し、戻ると form phase へ（dirty 不変。ライブラリは form 側）。撮影成功で form に戻り読み取りへ進む。カメラ phase 中の戻る／キャンセルはカメラを stop して form へ戻り値を変えない。読み取り中は既存の読み取り中モーダル。
 
 ## 置き場所
 

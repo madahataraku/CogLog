@@ -25,3 +25,6 @@ photo_error,写真を表示できません,Could not show photo,写真の失敗�
 permission_camera,カメラの許可が必要です,Camera permission is required,カメラ権限拒否
 permission_library,写真へのアクセス許可が必要です,Photo library permission is required,ライブラリ権限拒否
 open_settings,設定を開く,Open settings,設定アプリ導線
+camera_title,カメラ,Camera,アプリ内カメラ画面のタイトル
+camera_shutter,シャッター,Shutter,撮影シャッター
+camera_failed,撮影に失敗しました,Couldn't take the photo,撮影失敗

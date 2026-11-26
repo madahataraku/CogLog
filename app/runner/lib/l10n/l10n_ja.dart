@@ -705,6 +705,15 @@ class L10nJa extends L10n {
   String get screen_feature_exercise_history_edit_calories => '消費カロリー (kcal)';
 
   @override
+  String get screen_feature_exercise_history_edit_camera_failed => '撮影に失敗しました';
+
+  @override
+  String get screen_feature_exercise_history_edit_camera_shutter => 'シャッター';
+
+  @override
+  String get screen_feature_exercise_history_edit_camera_title => 'カメラ';
+
+  @override
   String get screen_feature_exercise_history_edit_discard_body =>
       '保存していない変更は失われます。';
 

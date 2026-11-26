@@ -25,6 +25,24 @@ mixin class L10nStringsMixin {
         'screen_feature_exercise_history_edit_calories',
       );
 
+  /// 撮影失敗
+  String get screen_feature_exercise_history_edit_camera_failed =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_edit_camera_failed',
+      );
+
+  /// 撮影シャッター
+  String get screen_feature_exercise_history_edit_camera_shutter =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_edit_camera_shutter',
+      );
+
+  /// アプリ内カメラ画面のタイトル
+  String get screen_feature_exercise_history_edit_camera_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_exercise_history_edit_camera_title',
+      );
+
   /// 破棄確認本文
   String get screen_feature_exercise_history_edit_discard_body =>
       LocalizeStringDelegate.get(

@@ -11,6 +11,7 @@ import 'package:view_confirm_dialog/view_confirm_dialog.dart';
 
 import '../strings.dart';
 import '../viewmodel/exercise_history_edit_screen_view_model.dart';
+import 'exercise_history_edit_camera_phase_view.dart';
 import 'exercise_history_edit_screen_providers.dart';
 
 /// 編集フィールド・写真再取得・保存・破棄確認。
@@ -27,7 +28,13 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
   /// ```dart
   /// const ExerciseHistoryEditScreenBody();
   /// ```
-  const ExerciseHistoryEditScreenBody({super.key});
+  const ExerciseHistoryEditScreenBody({
+    this.debugCameraPlaceholder = false,
+    super.key,
+  });
+
+  /// Golden 用にカメラプレビューを色枠へ差し替える。
+  final bool debugCameraPlaceholder;
 
   /// Entity を描画し、操作を ViewModel へ渡す。
   ///
@@ -121,6 +128,41 @@ class ExerciseHistoryEditScreenBody extends HookConsumerWidget {
     }
 
     final maxPhotoHeight = MediaQuery.sizeOf(context).height * 0.3;
+
+    if (entity.showCameraPhase) {
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) {
+            return;
+          }
+          await viewModel.onCancelEditCamera();
+        },
+        child: FScaffold(
+          // メーター記録と同様、プレビュー全面埋めのため childPad を切る。
+          childPad: false,
+          header: FHeader.nested(
+            title: Text(
+              strings.screen_feature_exercise_history_edit_camera_title,
+            ),
+            prefixes: [
+              FHeaderAction.back(
+                onPress: entity.busy
+                    ? null
+                    : () => unawaited(viewModel.onCancelEditCamera()),
+              ),
+            ],
+          ),
+          child: ExerciseHistoryEditCameraPhaseView(
+            entity: entity,
+            preview: viewModel.buildCameraPreview(),
+            debugPlaceholder: debugCameraPlaceholder,
+            onOpenSettings: viewModel.onOpenAppSettings,
+            onCapture: viewModel.onCaptureEditCamera,
+          ),
+        ),
+      );
+    }
 
     return PopScope(
       canPop: !entity.isDirty && !entity.busy,
