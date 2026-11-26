@@ -22,6 +22,12 @@
 - チュートリアルのハイライトは `tutorial_coach_mark` を用いる。実効バージョンはルート `pubspec.yaml` の `dependency_overrides` で pub 版を固定する（path フォークしない）。
 - 依存は OSS ライセンス一覧の再生成対象に含める。
 
+
+## loading_animation_widget
+
+- 不定ローディングスピナーは `loading_animation_widget` を用いる。種類は `threeArchedCircle`。実効バージョンはルート `pubspec.yaml` の `dependency_overrides` で pub 版を固定する（path フォークしない）。
+- 依存は OSS ライセンス一覧の再生成対象に含める。
+
 ## フレーバー
 
 `monolith.yaml` の `define.flavors` は `development`、`production`、`test`。値はすべて文字列にする。`test` はテストが読む dart-define 用で、中身は development に揃える。ネイティブの `--flavor` には `test` を置かない（AGP が `test` で始まる productFlavor 名を拒否するためでもある）。

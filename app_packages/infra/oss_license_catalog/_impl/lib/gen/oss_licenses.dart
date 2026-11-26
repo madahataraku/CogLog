@@ -130,6 +130,7 @@ const allDependencies = <Package>[
   _leak_tracker_testing,
   _lints,
   _listen,
+  _loading_animation_widget,
   _logging,
   _markdown,
   _matcher,
@@ -310,6 +311,7 @@ const allDependencies = <Package>[
   _view_coach_mark,
   _view_model_download_guidance,
   _view_meter_reading_progress,
+  _view_loading_spinner,
   _screen_injection,
   _screen_navigation,
   _screen_navigation_go_router,
@@ -6830,6 +6832,49 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// loading_animation_widget 1.3.0
+const _loading_animation_widget = Package(
+    name: 'loading_animation_widget',
+    description: "Loading animation or loading spiner or loader. It's used to show loading animation when the app is in loading state or something is processing for uncertain time.",
+    repository: 'https://github.com/watery-desert/loading_animation_widget',
+    authors: [],
+    version: '1.3.0',
+    spdxIdentifiers: ['BSD-3-Clause'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter')],
+    devDependencies: [PackageRef('flutter_test'), PackageRef('flutter_lints')],
+    license: '''BSD 3-Clause License
+
+Copyright (c) 2021, Watery Desert
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
   );
 
 /// logging 1.3.0
@@ -42248,7 +42293,7 @@ const _screen_feature_debug = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_app_log'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_diagnose_meter_vl'), PackageRef('usecase_diagnose_on_device_llm')],
+    dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_app_log'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_diagnose_meter_vl'), PackageRef('usecase_diagnose_on_device_llm'), PackageRef('usecase_meter_vl_guidance'), PackageRef('view_confirm_dialog')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('foundation_resources'), PackageRef('infra_meter_vl'), PackageRef('infra_meter_vl_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test'), PackageRef('usecase_diagnose_meter_vl_impl'), PackageRef('usecase_diagnose_on_device_llm_impl')],
   );
 
@@ -42339,7 +42384,7 @@ const _screen_feature_top = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_vl'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_meter_vl_guidance'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_tutorial'), PackageRef('view_coach_mark'), PackageRef('view_model_download_guidance')],
+    dependencies: [PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_vl'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_meter_vl_guidance'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_tutorial'), PackageRef('view_coach_mark'), PackageRef('view_model_download_guidance'), PackageRef('view_loading_spinner')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test')],
   );
 
@@ -42391,7 +42436,20 @@ const _view_meter_reading_progress = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('meta'), PackageRef('monolith_localization_runtime')],
+    dependencies: [PackageRef('flutter'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('view_loading_spinner')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('material_ui')],
+  );
+
+/// view_loading_spinner 0.1.0+1
+const _view_loading_spinner = Package(
+    name: 'view_loading_spinner',
+    description: 'Shared indeterminate loading spinner (threeArchedCircle).',
+    authors: [],
+    version: '0.1.0+1',
+    spdxIdentifiers: [],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('flutter'), PackageRef('forui'), PackageRef('loading_animation_widget'), PackageRef('meta')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('material_ui')],
   );
 
@@ -42950,8 +43008,8 @@ const _usecase_meter_vl_guidance = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('riverpod')],
-    devDependencies: [PackageRef('flutter_lints')],
+    dependencies: [PackageRef('infra_meter_vl'), PackageRef('riverpod'), PackageRef('state_stream')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('infra_meter_vl_testing')],
   );
 
 /// usecase_meter_vl_guidance_impl 0.1.0+1
@@ -42964,7 +43022,7 @@ const _usecase_meter_vl_guidance_impl = Package(
     isMarkdown: false,
     isSdk: false,
     dependencies: [PackageRef('infra_meter_vl'), PackageRef('infra_network_connectivity'), PackageRef('infra_on_device_llm'), PackageRef('usecase_meter_vl_guidance')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_meter_vl_testing'), PackageRef('infra_network_connectivity_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('infra_meter_vl_testing'), PackageRef('infra_network_connectivity_testing'), PackageRef('infra_on_device_llm_testing')],
   );
 
 /// usecase_read_meter_panel 0.1.0+1

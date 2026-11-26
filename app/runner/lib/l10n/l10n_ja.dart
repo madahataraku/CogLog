@@ -1268,6 +1268,15 @@ class L10nJa extends L10n {
   String get screen_feature_top_goal_label => '目標';
 
   @override
+  String get screen_feature_top_load_failed => 'ホームの読み込みに失敗しました';
+
+  @override
+  String get screen_feature_top_loading => '読み込み中です…';
+
+  @override
+  String get screen_feature_top_retry => '再試行';
+
+  @override
   String get screen_feature_top_settings_semantics => 'アプリ設定';
 
   @override

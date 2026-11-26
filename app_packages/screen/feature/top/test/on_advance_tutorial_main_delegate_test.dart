@@ -26,6 +26,7 @@ TopScreenState _baseState({
 }) {
   return TopScreenState(
     loaded: true,
+    loadFailed: false,
     metric: PeriodTotalMetric.calories,
     today: PeriodAggregate.empty,
     week: PeriodAggregate.empty,
