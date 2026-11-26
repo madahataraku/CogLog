@@ -3,7 +3,7 @@ import 'package:riverpod/riverpod.dart';
 import 'advance_tutorial_main_request.dart';
 import 'advance_tutorial_main_result.dart';
 
-/// メイン導線の開始・次へ・スキップ・目標保存後進行。
+/// メイン導線の開始・次へ・目標保存後進行。
 ///
 /// Example:
 /// ```dart

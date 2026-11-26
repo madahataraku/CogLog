@@ -2,23 +2,23 @@ part of 'advance_tutorial_main_result.dart';
 
 /// 次段階の表示。
 final class AdvanceTutorialMainShowResult extends AdvanceTutorialMainResult {
-  /// [step] を出し、必要なら目標タブへ誘導する。
+  /// [step] を出し、必要なら [navigation] へ誘導する。
   ///
   /// Example:
   /// ```dart
   /// const AdvanceTutorialMainResult.show(
   ///   step: TutorialMainStep.goalRecommend,
-  ///   navigateToGoalTab: true,
+  ///   navigation: AdvanceTutorialMainNavigation.goalSettingsTab,
   /// );
   /// ```
   const AdvanceTutorialMainShowResult({
     required this.step,
-    required this.navigateToGoalTab,
+    required this.navigation,
   });
 
   /// 表示する段階。
   final TutorialMainStep step;
 
-  /// true なら目標設定タブへ切り替える。
-  final bool navigateToGoalTab;
+  /// 主ボタン後の遷移先。ホーム連鎖中は [AdvanceTutorialMainNavigation.none]。
+  final AdvanceTutorialMainNavigation navigation;
 }

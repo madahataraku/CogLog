@@ -7,6 +7,7 @@
 /// ```
 library;
 
+export 'src/advance_tutorial_main_navigation.dart';
 export 'src/advance_tutorial_main_request.dart';
 export 'src/advance_tutorial_main_result.dart';
 export 'src/advance_tutorial_main_usecase.dart';

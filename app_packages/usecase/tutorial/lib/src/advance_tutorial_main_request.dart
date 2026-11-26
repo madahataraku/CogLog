@@ -1,6 +1,5 @@
 part 'advance_tutorial_main_goal_saved_request.dart';
 part 'advance_tutorial_main_next_request.dart';
-part 'advance_tutorial_main_skip_request.dart';
 part 'advance_tutorial_main_start_request.dart';
 
 /// メイン導線の進行依頼。
@@ -27,7 +26,7 @@ sealed class AdvanceTutorialMainRequest {
   const factory AdvanceTutorialMainRequest.start() =
       AdvanceTutorialMainStartRequest;
 
-  /// 主ボタン（次へ）。
+  /// 主ボタン（次へ／閉じる）。
   ///
   /// Example:
   /// ```dart
@@ -35,15 +34,6 @@ sealed class AdvanceTutorialMainRequest {
   /// ```
   const factory AdvanceTutorialMainRequest.next() =
       AdvanceTutorialMainNextRequest;
-
-  /// 段階3スキップ／戻る。
-  ///
-  /// Example:
-  /// ```dart
-  /// const AdvanceTutorialMainRequest.skip();
-  /// ```
-  const factory AdvanceTutorialMainRequest.skip() =
-      AdvanceTutorialMainSkipRequest;
 
   /// 段階3で目標保存が成功したとき。
   ///
