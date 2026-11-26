@@ -77,6 +77,8 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - 2 画面以上で使う Widget とデザインシステムは `view_*` に置く。
 - モデル未ダウンロード誘導ダイアログは、ホームとメーター記録（後続）で共用するため `view_model_download_guidance` に置く。
 - 読み取り中モーダルは、メーター記録と運動履歴編集で共用するため `view_meter_reading_progress` に置く。
+- 共用の不定ローディングスピナー（`threeArchedCircle`）は `view_loading_spinner` に置く。
+- ホーム初回読み込み中ダイアログはホーム専用のため `screen_feature_top` に置く。
 - 削除確認と編集破棄確認は共用のため `view_confirm_dialog` に置く。内容外周の余白はモデル未ダウンロード誘導・読み取り中と同じ 16 論理ピクセルとする。
 - 起動時のテーマ接続だけを `app` に残す。画面の中身を `app/lib/main.dart` に増やさない。
 
@@ -84,13 +86,23 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 
 - Forui の `showFDialog` を使う。
 - `barrierDismissible` は `false`（外側タップでは閉じない）。`useRootNavigator: true` でルート Navigator に載せ、ダイアログ障壁によりボトムナビ操作も受け付けない。
-- 内容は不定スピナー、読み取り中文言、目立たない中止ボタン（`FButton` の `secondary`）。確定進捗ゲージと％は出さない。
+- 内容は `view_loading_spinner` の `AppLoadingSpinner`（`threeArchedCircle`、64 論理ピクセル四方・primary）、読み取り中文言、目立たない中止ボタン（`FButton` の `secondary`）。確定進捗ゲージと％は出さない。
 - ダイアログ内容の外周に 16 論理ピクセルの余白を置く。
 - DialogRoute の完了は `MeterReadingProgressLauncher` 内だけが行い、自身の Route のみを外す（最上位が別ダイアログでも誤って閉じない）。画面から `Navigator` を直接呼ばない。
 - プラットフォームの戻る／pop は中止と同じ（Dialog 内 `PopScope`）。読み取り中は運動履歴編集の破棄確認を出さない。
 - プレビュー上オーバーレイや画面内インラインの読み取り中表示は出さない。
 - 背面へ移っても読み取りは継続し、前面復帰後もモーダルを維持する。
 - メーター記録と運動履歴編集で同一部品を使う。
+
+
+## ホーム読み込み中ダイアログ
+
+- Forui の `showFDialog` を使う。`barrierDismissible` は `false`。`useRootNavigator: true` でルート Navigator に載せ、背面操作を受け付けない。
+- プラットフォームの戻る／pop では閉じない（`PopScope(canPop: false)`。中止ボタンは置かない）。
+- 初回 Ready 前のみ表示する。期間合計とワンポイントアドバイスの読込完了（Ready）で閉じる。タブ選択・前面復帰の再読込では出さない。
+- 内容外周は 16 論理ピクセル。読込中は `AppLoadingSpinner`（`threeArchedCircle`、64・primary）と文言「読み込み中です…」／`Loading…`。失敗時は同ダイアログで「ホームの読み込みに失敗しました」／`Failed to load home` と再試行ボタン。
+- 背面の本文は描画したままダイアログを重ねる。
+- DialogRoute の完了は `TopHomeLoadingLauncher` 内だけが行い、自身の Route のみを外す。画面から `Navigator` を直接呼ばない。
 
 ## コーチマーク（チュートリアル）
 
