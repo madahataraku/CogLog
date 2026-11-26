@@ -97,10 +97,15 @@ class ExerciseHistoryScreenBody extends ConsumerWidget {
               child: CoachMarkTarget(
                 id: CoachMarkTargetId.historyCalendar,
                 child: SingleChildScrollView(
-                  child: ExerciseHistoryCalendar(
-                    weekdayLabels: entity.weekdayLabels,
-                    dayCells: entity.dayCells,
-                    onDayPressed: (day) => viewModel.onTapDay(day: day),
+                  child: FCard(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: ExerciseHistoryCalendar(
+                        weekdayLabels: entity.weekdayLabels,
+                        dayCells: entity.dayCells,
+                        onDayPressed: (day) => viewModel.onTapDay(day: day),
+                      ),
+                    ),
                   ),
                 ),
               ),
