@@ -53,6 +53,12 @@ mixin class L10nStringsMixin {
   String get screen_feature_goal_settings_calories_unit =>
       LocalizeStringDelegate.get('screen_feature_goal_settings_calories_unit');
 
+  /// 一日あたり目標カードタイトル
+  String get screen_feature_goal_settings_daily_goals_card_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_goal_settings_daily_goals_card_title',
+      );
+
   /// 一日あたり走行距離の欄
   String get screen_feature_goal_settings_distance_label =>
       LocalizeStringDelegate.get('screen_feature_goal_settings_distance_label');

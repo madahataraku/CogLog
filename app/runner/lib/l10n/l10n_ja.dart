@@ -806,6 +806,10 @@ class L10nJa extends L10n {
   String get screen_feature_goal_settings_calories_unit => 'kcal';
 
   @override
+  String get screen_feature_goal_settings_daily_goals_card_title =>
+      '1日あたりの運動目標';
+
+  @override
   String get screen_feature_goal_settings_distance_label => '走行距離';
 
   @override
@@ -861,7 +865,7 @@ class L10nJa extends L10n {
   String get screen_feature_goal_settings_tutorial_3_title => '目標設定のやり方③（自動更新）';
 
   @override
-  String get screen_feature_goal_settings_unset_hint => '未設定の欄は空のまま保存できます';
+  String get screen_feature_goal_settings_unset_hint => '未設定の欄は空のまま保存できます。';
 
   @override
   String get screen_feature_goal_settings_weekly_days_description =>
@@ -941,10 +945,6 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_goal_auto_updated => '目標が自動更新されました';
 
   @override
-  String get screen_feature_meter_capture_hand_entry_guidance =>
-      '読み取れなかった項目は手入力してください。';
-
-  @override
   String get screen_feature_meter_capture_open_settings => '設定を開く';
 
   @override
@@ -958,12 +958,20 @@ class L10nJa extends L10n {
   String get screen_feature_meter_capture_pick_library => 'ライブラリから選ぶ';
 
   @override
-  String get screen_feature_meter_capture_read_caution =>
-      '自動読み取りした値は誤っている場合があるため、その場合手動で修正してください。';
+  String get screen_feature_meter_capture_read_complete_subtitle =>
+      '自動読み取りした値は誤りが含まれている場合があります。内容を確認してから登録を行ってください。';
 
   @override
-  String get screen_feature_meter_capture_read_success =>
-      'エアロバイクのメーター内容を読み取りました。';
+  String get screen_feature_meter_capture_read_complete_title =>
+      'メーターの自動読み取りが完了しました';
+
+  @override
+  String get screen_feature_meter_capture_read_missing_subtitle =>
+      '読み取れなかった項目は手入力して登録してください。';
+
+  @override
+  String get screen_feature_meter_capture_read_missing_title =>
+      '読み取れなかった値があります';
 
   @override
   String get screen_feature_meter_capture_recorded_at => '運動した日時';
@@ -1211,7 +1219,7 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_tutorial_main_1_body =>
-      '本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。';
+      '本日・今週・今月の運動記録の合計値を確認できます。タブから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。';
 
   @override
   String get screen_feature_top_tutorial_main_1_title => 'ホーム画面の見かた';
@@ -1262,12 +1270,20 @@ class L10nJa extends L10n {
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';
 
   @override
+  String get screen_feature_top_weekly_achievement_done => '今週は目標達成済！';
+
+  @override
   String get screen_feature_top_weekly_achievement_guidance =>
       '目標設定で週間の目標運動日数と一日あたりの目標を設定しましょう';
 
   @override
   String screen_feature_top_weekly_achievement_ratio(String n, String m) {
-    return '$n/$m';
+    return '達成日数:$n日 / 目標日数:$m日';
+  }
+
+  @override
+  String screen_feature_top_weekly_achievement_remaining(String x) {
+    return '目標達成まであと$x日！';
   }
 
   @override
@@ -1277,6 +1293,14 @@ class L10nJa extends L10n {
     String remaining,
   ) {
     return '今週の目標達成は$n日、目標は$m日、残り$remaining日';
+  }
+
+  @override
+  String screen_feature_top_weekly_achievement_semantics_done(
+    String n,
+    String m,
+  ) {
+    return '今週の目標達成は$n日、目標は$m日、達成済';
   }
 
   @override

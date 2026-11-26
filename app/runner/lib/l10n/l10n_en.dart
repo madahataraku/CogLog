@@ -875,6 +875,10 @@ class L10nEn extends L10n {
   String get screen_feature_goal_settings_calories_unit => 'kcal';
 
   @override
+  String get screen_feature_goal_settings_daily_goals_card_title =>
+      'Daily exercise goals';
+
+  @override
   String get screen_feature_goal_settings_distance_label => 'Distance';
 
   @override
@@ -934,7 +938,7 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_goal_settings_unset_hint =>
-      'Leave fields empty to keep them unset';
+      'Leave fields empty to keep them unset.';
 
   @override
   String get screen_feature_goal_settings_weekly_days_description =>
@@ -1017,10 +1021,6 @@ class L10nEn extends L10n {
       'Daily goals were auto-updated';
 
   @override
-  String get screen_feature_meter_capture_hand_entry_guidance =>
-      'Enter any values that could not be read by hand.';
-
-  @override
   String get screen_feature_meter_capture_open_settings => 'Open settings';
 
   @override
@@ -1035,12 +1035,20 @@ class L10nEn extends L10n {
   String get screen_feature_meter_capture_pick_library => 'Choose from library';
 
   @override
-  String get screen_feature_meter_capture_read_caution =>
-      'Automatic readings can be wrong. Correct them manually if needed.';
+  String get screen_feature_meter_capture_read_complete_subtitle =>
+      'Automatic readings may include errors. Review the values before saving.';
 
   @override
-  String get screen_feature_meter_capture_read_success =>
-      'Read the exercise bike meter.';
+  String get screen_feature_meter_capture_read_complete_title =>
+      'Meter auto-read finished';
+
+  @override
+  String get screen_feature_meter_capture_read_missing_subtitle =>
+      'Enter any unread values by hand before saving.';
+
+  @override
+  String get screen_feature_meter_capture_read_missing_title =>
+      'Some values could not be read';
 
   @override
   String get screen_feature_meter_capture_recorded_at =>
@@ -1293,7 +1301,7 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_tutorial_main_1_body =>
-      'You can check the total exercise values for today, this week, and this month. Use the dropdown to switch among calories, distance, and duration.';
+      'You can check the total exercise values for today, this week, and this month. Use the tabs to switch among calories, distance, and duration.';
 
   @override
   String get screen_feature_top_tutorial_main_1_title => 'Getting around Home';
@@ -1347,12 +1355,21 @@ class L10nEn extends L10n {
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';
 
   @override
+  String get screen_feature_top_weekly_achievement_done =>
+      'This week\'s goal is done!';
+
+  @override
   String get screen_feature_top_weekly_achievement_guidance =>
       'Set weekly target exercise days and daily goals in Goals';
 
   @override
   String screen_feature_top_weekly_achievement_ratio(String n, String m) {
-    return '$n/$m';
+    return 'Days met:$n / Target days:$m';
+  }
+
+  @override
+  String screen_feature_top_weekly_achievement_remaining(String x) {
+    return '$x day(s) left to hit this week\'s goal!';
   }
 
   @override
@@ -1362,6 +1379,14 @@ class L10nEn extends L10n {
     String remaining,
   ) {
     return 'This week $n of $m goal days; $remaining remaining';
+  }
+
+  @override
+  String screen_feature_top_weekly_achievement_semantics_done(
+    String n,
+    String m,
+  ) {
+    return 'This week $n of $m goal days; goal met';
   }
 
   @override
