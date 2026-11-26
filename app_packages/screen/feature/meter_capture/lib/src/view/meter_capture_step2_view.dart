@@ -106,6 +106,7 @@ class MeterCaptureStep2View extends HookConsumerWidget {
     final averageSpeedController = useTextEditingController();
     final caloriesController = useTextEditingController();
     final busy = state.reading || state.saving;
+    final saveFlowInFlight = useRef(false);
     final canSubmit =
         canSubmitMeterCapture(
           distanceKm: state.distanceKm,
@@ -344,70 +345,82 @@ class MeterCaptureStep2View extends HookConsumerWidget {
                 onPress: !canSubmit || busy
                     ? null
                     : () async {
-                        if (await viewModel.shouldShowHealthWriteGuidance()) {
-                          if (!context.mounted) {
-                            return;
-                          }
-                          final continued =
-                              await _showHealthWriteGuidanceDialog(context);
-                          if (!continued) {
-                            return;
-                          }
-                          await viewModel.markHealthWriteGuidanceSeen();
-                        }
-                        final success = await viewModel.onSave();
-                        if (success == null) {
+                        if (saveFlowInFlight.value) {
                           return;
                         }
-                        if (success.goalAutoUpdated && context.mounted) {
-                          showFToast(
-                            context: context,
-                            title: Text(
-                              strings
-                                  .screen_feature_meter_capture_goal_auto_updated,
-                            ),
-                          );
-                        }
-                        final newly = success.newlyUnlockedAchievements;
-                        if (newly.isNotEmpty && context.mounted) {
-                          if (newly.length == 1) {
-                            final id = newly.first.id;
+                        saveFlowInFlight.value = true;
+                        try {
+                          if (await viewModel.shouldShowHealthWriteGuidance()) {
+                            if (!context.mounted) {
+                              return;
+                            }
+                            final continued =
+                                await _showHealthWriteGuidanceDialog(context);
+                            if (!continued) {
+                              return;
+                            }
+                            try {
+                              await viewModel.markHealthWriteGuidanceSeen();
+                            } on Object {
+                              // 提示済み保存失敗でも登録は進める（次回再表示しうる）。
+                            }
+                          }
+                          final success = await viewModel.onSave();
+                          if (success == null) {
+                            return;
+                          }
+                          if (success.goalAutoUpdated && context.mounted) {
                             showFToast(
                               context: context,
                               title: Text(
                                 strings
-                                    .screen_feature_meter_capture_achievement_unlocked_title(
-                                      name: resolveAchievementName(id),
-                                    ),
-                              ),
-                              description: Text(
-                                strings
-                                    .screen_feature_meter_capture_achievement_unlocked_body(
-                                      condition: resolveAchievementCondition(
-                                        id,
-                                      ),
-                                    ),
-                              ),
-                            );
-                          } else {
-                            final ordered = sortAchievementsByCatalogOrder(
-                              newly,
-                            );
-                            showFToast(
-                              context: context,
-                              title: Text(
-                                strings
-                                    .screen_feature_meter_capture_achievement_unlocked_summary_title(
-                                      count: '${ordered.length}',
-                                      firstName: resolveAchievementName(
-                                        ordered.first.id,
-                                      ),
-                                    ),
+                                    .screen_feature_meter_capture_goal_auto_updated,
                               ),
                             );
                           }
+                          final newly = success.newlyUnlockedAchievements;
+                          if (newly.isNotEmpty && context.mounted) {
+                            if (newly.length == 1) {
+                              final id = newly.first.id;
+                              showFToast(
+                                context: context,
+                                title: Text(
+                                  strings
+                                      .screen_feature_meter_capture_achievement_unlocked_title(
+                                        name: resolveAchievementName(id),
+                                      ),
+                                ),
+                                description: Text(
+                                  strings
+                                      .screen_feature_meter_capture_achievement_unlocked_body(
+                                        condition: resolveAchievementCondition(
+                                          id,
+                                        ),
+                                      ),
+                                ),
+                              );
+                            } else {
+                              final ordered = sortAchievementsByCatalogOrder(
+                                newly,
+                              );
+                              showFToast(
+                                context: context,
+                                title: Text(
+                                  strings
+                                      .screen_feature_meter_capture_achievement_unlocked_summary_title(
+                                        count: '${ordered.length}',
+                                        firstName: resolveAchievementName(
+                                          ordered.first.id,
+                                        ),
+                                      ),
+                                ),
+                              );
+                            }
+                          }
+                          viewModel.goToHomeTab();
+                        } finally {
+                          saveFlowInFlight.value = false;
                         }
-                        viewModel.goToHomeTab();
                       },
                 child: Text(strings.screen_feature_meter_capture_save),
               ),
