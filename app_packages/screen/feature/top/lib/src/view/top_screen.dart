@@ -155,6 +155,10 @@ class TopScreen extends HookConsumerWidget {
             return;
           }
           if (reason == CoachMarkDismissReason.forced) {
+            // 外部破棄でもホーム前面なら同じ段階から再開する。
+            if (canShowOnHome()) {
+              await viewModel.onParkTutorialMain(step);
+            }
             return;
           }
           if (reason == CoachMarkDismissReason.secondary ||
@@ -179,6 +183,8 @@ class TopScreen extends HookConsumerWidget {
                 return;
               }
               step = show.step;
+              // 前段階の disableBackButton ルート破棄を待ってから次を出す。
+              await WidgetsBinding.instance.endOfFrame;
             case AdvanceTutorialMainCompletedResult():
             case AdvanceTutorialMainNoopResult():
               return;
