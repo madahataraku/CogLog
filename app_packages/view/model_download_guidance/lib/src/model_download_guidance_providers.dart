@@ -1,6 +1,6 @@
 import 'package:riverpod/riverpod.dart';
 
-import 'gemma_meter_guidance_session.dart';
+import 'meter_vl_guidance_session.dart';
 import 'on_device_llm_guidance_session.dart';
 
 /// モデル誘導 UI 用の Provider 束。(A)/(B) セッションを分ける。
@@ -8,7 +8,7 @@ import 'on_device_llm_guidance_session.dart';
 /// Example:
 /// ```dart
 /// ModelDownloadGuidanceProviders.session;
-/// ModelDownloadGuidanceProviders.gemmaSession;
+/// ModelDownloadGuidanceProviders.meterVlSession;
 /// ```
 final class ModelDownloadGuidanceProviders {
   /// プロセス内の (A) 再表示抑制セッション。
@@ -21,14 +21,14 @@ final class ModelDownloadGuidanceProviders {
     (ref) => OnDeviceLlmGuidanceSession(),
   );
 
-  /// プロセス内の (B) Gemma 再表示抑制セッション。
+  /// プロセス内の (B) メーター VL 再表示抑制セッション。
   ///
   /// Example:
   /// ```dart
-  /// ref.watch(ModelDownloadGuidanceProviders.gemmaSession);
+  /// ref.watch(ModelDownloadGuidanceProviders.meterVlSession);
   /// ```
-  static final gemmaSession = Provider<GemmaMeterGuidanceSession>(
-    (ref) => GemmaMeterGuidanceSession(),
+  static final meterVlSession = Provider<MeterVlGuidanceSession>(
+    (ref) => MeterVlGuidanceSession(),
   );
 
   const ModelDownloadGuidanceProviders._();

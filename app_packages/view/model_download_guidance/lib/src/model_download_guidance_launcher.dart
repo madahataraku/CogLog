@@ -33,7 +33,7 @@ final class ModelDownloadGuidanceLauncher {
   /// // (B)
   /// await ModelDownloadGuidanceLauncher.show(
   ///   context,
-  ///   title: 'Gemma',
+  ///   title: 'Meter VL',
   ///   body: 'body',
   ///   disableDismissWhilePreparing: true,
   ///   onPrepareProgress: () async* {

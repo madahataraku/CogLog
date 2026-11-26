@@ -31,16 +31,6 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_clear_logs =>
       LocalizeStringDelegate.get('screen_feature_debug_clear_logs');
 
-  /// LFM VL main backend ラベル
-  String get screen_feature_debug_gemma_backend_label =>
-      LocalizeStringDelegate.get('screen_feature_debug_gemma_backend_label');
-
-  /// LFM VL visionBackend ラベル
-  String get screen_feature_debug_gemma_vision_backend_label =>
-      LocalizeStringDelegate.get(
-        'screen_feature_debug_gemma_vision_backend_label',
-      );
-
   /// 生成例外ラベル
   String get screen_feature_debug_generate_error_label =>
       LocalizeStringDelegate.get('screen_feature_debug_generate_error_label');
@@ -48,6 +38,16 @@ mixin class L10nStringsMixin {
   /// message ラベル
   String get screen_feature_debug_message_label =>
       LocalizeStringDelegate.get('screen_feature_debug_message_label');
+
+  /// LFM VL main backend ラベル
+  String get screen_feature_debug_meter_vl_backend_label =>
+      LocalizeStringDelegate.get('screen_feature_debug_meter_vl_backend_label');
+
+  /// LFM VL visionBackend ラベル
+  String get screen_feature_debug_meter_vl_vision_backend_label =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_meter_vl_vision_backend_label',
+      );
 
   /// 偽の表示
   String get screen_feature_debug_no =>
@@ -58,14 +58,14 @@ mixin class L10nStringsMixin {
       LocalizeStringDelegate.get('screen_feature_debug_platform_notes_label');
 
   /// LFM VL 優先モードの説明
-  String get screen_feature_debug_prefer_gemma_description =>
+  String get screen_feature_debug_prefer_meter_vl_description =>
       LocalizeStringDelegate.get(
-        'screen_feature_debug_prefer_gemma_description',
+        'screen_feature_debug_prefer_meter_vl_description',
       );
 
   /// メーター読み取りで LFM VL を優先するスイッチ
-  String get screen_feature_debug_prefer_gemma_item =>
-      LocalizeStringDelegate.get('screen_feature_debug_prefer_gemma_item');
+  String get screen_feature_debug_prefer_meter_vl_item =>
+      LocalizeStringDelegate.get('screen_feature_debug_prefer_meter_vl_item');
 
   /// 準備例外ラベル
   String get screen_feature_debug_prepare_error_label =>
@@ -105,19 +105,19 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_section_availability =>
       LocalizeStringDelegate.get('screen_feature_debug_section_availability');
 
-  /// LFM VL 可用性セクション見出し
-  String get screen_feature_debug_section_gemma_availability =>
-      LocalizeStringDelegate.get(
-        'screen_feature_debug_section_gemma_availability',
-      );
-
-  /// LFM VL プローブ見出し
-  String get screen_feature_debug_section_gemma_probe =>
-      LocalizeStringDelegate.get('screen_feature_debug_section_gemma_probe');
-
   /// ログセクション見出し
   String get screen_feature_debug_section_logs =>
       LocalizeStringDelegate.get('screen_feature_debug_section_logs');
+
+  /// LFM VL 可用性セクション見出し
+  String get screen_feature_debug_section_meter_vl_availability =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_section_meter_vl_availability',
+      );
+
+  /// LFM VL プローブ見出し
+  String get screen_feature_debug_section_meter_vl_probe =>
+      LocalizeStringDelegate.get('screen_feature_debug_section_meter_vl_probe');
 
   /// 生成プローブ見出し
   String get screen_feature_debug_section_probe =>

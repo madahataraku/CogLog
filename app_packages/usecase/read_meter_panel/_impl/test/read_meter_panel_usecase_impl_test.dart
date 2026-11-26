@@ -13,7 +13,7 @@ import 'package:usecase_read_meter_panel_impl/usecase_read_meter_panel_impl.dart
 void main() {
   final photo = Uint8List.fromList([1]);
 
-  FakeMeterReadingEngine unavailableGemma() => FakeMeterReadingEngine(
+  FakeMeterReadingEngine unavailableMeterVl() => FakeMeterReadingEngine(
     kind: MeterReadingEngineKind.lfmVl,
     available: false,
   );
@@ -21,7 +21,7 @@ void main() {
   ReadMeterPanelUsecaseImpl build({
     required OnDeviceLlm llm,
     required MeterReadingEngine llmEngine,
-    required MeterReadingEngine gemmaEngine,
+    required MeterReadingEngine meterVlEngine,
     AppLogStore? log,
     MeterReadingEngineSessionPreference? sessionPreference,
     Duration timeout = const Duration(seconds: 60),
@@ -29,7 +29,7 @@ void main() {
     return ReadMeterPanelUsecaseImpl(
       llm: llm,
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
       log: log,
       sessionPreference: sessionPreference,
       timeout: timeout,
@@ -43,7 +43,7 @@ void main() {
         kind: MeterReadingEngineKind.foundationModel,
         available: false,
       ),
-      gemmaEngine: unavailableGemma(),
+      meterVlEngine: unavailableMeterVl(),
     );
     expect(usecase.timeout, const Duration(seconds: 60));
   });
@@ -62,17 +62,17 @@ void main() {
         caloriesKcal: 100,
       ),
     );
-    final gemmaEngine = unavailableGemma();
+    final meterVlEngine = unavailableMeterVl();
 
     final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
       log: log,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
-    expect(gemmaEngine.readCallCount, 0);
+    expect(meterVlEngine.readCallCount, 0);
     expect(result.values.distanceKm, 10);
     expect(result.values.averageSpeedKmh, 10);
     expect(log.entries.map((e) => e.message), contains(contains('select llm')));
@@ -99,7 +99,7 @@ void main() {
     final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      gemmaEngine: unavailableGemma(),
+      meterVlEngine: unavailableMeterVl(),
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
@@ -120,16 +120,16 @@ void main() {
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final gemmaEngine = unavailableGemma();
+    final meterVlEngine = unavailableMeterVl();
 
     final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(gemmaEngine.readCallCount, 0);
+    expect(meterVlEngine.readCallCount, 0);
     expect(result.values.distanceKm, isNull);
     expect(
       classifyMeterReadingMessages(result.values),
@@ -146,16 +146,16 @@ void main() {
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 4),
     );
-    final gemmaEngine = unavailableGemma();
+    final meterVlEngine = unavailableMeterVl();
 
     final result = await build(
       llm: llm,
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(gemmaEngine.readCallCount, 0);
+    expect(meterVlEngine.readCallCount, 0);
     expect(result.values.distanceKm, isNull);
   });
 
@@ -170,7 +170,7 @@ void main() {
         kind: MeterReadingEngineKind.foundationModel,
         throwOnRead: true,
       ),
-      gemmaEngine: unavailableGemma(),
+      meterVlEngine: unavailableMeterVl(),
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(result.values.distanceKm, isNull);
@@ -191,7 +191,7 @@ void main() {
         supportsVisionValue: true,
       ),
       llmEngine: llmEngine,
-      gemmaEngine: unavailableGemma(),
+      meterVlEngine: unavailableMeterVl(),
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
@@ -208,14 +208,14 @@ void main() {
         kind: MeterReadingEngineKind.foundationModel,
         hangOnRead: true,
       ),
-      gemmaEngine: unavailableGemma(),
+      meterVlEngine: unavailableMeterVl(),
       timeout: const Duration(milliseconds: 20),
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(result.values.distanceKm, isNull);
   });
 
-  test('OS ready+vision なら Gemma を呼ばない', () async {
+  test('OS ready+vision なら メーター VL を呼ばない', () async {
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(
@@ -224,7 +224,7 @@ void main() {
         caloriesKcal: 50,
       ),
     );
-    final gemmaEngine = FakeMeterReadingEngine(
+    final meterVlEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(distanceKm: 99),
     );
@@ -235,51 +235,54 @@ void main() {
         supportsVisionValue: true,
       ),
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
-    expect(gemmaEngine.readCallCount, 0);
+    expect(meterVlEngine.readCallCount, 0);
     expect(result.values.distanceKm, 5);
   });
 
-  test('preferLfmVl かつ Gemma available なら OS ready+vision でも Gemma', () async {
-    final log = AppLogStore();
-    final llmEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.foundationModel,
-      values: const MeterReadingValues(distanceKm: 5),
-    );
-    final gemmaEngine = FakeMeterReadingEngine(
-      kind: MeterReadingEngineKind.lfmVl,
-      values: const MeterReadingValues(
-        distanceKm: 8,
-        duration: Duration(minutes: 25),
-        caloriesKcal: 40,
-      ),
-    );
+  test(
+    'preferLfmVl かつ メーター VL available なら OS ready+vision でもメーター VL',
+    () async {
+      final log = AppLogStore();
+      final llmEngine = FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.foundationModel,
+        values: const MeterReadingValues(distanceKm: 5),
+      );
+      final meterVlEngine = FakeMeterReadingEngine(
+        kind: MeterReadingEngineKind.lfmVl,
+        values: const MeterReadingValues(
+          distanceKm: 8,
+          duration: Duration(minutes: 25),
+          caloriesKcal: 40,
+        ),
+      );
 
-    final result = await build(
-      llm: FakeOnDeviceLlm(
-        readiness: OnDeviceLlmReadiness.ready,
-        supportsVisionValue: true,
-      ),
-      llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
-      sessionPreference: MeterReadingEngineSessionPreference()
-        ..preferLfmVlOverOsLlm = true,
-      log: log,
-    ).execute(ReadMeterPanelRequest(photoBytes: photo));
+      final result = await build(
+        llm: FakeOnDeviceLlm(
+          readiness: OnDeviceLlmReadiness.ready,
+          supportsVisionValue: true,
+        ),
+        llmEngine: llmEngine,
+        meterVlEngine: meterVlEngine,
+        sessionPreference: MeterReadingEngineSessionPreference()
+          ..preferLfmVlOverOsLlm = true,
+        log: log,
+      ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
-    expect(llmEngine.readCallCount, 0);
-    expect(gemmaEngine.readCallCount, 1);
-    expect(result.values.distanceKm, 8);
-    expect(
-      log.entries.map((e) => e.message),
-      contains(contains('reason=debug_prefer_lfm_vl')),
-    );
-  });
+      expect(llmEngine.readCallCount, 0);
+      expect(meterVlEngine.readCallCount, 1);
+      expect(result.values.distanceKm, 8);
+      expect(
+        log.entries.map((e) => e.message),
+        contains(contains('reason=debug_prefer_lfm_vl')),
+      );
+    },
+  );
 
-  test('preferLfmVl でも Gemma unavailable なら OS LLM', () async {
+  test('preferLfmVl でも メーター VL unavailable なら OS LLM', () async {
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(
@@ -288,7 +291,7 @@ void main() {
         caloriesKcal: 50,
       ),
     );
-    final gemmaEngine = unavailableGemma();
+    final meterVlEngine = unavailableMeterVl();
 
     final result = await build(
       llm: FakeOnDeviceLlm(
@@ -296,23 +299,23 @@ void main() {
         supportsVisionValue: true,
       ),
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
       sessionPreference: MeterReadingEngineSessionPreference()
         ..preferLfmVlOverOsLlm = true,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 1);
-    expect(gemmaEngine.readCallCount, 0);
+    expect(meterVlEngine.readCallCount, 0);
     expect(result.values.distanceKm, 5);
   });
 
-  test('OS modelNotDownloaded + Gemma ready なら Gemma のみ', () async {
+  test('OS modelNotDownloaded + メーター VL ready ならメーター VL のみ', () async {
     final log = AppLogStore();
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final gemmaEngine = FakeMeterReadingEngine(
+    final meterVlEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(
         distanceKm: 3,
@@ -327,25 +330,25 @@ void main() {
         supportsVisionValue: true,
       ),
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
       log: log,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(gemmaEngine.readCallCount, 1);
+    expect(meterVlEngine.readCallCount, 1);
     expect(result.values.distanceKm, 3);
     expect(
       log.entries.map((e) => e.message),
-      contains(contains('select gemma')),
+      contains(contains('select meterVl')),
     );
   });
 
-  test('OS vision 非対応 + Gemma ready なら Gemma のみ', () async {
+  test('OS vision 非対応 + メーター VL ready ならメーター VL のみ', () async {
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final gemmaEngine = FakeMeterReadingEngine(
+    final meterVlEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(
         distanceKm: 7,
@@ -360,11 +363,11 @@ void main() {
         supportsVisionValue: false,
       ),
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(gemmaEngine.readCallCount, 1);
+    expect(meterVlEngine.readCallCount, 1);
     expect(result.values.distanceKm, 7);
   });
 
@@ -373,7 +376,7 @@ void main() {
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final gemmaEngine = unavailableGemma();
+    final meterVlEngine = unavailableMeterVl();
 
     final result = await build(
       llm: FakeOnDeviceLlm(
@@ -381,11 +384,11 @@ void main() {
         supportsVisionValue: false,
       ),
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(gemmaEngine.readCallCount, 0);
+    expect(meterVlEngine.readCallCount, 0);
     expect(result.values.distanceKm, isNull);
     expect(
       classifyMeterReadingMessages(result.values),
@@ -393,12 +396,12 @@ void main() {
     );
   });
 
-  test('Gemma throwOnRead でも空・クラッシュなし', () async {
+  test('メーター VL throwOnRead でも空・クラッシュなし', () async {
     final llmEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.foundationModel,
       values: const MeterReadingValues(distanceKm: 1),
     );
-    final gemmaEngine = FakeMeterReadingEngine(
+    final meterVlEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.lfmVl,
       throwOnRead: true,
     );
@@ -409,11 +412,11 @@ void main() {
         supportsVisionValue: true,
       ),
       llmEngine: llmEngine,
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
     expect(llmEngine.readCallCount, 0);
-    expect(gemmaEngine.readCallCount, 1);
+    expect(meterVlEngine.readCallCount, 1);
     expect(result.values.distanceKm, isNull);
     expect(
       classifyMeterReadingMessages(result.values),
@@ -423,7 +426,7 @@ void main() {
 
   test('AppLog に測定値・生文が無い', () async {
     final log = AppLogStore();
-    final gemmaEngine = FakeMeterReadingEngine(
+    final meterVlEngine = FakeMeterReadingEngine(
       kind: MeterReadingEngineKind.lfmVl,
       values: const MeterReadingValues(
         distanceKm: 12.5,
@@ -440,11 +443,11 @@ void main() {
       llmEngine: FakeMeterReadingEngine(
         kind: MeterReadingEngineKind.foundationModel,
       ),
-      gemmaEngine: gemmaEngine,
+      meterVlEngine: meterVlEngine,
       log: log,
     ).execute(ReadMeterPanelRequest(photoBytes: photo));
 
-    expect(gemmaEngine.readCallCount, 1);
+    expect(meterVlEngine.readCallCount, 1);
     for (final entry in log.entries) {
       expect(entry.message.contains('12.5'), isFalse);
       expect(entry.message.contains('DISTANCE_KM'), isFalse);

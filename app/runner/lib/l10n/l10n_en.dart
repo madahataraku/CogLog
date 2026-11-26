@@ -515,16 +515,17 @@ class L10nEn extends L10n {
   String get screen_feature_debug_clear_logs => 'Clear logs';
 
   @override
-  String get screen_feature_debug_gemma_backend_label => 'backend';
-
-  @override
-  String get screen_feature_debug_gemma_vision_backend_label => 'visionBackend';
-
-  @override
   String get screen_feature_debug_generate_error_label => 'generate error';
 
   @override
   String get screen_feature_debug_message_label => 'message';
+
+  @override
+  String get screen_feature_debug_meter_vl_backend_label => 'backend';
+
+  @override
+  String get screen_feature_debug_meter_vl_vision_backend_label =>
+      'visionBackend';
 
   @override
   String get screen_feature_debug_no => 'No';
@@ -533,11 +534,11 @@ class L10nEn extends L10n {
   String get screen_feature_debug_platform_notes_label => 'platform notes';
 
   @override
-  String get screen_feature_debug_prefer_gemma_description =>
+  String get screen_feature_debug_prefer_meter_vl_description =>
       'Session only; off after restart';
 
   @override
-  String get screen_feature_debug_prefer_gemma_item => 'Prefer LFM VL';
+  String get screen_feature_debug_prefer_meter_vl_item => 'Prefer LFM VL';
 
   @override
   String get screen_feature_debug_prepare_error_label => 'prepare error';
@@ -568,13 +569,14 @@ class L10nEn extends L10n {
   String get screen_feature_debug_section_availability => 'On-device LLM';
 
   @override
-  String get screen_feature_debug_section_gemma_availability => 'LFM VL';
-
-  @override
-  String get screen_feature_debug_section_gemma_probe => 'LFM VL image probe';
-
-  @override
   String get screen_feature_debug_section_logs => 'App logs';
+
+  @override
+  String get screen_feature_debug_section_meter_vl_availability => 'LFM VL';
+
+  @override
+  String get screen_feature_debug_section_meter_vl_probe =>
+      'LFM VL image probe';
 
   @override
   String get screen_feature_debug_section_probe => 'Generation probe';
@@ -1481,11 +1483,11 @@ class L10nEn extends L10n {
   String get view_model_download_guidance_dismiss => 'Dismiss';
 
   @override
-  String get view_model_download_guidance_gemma_body =>
+  String get view_model_download_guidance_meter_vl_body =>
       'The meter reading model is not on this device yet. You can start preparing it while on Wi-Fi.';
 
   @override
-  String get view_model_download_guidance_gemma_title =>
+  String get view_model_download_guidance_meter_vl_title =>
       'Prepare meter reading model';
 
   @override

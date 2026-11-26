@@ -12,7 +12,7 @@ import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
 import 'package:infra_local_notification/infra_local_notification.dart';
-import 'package:infra_gemma_meter/infra_gemma_meter.dart';
+import 'package:infra_meter_vl/infra_meter_vl.dart';
 import 'package:infra_meter_photo/infra_meter_photo.dart';
 import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_network_connectivity/infra_network_connectivity.dart';
@@ -26,8 +26,8 @@ import 'package:usecase_import_app_data/usecase_import_app_data.dart';
 import 'package:usecase_import_app_data_impl/usecase_import_app_data_impl.dart';
 import 'package:usecase_recover_interrupted_import/usecase_recover_interrupted_import.dart';
 import 'package:usecase_recover_interrupted_import_impl/usecase_recover_interrupted_import_impl.dart';
-import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
-import 'package:usecase_diagnose_gemma_meter_impl/usecase_diagnose_gemma_meter_impl.dart';
+import 'package:usecase_diagnose_meter_vl/usecase_diagnose_meter_vl.dart';
+import 'package:usecase_diagnose_meter_vl_impl/usecase_diagnose_meter_vl_impl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
 import 'package:usecase_evaluate_achievements/usecase_evaluate_achievements.dart';
@@ -36,8 +36,8 @@ import 'package:usecase_evaluate_daily_goal_auto_update/usecase_evaluate_daily_g
 import 'package:usecase_evaluate_daily_goal_auto_update_impl/usecase_evaluate_daily_goal_auto_update_impl.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
 import 'package:usecase_generate_top_advice_impl/usecase_generate_top_advice_impl.dart';
-import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
-import 'package:usecase_gemma_meter_guidance_impl/usecase_gemma_meter_guidance_impl.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
+import 'package:usecase_meter_vl_guidance_impl/usecase_meter_vl_guidance_impl.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_achievements_impl/usecase_load_achievements_impl.dart';
 import 'package:usecase_load_app_runtime_info/usecase_load_app_runtime_info.dart';
@@ -90,7 +90,7 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:usecase_tutorial_impl/usecase_tutorial_impl.dart';
 
 /// トップ・推移の読み込み、指標保存、一日あたり目標の読み書き、アドバイス生成、
-/// 端末上 LLM / Gemma 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
+/// 端末上 LLM / メーター VL 誘導、運動履歴の一覧・詳細読み込み・更新・削除、メーター記録の写真取得・読み取り・保存・設定起動、
 /// ヘルス身体許可リクエストを上書きする。
 ///
 /// [adviceTemplatePicker] を渡すと定型選択を差し替える（Golden 用）。
@@ -183,9 +183,9 @@ List<Override> usecaseOverrides({
       log: ref.watch(appLogStoreProvider),
     ),
   ),
-  DiagnoseGemmaMeterUsecase.provider.overrideWith(
-    (ref) => DiagnoseGemmaMeterUsecaseImpl(
-      gemma: ref.watch(gemmaMeterVisionProvider),
+  DiagnoseMeterVlUsecase.provider.overrideWith(
+    (ref) => DiagnoseMeterVlUsecaseImpl(
+      meterVl: ref.watch(meterVlVisionProvider),
       log: ref.watch(appLogStoreProvider),
     ),
   ),
@@ -238,16 +238,16 @@ List<Override> usecaseOverrides({
     (ref) =>
         PrepareOnDeviceLlmModelUsecaseImpl(llm: ref.watch(onDeviceLlmProvider)),
   ),
-  EvaluateGemmaMeterGuidanceUsecase.provider.overrideWith(
-    (ref) => EvaluateGemmaMeterGuidanceUsecaseImpl(
+  EvaluateMeterVlGuidanceUsecase.provider.overrideWith(
+    (ref) => EvaluateMeterVlGuidanceUsecaseImpl(
       llm: ref.watch(onDeviceLlmProvider),
-      gemma: ref.watch(gemmaMeterVisionProvider),
+      meterVl: ref.watch(meterVlVisionProvider),
     ),
   ),
-  PrepareGemmaMeterModelUsecase.provider.overrideWith(
-    (ref) => PrepareGemmaMeterModelUsecaseImpl(
+  PrepareMeterVlModelUsecase.provider.overrideWith(
+    (ref) => PrepareMeterVlModelUsecaseImpl(
       network: ref.watch(networkConnectivityProvider),
-      gemma: ref.watch(gemmaMeterVisionProvider),
+      meterVl: ref.watch(meterVlVisionProvider),
     ),
   ),
   OpenAppSettingsUsecase.provider.overrideWith(
@@ -259,7 +259,7 @@ List<Override> usecaseOverrides({
     (ref) => ReadMeterPanelUsecaseImpl(
       llm: ref.watch(onDeviceLlmProvider),
       llmEngine: ref.watch(meterReadingLlmEngineProvider),
-      gemmaEngine: ref.watch(meterReadingGemmaEngineProvider),
+      meterVlEngine: ref.watch(meterReadingMeterVlEngineProvider),
       log: ref.watch(appLogStoreProvider),
       sessionPreference: ref.watch(meterReadingEngineSessionPreferenceProvider),
     ),

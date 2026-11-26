@@ -1,6 +1,6 @@
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:state_stream/state_stream.dart';
-import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
+import 'package:usecase_diagnose_meter_vl/usecase_diagnose_meter_vl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 
 import '../state/debug_screen_state.dart';
@@ -12,7 +12,7 @@ import '../state/debug_screen_state.dart';
 /// OnInitializeDelegate(
 ///   state: state,
 ///   diagnoseUsecase: diagnoseUsecase,
-///   diagnoseGemmaUsecase: diagnoseGemmaUsecase,
+///   diagnoseMeterVlUsecase: diagnoseMeterVlUsecase,
 ///   log: log,
 /// );
 /// ```
@@ -24,14 +24,14 @@ final class OnInitializeDelegate {
   /// OnInitializeDelegate(
   ///   state: state,
   ///   diagnoseUsecase: diagnoseUsecase,
-  ///   diagnoseGemmaUsecase: diagnoseGemmaUsecase,
+  ///   diagnoseMeterVlUsecase: diagnoseMeterVlUsecase,
   ///   log: log,
   /// );
   /// ```
   const OnInitializeDelegate({
     required this.state,
     required this.diagnoseUsecase,
-    required this.diagnoseGemmaUsecase,
+    required this.diagnoseMeterVlUsecase,
     required this.log,
   });
 
@@ -41,8 +41,8 @@ final class OnInitializeDelegate {
   /// 端末上 LLM 診断 Usecase。
   final DiagnoseOnDeviceLlmUsecase diagnoseUsecase;
 
-  /// Gemma メーター診断 Usecase。
-  final DiagnoseGemmaMeterUsecase diagnoseGemmaUsecase;
+  /// メーター VL診断 Usecase。
+  final DiagnoseMeterVlUsecase diagnoseMeterVlUsecase;
 
   /// アプリログ。
   final AppLogStore log;
@@ -59,20 +59,20 @@ final class OnInitializeDelegate {
         DebugScreenState(
           running: true,
           result: null,
-          gemmaResult: null,
+          meterVlResult: null,
           logs: log.entries,
           preferLfmVlOverOsLlm: current.preferLfmVlOverOsLlm,
         ),
       );
     });
     final result = await diagnoseUsecase.execute();
-    final gemmaResult = await diagnoseGemmaUsecase.execute();
+    final meterVlResult = await diagnoseMeterVlUsecase.execute();
     await state.updateWithLock((current, emitter) async {
       await emitter.emit(
         DebugScreenState(
           running: false,
           result: result,
-          gemmaResult: gemmaResult,
+          meterVlResult: meterVlResult,
           logs: log.entries,
           preferLfmVlOverOsLlm: current.preferLfmVlOverOsLlm,
         ),

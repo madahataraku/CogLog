@@ -54,7 +54,7 @@ class DebugScreenBody extends HookConsumerWidget {
       true => strings.screen_feature_debug_yes,
       false => strings.screen_feature_debug_no,
     };
-    final gemmaCanGenerateText = switch (entity.gemmaCanGenerate) {
+    final meterVlCanGenerateText = switch (entity.meterVlCanGenerate) {
       null => '-',
       true => strings.screen_feature_debug_yes,
       false => strings.screen_feature_debug_no,
@@ -130,7 +130,7 @@ class DebugScreenBody extends HookConsumerWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            strings.screen_feature_debug_section_gemma_availability,
+            strings.screen_feature_debug_section_meter_vl_availability,
             style: context.theme.typography.body.lg.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -139,36 +139,36 @@ class DebugScreenBody extends HookConsumerWidget {
           if (!entity.running) ...[
             _line(
               strings.screen_feature_debug_readiness_label,
-              entity.gemmaReadiness,
+              entity.meterVlReadiness,
             ),
             _line(
               strings.screen_feature_debug_status_label,
-              entity.gemmaStatus,
+              entity.meterVlStatus,
             ),
             _line(
               strings.screen_feature_debug_reason_label,
-              entity.gemmaReason,
+              entity.meterVlReason,
             ),
             _line(
               strings.screen_feature_debug_message_label,
-              entity.gemmaMessage,
+              entity.meterVlMessage,
             ),
             _line(
-              strings.screen_feature_debug_gemma_backend_label,
-              entity.gemmaBackend,
+              strings.screen_feature_debug_meter_vl_backend_label,
+              entity.meterVlBackend,
             ),
             _line(
-              strings.screen_feature_debug_gemma_vision_backend_label,
-              entity.gemmaVisionBackend,
+              strings.screen_feature_debug_meter_vl_vision_backend_label,
+              entity.meterVlVisionBackend,
             ),
             _line(
               strings.screen_feature_debug_availability_error_label,
-              entity.gemmaAvailabilityError,
+              entity.meterVlAvailabilityError,
             ),
           ],
           const SizedBox(height: 16),
           Text(
-            strings.screen_feature_debug_section_gemma_probe,
+            strings.screen_feature_debug_section_meter_vl_probe,
             style: context.theme.typography.body.lg.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -176,36 +176,36 @@ class DebugScreenBody extends HookConsumerWidget {
           const SizedBox(height: 8),
           _line(
             strings.screen_feature_debug_can_generate_label,
-            gemmaCanGenerateText,
+            meterVlCanGenerateText,
           ),
           _line(
             strings.screen_feature_debug_probe_output_length_label,
-            entity.gemmaProbeOutputLength,
+            entity.meterVlProbeOutputLength,
           ),
           _line(
             strings.screen_feature_debug_generate_error_label,
-            entity.gemmaGenerateError,
+            entity.meterVlGenerateError,
           ),
           _line(
             strings.screen_feature_debug_prepare_error_label,
-            entity.gemmaPrepareError,
+            entity.meterVlPrepareError,
           ),
           _line(
             strings.screen_feature_debug_probe_skipped_label,
-            entity.gemmaProbeSkipped,
+            entity.meterVlProbeSkipped,
           ),
           const SizedBox(height: 16),
           FTileGroup(
             children: [
               FTile(
-                title: Text(strings.screen_feature_debug_prefer_gemma_item),
+                title: Text(strings.screen_feature_debug_prefer_meter_vl_item),
                 subtitle: Text(
-                  strings.screen_feature_debug_prefer_gemma_description,
+                  strings.screen_feature_debug_prefer_meter_vl_description,
                 ),
                 suffix: FSwitch(
                   value: entity.preferLfmVlOverOsLlm,
                   semanticsLabel:
-                      strings.screen_feature_debug_prefer_gemma_item,
+                      strings.screen_feature_debug_prefer_meter_vl_item,
                   onChange: (value) {
                     unawaited(
                       ref

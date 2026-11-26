@@ -1,16 +1,16 @@
 import 'package:domain_daily_goal/domain_daily_goal.dart';
 import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_feature_top/src/viewmodel/delegate/on_acknowledge_gemma_meter_guidance_delegate.dart';
+import 'package:screen_feature_top/src/viewmodel/delegate/on_acknowledge_meter_vl_guidance_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_acknowledge_model_download_guidance_delegate.dart';
-import 'package:screen_feature_top/src/viewmodel/delegate/on_evaluate_gemma_meter_guidance_delegate.dart';
+import 'package:screen_feature_top/src/viewmodel/delegate/on_evaluate_meter_vl_guidance_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_initialize_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/on_select_metric_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/delegate/top_screen_state_to_entity_delegate.dart';
 import 'package:screen_feature_top/src/viewmodel/state/top_screen_state.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
-import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.dart';
@@ -85,16 +85,16 @@ final class _Evaluate implements EvaluateOnDeviceLlmGuidanceUsecase {
   }
 }
 
-final class _EvaluateGemma implements EvaluateGemmaMeterGuidanceUsecase {
-  _EvaluateGemma({this.shouldShow = false});
+final class _EvaluateMeterVl implements EvaluateMeterVlGuidanceUsecase {
+  _EvaluateMeterVl({this.shouldShow = false});
 
   final bool shouldShow;
   var calls = 0;
 
   @override
-  Future<GemmaMeterGuidanceDecision> execute() async {
+  Future<MeterVlGuidanceDecision> execute() async {
     calls += 1;
-    return GemmaMeterGuidanceDecision(shouldShow: shouldShow);
+    return MeterVlGuidanceDecision(shouldShow: shouldShow);
   }
 }
 
@@ -144,18 +144,18 @@ Future<void> _runInitialize({
   LoadTopScreenUsecase? load,
   GenerateTopAdviceUsecase? advice,
   EvaluateOnDeviceLlmGuidanceUsecase? evaluateA,
-  EvaluateGemmaMeterGuidanceUsecase? evaluateB,
+  EvaluateMeterVlGuidanceUsecase? evaluateB,
   OnDeviceLlmGuidanceSession? guidanceSession,
-  GemmaMeterGuidanceSession? gemmaSession,
+  MeterVlGuidanceSession? meterVlSession,
 }) {
   return OnInitializeDelegate(
     state: state,
     loadTopScreenUsecase: load ?? _Load(_loadResult),
     generateTopAdviceUsecase: advice ?? _Advice(),
     evaluateOnDeviceLlmGuidanceUsecase: evaluateA ?? _Evaluate(),
-    evaluateGemmaMeterGuidanceUsecase: evaluateB ?? _EvaluateGemma(),
+    evaluateMeterVlGuidanceUsecase: evaluateB ?? _EvaluateMeterVl(),
     guidanceSession: guidanceSession ?? OnDeviceLlmGuidanceSession(),
-    gemmaSession: gemmaSession ?? GemmaMeterGuidanceSession(),
+    meterVlSession: meterVlSession ?? MeterVlGuidanceSession(),
   ).execute(
     locale: 'ja',
     noExercise: _noExercise,
@@ -187,7 +187,7 @@ void main() {
     expect(state.state.adviceText, '今日はまだ運動していません');
     expect(state.state.adviceTone, AdviceTone.happy);
     expect(state.state.pendingModelDownloadGuidance, isFalse);
-    expect(state.state.pendingGemmaMeterGuidance, isFalse);
+    expect(state.state.pendingMeterVlGuidance, isFalse);
     expect(load.calls, 1);
     expect(advice.calls, 1);
     expect(advice.lastRequest?.locale, 'ja');
@@ -225,7 +225,7 @@ void main() {
     await _runInitialize(state: state, evaluateA: _Evaluate(shouldShow: true));
     expect(state.state.loaded, isTrue);
     expect(state.state.pendingModelDownloadGuidance, isTrue);
-    expect(state.state.pendingGemmaMeterGuidance, isFalse);
+    expect(state.state.pendingMeterVlGuidance, isFalse);
   });
 
   test('期間合計は誘導判定より先に loaded になる', () async {
@@ -248,67 +248,67 @@ void main() {
   test('markPresented 済みなら pending false かつ評価しない', () async {
     final session = OnDeviceLlmGuidanceSession()..markPresented();
     final evaluate = _Evaluate(shouldShow: true);
-    final evaluateGemma = _EvaluateGemma(shouldShow: true);
+    final evaluateMeterVl = _EvaluateMeterVl(shouldShow: true);
     await _runInitialize(
       state: state,
       evaluateA: evaluate,
-      evaluateB: evaluateGemma,
+      evaluateB: evaluateMeterVl,
       guidanceSession: session,
     );
     expect(state.state.pendingModelDownloadGuidance, isFalse);
     expect(evaluate.calls, 0);
-    expect(state.state.pendingGemmaMeterGuidance, isTrue);
-    expect(evaluateGemma.calls, 1);
+    expect(state.state.pendingMeterVlGuidance, isTrue);
+    expect(evaluateMeterVl.calls, 1);
   });
 
   test('誘導不要なら pending false', () async {
     await _runInitialize(state: state);
     expect(state.state.pendingModelDownloadGuidance, isFalse);
-    expect(state.state.pendingGemmaMeterGuidance, isFalse);
+    expect(state.state.pendingMeterVlGuidance, isFalse);
   });
 
   test('(A) を出さないとき (B) が pending になる', () async {
-    final evaluateGemma = _EvaluateGemma(shouldShow: true);
-    await _runInitialize(state: state, evaluateB: evaluateGemma);
+    final evaluateMeterVl = _EvaluateMeterVl(shouldShow: true);
+    await _runInitialize(state: state, evaluateB: evaluateMeterVl);
     expect(state.state.pendingModelDownloadGuidance, isFalse);
-    expect(state.state.pendingGemmaMeterGuidance, isTrue);
-    expect(evaluateGemma.calls, 1);
+    expect(state.state.pendingMeterVlGuidance, isTrue);
+    expect(evaluateMeterVl.calls, 1);
   });
 
   test('(A) pending のとき initialize では (B) を評価しない', () async {
-    final evaluateGemma = _EvaluateGemma(shouldShow: true);
+    final evaluateMeterVl = _EvaluateMeterVl(shouldShow: true);
     await _runInitialize(
       state: state,
       evaluateA: _Evaluate(shouldShow: true),
-      evaluateB: evaluateGemma,
+      evaluateB: evaluateMeterVl,
     );
     expect(state.state.pendingModelDownloadGuidance, isTrue);
-    expect(state.state.pendingGemmaMeterGuidance, isFalse);
-    expect(evaluateGemma.calls, 0);
+    expect(state.state.pendingMeterVlGuidance, isFalse);
+    expect(evaluateMeterVl.calls, 0);
   });
 
   test('(A) 後の evaluate で (B) pending になる', () async {
-    final evaluateGemma = _EvaluateGemma(shouldShow: true);
-    final gemmaSession = GemmaMeterGuidanceSession();
-    await OnEvaluateGemmaMeterGuidanceDelegate(
+    final evaluateMeterVl = _EvaluateMeterVl(shouldShow: true);
+    final meterVlSession = MeterVlGuidanceSession();
+    await OnEvaluateMeterVlGuidanceDelegate(
       state: state,
-      evaluateGemmaMeterGuidanceUsecase: evaluateGemma,
-      gemmaSession: gemmaSession,
+      evaluateMeterVlGuidanceUsecase: evaluateMeterVl,
+      meterVlSession: meterVlSession,
     ).execute();
-    expect(state.state.pendingGemmaMeterGuidance, isTrue);
-    expect(evaluateGemma.calls, 1);
+    expect(state.state.pendingMeterVlGuidance, isTrue);
+    expect(evaluateMeterVl.calls, 1);
   });
 
-  test('gemma markPresented 済みなら (B) を評価しない', () async {
-    final evaluateGemma = _EvaluateGemma(shouldShow: true);
-    final gemmaSession = GemmaMeterGuidanceSession()..markPresented();
+  test('meterVl markPresented 済みなら (B) を評価しない', () async {
+    final evaluateMeterVl = _EvaluateMeterVl(shouldShow: true);
+    final meterVlSession = MeterVlGuidanceSession()..markPresented();
     await _runInitialize(
       state: state,
-      evaluateB: evaluateGemma,
-      gemmaSession: gemmaSession,
+      evaluateB: evaluateMeterVl,
+      meterVlSession: meterVlSession,
     );
-    expect(state.state.pendingGemmaMeterGuidance, isFalse);
-    expect(evaluateGemma.calls, 0);
+    expect(state.state.pendingMeterVlGuidance, isFalse);
+    expect(evaluateMeterVl.calls, 0);
   });
 
   test('acknowledge 後は pending false かつ hasPresented', () async {
@@ -323,7 +323,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: true,
-        pendingGemmaMeterGuidance: false,
+        pendingMeterVlGuidance: false,
         pendingTutorialMain: false,
         tutorialMainStep: null,
         pendingTutorialAchievement: false,
@@ -343,7 +343,7 @@ void main() {
     expect(session.hasPresented, isTrue);
   });
 
-  test('gemma acknowledge 後は pending false かつ hasPresented', () async {
+  test('meterVl acknowledge 後は pending false かつ hasPresented', () async {
     state = MutableStateStream(
       const TopScreenState(
         loaded: true,
@@ -355,7 +355,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: false,
-        pendingGemmaMeterGuidance: true,
+        pendingMeterVlGuidance: true,
         pendingTutorialMain: false,
         tutorialMainStep: null,
         pendingTutorialAchievement: false,
@@ -365,12 +365,12 @@ void main() {
         showWeeklyGoalGuidance: true,
       ),
     );
-    final session = GemmaMeterGuidanceSession();
-    await OnAcknowledgeGemmaMeterGuidanceDelegate(
+    final session = MeterVlGuidanceSession();
+    await OnAcknowledgeMeterVlGuidanceDelegate(
       state: state,
       session: session,
     ).execute();
-    expect(state.state.pendingGemmaMeterGuidance, isFalse);
+    expect(state.state.pendingMeterVlGuidance, isFalse);
     expect(state.state.hasNewAchievements, isTrue);
     expect(session.hasPresented, isTrue);
   });
@@ -403,7 +403,7 @@ void main() {
         adviceText: '助言',
         adviceTone: AdviceTone.confused,
         pendingModelDownloadGuidance: false,
-        pendingGemmaMeterGuidance: false,
+        pendingMeterVlGuidance: false,
         pendingTutorialMain: false,
         tutorialMainStep: null,
         pendingTutorialAchievement: false,
@@ -439,7 +439,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: false,
-        pendingGemmaMeterGuidance: false,
+        pendingMeterVlGuidance: false,
         pendingTutorialMain: false,
         tutorialMainStep: null,
         pendingTutorialAchievement: false,
@@ -478,7 +478,7 @@ void main() {
         adviceText: '定型',
         adviceTone: AdviceTone.realized,
         pendingModelDownloadGuidance: false,
-        pendingGemmaMeterGuidance: false,
+        pendingMeterVlGuidance: false,
         pendingTutorialMain: false,
         tutorialMainStep: null,
         pendingTutorialAchievement: false,
@@ -493,7 +493,7 @@ void main() {
     expect(entity.adviceText, '定型');
     expect(entity.adviceTone, AdviceTone.realized);
     expect(entity.pendingModelDownloadGuidance, isFalse);
-    expect(entity.pendingGemmaMeterGuidance, isFalse);
+    expect(entity.pendingMeterVlGuidance, isFalse);
     expect(entity.calories.isUnset, isTrue);
   });
 
@@ -514,7 +514,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: false,
-        pendingGemmaMeterGuidance: false,
+        pendingMeterVlGuidance: false,
         pendingTutorialMain: false,
         tutorialMainStep: null,
         pendingTutorialAchievement: false,
@@ -552,7 +552,7 @@ void main() {
         adviceText: '',
         adviceTone: AdviceTone.fun,
         pendingModelDownloadGuidance: false,
-        pendingGemmaMeterGuidance: false,
+        pendingMeterVlGuidance: false,
         pendingTutorialMain: false,
         tutorialMainStep: null,
         pendingTutorialAchievement: false,

@@ -28,7 +28,7 @@ final class TopScreenState {
     required this.adviceText,
     required this.adviceTone,
     required this.pendingModelDownloadGuidance,
-    required this.pendingGemmaMeterGuidance,
+    required this.pendingMeterVlGuidance,
     required this.pendingTutorialMain,
     required this.tutorialMainStep,
     required this.pendingTutorialAchievement,
@@ -49,7 +49,7 @@ final class TopScreenState {
     adviceText: '',
     adviceTone: AdviceTone.fun,
     pendingModelDownloadGuidance: false,
-    pendingGemmaMeterGuidance: false,
+    pendingMeterVlGuidance: false,
     pendingTutorialMain: false,
     tutorialMainStep: null,
     pendingTutorialAchievement: false,
@@ -86,8 +86,8 @@ final class TopScreenState {
   /// OS LLM モデル未ダウンロード誘導 (A) を表示予約しているとき true。
   final bool pendingModelDownloadGuidance;
 
-  /// Gemma メーター誘導 (B) を表示予約しているとき true。
-  final bool pendingGemmaMeterGuidance;
+  /// メーター VL誘導 (B) を表示予約しているとき true。
+  final bool pendingMeterVlGuidance;
 
   /// メインチュートリアルを表示予約しているとき true。
   final bool pendingTutorialMain;
@@ -116,7 +116,7 @@ final class TopScreenState {
   ///
   /// Example:
   /// ```dart
-  /// state.copyWith(pendingGemmaMeterGuidance: true);
+  /// state.copyWith(pendingMeterVlGuidance: true);
   /// ```
   TopScreenState copyWith({
     bool? loaded,
@@ -128,7 +128,7 @@ final class TopScreenState {
     String? adviceText,
     AdviceTone? adviceTone,
     bool? pendingModelDownloadGuidance,
-    bool? pendingGemmaMeterGuidance,
+    bool? pendingMeterVlGuidance,
     bool? pendingTutorialMain,
     TutorialMainStep? tutorialMainStep,
     bool clearTutorialMainStep = false,
@@ -150,8 +150,8 @@ final class TopScreenState {
       adviceTone: adviceTone ?? this.adviceTone,
       pendingModelDownloadGuidance:
           pendingModelDownloadGuidance ?? this.pendingModelDownloadGuidance,
-      pendingGemmaMeterGuidance:
-          pendingGemmaMeterGuidance ?? this.pendingGemmaMeterGuidance,
+      pendingMeterVlGuidance:
+          pendingMeterVlGuidance ?? this.pendingMeterVlGuidance,
       pendingTutorialMain: pendingTutorialMain ?? this.pendingTutorialMain,
       tutorialMainStep: clearTutorialMainStep
           ? null

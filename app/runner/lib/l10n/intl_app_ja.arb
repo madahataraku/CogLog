@@ -561,14 +561,6 @@
   "@screen_feature_debug_clear_logs": {
     "description": "ログ消去ボタン"
   },
-  "screen_feature_debug_gemma_backend_label": "backend",
-  "@screen_feature_debug_gemma_backend_label": {
-    "description": "LFM VL main backend ラベル"
-  },
-  "screen_feature_debug_gemma_vision_backend_label": "visionBackend",
-  "@screen_feature_debug_gemma_vision_backend_label": {
-    "description": "LFM VL visionBackend ラベル"
-  },
   "screen_feature_debug_generate_error_label": "generate error",
   "@screen_feature_debug_generate_error_label": {
     "description": "生成例外ラベル"
@@ -576,6 +568,14 @@
   "screen_feature_debug_message_label": "message",
   "@screen_feature_debug_message_label": {
     "description": "message ラベル"
+  },
+  "screen_feature_debug_meter_vl_backend_label": "backend",
+  "@screen_feature_debug_meter_vl_backend_label": {
+    "description": "LFM VL main backend ラベル"
+  },
+  "screen_feature_debug_meter_vl_vision_backend_label": "visionBackend",
+  "@screen_feature_debug_meter_vl_vision_backend_label": {
+    "description": "LFM VL visionBackend ラベル"
   },
   "screen_feature_debug_no": "いいえ",
   "@screen_feature_debug_no": {
@@ -585,12 +585,12 @@
   "@screen_feature_debug_platform_notes_label": {
     "description": "platform notes ラベル"
   },
-  "screen_feature_debug_prefer_gemma_description": "同一セッションのみ。再起動でオフ",
-  "@screen_feature_debug_prefer_gemma_description": {
+  "screen_feature_debug_prefer_meter_vl_description": "同一セッションのみ。再起動でオフ",
+  "@screen_feature_debug_prefer_meter_vl_description": {
     "description": "LFM VL 優先モードの説明"
   },
-  "screen_feature_debug_prefer_gemma_item": "LFM VL 優先モード",
-  "@screen_feature_debug_prefer_gemma_item": {
+  "screen_feature_debug_prefer_meter_vl_item": "LFM VL 優先モード",
+  "@screen_feature_debug_prefer_meter_vl_item": {
     "description": "メーター読み取りで LFM VL を優先するスイッチ"
   },
   "screen_feature_debug_prepare_error_label": "prepare error",
@@ -629,17 +629,17 @@
   "@screen_feature_debug_section_availability": {
     "description": "可用性セクション見出し"
   },
-  "screen_feature_debug_section_gemma_availability": "LFM VL",
-  "@screen_feature_debug_section_gemma_availability": {
-    "description": "LFM VL 可用性セクション見出し"
-  },
-  "screen_feature_debug_section_gemma_probe": "LFM VL 画像プローブ",
-  "@screen_feature_debug_section_gemma_probe": {
-    "description": "LFM VL プローブ見出し"
-  },
   "screen_feature_debug_section_logs": "アプリログ",
   "@screen_feature_debug_section_logs": {
     "description": "ログセクション見出し"
+  },
+  "screen_feature_debug_section_meter_vl_availability": "LFM VL",
+  "@screen_feature_debug_section_meter_vl_availability": {
+    "description": "LFM VL 可用性セクション見出し"
+  },
+  "screen_feature_debug_section_meter_vl_probe": "LFM VL 画像プローブ",
+  "@screen_feature_debug_section_meter_vl_probe": {
+    "description": "LFM VL プローブ見出し"
   },
   "screen_feature_debug_section_probe": "生成プローブ",
   "@screen_feature_debug_section_probe": {
@@ -1745,12 +1745,12 @@
   "@view_model_download_guidance_dismiss": {
     "description": "閉じる"
   },
-  "view_model_download_guidance_gemma_body": "メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。",
-  "@view_model_download_guidance_gemma_body": {
+  "view_model_download_guidance_meter_vl_body": "メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。",
+  "@view_model_download_guidance_meter_vl_body": {
     "description": "LFM VL誘導本文"
   },
-  "view_model_download_guidance_gemma_title": "メーター読み取りモデルの準備",
-  "@view_model_download_guidance_gemma_title": {
+  "view_model_download_guidance_meter_vl_title": "メーター読み取りモデルの準備",
+  "@view_model_download_guidance_meter_vl_title": {
     "description": "LFM VL誘導タイトル"
   },
   "view_model_download_guidance_prepare": "モデルを準備",

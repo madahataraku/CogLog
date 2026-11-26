@@ -11,7 +11,7 @@ import 'package:screen_feature_top/src/view/top_screen_body.dart';
 import 'package:screen_feature_top/src/viewmodel/top_screen_view_model.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
-import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
@@ -121,14 +121,14 @@ final class _Prepare implements PrepareOnDeviceLlmModelUsecase {
   Future<void> execute() async {}
 }
 
-final class _GemmaGuidance implements EvaluateGemmaMeterGuidanceUsecase {
+final class _MeterVlGuidance implements EvaluateMeterVlGuidanceUsecase {
   @override
-  Future<GemmaMeterGuidanceDecision> execute() async {
-    return const GemmaMeterGuidanceDecision(shouldShow: false);
+  Future<MeterVlGuidanceDecision> execute() async {
+    return const MeterVlGuidanceDecision(shouldShow: false);
   }
 }
 
-final class _GemmaPrepare implements PrepareGemmaMeterModelUsecase {
+final class _MeterVlPrepare implements PrepareMeterVlModelUsecase {
   @override
   Stream<double> execute() async* {}
 }
@@ -206,11 +206,11 @@ Future<void> _pumpTop(WidgetTester tester, {required bool hasNew}) async {
         (ref) => _Guidance(),
       ),
       PrepareOnDeviceLlmModelUsecase.provider.overrideWith((ref) => _Prepare()),
-      EvaluateGemmaMeterGuidanceUsecase.provider.overrideWith(
-        (ref) => _GemmaGuidance(),
+      EvaluateMeterVlGuidanceUsecase.provider.overrideWith(
+        (ref) => _MeterVlGuidance(),
       ),
-      PrepareGemmaMeterModelUsecase.provider.overrideWith(
-        (ref) => _GemmaPrepare(),
+      PrepareMeterVlModelUsecase.provider.overrideWith(
+        (ref) => _MeterVlPrepare(),
       ),
       LoadAchievementNewIndicatorUsecase.provider.overrideWith(
         (ref) => _NewIndicator(),
@@ -218,8 +218,8 @@ Future<void> _pumpTop(WidgetTester tester, {required bool hasNew}) async {
       ModelDownloadGuidanceProviders.session.overrideWith(
         (ref) => OnDeviceLlmGuidanceSession(),
       ),
-      ModelDownloadGuidanceProviders.gemmaSession.overrideWith(
-        (ref) => GemmaMeterGuidanceSession(),
+      ModelDownloadGuidanceProviders.meterVlSession.overrideWith(
+        (ref) => MeterVlGuidanceSession(),
       ),
       LoadAchievementsUsecase.provider.overrideWith(
         (ref) => _LoadAchievements(),

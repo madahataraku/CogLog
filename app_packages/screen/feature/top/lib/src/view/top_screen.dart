@@ -11,7 +11,7 @@ import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../strings.dart';
 import '../viewmodel/top_screen_view_model.dart';
-import 'map_gemma_meter_prepare_error.dart';
+import 'map_meter_vl_prepare_error.dart';
 import 'top_conditional_advice_catalog.dart';
 import 'top_screen_impl.dart';
 import 'top_screen_providers.dart';
@@ -110,7 +110,7 @@ class TopScreen extends HookConsumerWidget {
         lifecycle,
         entity.adviceText,
         entity.pendingModelDownloadGuidance,
-        entity.pendingGemmaMeterGuidance,
+        entity.pendingMeterVlGuidance,
       ],
     );
 
@@ -181,7 +181,7 @@ class TopScreen extends HookConsumerWidget {
             return;
           }
           // (A) の show 完了後に (B) を評価する。
-          await viewModel.onEvaluateGemmaMeterGuidance();
+          await viewModel.onEvaluateMeterVlGuidance();
         });
         return null;
       },
@@ -194,7 +194,7 @@ class TopScreen extends HookConsumerWidget {
     );
     useEffect(
       () {
-        if (!entity.pendingGemmaMeterGuidance) {
+        if (!entity.pendingMeterVlGuidance) {
           return null;
         }
         if (tutorialSession.isShowing || entity.pendingTutorialMain) {
@@ -222,24 +222,24 @@ class TopScreen extends HookConsumerWidget {
             return;
           }
           // 表示直前に提示済みにし、initialize 再入とのレースを防ぐ。
-          await viewModel.onAcknowledgeGemmaMeterGuidance();
+          await viewModel.onAcknowledgeMeterVlGuidance();
           if (!context.mounted) {
             return;
           }
           // (B) 専用文言・進捗・準備中は閉じる無効。
           await ModelDownloadGuidanceLauncher.show(
             context,
-            title: strings.view_model_download_guidance_gemma_title,
-            body: strings.view_model_download_guidance_gemma_body,
+            title: strings.view_model_download_guidance_meter_vl_title,
+            body: strings.view_model_download_guidance_meter_vl_body,
             disableDismissWhilePreparing: true,
-            onPrepareProgress: viewModel.onPrepareGemmaMeterGuidance,
-            mapPrepareError: mapGemmaMeterPrepareError,
+            onPrepareProgress: viewModel.onPrepareMeterVlGuidance,
+            mapPrepareError: mapMeterVlPrepareError,
           );
         });
         return null;
       },
       [
-        entity.pendingGemmaMeterGuidance,
+        entity.pendingMeterVlGuidance,
         entity.pendingTutorialMain,
         tutorialSession.isShowing,
         viewModel,

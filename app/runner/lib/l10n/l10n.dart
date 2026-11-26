@@ -931,18 +931,6 @@ abstract class L10n {
   /// **'ログを消去'**
   String get screen_feature_debug_clear_logs;
 
-  /// LFM VL main backend ラベル
-  ///
-  /// In ja, this message translates to:
-  /// **'backend'**
-  String get screen_feature_debug_gemma_backend_label;
-
-  /// LFM VL visionBackend ラベル
-  ///
-  /// In ja, this message translates to:
-  /// **'visionBackend'**
-  String get screen_feature_debug_gemma_vision_backend_label;
-
   /// 生成例外ラベル
   ///
   /// In ja, this message translates to:
@@ -954,6 +942,18 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'message'**
   String get screen_feature_debug_message_label;
+
+  /// LFM VL main backend ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'backend'**
+  String get screen_feature_debug_meter_vl_backend_label;
+
+  /// LFM VL visionBackend ラベル
+  ///
+  /// In ja, this message translates to:
+  /// **'visionBackend'**
+  String get screen_feature_debug_meter_vl_vision_backend_label;
 
   /// 偽の表示
   ///
@@ -971,13 +971,13 @@ abstract class L10n {
   ///
   /// In ja, this message translates to:
   /// **'同一セッションのみ。再起動でオフ'**
-  String get screen_feature_debug_prefer_gemma_description;
+  String get screen_feature_debug_prefer_meter_vl_description;
 
   /// メーター読み取りで LFM VL を優先するスイッチ
   ///
   /// In ja, this message translates to:
   /// **'LFM VL 優先モード'**
-  String get screen_feature_debug_prefer_gemma_item;
+  String get screen_feature_debug_prefer_meter_vl_item;
 
   /// 準備例外ラベル
   ///
@@ -1033,23 +1033,23 @@ abstract class L10n {
   /// **'端末上 LLM'**
   String get screen_feature_debug_section_availability;
 
-  /// LFM VL 可用性セクション見出し
-  ///
-  /// In ja, this message translates to:
-  /// **'LFM VL'**
-  String get screen_feature_debug_section_gemma_availability;
-
-  /// LFM VL プローブ見出し
-  ///
-  /// In ja, this message translates to:
-  /// **'LFM VL 画像プローブ'**
-  String get screen_feature_debug_section_gemma_probe;
-
   /// ログセクション見出し
   ///
   /// In ja, this message translates to:
   /// **'アプリログ'**
   String get screen_feature_debug_section_logs;
+
+  /// LFM VL 可用性セクション見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'LFM VL'**
+  String get screen_feature_debug_section_meter_vl_availability;
+
+  /// LFM VL プローブ見出し
+  ///
+  /// In ja, this message translates to:
+  /// **'LFM VL 画像プローブ'**
+  String get screen_feature_debug_section_meter_vl_probe;
 
   /// 生成プローブ見出し
   ///
@@ -2552,13 +2552,13 @@ abstract class L10n {
   ///
   /// In ja, this message translates to:
   /// **'メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。'**
-  String get view_model_download_guidance_gemma_body;
+  String get view_model_download_guidance_meter_vl_body;
 
   /// LFM VL誘導タイトル
   ///
   /// In ja, this message translates to:
   /// **'メーター読み取りモデルの準備'**
-  String get view_model_download_guidance_gemma_title;
+  String get view_model_download_guidance_meter_vl_title;
 
   /// 準備開始
   ///

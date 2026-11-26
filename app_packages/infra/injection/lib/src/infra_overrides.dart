@@ -4,8 +4,8 @@ import 'package:infra_app_runtime_info/infra_app_runtime_info.dart';
 import 'package:infra_app_runtime_info_mobile/infra_app_runtime_info_mobile.dart';
 import 'package:infra_app_settings/infra_app_settings.dart';
 import 'package:infra_app_settings_mobile/infra_app_settings_mobile.dart';
-import 'package:infra_gemma_meter/infra_gemma_meter.dart';
-import 'package:infra_gemma_meter_mobile/infra_gemma_meter_mobile.dart';
+import 'package:infra_meter_vl/infra_meter_vl.dart';
+import 'package:infra_meter_vl_mobile/infra_meter_vl_mobile.dart';
 import 'package:infra_health_body_metrics/infra_health_body_metrics.dart';
 import 'package:infra_health_body_metrics_mobile/infra_health_body_metrics_mobile.dart';
 import 'package:infra_health_workout/infra_health_workout.dart';
@@ -29,11 +29,11 @@ import 'package:riverpod/riverpod.dart';
 
 /// 端末上 LLM など infra の本番実装を上書きする。
 ///
-/// [onDeviceLlm] / [gemmaMeterVision] / [meterPhotoSource] /
+/// [onDeviceLlm] / [meterVlVision] / [meterPhotoSource] /
 /// [healthBodyMetricsSource] / [networkConnectivity] / [userFileGateway]
 /// を渡すと、その実装を使う（Widget テスト用）。
-/// [gemmaMeterVision] を省略したとき、iOS / Android では [PluginGemmaMeterVision]、
-/// それ以外では [UnavailableGemmaMeterVision] を束ねる。
+/// [meterVlVision] を省略したとき、iOS / Android では [PluginMeterVlVision]、
+/// それ以外では [UnavailableMeterVlVision] を束ねる。
 ///
 /// Example:
 /// ```dart
@@ -41,7 +41,7 @@ import 'package:riverpod/riverpod.dart';
 /// ```
 List<Override> infraOverrides({
   OnDeviceLlm? onDeviceLlm,
-  GemmaMeterVision? gemmaMeterVision,
+  MeterVlVision? meterVlVision,
   MeterPhotoSource? meterPhotoSource,
   HealthBodyMetricsSource? healthBodyMetricsSource,
   NetworkConnectivity? networkConnectivity,
@@ -63,20 +63,20 @@ List<Override> infraOverrides({
         return const UnavailableOnDeviceLlm();
     }
   }),
-  gemmaMeterVisionProvider.overrideWith((ref) {
-    final injected = gemmaMeterVision;
+  meterVlVisionProvider.overrideWith((ref) {
+    final injected = meterVlVision;
     if (injected != null) {
       return injected;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
       case TargetPlatform.android:
-        return PluginGemmaMeterVision();
+        return PluginMeterVlVision();
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
-        return const UnavailableGemmaMeterVision();
+        return const UnavailableMeterVlVision();
     }
   }),
   networkConnectivityProvider.overrideWith(
@@ -89,9 +89,9 @@ List<Override> infraOverrides({
   meterReadingLlmEngineProvider.overrideWith(
     (ref) => _meterReadingLlmEngine(ref),
   ),
-  meterReadingGemmaEngineProvider.overrideWith(
-    (ref) => GemmaMeterReadingEngine(
-      gemma: ref.watch(gemmaMeterVisionProvider),
+  meterReadingMeterVlEngineProvider.overrideWith(
+    (ref) => MeterVlReadingEngine(
+      meterVl: ref.watch(meterVlVisionProvider),
       log: ref.watch(appLogStoreProvider),
     ),
   ),
@@ -181,7 +181,7 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
   }
 }
 
-/// デバッグ／一覧用の LLM + Gemma エンジン。
+/// デバッグ／一覧用の LLM + メーター VL エンジン。
 ///
 /// Example:
 /// ```dart
@@ -189,5 +189,5 @@ MeterReadingEngine _meterReadingLlmEngine(Ref ref) {
 /// ```
 List<MeterReadingEngine> _meterReadingEngines(Ref ref) => [
   _meterReadingLlmEngine(ref),
-  ref.watch(meterReadingGemmaEngineProvider),
+  ref.watch(meterReadingMeterVlEngineProvider),
 ];

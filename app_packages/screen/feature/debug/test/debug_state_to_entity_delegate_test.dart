@@ -1,10 +1,10 @@
 import 'package:foundation_app_log/foundation_app_log.dart';
-import 'package:infra_gemma_meter/infra_gemma_meter.dart';
+import 'package:infra_meter_vl/infra_meter_vl.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:screen_feature_debug/src/viewmodel/delegate/debug_state_to_entity_delegate.dart';
 import 'package:screen_feature_debug/src/viewmodel/state/debug_screen_state.dart';
 import 'package:test/test.dart';
-import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
+import 'package:usecase_diagnose_meter_vl/usecase_diagnose_meter_vl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 
 void main() {
@@ -14,8 +14,8 @@ void main() {
     );
     expect(entity.readiness, '-');
     expect(entity.canGenerate, isNull);
-    expect(entity.gemmaReadiness, '-');
-    expect(entity.gemmaCanGenerate, isNull);
+    expect(entity.meterVlReadiness, '-');
+    expect(entity.meterVlCanGenerate, isNull);
     expect(entity.preferLfmVlOverOsLlm, isFalse);
     expect(entity.logLines, isEmpty);
   });
@@ -34,12 +34,12 @@ void main() {
           canGenerate: true,
           sampleOutput: 'hi',
         ),
-        gemmaResult: const DiagnoseGemmaMeterResult(
-          snapshot: GemmaMeterAvailabilitySnapshot(
-            readiness: GemmaMeterReadiness.ready,
+        meterVlResult: const DiagnoseMeterVlResult(
+          snapshot: MeterVlAvailabilitySnapshot(
+            readiness: MeterVlReadiness.ready,
             status: 'available',
             reason: 'ready',
-            message: 'gemma ok',
+            message: 'meterVl ok',
             backend: 'gpu',
             visionBackend: 'cpu',
           ),
@@ -60,11 +60,11 @@ void main() {
     expect(entity.readiness, 'ready');
     expect(entity.canGenerate, isTrue);
     expect(entity.sampleOutput, 'hi');
-    expect(entity.gemmaReadiness, 'ready');
-    expect(entity.gemmaBackend, 'gpu');
-    expect(entity.gemmaVisionBackend, 'cpu');
-    expect(entity.gemmaCanGenerate, isTrue);
-    expect(entity.gemmaProbeOutputLength, '2');
+    expect(entity.meterVlReadiness, 'ready');
+    expect(entity.meterVlBackend, 'gpu');
+    expect(entity.meterVlVisionBackend, 'cpu');
+    expect(entity.meterVlCanGenerate, isTrue);
+    expect(entity.meterVlProbeOutputLength, '2');
     expect(entity.preferLfmVlOverOsLlm, isTrue);
     expect(entity.logLines.single, contains('t: m'));
   });
@@ -74,7 +74,7 @@ void main() {
       DebugScreenState(
         running: false,
         result: null,
-        gemmaResult: null,
+        meterVlResult: null,
         preferLfmVlOverOsLlm: false,
         logs: [
           AppLogEntry(
@@ -109,7 +109,7 @@ void main() {
       DebugScreenState(
         running: false,
         result: null,
-        gemmaResult: null,
+        meterVlResult: null,
         preferLfmVlOverOsLlm: false,
         logs: [
           AppLogEntry(
@@ -130,7 +130,7 @@ void main() {
       DebugScreenState(
         running: false,
         result: null,
-        gemmaResult: null,
+        meterVlResult: null,
         preferLfmVlOverOsLlm: false,
         logs: [
           AppLogEntry(

@@ -468,16 +468,17 @@ class L10nJa extends L10n {
   String get screen_feature_debug_clear_logs => 'ログを消去';
 
   @override
-  String get screen_feature_debug_gemma_backend_label => 'backend';
-
-  @override
-  String get screen_feature_debug_gemma_vision_backend_label => 'visionBackend';
-
-  @override
   String get screen_feature_debug_generate_error_label => 'generate error';
 
   @override
   String get screen_feature_debug_message_label => 'message';
+
+  @override
+  String get screen_feature_debug_meter_vl_backend_label => 'backend';
+
+  @override
+  String get screen_feature_debug_meter_vl_vision_backend_label =>
+      'visionBackend';
 
   @override
   String get screen_feature_debug_no => 'いいえ';
@@ -486,11 +487,11 @@ class L10nJa extends L10n {
   String get screen_feature_debug_platform_notes_label => 'platform notes';
 
   @override
-  String get screen_feature_debug_prefer_gemma_description =>
+  String get screen_feature_debug_prefer_meter_vl_description =>
       '同一セッションのみ。再起動でオフ';
 
   @override
-  String get screen_feature_debug_prefer_gemma_item => 'LFM VL 優先モード';
+  String get screen_feature_debug_prefer_meter_vl_item => 'LFM VL 優先モード';
 
   @override
   String get screen_feature_debug_prepare_error_label => 'prepare error';
@@ -521,13 +522,13 @@ class L10nJa extends L10n {
   String get screen_feature_debug_section_availability => '端末上 LLM';
 
   @override
-  String get screen_feature_debug_section_gemma_availability => 'LFM VL';
-
-  @override
-  String get screen_feature_debug_section_gemma_probe => 'LFM VL 画像プローブ';
-
-  @override
   String get screen_feature_debug_section_logs => 'アプリログ';
+
+  @override
+  String get screen_feature_debug_section_meter_vl_availability => 'LFM VL';
+
+  @override
+  String get screen_feature_debug_section_meter_vl_probe => 'LFM VL 画像プローブ';
 
   @override
   String get screen_feature_debug_section_probe => '生成プローブ';
@@ -1390,11 +1391,11 @@ class L10nJa extends L10n {
   String get view_model_download_guidance_dismiss => '閉じる';
 
   @override
-  String get view_model_download_guidance_gemma_body =>
+  String get view_model_download_guidance_meter_vl_body =>
       'メーター読み取り用のモデルが端末にありません。Wi-Fi接続中に準備を開始できます。';
 
   @override
-  String get view_model_download_guidance_gemma_title => 'メーター読み取りモデルの準備';
+  String get view_model_download_guidance_meter_vl_title => 'メーター読み取りモデルの準備';
 
   @override
   String get view_model_download_guidance_prepare => 'モデルを準備';

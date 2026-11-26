@@ -6,7 +6,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
-import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
@@ -14,19 +14,19 @@ import 'package:usecase_save_top_screen_metric/usecase_save_top_screen_metric.da
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
-import 'delegate/on_acknowledge_gemma_meter_guidance_delegate.dart';
+import 'delegate/on_acknowledge_meter_vl_guidance_delegate.dart';
 import 'delegate/on_acknowledge_model_download_guidance_delegate.dart';
 import 'delegate/on_acknowledge_tutorial_achievement_delegate.dart';
 import 'delegate/on_acknowledge_tutorial_main_delegate.dart';
 import 'delegate/on_advance_tutorial_main_delegate.dart';
 import 'delegate/on_dismiss_tutorial_achievement_delegate.dart';
-import 'delegate/on_evaluate_gemma_meter_guidance_delegate.dart';
+import 'delegate/on_evaluate_meter_vl_guidance_delegate.dart';
 import 'delegate/on_evaluate_tutorial_achievement_delegate.dart';
 import 'delegate/on_evaluate_tutorial_main_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_open_achievements_delegate.dart';
 import 'delegate/on_open_app_settings_delegate.dart';
-import 'delegate/on_prepare_gemma_meter_guidance_delegate.dart';
+import 'delegate/on_prepare_meter_vl_guidance_delegate.dart';
 import 'delegate/on_prepare_model_download_guidance_delegate.dart';
 import 'delegate/on_select_metric_delegate.dart';
 import 'delegate/top_screen_state_to_entity_delegate.dart';
@@ -67,14 +67,16 @@ final class TopScreenViewModel {
         prepareOnDeviceLlmModelUsecase: ref.watch(
           PrepareOnDeviceLlmModelUsecase.provider,
         ),
-        evaluateGemmaMeterGuidanceUsecase: ref.watch(
-          EvaluateGemmaMeterGuidanceUsecase.provider,
+        evaluateMeterVlGuidanceUsecase: ref.watch(
+          EvaluateMeterVlGuidanceUsecase.provider,
         ),
-        prepareGemmaMeterModelUsecase: ref.watch(
-          PrepareGemmaMeterModelUsecase.provider,
+        prepareMeterVlModelUsecase: ref.watch(
+          PrepareMeterVlModelUsecase.provider,
         ),
         guidanceSession: ref.watch(ModelDownloadGuidanceProviders.session),
-        gemmaSession: ref.watch(ModelDownloadGuidanceProviders.gemmaSession),
+        meterVlSession: ref.watch(
+          ModelDownloadGuidanceProviders.meterVlSession,
+        ),
         navigation: ref.watch(screenNavigationProvider),
         newIndicator: ref.watch(LoadAchievementNewIndicatorUsecase.provider),
         evaluateTutorialMainAutoStartUsecase: ref.watch(
@@ -106,10 +108,10 @@ final class TopScreenViewModel {
       GenerateTopAdviceUsecase.provider,
       EvaluateOnDeviceLlmGuidanceUsecase.provider,
       PrepareOnDeviceLlmModelUsecase.provider,
-      EvaluateGemmaMeterGuidanceUsecase.provider,
-      PrepareGemmaMeterModelUsecase.provider,
+      EvaluateMeterVlGuidanceUsecase.provider,
+      PrepareMeterVlModelUsecase.provider,
       ModelDownloadGuidanceProviders.session,
-      ModelDownloadGuidanceProviders.gemmaSession,
+      ModelDownloadGuidanceProviders.meterVlSession,
       screenNavigationProvider,
       LoadAchievementNewIndicatorUsecase.provider,
       EvaluateTutorialMainAutoStartUsecase.provider,
@@ -145,13 +147,13 @@ final class TopScreenViewModel {
   @visibleForTesting
   final PrepareOnDeviceLlmModelUsecase prepareOnDeviceLlmModelUsecase;
 
-  /// Gemma メーター誘導 (B) の要否。
+  /// メーター VL誘導 (B) の要否。
   @visibleForTesting
-  final EvaluateGemmaMeterGuidanceUsecase evaluateGemmaMeterGuidanceUsecase;
+  final EvaluateMeterVlGuidanceUsecase evaluateMeterVlGuidanceUsecase;
 
-  /// Gemma モデル準備。
+  /// メーター VL モデル準備。
   @visibleForTesting
-  final PrepareGemmaMeterModelUsecase prepareGemmaMeterModelUsecase;
+  final PrepareMeterVlModelUsecase prepareMeterVlModelUsecase;
 
   /// プロセス内の (A) 誘導再表示抑制。
   @visibleForTesting
@@ -159,7 +161,7 @@ final class TopScreenViewModel {
 
   /// プロセス内の (B) 誘導再表示抑制。
   @visibleForTesting
-  final GemmaMeterGuidanceSession gemmaSession;
+  final MeterVlGuidanceSession meterVlSession;
 
   /// 画面遷移。
   @visibleForTesting
@@ -215,10 +217,10 @@ final class TopScreenViewModel {
     required this.generateTopAdviceUsecase,
     required this.evaluateOnDeviceLlmGuidanceUsecase,
     required this.prepareOnDeviceLlmModelUsecase,
-    required this.evaluateGemmaMeterGuidanceUsecase,
-    required this.prepareGemmaMeterModelUsecase,
+    required this.evaluateMeterVlGuidanceUsecase,
+    required this.prepareMeterVlModelUsecase,
     required this.guidanceSession,
-    required this.gemmaSession,
+    required this.meterVlSession,
     required this.navigation,
     required this.newIndicator,
     required this.evaluateTutorialMainAutoStartUsecase,

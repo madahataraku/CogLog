@@ -1,13 +1,13 @@
 import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
-import 'package:usecase_gemma_meter_guidance/usecase_gemma_meter_guidance.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
 import 'package:usecase_load_top_screen/usecase_load_top_screen.dart';
 import 'package:usecase_on_device_llm_guidance/usecase_on_device_llm_guidance.dart';
 import 'package:view_model_download_guidance/view_model_download_guidance.dart';
 
 import '../state/top_screen_state.dart';
-import 'on_evaluate_gemma_meter_guidance_delegate.dart';
+import 'on_evaluate_meter_vl_guidance_delegate.dart';
 
 /// トップ画面の期間合計とアドバイスを読み、State を置き換える。
 ///
@@ -18,9 +18,9 @@ import 'on_evaluate_gemma_meter_guidance_delegate.dart';
 ///   loadTopScreenUsecase: loadTopScreenUsecase,
 ///   generateTopAdviceUsecase: generateTopAdviceUsecase,
 ///   evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
-///   evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
+///   evaluateMeterVlGuidanceUsecase: evaluateMeterVlGuidanceUsecase,
 ///   guidanceSession: guidanceSession,
-///   gemmaSession: gemmaSession,
+///   meterVlSession: meterVlSession,
 /// ).execute(
 ///   locale: 'ja',
 ///   noExercise: AdviceTemplate(
@@ -43,9 +43,9 @@ final class OnInitializeDelegate {
   ///   loadTopScreenUsecase: loadTopScreenUsecase,
   ///   generateTopAdviceUsecase: generateTopAdviceUsecase,
   ///   evaluateOnDeviceLlmGuidanceUsecase: evaluateOnDeviceLlmGuidanceUsecase,
-  ///   evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
+  ///   evaluateMeterVlGuidanceUsecase: evaluateMeterVlGuidanceUsecase,
   ///   guidanceSession: guidanceSession,
-  ///   gemmaSession: gemmaSession,
+  ///   meterVlSession: meterVlSession,
   /// );
   /// ```
   const OnInitializeDelegate({
@@ -53,9 +53,9 @@ final class OnInitializeDelegate {
     required this.loadTopScreenUsecase,
     required this.generateTopAdviceUsecase,
     required this.evaluateOnDeviceLlmGuidanceUsecase,
-    required this.evaluateGemmaMeterGuidanceUsecase,
+    required this.evaluateMeterVlGuidanceUsecase,
     required this.guidanceSession,
-    required this.gemmaSession,
+    required this.meterVlSession,
   });
 
   /// 更新する画面状態。
@@ -70,19 +70,19 @@ final class OnInitializeDelegate {
   /// OS LLM モデル未ダウンロード誘導 (A) の要否。
   final EvaluateOnDeviceLlmGuidanceUsecase evaluateOnDeviceLlmGuidanceUsecase;
 
-  /// Gemma メーター誘導 (B) の要否。
-  final EvaluateGemmaMeterGuidanceUsecase evaluateGemmaMeterGuidanceUsecase;
+  /// メーター VL誘導 (B) の要否。
+  final EvaluateMeterVlGuidanceUsecase evaluateMeterVlGuidanceUsecase;
 
   /// プロセス内の (A) 誘導再表示抑制。
   final OnDeviceLlmGuidanceSession guidanceSession;
 
   /// プロセス内の (B) 誘導再表示抑制。
-  final GemmaMeterGuidanceSession gemmaSession;
+  final MeterVlGuidanceSession meterVlSession;
 
   /// 期間合計とアドバイスを先に出し、誘導判定は後から反映する。
   ///
   /// (A) を出さないときだけ、ここで (B) を評価する。(A) を出すときは
-  /// ダイアログ完了後に [OnEvaluateGemmaMeterGuidanceDelegate] を呼ぶ。
+  /// ダイアログ完了後に [OnEvaluateMeterVlGuidanceDelegate] を呼ぶ。
   ///
   /// Example:
   /// ```dart
@@ -136,7 +136,7 @@ final class OnInitializeDelegate {
           adviceText: advice.advice,
           adviceTone: advice.tone,
           pendingModelDownloadGuidance: false,
-          pendingGemmaMeterGuidance: false,
+          pendingMeterVlGuidance: false,
           pendingTutorialMain: false,
           tutorialMainStep: null,
           pendingTutorialAchievement: false,
@@ -166,10 +166,10 @@ final class OnInitializeDelegate {
 
     // (A) を出さない場合は Ready 後すぐ (B) を評価する。
     if (!pendingA) {
-      await OnEvaluateGemmaMeterGuidanceDelegate(
+      await OnEvaluateMeterVlGuidanceDelegate(
         state: state,
-        evaluateGemmaMeterGuidanceUsecase: evaluateGemmaMeterGuidanceUsecase,
-        gemmaSession: gemmaSession,
+        evaluateMeterVlGuidanceUsecase: evaluateMeterVlGuidanceUsecase,
+        meterVlSession: meterVlSession,
       ).execute();
     }
   }
