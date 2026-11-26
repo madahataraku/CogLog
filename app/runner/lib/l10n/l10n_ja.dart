@@ -510,6 +510,62 @@ class L10nJa extends L10n {
   String get screen_feature_debug_reason_label => 'reason';
 
   @override
+  String get screen_feature_debug_redownload_confirm_body =>
+      '端末上の LFM VL（および旧 Gemma モデル）を削除し、Wi-Fi 経由で再取得します。モバイル回線では開始できません。';
+
+  @override
+  String get screen_feature_debug_redownload_confirm_cancel => 'キャンセル';
+
+  @override
+  String get screen_feature_debug_redownload_confirm_ok => '再ダウンロード';
+
+  @override
+  String get screen_feature_debug_redownload_confirm_title =>
+      'LFM VL を再ダウンロードしますか？';
+
+  @override
+  String get screen_feature_debug_redownload_disabled_busy =>
+      'メーター読み取りまたはモデル準備の完了を待ってから再度お試しください。';
+
+  @override
+  String get screen_feature_debug_redownload_disabled_running =>
+      '再ダウンロードの実行中です。';
+
+  @override
+  String get screen_feature_debug_redownload_disabled_unavailable =>
+      'この端末では LFM VL を利用できません。';
+
+  @override
+  String get screen_feature_debug_redownload_failed =>
+      'LFM VL の再ダウンロードに失敗しました。しばらくしてから再度お試しください。';
+
+  @override
+  String get screen_feature_debug_redownload_failed_network =>
+      '通信に失敗しました。接続を確認してから再度お試しください。';
+
+  @override
+  String get screen_feature_debug_redownload_failed_storage =>
+      '空き容量が足りません。容量を確保してから再度お試しください。';
+
+  @override
+  String get screen_feature_debug_redownload_failed_wifi =>
+      'Wi-Fiに接続してから再度お試しください。';
+
+  @override
+  String get screen_feature_debug_redownload_meter_vl => 'LFM VL を再ダウンロード';
+
+  @override
+  String get screen_feature_debug_redownload_meter_vl_description =>
+      '保持中のモデルを削除してから再取得します';
+
+  @override
+  String get screen_feature_debug_redownload_running => 'LFM VL を再ダウンロード中…';
+
+  @override
+  String get screen_feature_debug_redownload_success =>
+      'LFM VL の再ダウンロードが完了しました。';
+
+  @override
   String get screen_feature_debug_run_diagnose => '再診断';
 
   @override

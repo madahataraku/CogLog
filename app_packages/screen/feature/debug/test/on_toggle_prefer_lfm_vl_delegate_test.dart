@@ -20,13 +20,7 @@ void main() {
     final preference = MeterReadingEngineSessionPreference()
       ..preferLfmVlOverOsLlm = true;
     final state = MutableStateStream(
-      const DebugScreenState(
-        running: false,
-        result: null,
-        meterVlResult: null,
-        logs: [],
-        preferLfmVlOverOsLlm: true,
-      ),
+      DebugScreenState.initial.copyWith(preferLfmVlOverOsLlm: true),
     );
     await OnTogglePreferLfmVlDelegate(
       state: state,

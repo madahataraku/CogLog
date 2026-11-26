@@ -131,6 +131,12 @@ availability の `ready` は当該プロセスで `Engine.initialize()` が成�
 初期化成功とは別とする。stamp が無い／違う既存ファイルは一度だけ再取得する。
 デバイス固有の初期化失敗後も現行世代の成果物は保持・再利用する。
 デバッグ表示の backend / visionBackend は設定どおり（Android `gpu` / `cpu`、iOS `cpu` / `cpu`）。
+デバッグの LFM VL 強制再ダウンロードの削除段階では、現行の `lfm_meter/`（成果物・stamp・プロセス内 engine）に加え、
+Android の `gemma_meter/`、iOS の `gemma_meter/` および `gemma4-e2b/` を明示的に削除する。
+未保持でも削除は成功（no-op）とし、その後 Wi-Fi 下で prepare する。
+delete は preparing フラグを exclusive 取得してから実行し、完了まで排他を維持する。
+prepare／generate 実行中は削除を拒否し、進行中処理は打ち切らない。
+prepare 開始時に preparing または generating なら失敗とする（Android は error 完了、偽 success 禁止。iOS は FlutterError）。
 
 Bundle Identifier は上記フレーバー対応表に従う。`dart run monolith_runner:xcodegen` は、各構成の Bundle Identifier、Provisioning Profile、Team ID が揃ってから実行する。Provisioning Profile と Team ID は未指定のため、いまは xcodegen を実行しない。指示に無い署名の値は作らない。
 

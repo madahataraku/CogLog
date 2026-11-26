@@ -60,4 +60,50 @@ extension DebugScreenViewModelActions on DebugScreenViewModel {
   void onBack() {
     OnBackDelegate(navigation: navigation).execute();
   }
+
+  /// 確認ダイアログ後に LFM VL 再ダウンロードを開始する。
+  ///
+  /// 本体は [OnRedownloadMeterVlDelegate.execute]。
+  /// busy 拒否時は conflict 理由を残すがボタンは有効のまま。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onRedownloadMeterVl();
+  /// ```
+  Future<bool> onRedownloadMeterVl() {
+    return OnRedownloadMeterVlDelegate(
+      session: redownloadSession,
+      usecase: redownloadUsecase,
+      state: state,
+    ).execute();
+  }
+
+  /// 再ダウンロード確定後の再診断が終わったことを session へ伝える。
+  ///
+  /// 本体は [OnAcknowledgeRedownloadDiagnoseRefreshDelegate.execute]。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onAcknowledgeRedownloadDiagnoseRefresh();
+  /// ```
+  Future<void> onAcknowledgeRedownloadDiagnoseRefresh() {
+    return OnAcknowledgeRedownloadDiagnoseRefreshDelegate(
+      session: redownloadSession,
+    ).execute();
+  }
+
+  /// session スナップショットを [DebugScreenState] へ写す。
+  ///
+  /// 本体は [OnRedownloadSessionSyncDelegate.execute]。
+  /// provider 購読開始時の即時同期と stream 更新の両方から呼ばれる。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onRedownloadSessionSync(sessionState);
+  /// ```
+  Future<void> onRedownloadSessionSync(
+    MeterVlRedownloadSessionState sessionState,
+  ) {
+    return OnRedownloadSessionSyncDelegate(state: state).execute(sessionState);
+  }
 }

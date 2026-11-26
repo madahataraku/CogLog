@@ -22,6 +22,7 @@ final class _FakeClient implements MeterVlNativeClient {
     ),
     this.throwOnAvailability = false,
     this.prepareProgress = const [0.5, 1.0],
+    this.operationBusy = false,
   });
 
   /// 返す可用性。
@@ -35,6 +36,12 @@ final class _FakeClient implements MeterVlNativeClient {
 
   /// 最後に渡された画像。
   Uint8List? lastImageBytes;
+
+  /// [deleteDownloadedModels] の呼出回数。
+  int deleteDownloadedModelsCallCount = 0;
+
+  /// [isOperationBusy] が返す値。
+  bool operationBusy = false;
 
   @override
   Future<MeterVlNativeAvailability> getAvailability() async {
@@ -61,6 +68,14 @@ final class _FakeClient implements MeterVlNativeClient {
 
   @override
   Stream<double> prepareModel() => Stream<double>.fromIterable(prepareProgress);
+
+  @override
+  Future<void> deleteDownloadedModels() async {
+    deleteDownloadedModelsCallCount++;
+  }
+
+  @override
+  Future<bool> get isOperationBusy async => operationBusy;
 }
 
 void main() {
@@ -136,6 +151,14 @@ void main() {
       client: _FakeClient(prepareProgress: const [0.1, 1.0]),
     );
     expect(await plugin.prepareModel().toList(), [0.1, 1.0]);
+  });
+
+  test('deleteDownloadedModels / isOperationBusy は client へ委譲する', () async {
+    final client = _FakeClient(operationBusy: true);
+    final plugin = PluginMeterVlVision(client: client);
+    await plugin.deleteDownloadedModels();
+    expect(client.deleteDownloadedModelsCallCount, 1);
+    expect(await plugin.isOperationBusy, isTrue);
   });
 
   test('diagnoseGenerateWithImage は readiness を問わない', () async {

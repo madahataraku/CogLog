@@ -44,15 +44,7 @@ final class OnTogglePreferLfmVlDelegate {
   Future<void> execute(bool preferLfmVl) async {
     sessionPreference.preferLfmVlOverOsLlm = preferLfmVl;
     await state.updateWithLock((current, emitter) async {
-      await emitter.emit(
-        DebugScreenState(
-          running: current.running,
-          result: current.result,
-          meterVlResult: current.meterVlResult,
-          logs: current.logs,
-          preferLfmVlOverOsLlm: preferLfmVl,
-        ),
-      );
+      await emitter.emit(current.copyWith(preferLfmVlOverOsLlm: preferLfmVl));
     });
   }
 }

@@ -34,6 +34,7 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
   private var prepareEvents: EventChannel.EventSink? = null
   private val executor = Executors.newSingleThreadExecutor()
   private val preparing = AtomicBoolean(false)
+  private val generating = AtomicBoolean(false)
   private var engine: Engine? = null
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -69,11 +70,28 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
         }
       }
       "prepareModel" -> {
+        // Reserve before queueing so a queued delete cannot run after prepare.
+        if (generating.get() || !preparing.compareAndSet(false, true)) {
+          prepareEvents?.error(
+            "busy",
+            "LFM VL meter operation is in progress.",
+            null,
+          )
+          result.error(
+            "busy",
+            "LFM VL meter operation is in progress.",
+            null,
+          )
+          return
+        }
         executor.execute { prepareModel(result) }
       }
       "generateWithImage" -> {
         val prompt = call.argument<String>("prompt") ?: ""
         val imageBytes = call.argument<ByteArray>("imageBytes") ?: ByteArray(0)
+        if (!tryBeginGenerate(result)) {
+          return
+        }
         executor.execute {
           try {
             val text = generate(prompt, imageBytes, requireReady = true)
@@ -82,12 +100,17 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
             runOnMain {
               result.error("generic", safeMessage(error), null)
             }
+          } finally {
+            generating.set(false)
           }
         }
       }
       "diagnoseGenerateWithImage" -> {
         val prompt = call.argument<String>("prompt") ?: ""
         val imageBytes = call.argument<ByteArray>("imageBytes") ?: ByteArray(0)
+        if (!tryBeginGenerate(result)) {
+          return
+        }
         executor.execute {
           try {
             val text = generate(prompt, imageBytes, requireReady = false)
@@ -96,11 +119,33 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
             runOnMain {
               result.error("generic", safeMessage(error), null)
             }
+          } finally {
+            generating.set(false)
           }
         }
       }
+      "deleteDownloadedModels" -> {
+        // Reserve before queueing so delete cannot wait behind prepare then succeed.
+        if (generating.get() || !preparing.compareAndSet(false, true)) {
+          result.error("busy", "LFM VL meter operation is in progress.", null)
+          return
+        }
+        executor.execute { deleteDownloadedModels(result) }
+      }
+      "isOperationBusy" -> {
+        result.success(preparing.get() || generating.get())
+      }
       else -> result.notImplemented()
     }
+  }
+
+  /** Reserves [generating] on the calling thread; reports busy via [result] on failure. */
+  private fun tryBeginGenerate(result: Result): Boolean {
+    if (preparing.get() || !generating.compareAndSet(false, true)) {
+      result.error("busy", "LFM VL meter operation is in progress.", null)
+      return false
+    }
+    return true
   }
 
   /** Configured LiteRT-LM backends (main GPU, vision CPU, MTP off). */
@@ -136,11 +181,11 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
     }
   }
 
+  /**
+   * Runs prepare after [preparing] was reserved on the calling thread.
+   * Always clears [preparing] in [finally].
+   */
   private fun prepareModel(result: Result) {
-    if (!preparing.compareAndSet(false, true)) {
-      runOnMain { result.success(null) }
-      return
-    }
     try {
       if (appContext == null) {
         throw IOException("Application context is unavailable.")
@@ -267,6 +312,10 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
     }
   }
 
+  /**
+   * Runs generate after [generating] was reserved on the calling thread.
+   * Caller clears [generating] in its [finally].
+   */
   private fun generate(
     prompt: String,
     imageBytes: ByteArray,
@@ -289,6 +338,32 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
           ),
         )
       return response.toString()
+    }
+  }
+
+  /**
+   * Runs delete after [preparing] was reserved on the calling thread.
+   * Always clears [preparing] in [finally].
+   */
+  private fun deleteDownloadedModels(result: Result) {
+    try {
+      closeEngine()
+      clearEngineStamp()
+      val ctx = appContext
+      if (ctx != null) {
+        val dir = File(ctx.noBackupFilesDir, MODEL_DIR)
+        if (dir.exists() && !dir.deleteRecursively()) {
+          throw IOException("Could not delete LFM VL model directory.")
+        }
+      }
+      removeLegacyGemmaModelOrThrow()
+      runOnMain { result.success(null) }
+    } catch (error: Exception) {
+      runOnMain {
+        result.error("generic", safeMessage(error), null)
+      }
+    } finally {
+      preparing.set(false)
     }
   }
 
@@ -385,7 +460,12 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
   }
 
   private fun clearEngineStamp() {
-    prefs().edit().remove(ENGINE_STAMP_KEY).apply()
+    val context = appContext ?: return
+    context
+      .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+      .edit()
+      .remove(ENGINE_STAMP_KEY)
+      .apply()
   }
 
   /**
@@ -422,11 +502,23 @@ class MeterVlPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHandl
     IOException(message, cause)
 
   /** Deletes the previous Gemma LiteRT tree under noBackupFilesDir if present. */
+  /** Best-effort cleanup for availability / prepare (ignore delete failures). */
   private fun removeLegacyGemmaModelIfPresent() {
     val ctx = appContext ?: return
     val legacy = File(ctx.noBackupFilesDir, LEGACY_MODEL_DIR)
     if (legacy.exists()) {
       legacy.deleteRecursively()
+    }
+  }
+
+  /**
+   * Explicit delete path: missing directory is success; failed delete throws.
+   */
+  private fun removeLegacyGemmaModelOrThrow() {
+    val ctx = appContext ?: return
+    val legacy = File(ctx.noBackupFilesDir, LEGACY_MODEL_DIR)
+    if (legacy.exists() && !legacy.deleteRecursively()) {
+      throw IOException("Could not delete legacy Gemma meter model directory.")
     }
   }
 

@@ -89,6 +89,84 @@ mixin class L10nStringsMixin {
   String get screen_feature_debug_reason_label =>
       LocalizeStringDelegate.get('screen_feature_debug_reason_label');
 
+  /// 確認本文
+  String get screen_feature_debug_redownload_confirm_body =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_confirm_body',
+      );
+
+  /// 確認のキャンセル
+  String get screen_feature_debug_redownload_confirm_cancel =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_confirm_cancel',
+      );
+
+  /// 確認の確定
+  String get screen_feature_debug_redownload_confirm_ok =>
+      LocalizeStringDelegate.get('screen_feature_debug_redownload_confirm_ok');
+
+  /// 確認ダイアログ見出し
+  String get screen_feature_debug_redownload_confirm_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_confirm_title',
+      );
+
+  /// 競合
+  String get screen_feature_debug_redownload_disabled_busy =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_disabled_busy',
+      );
+
+  /// 二重開始
+  String get screen_feature_debug_redownload_disabled_running =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_disabled_running',
+      );
+
+  /// 非対応
+  String get screen_feature_debug_redownload_disabled_unavailable =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_disabled_unavailable',
+      );
+
+  /// 共通失敗
+  String get screen_feature_debug_redownload_failed =>
+      LocalizeStringDelegate.get('screen_feature_debug_redownload_failed');
+
+  /// 通信失敗
+  String get screen_feature_debug_redownload_failed_network =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_failed_network',
+      );
+
+  /// 容量不足
+  String get screen_feature_debug_redownload_failed_storage =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_failed_storage',
+      );
+
+  /// Wi-Fi 以外
+  String get screen_feature_debug_redownload_failed_wifi =>
+      LocalizeStringDelegate.get('screen_feature_debug_redownload_failed_wifi');
+
+  /// LFM VL 強制再ダウンロードボタン
+  String get screen_feature_debug_redownload_meter_vl =>
+      LocalizeStringDelegate.get('screen_feature_debug_redownload_meter_vl');
+
+  /// ボタン説明
+  String get screen_feature_debug_redownload_meter_vl_description =>
+      LocalizeStringDelegate.get(
+        'screen_feature_debug_redownload_meter_vl_description',
+      );
+
+  /// 実行中表示
+  String get screen_feature_debug_redownload_running =>
+      LocalizeStringDelegate.get('screen_feature_debug_redownload_running');
+
+  /// 成功
+  String get screen_feature_debug_redownload_success =>
+      LocalizeStringDelegate.get('screen_feature_debug_redownload_success');
+
   /// 診断再実行ボタン
   String get screen_feature_debug_run_diagnose =>
       LocalizeStringDelegate.get('screen_feature_debug_run_diagnose');

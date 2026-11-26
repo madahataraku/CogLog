@@ -6,6 +6,7 @@ version: 0.1.0+1
 
 environment:
   sdk: ^3.13.7
+  flutter: ">=3.47.0 <4.0.0"
 
 dependencies:
   infra_meter_vl: any
@@ -15,7 +16,8 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: any
+  flutter_test:
+    sdk: flutter
   infra_meter_vl_testing: any
   infra_network_connectivity_testing: any
   infra_on_device_llm_testing: any
-  test: any

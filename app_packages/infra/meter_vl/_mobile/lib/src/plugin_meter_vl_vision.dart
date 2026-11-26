@@ -131,4 +131,22 @@ final class PluginMeterVlVision implements MeterVlVision {
   /// ```
   @override
   Stream<double> prepareModel() => _client.prepareModel();
+
+  /// ネイティブ client へ削除を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await plugin.deleteDownloadedModels();
+  /// ```
+  @override
+  Future<void> deleteDownloadedModels() => _client.deleteDownloadedModels();
+
+  /// ネイティブ client の busy 判定を委譲する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await plugin.isOperationBusy;
+  /// ```
+  @override
+  Future<bool> get isOperationBusy => _client.isOperationBusy;
 }

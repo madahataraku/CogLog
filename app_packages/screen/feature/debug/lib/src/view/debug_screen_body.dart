@@ -5,6 +5,8 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:usecase_meter_vl_guidance/usecase_meter_vl_guidance.dart';
+import 'package:view_confirm_dialog/view_confirm_dialog.dart';
 
 import '../strings.dart';
 import '../viewmodel/debug_screen_view_model.dart';
@@ -40,6 +42,7 @@ class DebugScreenBody extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entity = ref.watch(DebugScreenProviders.entity);
+    final viewModel = ref.watch(DebugScreenViewModel.provider);
     final logController = useTextEditingController();
     final logScrollController = useScrollController();
     final logText = entity.logLines.join('\n');
@@ -48,6 +51,16 @@ class DebugScreenBody extends HookConsumerWidget {
       syncLogText(logController, logScrollController, logText);
       return null;
     }, [logText]);
+    useEffect(() {
+      if (!entity.diagnoseRefreshPending) {
+        return null;
+      }
+      unawaited(() async {
+        await viewModel.onInitialize();
+        await viewModel.onAcknowledgeRedownloadDiagnoseRefresh();
+      }());
+      return null;
+    }, [entity.diagnoseRefreshPending, viewModel]);
     // null は未診断、bool はローカライズした yes/no へ。
     final canGenerateText = switch (entity.canGenerate) {
       null => '-',
@@ -223,6 +236,42 @@ class DebugScreenBody extends HookConsumerWidget {
                 ? null
                 : () => ref.read(DebugScreenViewModel.provider).onInitialize(),
             child: Text(strings.screen_feature_debug_run_diagnose),
+          ),
+          const SizedBox(height: 12),
+          Text(strings.screen_feature_debug_redownload_meter_vl_description),
+          if (entity.redownloadDisabledReason.isNotEmpty)
+            Text(entity.redownloadDisabledReason),
+          if (entity.redownloadStatusText.isNotEmpty)
+            Text(entity.redownloadStatusText),
+          if (entity.redownloadPhase == MeterVlRedownloadPhase.running) ...[
+            FDeterminateProgress(
+              value: entity.redownloadProgress.clamp(0.0, 1.0),
+            ),
+            Text(
+              '${(entity.redownloadProgress.clamp(0.0, 1.0) * 100).round()}%',
+            ),
+          ],
+          FButton(
+            onPress: entity.redownloadEnabled
+                ? () async {
+                    final ok = await showConfirmDialog(
+                      context,
+                      title:
+                          strings.screen_feature_debug_redownload_confirm_title,
+                      body:
+                          strings.screen_feature_debug_redownload_confirm_body,
+                      confirmLabel:
+                          strings.screen_feature_debug_redownload_confirm_ok,
+                      cancelLabel: strings
+                          .screen_feature_debug_redownload_confirm_cancel,
+                    );
+                    if (!ok || !context.mounted) {
+                      return;
+                    }
+                    unawaited(viewModel.onRedownloadMeterVl());
+                  }
+                : null,
+            child: Text(strings.screen_feature_debug_redownload_meter_vl),
           ),
           const SizedBox(height: 24),
           Row(

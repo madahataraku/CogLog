@@ -131,6 +131,91 @@ void main() {
     );
   });
 
+  test('deleteDownloadedModels は method を呼ぶ', () async {
+    const channel = MethodChannel('test_meter_vl_delete');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          expect(call.method, 'deleteDownloadedModels');
+          return null;
+        });
+    addTearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null);
+    });
+
+    final client = MethodChannelMeterVlNativeClient(methodChannel: channel);
+    await client.deleteDownloadedModels();
+  });
+
+  test('deleteDownloadedModels の PlatformException を写す', () async {
+    const channel = MethodChannel('test_meter_vl_delete_error');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          throw PlatformException(code: 'busy', message: 'in progress');
+        });
+    addTearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null);
+    });
+
+    final client = MethodChannelMeterVlNativeClient(methodChannel: channel);
+    await expectLater(
+      client.deleteDownloadedModels(),
+      throwsA(
+        isA<MeterVlPrepareException>().having(
+          (e) => e.kind,
+          'kind',
+          MeterVlPrepareFailureKind.generic,
+        ),
+      ),
+    );
+  });
+
+  test('isOperationBusy は true/false を返す', () async {
+    const channel = MethodChannel('test_meter_vl_busy');
+    var response = true;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          expect(call.method, 'isOperationBusy');
+          return response;
+        });
+    addTearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null);
+    });
+
+    final client = MethodChannelMeterVlNativeClient(methodChannel: channel);
+    expect(await client.isOperationBusy, isTrue);
+    response = false;
+    expect(await client.isOperationBusy, isFalse);
+  });
+
+  test('isOperationBusy の null は false', () async {
+    const channel = MethodChannel('test_meter_vl_busy_null');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async => null);
+    addTearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null);
+    });
+
+    final client = MethodChannelMeterVlNativeClient(methodChannel: channel);
+    expect(await client.isOperationBusy, isFalse);
+  });
+
+  test('mapDeleteError は busy を generic に写す', () {
+    expect(
+      MethodChannelMeterVlNativeClient.mapDeleteError(
+        PlatformException(code: 'busy', message: 'in progress'),
+      ),
+      isA<MeterVlPrepareException>().having(
+        (e) => e.kind,
+        'kind',
+        MeterVlPrepareFailureKind.generic,
+      ),
+    );
+  });
+
   test('generateWithImage は本文を返す', () async {
     const channel = MethodChannel('test_meter_vl_generate');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger

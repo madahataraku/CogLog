@@ -3,7 +3,7 @@ import 'package:infra_meter_vl_testing/infra_meter_vl_testing.dart';
 import 'package:infra_network_connectivity_testing/infra_network_connectivity_testing.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:usecase_meter_vl_guidance_impl/usecase_meter_vl_guidance_impl.dart';
 
 void main() {

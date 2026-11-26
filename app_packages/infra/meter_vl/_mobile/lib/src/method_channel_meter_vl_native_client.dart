@@ -62,6 +62,27 @@ final class MethodChannelMeterVlNativeClient implements MeterVlNativeClient {
     return MeterVlPrepareException(kind, message: error.message);
   }
 
+  /// delete 用。`busy` は generic（画面は競合文言を別経路で出す）。
+  ///
+  /// Example:
+  /// ```dart
+  /// MethodChannelMeterVlNativeClient.mapDeleteError(
+  ///   PlatformException(code: 'busy'),
+  /// );
+  /// ```
+  @visibleForTesting
+  static Object mapDeleteError(Object error) {
+    if (error is! PlatformException) {
+      return error;
+    }
+    // ネイティブ busy も MeterVlPrepareException(generic) に落とす。
+    // 開始前の競合拒否は Dart 側 isOperationBusy で先に弾く。
+    return MeterVlPrepareException(
+      MeterVlPrepareFailureKind.generic,
+      message: error.message,
+    );
+  }
+
   /// ネイティブへ可用性を問い合わせる。
   ///
   /// 応答 Map が無いときは `platformUnsupported` の unavailable を返す。
@@ -181,5 +202,34 @@ final class MethodChannelMeterVlNativeClient implements MeterVlNativeClient {
       },
     );
     return controller.stream;
+  }
+
+  /// MethodChannel `deleteDownloadedModels` を呼び、失敗を [mapDeleteError] へ写す。
+  ///
+  /// Example:
+  /// ```dart
+  /// await client.deleteDownloadedModels();
+  /// ```
+  @override
+  Future<void> deleteDownloadedModels() async {
+    try {
+      await methodChannel.invokeMethod<void>('deleteDownloadedModels');
+    } on Exception catch (error, stackTrace) {
+      // PlatformException 等の失敗を MeterVlPrepareException へ揃える。
+      // Error はチャネル実装の想定外として再 throw させる。
+      Error.throwWithStackTrace(mapDeleteError(error), stackTrace);
+    }
+  }
+
+  /// MethodChannel `isOperationBusy` を呼び、null は false とみなす。
+  ///
+  /// Example:
+  /// ```dart
+  /// await client.isOperationBusy;
+  /// ```
+  @override
+  Future<bool> get isOperationBusy async {
+    final busy = await methodChannel.invokeMethod<bool>('isOperationBusy');
+    return busy ?? false;
   }
 }

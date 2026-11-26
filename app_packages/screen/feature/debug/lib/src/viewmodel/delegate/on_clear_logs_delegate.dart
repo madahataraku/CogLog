@@ -33,15 +33,7 @@ final class OnClearLogsDelegate {
   Future<void> execute() async {
     log.clear();
     await state.updateWithLock((current, emitter) async {
-      await emitter.emit(
-        DebugScreenState(
-          running: current.running,
-          result: current.result,
-          meterVlResult: current.meterVlResult,
-          logs: log.entries,
-          preferLfmVlOverOsLlm: current.preferLfmVlOverOsLlm,
-        ),
-      );
+      await emitter.emit(current.copyWith(logs: log.entries));
     });
   }
 }
