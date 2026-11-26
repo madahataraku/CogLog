@@ -94,6 +94,7 @@ class MeterCaptureStep1View extends ConsumerWidget {
           child: SizedBox(
             height: 72,
             child: Row(
+              spacing: 12,
               children: [
                 Expanded(
                   child: FButton(
