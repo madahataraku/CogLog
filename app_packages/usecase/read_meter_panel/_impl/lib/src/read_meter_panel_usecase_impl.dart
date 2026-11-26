@@ -6,11 +6,11 @@ import 'package:infra_meter_reading/infra_meter_reading.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 
-/// OS LLM ready+vision なら [llmEngine]、さもなければ [gemmaEngine] が available ならそれを試し、
+/// OS LLM ready+vision なら [llmEngine]、さもなければ [meterVlEngine] が available ならそれを試し、
 /// どちらも無ければ手打ちへ進む。
 ///
-/// [sessionPreference.preferLfmVlOverOsLlm] が true かつ [gemmaEngine] が available のときは
-/// ready+vision でも [gemmaEngine] を選ぶ。
+/// [sessionPreference.preferLfmVlOverOsLlm] が true かつ [meterVlEngine] が available のときは
+/// ready+vision でも [meterVlEngine] を選ぶ。
 ///
 /// 全体の上限は [timeout]（既定 60 秒）。
 /// 超過時はその時点の結果を返す。
@@ -21,7 +21,7 @@ import 'package:usecase_read_meter_panel/usecase_read_meter_panel.dart';
 /// ReadMeterPanelUsecaseImpl(
 ///   llm: llm,
 ///   llmEngine: llmEngine,
-///   gemmaEngine: gemmaEngine,
+///   meterVlEngine: meterVlEngine,
 ///   log: AppLogStore(),
 /// ).execute(ReadMeterPanelRequest(photoBytes: Uint8List(0)));
 /// ```
@@ -33,14 +33,14 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   /// ReadMeterPanelUsecaseImpl(
   ///   llm: llm,
   ///   llmEngine: llmEngine,
-  ///   gemmaEngine: gemmaEngine,
+  ///   meterVlEngine: meterVlEngine,
   ///   log: AppLogStore(),
   /// );
   /// ```
   ReadMeterPanelUsecaseImpl({
     required this.llm,
     required this.llmEngine,
-    required this.gemmaEngine,
+    required this.meterVlEngine,
     AppLogStore? log,
     MeterReadingEngineSessionPreference? sessionPreference,
     this.timeout = const Duration(seconds: 60),
@@ -55,7 +55,7 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
   final MeterReadingEngine llmEngine;
 
   /// OS LLM が使えないときのフォールバック読み取りエンジン。
-  final MeterReadingEngine gemmaEngine;
+  final MeterReadingEngine meterVlEngine;
 
   /// デバッグ画面向けのプロセス内ログ。
   final AppLogStore log;
@@ -149,8 +149,8 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     );
   }
 
-  /// [sessionPreference.preferLfmVlOverOsLlm] かつ Gemma available なら [gemmaEngine]。
-  /// さもなければ ready+vision なら [llmEngine]、さらにさもなければ Gemma available ならそれ。
+  /// [sessionPreference.preferLfmVlOverOsLlm] かつメーター VL available なら [meterVlEngine]。
+  /// さもなければ ready+vision なら [llmEngine]、さらにさもなければメーター VL available ならそれ。
   /// それ以外は null。
   ///
   /// Example:
@@ -162,16 +162,16 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
     final readiness = await llm.readiness;
     final vision = await llm.supportsVision;
     final preferLfmVl = sessionPreference.preferLfmVlOverOsLlm;
-    if (preferLfmVl && await gemmaEngine.isAvailable) {
+    if (preferLfmVl && await meterVlEngine.isAvailable) {
       log.append(
         tag: 'meter.read',
         level: AppLogLevel.info,
         message:
-            'select gemma kind=${gemmaEngine.kind.name}; '
+            'select meterVl kind=${meterVlEngine.kind.name}; '
             'reason=debug_prefer_lfm_vl; '
             'readiness=${readiness.name}; vision=$vision',
       );
-      return gemmaEngine;
+      return meterVlEngine;
     }
     if (readiness == OnDeviceLlmReadiness.ready && vision) {
       log.append(
@@ -183,23 +183,23 @@ final class ReadMeterPanelUsecaseImpl implements ReadMeterPanelUsecase {
       );
       return llmEngine;
     }
-    if (await gemmaEngine.isAvailable) {
+    if (await meterVlEngine.isAvailable) {
       log.append(
         tag: 'meter.read',
         level: AppLogLevel.info,
         message:
-            'select gemma kind=${gemmaEngine.kind.name}; '
+            'select meterVl kind=${meterVlEngine.kind.name}; '
             'reason=os_llm_unavailable; '
             'readiness=${readiness.name}; vision=$vision',
       );
-      return gemmaEngine;
+      return meterVlEngine;
     }
     log.append(
       tag: 'meter.read',
       level: AppLogLevel.warn,
       message:
           'no engine; readiness=${readiness.name}; vision=$vision; '
-          'gemmaUnavailable; preferLfmVl=$preferLfmVl',
+          'meterVlUnavailable; preferLfmVl=$preferLfmVl',
     );
     return null;
   }

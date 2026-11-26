@@ -23,7 +23,7 @@ void main() {
       const DebugScreenState(
         running: false,
         result: null,
-        gemmaResult: null,
+        meterVlResult: null,
         logs: [],
         preferLfmVlOverOsLlm: true,
       ),

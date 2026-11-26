@@ -17,7 +17,7 @@ dependencies:
   forui: any
   foundation_resources: any
   hooks_riverpod: any
-  infra_gemma_meter: any
+  infra_meter_vl: any
   material_ui: any
   meta: any
   monolith_localization_runtime: any
@@ -26,7 +26,7 @@ dependencies:
   state_stream: any
   state_stream_riverpod: any
   usecase_generate_top_advice: any
-  usecase_gemma_meter_guidance: any
+  usecase_meter_vl_guidance: any
   usecase_load_achievements: any
   usecase_load_top_screen: any
   usecase_on_device_llm_guidance: any

@@ -48,7 +48,7 @@ final class TopScreenStateToEntityDelegate {
       adviceText: state.adviceText,
       adviceTone: state.adviceTone,
       pendingModelDownloadGuidance: state.pendingModelDownloadGuidance,
-      pendingGemmaMeterGuidance: state.pendingGemmaMeterGuidance,
+      pendingMeterVlGuidance: state.pendingMeterVlGuidance,
       pendingTutorialMain: state.pendingTutorialMain,
       tutorialMainStep: state.tutorialMainStep,
       pendingTutorialAchievement: state.pendingTutorialAchievement,

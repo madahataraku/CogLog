@@ -1,0 +1,21 @@
+name: usecase_meter_vl_guidance_impl
+description: Meter VL guidance usecase implementations.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_meter_vl: any
+  infra_network_connectivity: any
+  infra_on_device_llm: any
+  usecase_meter_vl_guidance: any
+
+dev_dependencies:
+  flutter_lints: any
+  infra_meter_vl_testing: any
+  infra_network_connectivity_testing: any
+  infra_on_device_llm_testing: any
+  test: any

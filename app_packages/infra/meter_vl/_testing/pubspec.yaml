@@ -1,0 +1,16 @@
+name: infra_meter_vl_testing
+description: Fake MeterVlVision for tests.
+publish_to: none
+resolution: workspace
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  infra_meter_vl:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: any
+  test: any

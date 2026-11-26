@@ -18,18 +18,18 @@
 ///   generateError: '-',
 ///   prepareError: '-',
 ///   probeSkipped: '-',
-///   gemmaReadiness: '-',
-///   gemmaStatus: '-',
-///   gemmaReason: '-',
-///   gemmaMessage: '-',
-///   gemmaBackend: '-',
-///   gemmaVisionBackend: '-',
-///   gemmaAvailabilityError: '-',
-///   gemmaCanGenerate: null,
-///   gemmaProbeOutputLength: '-',
-///   gemmaGenerateError: '-',
-///   gemmaPrepareError: '-',
-///   gemmaProbeSkipped: '-',
+///   meterVlReadiness: '-',
+///   meterVlStatus: '-',
+///   meterVlReason: '-',
+///   meterVlMessage: '-',
+///   meterVlBackend: '-',
+///   meterVlVisionBackend: '-',
+///   meterVlAvailabilityError: '-',
+///   meterVlCanGenerate: null,
+///   meterVlProbeOutputLength: '-',
+///   meterVlGenerateError: '-',
+///   meterVlPrepareError: '-',
+///   meterVlProbeSkipped: '-',
 ///   preferLfmVlOverOsLlm: false,
 ///   logLines: [],
 /// );
@@ -53,18 +53,18 @@ final class DebugScreenEntity {
   ///   generateError: '-',
   ///   prepareError: '-',
   ///   probeSkipped: '-',
-  ///   gemmaReadiness: 'ready',
-  ///   gemmaStatus: 'available',
-  ///   gemmaReason: 'ready',
-  ///   gemmaMessage: 'ok',
-  ///   gemmaBackend: 'gpu',
-  ///   gemmaVisionBackend: 'cpu',
-  ///   gemmaAvailabilityError: '-',
-  ///   gemmaCanGenerate: true,
-  ///   gemmaProbeOutputLength: '2',
-  ///   gemmaGenerateError: '-',
-  ///   gemmaPrepareError: '-',
-  ///   gemmaProbeSkipped: '-',
+  ///   meterVlReadiness: 'ready',
+  ///   meterVlStatus: 'available',
+  ///   meterVlReason: 'ready',
+  ///   meterVlMessage: 'ok',
+  ///   meterVlBackend: 'gpu',
+  ///   meterVlVisionBackend: 'cpu',
+  ///   meterVlAvailabilityError: '-',
+  ///   meterVlCanGenerate: true,
+  ///   meterVlProbeOutputLength: '2',
+  ///   meterVlGenerateError: '-',
+  ///   meterVlPrepareError: '-',
+  ///   meterVlProbeSkipped: '-',
   ///   preferLfmVlOverOsLlm: true,
   ///   logLines: ['line'],
   /// );
@@ -83,18 +83,18 @@ final class DebugScreenEntity {
     required this.generateError,
     required this.prepareError,
     required this.probeSkipped,
-    required this.gemmaReadiness,
-    required this.gemmaStatus,
-    required this.gemmaReason,
-    required this.gemmaMessage,
-    required this.gemmaBackend,
-    required this.gemmaVisionBackend,
-    required this.gemmaAvailabilityError,
-    required this.gemmaCanGenerate,
-    required this.gemmaProbeOutputLength,
-    required this.gemmaGenerateError,
-    required this.gemmaPrepareError,
-    required this.gemmaProbeSkipped,
+    required this.meterVlReadiness,
+    required this.meterVlStatus,
+    required this.meterVlReason,
+    required this.meterVlMessage,
+    required this.meterVlBackend,
+    required this.meterVlVisionBackend,
+    required this.meterVlAvailabilityError,
+    required this.meterVlCanGenerate,
+    required this.meterVlProbeOutputLength,
+    required this.meterVlGenerateError,
+    required this.meterVlPrepareError,
+    required this.meterVlProbeSkipped,
     required this.preferLfmVlOverOsLlm,
     required this.logLines,
   });
@@ -138,43 +138,43 @@ final class DebugScreenEntity {
   /// プローブをスキップした理由。該当無しは `'-'`。
   final String probeSkipped;
 
-  /// Gemma の readiness 名。未取得は `'-'`。
-  final String gemmaReadiness;
+  /// メーター VL の readiness 名。未取得は `'-'`。
+  final String meterVlReadiness;
 
-  /// Gemma の status。空・未取得は `'-'`。
-  final String gemmaStatus;
+  /// メーター VL の status。空・未取得は `'-'`。
+  final String meterVlStatus;
 
-  /// Gemma の reason。空・未取得は `'-'`。
-  final String gemmaReason;
+  /// メーター VL の reason。空・未取得は `'-'`。
+  final String meterVlReason;
 
-  /// Gemma の message。空・未取得は `'-'`。
-  final String gemmaMessage;
+  /// メーター VL の message。空・未取得は `'-'`。
+  final String meterVlMessage;
 
-  /// Gemma の LiteRT-LM main backend（例: `gpu` / `cpu`）。空・未取得は `'-'`。
-  final String gemmaBackend;
+  /// メーター VL の LiteRT-LM main backend（例: `gpu` / `cpu`）。空・未取得は `'-'`。
+  final String meterVlBackend;
 
-  /// Gemma の LiteRT-LM visionBackend（例: `gpu` / `cpu`）。空・未取得は `'-'`。
-  final String gemmaVisionBackend;
+  /// メーター VL の LiteRT-LM visionBackend（例: `gpu` / `cpu`）。空・未取得は `'-'`。
+  final String meterVlVisionBackend;
 
-  /// Gemma 利用可否例外。無ければ `'-'`。
-  final String gemmaAvailabilityError;
+  /// メーター VL 利用可否例外。無ければ `'-'`。
+  final String meterVlAvailabilityError;
 
-  /// Gemma 画像プローブの可否。未診断は null。
-  final bool? gemmaCanGenerate;
+  /// メーター VL 画像プローブの可否。未診断は null。
+  final bool? meterVlCanGenerate;
 
-  /// Gemma プローブ本文の長さ（文字列）。未取得は `'-'`。
-  final String gemmaProbeOutputLength;
+  /// メーター VL プローブ本文の長さ（文字列）。未取得は `'-'`。
+  final String meterVlProbeOutputLength;
 
-  /// Gemma 生成例外。無ければ `'-'`。
-  final String gemmaGenerateError;
+  /// メーター VL 生成例外。無ければ `'-'`。
+  final String meterVlGenerateError;
 
-  /// Gemma 準備例外。無ければ `'-'`。
-  final String gemmaPrepareError;
+  /// メーター VL 準備例外。無ければ `'-'`。
+  final String meterVlPrepareError;
 
-  /// Gemma プローブ省略理由。該当無しは `'-'`。
-  final String gemmaProbeSkipped;
+  /// メーター VL プローブ省略理由。該当無しは `'-'`。
+  final String meterVlProbeSkipped;
 
-  /// 同一プロセス内で Gemma をメーター読み取りで優先するとき true。
+  /// 同一プロセス内で メーター VL をメーター読み取りで優先するとき true。
   final bool preferLfmVlOverOsLlm;
 
   /// 古い行が先（上が古い）になるログ文字列。各要素は 1 エントリ分。

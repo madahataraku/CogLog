@@ -4,15 +4,15 @@ import 'package:forui/forui.dart';
 import 'package:foundation_app_log/foundation_app_log.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:infra_gemma_meter_testing/infra_gemma_meter_testing.dart';
+import 'package:infra_meter_vl_testing/infra_meter_vl_testing.dart';
 import 'package:infra_on_device_llm/infra_on_device_llm.dart';
 import 'package:infra_on_device_llm_testing/infra_on_device_llm_testing.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_debug/src/view/debug_screen_body.dart';
 import 'package:screen_navigation/screen_navigation.dart';
-import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
-import 'package:usecase_diagnose_gemma_meter_impl/usecase_diagnose_gemma_meter_impl.dart';
+import 'package:usecase_diagnose_meter_vl/usecase_diagnose_meter_vl.dart';
+import 'package:usecase_diagnose_meter_vl_impl/usecase_diagnose_meter_vl_impl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 import 'package:usecase_diagnose_on_device_llm_impl/usecase_diagnose_on_device_llm_impl.dart';
 
@@ -166,9 +166,9 @@ void main() {
                 log: log,
               ),
             ),
-            DiagnoseGemmaMeterUsecase.provider.overrideWith(
-              (ref) => DiagnoseGemmaMeterUsecaseImpl(
-                gemma: FakeGemmaMeterVision(response: 'ok'),
+            DiagnoseMeterVlUsecase.provider.overrideWith(
+              (ref) => DiagnoseMeterVlUsecaseImpl(
+                meterVl: FakeMeterVlVision(response: 'ok'),
                 log: log,
               ),
             ),

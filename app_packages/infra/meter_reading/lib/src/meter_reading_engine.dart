@@ -63,8 +63,8 @@ final meterReadingLlmEngineProvider = Provider<MeterReadingEngine>(
 ///
 /// Example:
 /// ```dart
-/// meterReadingGemmaEngineProvider;
+/// meterReadingMeterVlEngineProvider;
 /// ```
-final meterReadingGemmaEngineProvider = Provider<MeterReadingEngine>(
-  (ref) => throw UnimplementedError('meterReadingGemmaEngineProvider'),
+final meterReadingMeterVlEngineProvider = Provider<MeterReadingEngine>(
+  (ref) => throw UnimplementedError('meterReadingMeterVlEngineProvider'),
 );

@@ -83,7 +83,7 @@ Java / Kotlin の JVM ターゲットは **17** に揃える（`app/android/app/
 メーター読み取りの自動解析は OS LLM または LFM VL のみとする。空間 OCR
 （ML Kit / Vision / 七セグ TFLite。メーター読み取り用の独自 Core ML OCR を含む）は採用しない。
 
-LFM VL 経路（`infra_gemma_meter_mobile`）は Android / iOS とも LiteRT-LM を使う。
+LFM VL 経路（`infra_meter_vl_mobile`）は Android / iOS とも LiteRT-LM を使う。
 Android 依存は `com.google.ai.edge.litertlm:litertlm-android`（実効版はビルド時に
 Google Maven の release を追う。ピン留めしない）。iOS は Swift Package
 `https://github.com/google-ai-edge/LiteRT-LM`（product `LiteRTLM`。実効版は
@@ -111,7 +111,7 @@ Foundation Models ほかの要件に合わせ iOS 18 未満にしない（LiteRT
 
 LFM VL 経路は LiteRT-LM（Swift Package `https://github.com/google-ai-edge/LiteRT-LM`、
 product `LiteRTLM`）を使う。CocoaPods だけでは LiteRTLM がリンクされないため、
-アプリの Xcode / Flutter SPM 側で依存を解決する（`infra_gemma_meter_mobile` の
+アプリの Xcode / Flutter SPM 側で依存を解決する（`infra_meter_vl_mobile` の
 README・podspec コメントを参照。`Runner.xcodeproj` にも LiteRTLM をリンクする）。
 LiteRT-LM を OSS ライセンス一覧（`extraOssLicenses`）の対象に含める。
 モデルはアプリ同梱せず、Android と同じ Hugging Face `litert-community`

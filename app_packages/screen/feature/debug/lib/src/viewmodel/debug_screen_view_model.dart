@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
-import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
+import 'package:usecase_diagnose_meter_vl/usecase_diagnose_meter_vl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 
 import 'delegate/debug_state_to_entity_delegate.dart';
@@ -45,13 +45,13 @@ final class DebugScreenViewModel {
           DebugScreenState(
             running: false,
             result: null,
-            gemmaResult: null,
+            meterVlResult: null,
             logs: [],
             preferLfmVlOverOsLlm: sessionPreference.preferLfmVlOverOsLlm,
           ),
         ),
         diagnoseUsecase: ref.watch(DiagnoseOnDeviceLlmUsecase.provider),
-        diagnoseGemmaUsecase: ref.watch(DiagnoseGemmaMeterUsecase.provider),
+        diagnoseMeterVlUsecase: ref.watch(DiagnoseMeterVlUsecase.provider),
         log: log,
         sessionPreference: sessionPreference,
         navigation: ref.watch(screenNavigationProvider),
@@ -70,7 +70,7 @@ final class DebugScreenViewModel {
     },
     dependencies: [
       DiagnoseOnDeviceLlmUsecase.provider,
-      DiagnoseGemmaMeterUsecase.provider,
+      DiagnoseMeterVlUsecase.provider,
       appLogStoreProvider,
       meterReadingEngineSessionPreferenceProvider,
       screenNavigationProvider,
@@ -85,9 +85,9 @@ final class DebugScreenViewModel {
   @visibleForTesting
   final DiagnoseOnDeviceLlmUsecase diagnoseUsecase;
 
-  /// Gemma メーター診断 Usecase。
+  /// メーター VL診断 Usecase。
   @visibleForTesting
-  final DiagnoseGemmaMeterUsecase diagnoseGemmaUsecase;
+  final DiagnoseMeterVlUsecase diagnoseMeterVlUsecase;
 
   /// アプリログ。
   @visibleForTesting
@@ -114,7 +114,7 @@ final class DebugScreenViewModel {
   const DebugScreenViewModel._({
     required this.state,
     required this.diagnoseUsecase,
-    required this.diagnoseGemmaUsecase,
+    required this.diagnoseMeterVlUsecase,
     required this.log,
     required this.sessionPreference,
     required this.navigation,

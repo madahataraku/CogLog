@@ -24,12 +24,12 @@ void main() {
       isA<LlmMeterReadingEngine>(),
     );
     expect(
-      container.read(meterReadingGemmaEngineProvider).kind,
+      container.read(meterReadingMeterVlEngineProvider).kind,
       MeterReadingEngineKind.lfmVl,
     );
     expect(
-      container.read(meterReadingGemmaEngineProvider),
-      isA<GemmaMeterReadingEngine>(),
+      container.read(meterReadingMeterVlEngineProvider),
+      isA<MeterVlReadingEngine>(),
     );
     expect(container.read(meterReadingEnginesProvider), hasLength(2));
     expect(container.read(meterReadingEnginesProvider).map((e) => e.kind), [
@@ -48,7 +48,7 @@ void main() {
       MeterReadingEngineKind.geminiNano,
     );
     expect(
-      container.read(meterReadingGemmaEngineProvider).kind,
+      container.read(meterReadingMeterVlEngineProvider).kind,
       MeterReadingEngineKind.lfmVl,
     );
     expect(container.read(meterReadingEnginesProvider), hasLength(2));
@@ -68,7 +68,7 @@ void main() {
       isA<UnavailableMeterReadingEngine>(),
     );
     expect(
-      container.read(meterReadingGemmaEngineProvider).kind,
+      container.read(meterReadingMeterVlEngineProvider).kind,
       MeterReadingEngineKind.lfmVl,
     );
     expect(container.read(meterReadingEnginesProvider), hasLength(2));

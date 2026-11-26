@@ -18,12 +18,12 @@ mixin class L10nStringsMixin {
       LocalizeStringDelegate.get('view_model_download_guidance_dismiss');
 
   /// LFM VL誘導本文
-  String get view_model_download_guidance_gemma_body =>
-      LocalizeStringDelegate.get('view_model_download_guidance_gemma_body');
+  String get view_model_download_guidance_meter_vl_body =>
+      LocalizeStringDelegate.get('view_model_download_guidance_meter_vl_body');
 
   /// LFM VL誘導タイトル
-  String get view_model_download_guidance_gemma_title =>
-      LocalizeStringDelegate.get('view_model_download_guidance_gemma_title');
+  String get view_model_download_guidance_meter_vl_title =>
+      LocalizeStringDelegate.get('view_model_download_guidance_meter_vl_title');
 
   /// 準備開始
   String get view_model_download_guidance_prepare =>

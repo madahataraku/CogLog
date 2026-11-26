@@ -28,8 +28,8 @@ final class DebugStateToEntityDelegate {
   DebugScreenEntity execute(DebugScreenState state) {
     final result = state.result;
     final snapshot = result?.snapshot;
-    final gemma = state.gemmaResult;
-    final gemmaSnapshot = gemma?.snapshot;
+    final meterVl = state.meterVlResult;
+    final meterVlSnapshot = meterVl?.snapshot;
     // ラベル行の未取得表示を画面全体で揃える。
     String dash(String? value) {
       if (value == null || value.isEmpty) {
@@ -62,18 +62,18 @@ final class DebugStateToEntityDelegate {
       generateError: dash(result?.generateError),
       prepareError: dash(result?.prepareError),
       probeSkipped: dash(result?.probeSkippedReason),
-      gemmaReadiness: gemmaSnapshot?.readiness.name ?? '-',
-      gemmaStatus: dash(gemmaSnapshot?.status),
-      gemmaReason: dash(gemmaSnapshot?.reason),
-      gemmaMessage: dash(gemmaSnapshot?.message),
-      gemmaBackend: dash(gemmaSnapshot?.backend),
-      gemmaVisionBackend: dash(gemmaSnapshot?.visionBackend),
-      gemmaAvailabilityError: dash(gemma?.availabilityError),
-      gemmaCanGenerate: gemma?.canGenerate,
-      gemmaProbeOutputLength: gemma?.probeOutputLength?.toString() ?? '-',
-      gemmaGenerateError: dash(gemma?.generateError),
-      gemmaPrepareError: dash(gemma?.prepareError),
-      gemmaProbeSkipped: dash(gemma?.probeSkippedReason),
+      meterVlReadiness: meterVlSnapshot?.readiness.name ?? '-',
+      meterVlStatus: dash(meterVlSnapshot?.status),
+      meterVlReason: dash(meterVlSnapshot?.reason),
+      meterVlMessage: dash(meterVlSnapshot?.message),
+      meterVlBackend: dash(meterVlSnapshot?.backend),
+      meterVlVisionBackend: dash(meterVlSnapshot?.visionBackend),
+      meterVlAvailabilityError: dash(meterVl?.availabilityError),
+      meterVlCanGenerate: meterVl?.canGenerate,
+      meterVlProbeOutputLength: meterVl?.probeOutputLength?.toString() ?? '-',
+      meterVlGenerateError: dash(meterVl?.generateError),
+      meterVlPrepareError: dash(meterVl?.prepareError),
+      meterVlProbeSkipped: dash(meterVl?.probeSkippedReason),
       preferLfmVlOverOsLlm: state.preferLfmVlOverOsLlm,
       logLines: logLines,
     );

@@ -48,7 +48,7 @@ final class OnTogglePreferLfmVlDelegate {
         DebugScreenState(
           running: current.running,
           result: current.result,
-          gemmaResult: current.gemmaResult,
+          meterVlResult: current.meterVlResult,
           logs: current.logs,
           preferLfmVlOverOsLlm: preferLfmVl,
         ),

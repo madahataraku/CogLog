@@ -34,7 +34,7 @@ TopScreenState _baseState({
     adviceText: '',
     adviceTone: AdviceTone.fun,
     pendingModelDownloadGuidance: false,
-    pendingGemmaMeterGuidance: false,
+    pendingMeterVlGuidance: false,
     pendingTutorialMain: pendingTutorialMain,
     tutorialMainStep: tutorialMainStep,
     pendingTutorialAchievement: false,

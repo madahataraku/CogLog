@@ -266,9 +266,9 @@ const allDependencies = <Package>[
   _infra_app_runtime_info_mobile,
   _infra_app_runtime_info_testing,
   _infra_cogsav,
-  _infra_gemma_meter,
-  _infra_gemma_meter_mobile,
-  _infra_gemma_meter_testing,
+  _infra_meter_vl,
+  _infra_meter_vl_mobile,
+  _infra_meter_vl_testing,
   _infra_network_connectivity,
   _infra_network_connectivity_mobile,
   _infra_network_connectivity_testing,
@@ -319,8 +319,8 @@ const allDependencies = <Package>[
   _usecase_evaluate_daily_goal_auto_update_impl,
   _usecase_diagnose_on_device_llm,
   _usecase_diagnose_on_device_llm_impl,
-  _usecase_diagnose_gemma_meter,
-  _usecase_diagnose_gemma_meter_impl,
+  _usecase_diagnose_meter_vl,
+  _usecase_diagnose_meter_vl_impl,
   _usecase_generate_top_advice,
   _usecase_generate_top_advice_impl,
   _usecase_injection,
@@ -352,8 +352,8 @@ const allDependencies = <Package>[
   _usecase_open_app_settings_impl,
   _usecase_on_device_llm_guidance,
   _usecase_on_device_llm_guidance_impl,
-  _usecase_gemma_meter_guidance,
-  _usecase_gemma_meter_guidance_impl,
+  _usecase_meter_vl_guidance,
+  _usecase_meter_vl_guidance_impl,
   _usecase_read_meter_panel,
   _usecase_read_meter_panel_impl,
   _usecase_request_health_body_permission,
@@ -41760,10 +41760,10 @@ const _infra_cogsav = Package(
     devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
   );
 
-/// infra_gemma_meter 0.1.0+1
-const _infra_gemma_meter = Package(
-    name: 'infra_gemma_meter',
-    description: 'Gemma E2B meter-vision port for CogLog.',
+/// infra_meter_vl 0.1.0+1
+const _infra_meter_vl = Package(
+    name: 'infra_meter_vl',
+    description: 'Meter VL vision port for CogLog (LiteRT-LM).',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: [],
@@ -41773,16 +41773,16 @@ const _infra_gemma_meter = Package(
     devDependencies: [PackageRef('flutter_lints')],
   );
 
-/// infra_gemma_meter_mobile 0.1.0+1
-const _infra_gemma_meter_mobile = Package(
-    name: 'infra_gemma_meter_mobile',
-    description: 'Mobile GemmaMeterVision (Android / iOS LiteRT-LM Gemma E2B).',
+/// infra_meter_vl_mobile 0.1.0+1
+const _infra_meter_vl_mobile = Package(
+    name: 'infra_meter_vl_mobile',
+    description: 'Mobile MeterVlVision (Android / iOS LiteRT-LM).',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: ['MIT'],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('infra_gemma_meter'), PackageRef('meta')],
+    dependencies: [PackageRef('flutter'), PackageRef('infra_meter_vl'), PackageRef('meta')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('test')],
     license: '''MIT License
 
@@ -41807,16 +41807,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.''',
   );
 
-/// infra_gemma_meter_testing 0.1.0+1
-const _infra_gemma_meter_testing = Package(
-    name: 'infra_gemma_meter_testing',
-    description: 'Fake GemmaMeterVision for tests.',
+/// infra_meter_vl_testing 0.1.0+1
+const _infra_meter_vl_testing = Package(
+    name: 'infra_meter_vl_testing',
+    description: 'Fake MeterVlVision for tests.',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('infra_gemma_meter')],
+    dependencies: [PackageRef('infra_meter_vl')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('test')],
   );
 
@@ -41946,7 +41946,7 @@ const _infra_injection = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('foundation_app_log'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_runtime_info_mobile'), PackageRef('infra_app_settings'), PackageRef('infra_app_settings_mobile'), PackageRef('infra_gemma_meter'), PackageRef('infra_gemma_meter_mobile'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_body_metrics_mobile'), PackageRef('infra_health_workout'), PackageRef('infra_health_workout_mobile'), PackageRef('infra_local_notification'), PackageRef('infra_local_notification_mobile'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_photo_mobile'), PackageRef('infra_meter_reading'), PackageRef('infra_meter_reading_mobile'), PackageRef('infra_network_connectivity'), PackageRef('infra_network_connectivity_mobile'), PackageRef('infra_on_device_llm'), PackageRef('infra_on_device_llm_mobile'), PackageRef('infra_oss_license_catalog'), PackageRef('infra_oss_license_catalog_impl'), PackageRef('infra_user_file'), PackageRef('infra_user_file_mobile'), PackageRef('riverpod')],
+    dependencies: [PackageRef('flutter'), PackageRef('foundation_app_log'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_runtime_info_mobile'), PackageRef('infra_app_settings'), PackageRef('infra_app_settings_mobile'), PackageRef('infra_meter_vl'), PackageRef('infra_meter_vl_mobile'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_body_metrics_mobile'), PackageRef('infra_health_workout'), PackageRef('infra_health_workout_mobile'), PackageRef('infra_local_notification'), PackageRef('infra_local_notification_mobile'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_photo_mobile'), PackageRef('infra_meter_reading'), PackageRef('infra_meter_reading_mobile'), PackageRef('infra_network_connectivity'), PackageRef('infra_network_connectivity_mobile'), PackageRef('infra_on_device_llm'), PackageRef('infra_on_device_llm_mobile'), PackageRef('infra_oss_license_catalog'), PackageRef('infra_oss_license_catalog_impl'), PackageRef('infra_user_file'), PackageRef('infra_user_file_mobile'), PackageRef('riverpod')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('infra_user_file_testing')],
   );
 
@@ -42011,8 +42011,8 @@ const _infra_meter_reading_mobile = Package(
     spdxIdentifiers: ['MIT'],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_exercise_history'), PackageRef('foundation_app_log'), PackageRef('infra_gemma_meter'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_gemma_meter_testing'), PackageRef('infra_meter_reading_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
+    dependencies: [PackageRef('domain_exercise_history'), PackageRef('foundation_app_log'), PackageRef('infra_meter_vl'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_meter_vl_testing'), PackageRef('infra_meter_reading_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
     license: '''MIT License
 
 Copyright (c) 2026 Seena
@@ -42248,8 +42248,8 @@ const _screen_feature_debug = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_app_log'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_diagnose_gemma_meter'), PackageRef('usecase_diagnose_on_device_llm')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('foundation_resources'), PackageRef('infra_gemma_meter'), PackageRef('infra_gemma_meter_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test'), PackageRef('usecase_diagnose_gemma_meter_impl'), PackageRef('usecase_diagnose_on_device_llm_impl')],
+    dependencies: [PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_app_log'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_reading'), PackageRef('infra_on_device_llm'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_diagnose_meter_vl'), PackageRef('usecase_diagnose_on_device_llm')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test'), PackageRef('foundation_resources'), PackageRef('infra_meter_vl'), PackageRef('infra_meter_vl_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test'), PackageRef('usecase_diagnose_meter_vl_impl'), PackageRef('usecase_diagnose_on_device_llm_impl')],
   );
 
 /// screen_feature_exercise_history 0.1.0+1
@@ -42339,7 +42339,7 @@ const _screen_feature_top = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('hooks_riverpod'), PackageRef('infra_gemma_meter'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_gemma_meter_guidance'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_tutorial'), PackageRef('view_coach_mark'), PackageRef('view_model_download_guidance')],
+    dependencies: [PackageRef('domain_daily_goal'), PackageRef('domain_exercise_history'), PackageRef('flutter'), PackageRef('flutter_hooks'), PackageRef('forui'), PackageRef('foundation_resources'), PackageRef('hooks_riverpod'), PackageRef('infra_meter_vl'), PackageRef('material_ui'), PackageRef('meta'), PackageRef('monolith_localization_runtime'), PackageRef('riverpod'), PackageRef('screen_navigation'), PackageRef('state_stream'), PackageRef('state_stream_riverpod'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_meter_vl_guidance'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_tutorial'), PackageRef('view_coach_mark'), PackageRef('view_model_download_guidance')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_test')],
   );
 
@@ -42512,30 +42512,30 @@ const _usecase_diagnose_on_device_llm_impl = Package(
     devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
   );
 
-/// usecase_diagnose_gemma_meter 0.1.0+1
-const _usecase_diagnose_gemma_meter = Package(
-    name: 'usecase_diagnose_gemma_meter',
-    description: 'Diagnoses Gemma meter vision readiness and image probe.',
+/// usecase_diagnose_meter_vl 0.1.0+1
+const _usecase_diagnose_meter_vl = Package(
+    name: 'usecase_diagnose_meter_vl',
+    description: 'Diagnoses meter VL vision readiness and image probe.',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('infra_gemma_meter'), PackageRef('meta'), PackageRef('riverpod')],
+    dependencies: [PackageRef('infra_meter_vl'), PackageRef('meta'), PackageRef('riverpod')],
     devDependencies: [PackageRef('flutter_lints')],
   );
 
-/// usecase_diagnose_gemma_meter_impl 0.1.0+1
-const _usecase_diagnose_gemma_meter_impl = Package(
-    name: 'usecase_diagnose_gemma_meter_impl',
-    description: 'Implementation of Gemma meter diagnosis.',
+/// usecase_diagnose_meter_vl_impl 0.1.0+1
+const _usecase_diagnose_meter_vl_impl = Package(
+    name: 'usecase_diagnose_meter_vl_impl',
+    description: 'Implementation of meter VL diagnosis.',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('foundation_app_log'), PackageRef('infra_gemma_meter'), PackageRef('meta'), PackageRef('usecase_diagnose_gemma_meter')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_gemma_meter_testing'), PackageRef('test')],
+    dependencies: [PackageRef('foundation_app_log'), PackageRef('infra_meter_vl'), PackageRef('meta'), PackageRef('usecase_diagnose_meter_vl')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_meter_vl_testing'), PackageRef('test')],
   );
 
 /// usecase_generate_top_advice 0.1.0+1
@@ -42573,7 +42573,7 @@ const _usecase_injection = Package(
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('data_repository_achievement'), PackageRef('data_repository_daily_goal'), PackageRef('data_repository_exercise_history'), PackageRef('data_repository_notification_settings'), PackageRef('data_repository_top_screen_metric'), PackageRef('data_repository_tutorial'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_settings'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_workout'), PackageRef('infra_local_notification'), PackageRef('infra_gemma_meter'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_reading'), PackageRef('infra_network_connectivity'), PackageRef('infra_oss_license_catalog'), PackageRef('foundation_app_log'), PackageRef('infra_on_device_llm'), PackageRef('riverpod'), PackageRef('usecase_diagnose_on_device_llm'), PackageRef('usecase_diagnose_on_device_llm_impl'), PackageRef('usecase_diagnose_gemma_meter'), PackageRef('usecase_diagnose_gemma_meter_impl'), PackageRef('usecase_evaluate_achievements'), PackageRef('usecase_evaluate_achievements_impl'), PackageRef('usecase_evaluate_daily_goal_auto_update'), PackageRef('usecase_evaluate_daily_goal_auto_update_impl'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_generate_top_advice_impl'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_achievements_impl'), PackageRef('usecase_load_app_runtime_info'), PackageRef('usecase_load_app_runtime_info_impl'), PackageRef('usecase_load_daily_goal'), PackageRef('usecase_load_daily_goal_impl'), PackageRef('usecase_load_exercise_history_detail'), PackageRef('usecase_load_exercise_history_detail_impl'), PackageRef('usecase_load_exercise_history_page'), PackageRef('usecase_load_exercise_history_page_impl'), PackageRef('usecase_load_exercise_history_month'), PackageRef('usecase_load_exercise_history_month_impl'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day_impl'), PackageRef('usecase_load_oss_licenses'), PackageRef('usecase_load_oss_licenses_impl'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_load_top_screen_impl'), PackageRef('usecase_load_trends'), PackageRef('usecase_load_trends_impl'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_control_meter_in_app_camera_impl'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_obtain_meter_photo_impl'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_on_device_llm_guidance_impl'), PackageRef('usecase_gemma_meter_guidance'), PackageRef('usecase_gemma_meter_guidance_impl'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_open_app_settings_impl'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_read_meter_panel_impl'), PackageRef('usecase_request_health_body_permission'), PackageRef('usecase_request_health_body_permission_impl'), PackageRef('usecase_save_daily_goal'), PackageRef('usecase_save_daily_goal_impl'), PackageRef('usecase_save_meter_capture'), PackageRef('usecase_save_meter_capture_impl'), PackageRef('usecase_update_exercise_history'), PackageRef('usecase_update_exercise_history_impl'), PackageRef('usecase_delete_exercise_history'), PackageRef('usecase_delete_exercise_history_impl'), PackageRef('usecase_save_notification_settings'), PackageRef('usecase_save_notification_settings_impl'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_save_top_screen_metric_impl'), PackageRef('usecase_sync_exercise_reminder'), PackageRef('usecase_sync_exercise_reminder_impl'), PackageRef('usecase_tutorial'), PackageRef('usecase_tutorial_impl'), PackageRef('usecase_load_notification_settings'), PackageRef('usecase_load_notification_settings_impl'), PackageRef('usecase_export_app_data'), PackageRef('usecase_export_app_data_impl'), PackageRef('usecase_import_app_data'), PackageRef('usecase_import_app_data_impl'), PackageRef('usecase_recover_interrupted_import'), PackageRef('usecase_recover_interrupted_import_impl'), PackageRef('infra_user_file')],
+    dependencies: [PackageRef('data_repository_achievement'), PackageRef('data_repository_daily_goal'), PackageRef('data_repository_exercise_history'), PackageRef('data_repository_notification_settings'), PackageRef('data_repository_top_screen_metric'), PackageRef('data_repository_tutorial'), PackageRef('infra_app_runtime_info'), PackageRef('infra_app_settings'), PackageRef('infra_health_body_metrics'), PackageRef('infra_health_workout'), PackageRef('infra_local_notification'), PackageRef('infra_meter_vl'), PackageRef('infra_meter_photo'), PackageRef('infra_meter_reading'), PackageRef('infra_network_connectivity'), PackageRef('infra_oss_license_catalog'), PackageRef('foundation_app_log'), PackageRef('infra_on_device_llm'), PackageRef('riverpod'), PackageRef('usecase_diagnose_on_device_llm'), PackageRef('usecase_diagnose_on_device_llm_impl'), PackageRef('usecase_diagnose_meter_vl'), PackageRef('usecase_diagnose_meter_vl_impl'), PackageRef('usecase_evaluate_achievements'), PackageRef('usecase_evaluate_achievements_impl'), PackageRef('usecase_evaluate_daily_goal_auto_update'), PackageRef('usecase_evaluate_daily_goal_auto_update_impl'), PackageRef('usecase_generate_top_advice'), PackageRef('usecase_generate_top_advice_impl'), PackageRef('usecase_load_achievements'), PackageRef('usecase_load_achievements_impl'), PackageRef('usecase_load_app_runtime_info'), PackageRef('usecase_load_app_runtime_info_impl'), PackageRef('usecase_load_daily_goal'), PackageRef('usecase_load_daily_goal_impl'), PackageRef('usecase_load_exercise_history_detail'), PackageRef('usecase_load_exercise_history_detail_impl'), PackageRef('usecase_load_exercise_history_page'), PackageRef('usecase_load_exercise_history_page_impl'), PackageRef('usecase_load_exercise_history_month'), PackageRef('usecase_load_exercise_history_month_impl'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day'), PackageRef('usecase_load_exercise_histories_for_same_recorded_day_impl'), PackageRef('usecase_load_oss_licenses'), PackageRef('usecase_load_oss_licenses_impl'), PackageRef('usecase_load_top_screen'), PackageRef('usecase_load_top_screen_impl'), PackageRef('usecase_load_trends'), PackageRef('usecase_load_trends_impl'), PackageRef('usecase_control_meter_in_app_camera'), PackageRef('usecase_control_meter_in_app_camera_impl'), PackageRef('usecase_obtain_meter_photo'), PackageRef('usecase_obtain_meter_photo_impl'), PackageRef('usecase_on_device_llm_guidance'), PackageRef('usecase_on_device_llm_guidance_impl'), PackageRef('usecase_meter_vl_guidance'), PackageRef('usecase_meter_vl_guidance_impl'), PackageRef('usecase_open_app_settings'), PackageRef('usecase_open_app_settings_impl'), PackageRef('usecase_read_meter_panel'), PackageRef('usecase_read_meter_panel_impl'), PackageRef('usecase_request_health_body_permission'), PackageRef('usecase_request_health_body_permission_impl'), PackageRef('usecase_save_daily_goal'), PackageRef('usecase_save_daily_goal_impl'), PackageRef('usecase_save_meter_capture'), PackageRef('usecase_save_meter_capture_impl'), PackageRef('usecase_update_exercise_history'), PackageRef('usecase_update_exercise_history_impl'), PackageRef('usecase_delete_exercise_history'), PackageRef('usecase_delete_exercise_history_impl'), PackageRef('usecase_save_notification_settings'), PackageRef('usecase_save_notification_settings_impl'), PackageRef('usecase_save_top_screen_metric'), PackageRef('usecase_save_top_screen_metric_impl'), PackageRef('usecase_sync_exercise_reminder'), PackageRef('usecase_sync_exercise_reminder_impl'), PackageRef('usecase_tutorial'), PackageRef('usecase_tutorial_impl'), PackageRef('usecase_load_notification_settings'), PackageRef('usecase_load_notification_settings_impl'), PackageRef('usecase_export_app_data'), PackageRef('usecase_export_app_data_impl'), PackageRef('usecase_import_app_data'), PackageRef('usecase_import_app_data_impl'), PackageRef('usecase_recover_interrupted_import'), PackageRef('usecase_recover_interrupted_import_impl'), PackageRef('infra_user_file')],
     devDependencies: [PackageRef('flutter_lints')],
   );
 
@@ -42941,10 +42941,10 @@ const _usecase_on_device_llm_guidance_impl = Package(
     devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
   );
 
-/// usecase_gemma_meter_guidance 0.1.0+1
-const _usecase_gemma_meter_guidance = Package(
-    name: 'usecase_gemma_meter_guidance',
-    description: 'Evaluate and prepare Gemma meter model download guidance.',
+/// usecase_meter_vl_guidance 0.1.0+1
+const _usecase_meter_vl_guidance = Package(
+    name: 'usecase_meter_vl_guidance',
+    description: 'Evaluate and prepare meter VL model download guidance.',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: [],
@@ -42954,17 +42954,17 @@ const _usecase_gemma_meter_guidance = Package(
     devDependencies: [PackageRef('flutter_lints')],
   );
 
-/// usecase_gemma_meter_guidance_impl 0.1.0+1
-const _usecase_gemma_meter_guidance_impl = Package(
-    name: 'usecase_gemma_meter_guidance_impl',
-    description: 'Gemma meter guidance usecase implementations.',
+/// usecase_meter_vl_guidance_impl 0.1.0+1
+const _usecase_meter_vl_guidance_impl = Package(
+    name: 'usecase_meter_vl_guidance_impl',
+    description: 'Meter VL guidance usecase implementations.',
     authors: [],
     version: '0.1.0+1',
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('infra_gemma_meter'), PackageRef('infra_network_connectivity'), PackageRef('infra_on_device_llm'), PackageRef('usecase_gemma_meter_guidance')],
-    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_gemma_meter_testing'), PackageRef('infra_network_connectivity_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
+    dependencies: [PackageRef('infra_meter_vl'), PackageRef('infra_network_connectivity'), PackageRef('infra_on_device_llm'), PackageRef('usecase_meter_vl_guidance')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('infra_meter_vl_testing'), PackageRef('infra_network_connectivity_testing'), PackageRef('infra_on_device_llm_testing'), PackageRef('test')],
   );
 
 /// usecase_read_meter_panel 0.1.0+1

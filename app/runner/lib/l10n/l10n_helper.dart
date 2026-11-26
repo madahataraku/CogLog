@@ -606,14 +606,6 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_clear_logs;
       },
-      'screen_feature_debug_gemma_backend_label': (source) {
-        // No Placeholders
-        return l10n.screen_feature_debug_gemma_backend_label;
-      },
-      'screen_feature_debug_gemma_vision_backend_label': (source) {
-        // No Placeholders
-        return l10n.screen_feature_debug_gemma_vision_backend_label;
-      },
       'screen_feature_debug_generate_error_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_generate_error_label;
@@ -621,6 +613,14 @@ final class L10nHelper {
       'screen_feature_debug_message_label': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_message_label;
+      },
+      'screen_feature_debug_meter_vl_backend_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_meter_vl_backend_label;
+      },
+      'screen_feature_debug_meter_vl_vision_backend_label': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_meter_vl_vision_backend_label;
       },
       'screen_feature_debug_no': (source) {
         // No Placeholders
@@ -630,13 +630,13 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_platform_notes_label;
       },
-      'screen_feature_debug_prefer_gemma_description': (source) {
+      'screen_feature_debug_prefer_meter_vl_description': (source) {
         // No Placeholders
-        return l10n.screen_feature_debug_prefer_gemma_description;
+        return l10n.screen_feature_debug_prefer_meter_vl_description;
       },
-      'screen_feature_debug_prefer_gemma_item': (source) {
+      'screen_feature_debug_prefer_meter_vl_item': (source) {
         // No Placeholders
-        return l10n.screen_feature_debug_prefer_gemma_item;
+        return l10n.screen_feature_debug_prefer_meter_vl_item;
       },
       'screen_feature_debug_prepare_error_label': (source) {
         // No Placeholders
@@ -674,17 +674,17 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_debug_section_availability;
       },
-      'screen_feature_debug_section_gemma_availability': (source) {
-        // No Placeholders
-        return l10n.screen_feature_debug_section_gemma_availability;
-      },
-      'screen_feature_debug_section_gemma_probe': (source) {
-        // No Placeholders
-        return l10n.screen_feature_debug_section_gemma_probe;
-      },
       'screen_feature_debug_section_logs': (source) {
         // No Placeholders
         return l10n.screen_feature_debug_section_logs;
+      },
+      'screen_feature_debug_section_meter_vl_availability': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_meter_vl_availability;
+      },
+      'screen_feature_debug_section_meter_vl_probe': (source) {
+        // No Placeholders
+        return l10n.screen_feature_debug_section_meter_vl_probe;
       },
       'screen_feature_debug_section_probe': (source) {
         // No Placeholders
@@ -1793,13 +1793,13 @@ final class L10nHelper {
         // No Placeholders
         return l10n.view_model_download_guidance_dismiss;
       },
-      'view_model_download_guidance_gemma_body': (source) {
+      'view_model_download_guidance_meter_vl_body': (source) {
         // No Placeholders
-        return l10n.view_model_download_guidance_gemma_body;
+        return l10n.view_model_download_guidance_meter_vl_body;
       },
-      'view_model_download_guidance_gemma_title': (source) {
+      'view_model_download_guidance_meter_vl_title': (source) {
         // No Placeholders
-        return l10n.view_model_download_guidance_gemma_title;
+        return l10n.view_model_download_guidance_meter_vl_title;
       },
       'view_model_download_guidance_prepare': (source) {
         // No Placeholders

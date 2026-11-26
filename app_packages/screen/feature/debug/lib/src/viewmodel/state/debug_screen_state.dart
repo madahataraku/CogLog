@@ -1,5 +1,5 @@
 import 'package:foundation_app_log/foundation_app_log.dart';
-import 'package:usecase_diagnose_gemma_meter/usecase_diagnose_gemma_meter.dart';
+import 'package:usecase_diagnose_meter_vl/usecase_diagnose_meter_vl.dart';
 import 'package:usecase_diagnose_on_device_llm/usecase_diagnose_on_device_llm.dart';
 
 /// デバッグ画面の状態。
@@ -16,7 +16,7 @@ final class DebugScreenState {
   /// const DebugScreenState(
   ///   running: false,
   ///   result: null,
-  ///   gemmaResult: null,
+  ///   meterVlResult: null,
   ///   logs: [],
   ///   preferLfmVlOverOsLlm: false,
   /// );
@@ -24,7 +24,7 @@ final class DebugScreenState {
   const DebugScreenState({
     required this.running,
     required this.result,
-    required this.gemmaResult,
+    required this.meterVlResult,
     required this.logs,
     required this.preferLfmVlOverOsLlm,
   });
@@ -33,7 +33,7 @@ final class DebugScreenState {
   static const initial = DebugScreenState(
     running: false,
     result: null,
-    gemmaResult: null,
+    meterVlResult: null,
     logs: [],
     preferLfmVlOverOsLlm: false,
   );
@@ -44,12 +44,12 @@ final class DebugScreenState {
   /// 直近の端末上 LLM 診断結果。
   final DiagnoseOnDeviceLlmResult? result;
 
-  /// 直近の Gemma メーター診断結果。
-  final DiagnoseGemmaMeterResult? gemmaResult;
+  /// 直近の メーター VL診断結果。
+  final DiagnoseMeterVlResult? meterVlResult;
 
   /// 表示するログ行（新しい順ではない、ストア順）。
   final List<AppLogEntry> logs;
 
-  /// 同一プロセス内で Gemma をメーター読み取りで優先するとき true。
+  /// 同一プロセス内で メーター VL をメーター読み取りで優先するとき true。
   final bool preferLfmVlOverOsLlm;
 }
