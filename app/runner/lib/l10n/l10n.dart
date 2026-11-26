@@ -1543,6 +1543,12 @@ abstract class L10n {
   /// **'kcal'**
   String get screen_feature_goal_settings_calories_unit;
 
+  /// 一日あたり目標カードタイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'1日あたりの運動目標'**
+  String get screen_feature_goal_settings_daily_goals_card_title;
+
   /// 一日あたり走行距離の欄
   ///
   /// In ja, this message translates to:
@@ -1648,7 +1654,7 @@ abstract class L10n {
   /// 未設定の説明
   ///
   /// In ja, this message translates to:
-  /// **'未設定の欄は空のまま保存できます'**
+  /// **'未設定の欄は空のまま保存できます。'**
   String get screen_feature_goal_settings_unset_hint;
 
   /// 説明
@@ -1782,12 +1788,6 @@ abstract class L10n {
   /// **'目標が自動更新されました'**
   String get screen_feature_meter_capture_goal_auto_updated;
 
-  /// 読み取り不完全時の手打ち案内
-  ///
-  /// In ja, this message translates to:
-  /// **'読み取れなかった項目は手入力してください。'**
-  String get screen_feature_meter_capture_hand_entry_guidance;
-
   /// 設定アプリ導線
   ///
   /// In ja, this message translates to:
@@ -1812,17 +1812,29 @@ abstract class L10n {
   /// **'ライブラリから選ぶ'**
   String get screen_feature_meter_capture_pick_library;
 
-  /// 読み取り値の注意（完全・不完全）
+  /// 完了FAlert本文
   ///
   /// In ja, this message translates to:
-  /// **'自動読み取りした値は誤っている場合があるため、その場合手動で修正してください。'**
-  String get screen_feature_meter_capture_read_caution;
+  /// **'自動読み取りした値は誤りが含まれている場合があります。内容を確認してから登録を行ってください。'**
+  String get screen_feature_meter_capture_read_complete_subtitle;
 
-  /// 自動読み取り完全時の成功
+  /// 完了FAlertタイトル
   ///
   /// In ja, this message translates to:
-  /// **'エアロバイクのメーター内容を読み取りました。'**
-  String get screen_feature_meter_capture_read_success;
+  /// **'メーターの自動読み取りが完了しました'**
+  String get screen_feature_meter_capture_read_complete_title;
+
+  /// 読み取り不可FAlert本文
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取れなかった項目は手入力して登録してください。'**
+  String get screen_feature_meter_capture_read_missing_subtitle;
+
+  /// 読み取り不可FAlertタイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'読み取れなかった値があります'**
+  String get screen_feature_meter_capture_read_missing_title;
 
   /// 運動した日時（旧・記録日時）
   ///
@@ -2223,7 +2235,7 @@ abstract class L10n {
   /// 段階1本文
   ///
   /// In ja, this message translates to:
-  /// **'本日・今週・今月の運動記録の合計値を確認できます。プルダウンメニューから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。'**
+  /// **'本日・今週・今月の運動記録の合計値を確認できます。タブから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。'**
   String get screen_feature_top_tutorial_main_1_body;
 
   /// 段階1タイトル
@@ -2310,6 +2322,12 @@ abstract class L10n {
   /// **'目標設定で一日あたりの目標を設定しましょう'**
   String get screen_feature_top_unset_prompt;
 
+  /// 達成済
+  ///
+  /// In ja, this message translates to:
+  /// **'今週は目標達成済！'**
+  String get screen_feature_top_weekly_achievement_done;
+
   /// 誘導
   ///
   /// In ja, this message translates to:
@@ -2319,8 +2337,14 @@ abstract class L10n {
   /// 達成日数比
   ///
   /// In ja, this message translates to:
-  /// **'{n}/{m}'**
+  /// **'達成日数:{n}日 / 目標日数:{m}日'**
   String screen_feature_top_weekly_achievement_ratio(String n, String m);
+
+  /// 残り日数
+  ///
+  /// In ja, this message translates to:
+  /// **'目標達成まであと{x}日！'**
+  String screen_feature_top_weekly_achievement_remaining(String x);
 
   /// semantics
   ///
@@ -2330,6 +2354,15 @@ abstract class L10n {
     String n,
     String m,
     String remaining,
+  );
+
+  /// 達成済semantics
+  ///
+  /// In ja, this message translates to:
+  /// **'今週の目標達成は{n}日、目標は{m}日、達成済'**
+  String screen_feature_top_weekly_achievement_semantics_done(
+    String n,
+    String m,
   );
 
   /// 週間達成見出し

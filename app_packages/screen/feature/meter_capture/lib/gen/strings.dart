@@ -78,12 +78,6 @@ mixin class L10nStringsMixin {
         'screen_feature_meter_capture_goal_auto_updated',
       );
 
-  /// 読み取り不完全時の手打ち案内
-  String get screen_feature_meter_capture_hand_entry_guidance =>
-      LocalizeStringDelegate.get(
-        'screen_feature_meter_capture_hand_entry_guidance',
-      );
-
   /// 設定アプリ導線
   String get screen_feature_meter_capture_open_settings =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_open_settings');
@@ -104,13 +98,29 @@ mixin class L10nStringsMixin {
   String get screen_feature_meter_capture_pick_library =>
       LocalizeStringDelegate.get('screen_feature_meter_capture_pick_library');
 
-  /// 読み取り値の注意（完全・不完全）
-  String get screen_feature_meter_capture_read_caution =>
-      LocalizeStringDelegate.get('screen_feature_meter_capture_read_caution');
+  /// 完了FAlert本文
+  String get screen_feature_meter_capture_read_complete_subtitle =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_read_complete_subtitle',
+      );
 
-  /// 自動読み取り完全時の成功
-  String get screen_feature_meter_capture_read_success =>
-      LocalizeStringDelegate.get('screen_feature_meter_capture_read_success');
+  /// 完了FAlertタイトル
+  String get screen_feature_meter_capture_read_complete_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_read_complete_title',
+      );
+
+  /// 読み取り不可FAlert本文
+  String get screen_feature_meter_capture_read_missing_subtitle =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_read_missing_subtitle',
+      );
+
+  /// 読み取り不可FAlertタイトル
+  String get screen_feature_meter_capture_read_missing_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_meter_capture_read_missing_title',
+      );
 
   /// 運動した日時（旧・記録日時）
   String get screen_feature_meter_capture_recorded_at =>
