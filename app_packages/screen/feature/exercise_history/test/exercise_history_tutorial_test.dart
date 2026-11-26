@@ -94,6 +94,12 @@ final class _Nav implements ScreenNavigation {
 
   @override
   void goToMeterCaptureTab() {}
+
+  @override
+  void goToTrendsTab() {}
+
+  @override
+  void goToExerciseHistoryTab() {}
 }
 
 Future<void> _pumpFrames(WidgetTester tester, {int count = 12}) async {
