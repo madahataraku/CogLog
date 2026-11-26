@@ -95,7 +95,8 @@ final class CoachMarkLauncher {
       ],
     );
 
-    final tutorial = TutorialCoachMark(
+    late final TutorialCoachMark tutorial;
+    tutorial = TutorialCoachMark(
       targets: [target],
       hideSkip: true,
       pulseEnable: false,
@@ -106,6 +107,10 @@ final class CoachMarkLauncher {
       // OS 戻るをライブラリ側で無効化する。
       disableBackButton: true,
       onFinish: () {
+        // 旧インスタンスの finish が、次の表示の Completer を誤って完了させない。
+        if (!identical(_active, tutorial)) {
+          return;
+        }
         // finish() 経由で外されたとき、未完了なら primary 相当として閉じる。
         final pending = _activeCompleter;
         if (pending != null && !pending.isCompleted) {
