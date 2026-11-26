@@ -250,6 +250,12 @@ List<Override> usecaseOverrides({
       meterVl: ref.watch(meterVlVisionProvider),
     ),
   ),
+  RedownloadMeterVlModelUsecase.provider.overrideWith(
+    (ref) => RedownloadMeterVlModelUsecaseImpl(
+      network: ref.watch(networkConnectivityProvider),
+      meterVl: ref.watch(meterVlVisionProvider),
+    ),
+  ),
   OpenAppSettingsUsecase.provider.overrideWith(
     (ref) => OpenAppSettingsUsecaseImpl(
       opener: ref.watch(appSettingsOpenerProvider),
