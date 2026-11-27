@@ -329,5 +329,4 @@ final class CoachMarkLauncher {
       // dispose 中の Navigator.of 失敗など。参照は呼び出し側で既に外している。
     }
   }
-
 }
