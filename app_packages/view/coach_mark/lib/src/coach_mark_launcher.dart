@@ -11,6 +11,7 @@ import 'coach_mark_bubble.dart';
 import 'coach_mark_dismiss_reason.dart';
 import 'coach_mark_providers.dart';
 import 'coach_mark_step.dart';
+import 'coach_mark_target_id.dart';
 
 /// コーチマークの表示／破棄（`tutorial_coach_mark` 経由）。
 ///
@@ -98,7 +99,8 @@ final class CoachMarkLauncher {
       identify: step.targetId.name,
       targetPosition: position,
       shape: ShapeLightFocus.RRect,
-      radius: 8,
+      // アチーブメント行の枠（radius 12）に穴の角を揃える。
+      radius: step.targetId == CoachMarkTargetId.achievementList ? 12 : 8,
       paddingFocus: _focusPad,
       enableOverlayTab: false,
       // 穴タップは主ボタン（閉じる／次へ）と同じ primary 完了にする。

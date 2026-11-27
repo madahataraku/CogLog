@@ -68,6 +68,54 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     }
   });
+
+  // テスト対象:
+  // AdviceSpeechPanel の homeAdvisor 枠
+  //
+  // テスト内容:
+  // PNG デコードを待たなくても homeAdvisor の矩形が 144 四方である。
+  testWidgets('homeAdvisor はデコード前も 144 四方', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+
+    await LocalizeStringDelegate.injectDelegateForTest(
+      arbJson: StringsTestHelper.ja,
+    );
+    addTearDown(LocalizeStringDelegate.resetDelegateForTest);
+
+    final registry = CoachMarkRegistry();
+    try {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            CoachMarkProviders.registry.overrideWith((ref) => registry),
+          ],
+          child: MaterialApp(
+            locale: const Locale('ja'),
+            home: FTheme(
+              data: FThemeData(touch: true, colors: FColors.neutralLight),
+              child: AdviceSpeechPanel(
+                adviceText: _fixedAdviceText,
+                tone: AdviceTone.fun,
+                semanticsLabel: 'アドバイザー',
+              ),
+            ),
+          ),
+        ),
+      );
+      // pumpAndSettle / precache せず、初回レイアウト直後の矩形を見る。
+      await tester.pump();
+
+      final rect = registry.rectFor(
+        CoachMarkTargetId.homeAdvisor,
+        tester.element(find.byType(AdviceSpeechPanel)),
+      );
+      expect(rect, isNotNull);
+      expect(rect!.width, AdviceSpeechPanel.advisorSize);
+      expect(rect.height, AdviceSpeechPanel.advisorSize);
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 }
 
 Future<void> _pumpPanelGolden(

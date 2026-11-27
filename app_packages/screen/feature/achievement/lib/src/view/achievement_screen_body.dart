@@ -67,20 +67,24 @@ class AchievementScreenBody extends ConsumerWidget {
             ],
           ),
         ),
+        // 穴は先頭行の枠（DecoratedBox）だけ。一覧の水平・先頭上 inset は
+        // CoachMarkTarget の外側 Padding に置き、矩形に余白を混ぜない。
         AchievementScreenReadyEntity(:final rows) => ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.only(bottom: 8),
           itemCount: rows.length,
           separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final row = _AchievementRowView(row: rows[index]);
-            // 文脈チュートリアルは先頭行だけを穴にする。
-            if (index == 0) {
-              return CoachMarkTarget(
-                id: CoachMarkTargetId.achievementList,
-                child: row,
-              );
-            }
-            return row;
+            final child = index == 0
+                ? CoachMarkTarget(
+                    id: CoachMarkTargetId.achievementList,
+                    child: row,
+                  )
+                : row;
+            return Padding(
+              padding: EdgeInsets.fromLTRB(16, index == 0 ? 8 : 0, 16, 0),
+              child: child,
+            );
           },
         ),
       },

@@ -46,7 +46,13 @@ class AdviceSpeechPanel extends StatelessWidget {
   /// キャラクター画像の代替テキスト。
   final String semanticsLabel;
 
-  /// 左に吹き出し、右に高さ 144 のキャラクターを並べる。
+  /// アドバイザー画像と導入穴の一辺（論理ピクセル）。
+  ///
+  /// PNG デコード前でも [CoachMarkTargetId.homeAdvisor] の矩形が 0 幅にならないよう
+  /// 固定サイズの枠に載せる。
+  static const double advisorSize = 144;
+
+  /// 左に吹き出し、右に [advisorSize] 四方のキャラクターを並べる。
   ///
   /// Example:
   /// ```dart
@@ -80,16 +86,22 @@ class AdviceSpeechPanel extends StatelessWidget {
             ),
           ),
         ),
-        CoachMarkTarget(
-          id: CoachMarkTargetId.homeAdvisor,
-          child: Semantics(
-            label: semanticsLabel,
-            image: true,
-            child: Image.asset(
-              'assets/advisor/${tone.name}.png',
-              package: 'screen_feature_top',
-              height: 144,
-              fit: BoxFit.contain,
+        // Semantics は穴の外。キー付き枠はデコード前も advisorSize 四方を保つ。
+        Semantics(
+          label: semanticsLabel,
+          image: true,
+          child: CoachMarkTarget(
+            id: CoachMarkTargetId.homeAdvisor,
+            child: SizedBox(
+              width: advisorSize,
+              height: advisorSize,
+              child: Image.asset(
+                'assets/advisor/${tone.name}.png',
+                package: 'screen_feature_top',
+                width: advisorSize,
+                height: advisorSize,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),

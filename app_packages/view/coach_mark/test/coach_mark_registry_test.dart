@@ -41,4 +41,42 @@ void main() {
       reason: '未マウント時は null であること',
     );
   });
+
+  // テスト対象:
+  // CoachMarkRegistry.rectFor
+  //
+  // テスト内容:
+  // root Overlay 基準の座標とサイズを返す。
+  testWidgets('rectFor は Overlay 基準の矩形を返す', (tester) async {
+    final registry = CoachMarkRegistry();
+    final key = GlobalKey();
+    registry.register(CoachMarkTargetId.navHome, key);
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(key: key, width: 40, height: 24),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final rect = registry.rectFor(
+      CoachMarkTargetId.navHome,
+      tester.element(find.byType(SizedBox)),
+    );
+    expect(rect, isNotNull);
+    expect(rect!.size, const Size(40, 24));
+    expect(rect.topLeft, Offset.zero);
+  });
 }
