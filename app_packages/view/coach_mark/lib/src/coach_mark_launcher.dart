@@ -46,6 +46,25 @@ final class CoachMarkLauncher {
   /// [TutorialCoachMark] の focus padding（配置計算と揃える）。
   static const double _focusPad = 4;
 
+  /// 既定の穴角丸。
+  static const double _defaultFocusRadius = 8;
+
+  /// アチーブメント行枠に合わせた穴角丸。
+  static const double _achievementFocusRadius = 12;
+
+  /// [id] に応じた穴の角丸半径。
+  ///
+  /// Example:
+  /// ```dart
+  /// CoachMarkLauncher.focusRadiusFor(CoachMarkTargetId.achievementList);
+  /// ```
+  @visibleForTesting
+  static double focusRadiusFor(CoachMarkTargetId id) {
+    return id == CoachMarkTargetId.achievementList
+        ? _achievementFocusRadius
+        : _defaultFocusRadius;
+  }
+
   /// 表示中のコントローラ。
   static TutorialCoachMark? _active;
 
@@ -99,8 +118,7 @@ final class CoachMarkLauncher {
       identify: step.targetId.name,
       targetPosition: position,
       shape: ShapeLightFocus.RRect,
-      // アチーブメント行の枠（radius 12）に穴の角を揃える。
-      radius: step.targetId == CoachMarkTargetId.achievementList ? 12 : 8,
+      radius: focusRadiusFor(step.targetId),
       paddingFocus: _focusPad,
       enableOverlayTab: false,
       // 穴タップは主ボタン（閉じる／次へ）と同じ primary 完了にする。

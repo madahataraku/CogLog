@@ -46,24 +46,35 @@ void main() {
   // CoachMarkRegistry.rectFor
   //
   // テスト内容:
-  // root Overlay 基準の座標とサイズを返す。
-  testWidgets('rectFor は Overlay 基準の矩形を返す', (tester) async {
+  // Overlay を画面原点からずらしても、返す矩形は Overlay 基準（オフセットを除く）。
+  testWidgets('rectFor は Overlay オフセットを除いた矩形を返す', (tester) async {
     final registry = CoachMarkRegistry();
     final key = GlobalKey();
     registry.register(CoachMarkTargetId.navHome, key);
+    const overlayOffset = Offset(30, 50);
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: Overlay(
-          initialEntries: [
-            OverlayEntry(
-              builder: (context) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: SizedBox(key: key, width: 40, height: 24),
-                );
-              },
+        child: Stack(
+          children: [
+            Positioned(
+              left: overlayOffset.dx,
+              top: overlayOffset.dy,
+              width: 200,
+              height: 120,
+              child: Overlay(
+                initialEntries: [
+                  OverlayEntry(
+                    builder: (context) {
+                      return Align(
+                        alignment: Alignment.topLeft,
+                        child: SizedBox(key: key, width: 40, height: 24),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -71,12 +82,20 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    final box = tester.renderObject<RenderBox>(find.byKey(key));
+    final globalTopLeft = box.localToGlobal(Offset.zero);
+    expect(globalTopLeft, overlayOffset, reason: 'グローバル座標は Overlay オフセットを含むこと');
+
     final rect = registry.rectFor(
       CoachMarkTargetId.navHome,
-      tester.element(find.byType(SizedBox)),
+      tester.element(find.byKey(key)),
     );
     expect(rect, isNotNull);
     expect(rect!.size, const Size(40, 24));
-    expect(rect.topLeft, Offset.zero);
+    expect(
+      rect.topLeft,
+      Offset.zero,
+      reason: 'root Overlay 基準ではオフセットを除いた原点であること',
+    );
   });
 }

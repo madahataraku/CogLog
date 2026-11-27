@@ -219,6 +219,23 @@ void main() {
   });
 
   // テスト対象:
+  // CoachMarkLauncher.focusRadiusFor
+  //
+  // テスト内容:
+  // アチーブメント行は枠と同じ 12、それ以外は既定 8。
+  test('穴の角丸はアチーブメント行だけ 12', () {
+    expect(
+      CoachMarkLauncher.focusRadiusFor(CoachMarkTargetId.achievementList),
+      12,
+    );
+    expect(CoachMarkLauncher.focusRadiusFor(CoachMarkTargetId.homeAdvisor), 8);
+    expect(
+      CoachMarkLauncher.focusRadiusFor(CoachMarkTargetId.homePeriodTotals),
+      8,
+    );
+  });
+
+  // テスト対象:
   // CoachMarkLauncher.contentAlignFor / resolveContentPlacement
   //
   // テスト内容:
