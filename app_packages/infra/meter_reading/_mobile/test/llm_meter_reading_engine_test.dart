@@ -49,7 +49,11 @@ void main() {
     expect(llm.lastPrompt, contains('Reply with JSON only'));
     expect(llm.lastPrompt, contains('Unreadable fields must be null'));
     expect(llm.lastPrompt, contains('"time"'));
-    expect(llm.lastPrompt, contains('Prefer the number directly above'));
+    expect(
+      llm.lastPrompt,
+      contains('Prefer the colon-separated readout nearest'),
+    );
+    expect(llm.lastPrompt, contains('above, below, or beside'));
     expect(llm.lastPrompt, contains('"distance"'));
     expect(llm.lastPrompt, contains('"time-hour"'));
     expect(llm.lastPrompt, contains('"calories"'));

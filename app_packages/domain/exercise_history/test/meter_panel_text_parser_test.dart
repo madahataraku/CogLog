@@ -44,6 +44,28 @@ void main() {
     expect(values.duration, const Duration(minutes: 12, seconds: 5));
   });
 
+  test('不正な time 文字列は未取得で分解フィールドへ落ちる', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":1,"time":"99:99","time-hour":0,"time-min":10,"time-sec":0,"calories":10}',
+    );
+    expect(values.duration, const Duration(minutes: 10));
+  });
+
+  test('範囲外の time 文字列だけで分解も無いときは未取得', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":1,"time":"1:99","time-hour":null,"time-min":null,"time-sec":null,"calories":10}',
+    );
+    expect(values.duration, isNull);
+    expect(values.distanceKm, 1);
+  });
+
+  test('JSON の HH:mm:ss 文字列を読む', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":1,"time":"1:02:03","calories":10}',
+    );
+    expect(values.duration, const Duration(hours: 1, minutes: 2, seconds: 3));
+  });
+
   test('コードフェンス付き JSON を読む', () {
     final values = MeterPanelTextParser.parse(
       '```json\n{"distance": 3, "time-hour": 0, "time-min": 10, "time-sec": 5, "calories": 40}\n```',
