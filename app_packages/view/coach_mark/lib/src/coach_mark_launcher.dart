@@ -106,7 +106,7 @@ final class CoachMarkLauncher {
       Offset(size.width * 0.2, size.height * 0.4),
     );
     final key = registry.keyFor(step.targetId);
-    final keyReady = key?.currentContext != null && hole != null;
+    final keyReady = shouldUseKeyTarget(key: key, hole: hole);
     final position = hole == null
         ? fallback
         : TargetPosition(hole.size, hole.topLeft);
@@ -132,9 +132,14 @@ final class CoachMarkLauncher {
           align: placement.align,
           customPosition: placement.customPosition,
           padding: EdgeInsets.zero,
+          // Positioned(top+bottom) は高さタイト拘束になるため Align で緩め、
+          // 吹き出しは内容サイズ（上限あり）に縮み穴を覆わない。
           child: FTheme(
             data: theme,
-            child: CoachMarkBubble(step: step, onDismiss: complete),
+            child: Align(
+              alignment: placement.bubbleAlignment,
+              child: CoachMarkBubble(step: step, onDismiss: complete),
+            ),
           ),
         ),
       ],
@@ -199,11 +204,26 @@ final class CoachMarkLauncher {
     return resolveContentPlacement(hole: hole, screenSize: screenSize).align;
   }
 
+  /// 登録キーが生きて矩形も取れるとき [TargetFocus.keyTarget] を使うか。
+  ///
+  /// Example:
+  /// ```dart
+  /// CoachMarkLauncher.shouldUseKeyTarget(key: key, hole: rect);
+  /// ```
+  @visibleForTesting
+  static bool shouldUseKeyTarget({
+    required GlobalKey? key,
+    required Rect? hole,
+  }) {
+    return key?.currentContext != null && hole != null;
+  }
+
   /// 穴の上下どちらに載せるかを決め、常に SafeArea 内の custom 帯へ固定する。
   ///
   /// `tutorial_coach_mark` の ContentAlign.top／bottom は高さ上限がなく、
   /// custom で top か bottom だけ指定すると吹き出しが SafeArea 外へ伸びる。
   /// そのため top と bottom の両方を指定し、Positioned の帯内に収める。
+  /// [bubbleAlignment] は帯内で吹き出しを穴寄り（または下端）へ寄せる。
   ///
   /// Example:
   /// ```dart
@@ -213,7 +233,11 @@ final class CoachMarkLauncher {
   /// );
   /// ```
   @visibleForTesting
-  static ({ContentAlign align, CustomTargetContentPosition? customPosition})
+  static ({
+    ContentAlign align,
+    CustomTargetContentPosition? customPosition,
+    AlignmentGeometry bubbleAlignment,
+  })
   resolveContentPlacement({
     required Rect? hole,
     required Size screenSize,
@@ -221,6 +245,8 @@ final class CoachMarkLauncher {
   }) {
     final bandTop = safePadding.top + _gap;
     final bandBottom = safePadding.bottom + _gap;
+    final bandLeft = safePadding.left + _gap;
+    final bandRight = safePadding.right + _gap;
 
     CustomTargetContentPosition safeBand({
       required double top,
@@ -235,8 +261,8 @@ final class CoachMarkLauncher {
         math.min(bottom, screenSize.height - clampedTop),
       );
       return CustomTargetContentPosition(
-        left: 0,
-        right: 0,
+        left: bandLeft,
+        right: bandRight,
         top: clampedTop,
         bottom: clampedBottom,
       );
@@ -246,6 +272,7 @@ final class CoachMarkLauncher {
       return (
         align: ContentAlign.custom,
         customPosition: safeBand(top: bandTop, bottom: bandBottom),
+        bubbleAlignment: Alignment.bottomCenter,
       );
     }
 
@@ -261,6 +288,7 @@ final class CoachMarkLauncher {
       return (
         align: ContentAlign.custom,
         customPosition: safeBand(top: bandTop, bottom: bandBottom),
+        bubbleAlignment: Alignment.bottomCenter,
       );
     }
 
@@ -280,6 +308,7 @@ final class CoachMarkLauncher {
       return (
         align: ContentAlign.custom,
         customPosition: safeBand(top: bandTop, bottom: bottomFromScreen),
+        bubbleAlignment: Alignment.bottomCenter,
       );
     }
 
@@ -290,6 +319,7 @@ final class CoachMarkLauncher {
         top: math.min(hole.bottom + _gap, screenSize.height - bandBottom),
         bottom: bandBottom,
       ),
+      bubbleAlignment: Alignment.topCenter,
     );
   }
 

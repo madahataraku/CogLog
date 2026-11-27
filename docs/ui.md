@@ -119,7 +119,7 @@ Forui の Widget と、Cupertino または Material の Widget は同じ木に�
 - ハイライト表示は `tutorial_coach_mark`（`TutorialCoachMark` / `TargetFocus`）を pub 依存で使う。`showFDialog` は使わない。
 - 実効版はルート `dependency_overrides` で固定する（path フォークしない）。
 - ハイライト対象は `CoachMarkTarget` で `CoachMarkTargetId` を登録し、表示時の矩形を root Overlay 基準の `TargetPosition` に渡す（グローバル原点とのズレを避ける）。キー未解決時は画面中央の矩形にフォールバックする。
-- 吹き出し（タイトル・本文・主／副ボタン）は `TargetContent` の子として `view_coach_mark` が描く。内容外周と要素間の余白は確認ダイアログなどと同じ 16 論理ピクセル。配置は常に `ContentAlign.custom` で、`MediaQuery.padding`（SafeArea）内の帯に top と bottom を両方指定する（ライブラリの top／bottom や片側だけの custom だと低解像度でボタンが SafeArea 外へ切れる）。穴が下寄りなら上帯・上寄りなら下帯を選び、帯内で本文はスクロールし主／副ボタンは残す。ライブラリ標準の SKIP は隠す。
+- 吹き出し（タイトル・本文・主／副ボタン）は `TargetContent` の子として `view_coach_mark` が描く。内容外周と要素間の余白は確認ダイアログなどと同じ 16 論理ピクセル。配置は常に `ContentAlign.custom` で、`MediaQuery.padding`（SafeArea）内の帯に top／bottom／left／right を指定する（ライブラリの top／bottom や片側だけの custom だと低解像度でボタンが SafeArea 外へ切れる）。穴が下寄りなら上帯・上寄りなら下帯を選び、帯内は `Align` で内容サイズに縮め（全画面帯でも穴を覆わない）、本文はスクロールし主／副ボタンを残す（帯が狭いときは全体スクロール）。ライブラリ標準の SKIP は隠す。
 - 注目箇所以外の障壁は、Forui ダイアログ（`FDialogRouteStyle.defaultBarrierFilter`）と同系のブラー＋`colors.barrier` 色を `tutorial_coach_mark` の `imageFilter`（穴を除く `BackdropFilter`）で載せる。`opacityShadow` は 0（色は `imageFilter` 側）。フォークやライブラリ変更は不要。
 - 外側タップ・ハイライト外タップ・背面スクロール・穴下のフォーム操作は無効（`enableOverlayTab: false`）。穴（注目箇所）タップは主ボタンと同じ primary 完了（閉じる／次へ）とする（`enableTargetTab: true`。ライブラリが `finish` し、`onFinish` で primary 相当）。背面ウィジェット自体の onPress は穴タップでは発火しない。メイン段階3にスキップは置かない（次へのみ）。表示中の OS 戻るはライブラリにより無効。
 - 読み取り中モーダル表示中はコーチマークを出さない／隠す。提示済みにはしない。撮影タブの離脱・読み取り開始で閉じるのは撮影／編集文脈だけとし、目標設定文脈やホームのメイン連鎖など他画面のコーチマークは破棄しない。

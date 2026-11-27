@@ -113,4 +113,66 @@ void main() {
     await tester.pumpAndSettle();
     expect(await future, CoachMarkDismissReason.primary);
   });
+
+  // テスト対象:
+  // CoachMarkBubble（長い本文）
+  //
+  // テスト内容:
+  // 帯に余裕があるとき本文はスクロールでき、主ボタンは帯内に残る。
+  testWidgets('長い本文でも主ボタンは見え操作できる', (tester) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final registry = CoachMarkRegistry();
+    late BuildContext savedContext;
+    final targetKey = GlobalKey();
+
+    await tester.pumpWidget(
+      _wrap(
+        registry: registry,
+        child: Builder(
+          builder: (context) {
+            savedContext = context;
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                height: 120,
+                width: double.infinity,
+                child: ColoredBox(
+                  key: targetKey,
+                  color: const Color(0xFFCCCCCC),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    registry.register(CoachMarkTargetId.homePeriodTotals, targetKey);
+
+    final longBody = List.generate(40, (i) => '行$i の説明文です。').join('\n');
+    final future = CoachMarkLauncher.show(
+      savedContext,
+      step: CoachMarkStep(
+        targetId: CoachMarkTargetId.homePeriodTotals,
+        title: '長い説明',
+        body: longBody,
+        primaryLabel: '閉じる',
+      ),
+    );
+    for (var i = 0; i < 12; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    final button = find.text('閉じる');
+    expect(button, findsOneWidget);
+    final buttonRect = tester.getRect(button);
+    expect(buttonRect.bottom, lessThanOrEqualTo(640 - 34 + 1.0));
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(await future, CoachMarkDismissReason.primary);
+  });
 }

@@ -242,7 +242,7 @@ void main() {
   // 常に custom。穴が下寄りなら上帯、上寄りなら下帯（SafeArea 内で top+bottom）。
   test('吹き出し配置は穴の上下で帯を切り替える', () {
     const size = Size(360, 640);
-    const safe = EdgeInsets.only(top: 20, bottom: 20);
+    const safe = EdgeInsets.only(top: 20, bottom: 20, left: 12, right: 16);
     final above = CoachMarkLauncher.resolveContentPlacement(
       hole: const Rect.fromLTWH(10, 500, 100, 40),
       screenSize: size,
@@ -251,6 +251,9 @@ void main() {
     expect(above.align, ContentAlign.custom);
     expect(above.customPosition?.top, 20 + 8);
     expect(above.customPosition?.bottom, greaterThan(20));
+    expect(above.customPosition?.left, 12 + 8);
+    expect(above.customPosition?.right, 16 + 8);
+    expect(above.bubbleAlignment, Alignment.bottomCenter);
 
     final below = CoachMarkLauncher.resolveContentPlacement(
       hole: const Rect.fromLTWH(10, 80, 100, 40),
@@ -260,6 +263,7 @@ void main() {
     expect(below.align, ContentAlign.custom);
     expect(below.customPosition?.top, greaterThan(80));
     expect(below.customPosition?.bottom, 20 + 8);
+    expect(below.bubbleAlignment, Alignment.topCenter);
 
     expect(
       CoachMarkLauncher.contentAlignFor(hole: null, screenSize: size),
@@ -278,15 +282,21 @@ void main() {
     final placement = CoachMarkLauncher.resolveContentPlacement(
       hole: const Rect.fromLTWH(0, 40, 360, 520),
       screenSize: size,
-      safePadding: const EdgeInsets.only(top: 20, bottom: 20),
+      safePadding: const EdgeInsets.only(
+        top: 20,
+        bottom: 20,
+        left: 10,
+        right: 10,
+      ),
     );
     expect(placement.align, ContentAlign.custom);
     expect(placement.customPosition, isNotNull);
     final custom = placement.customPosition!;
-    expect(custom.left, 0);
-    expect(custom.right, 0);
+    expect(custom.left, 10 + 8);
+    expect(custom.right, 10 + 8);
     expect(custom.top, isNotNull);
     expect(custom.bottom, isNotNull);
+    expect(placement.bubbleAlignment, Alignment.bottomCenter);
   });
 
   // テスト対象:
@@ -305,6 +315,37 @@ void main() {
     expect(placement.align, ContentAlign.custom);
     expect(placement.customPosition?.top, greaterThan(400));
     expect(placement.customPosition?.bottom, 34 + 8);
+    expect(placement.bubbleAlignment, Alignment.topCenter);
+  });
+
+  // テスト対象:
+  // CoachMarkLauncher.shouldUseKeyTarget
+  //
+  // テスト内容:
+  // キーがマウント済みかつ矩形があるときだけ keyTarget を使う。
+  testWidgets('登録キーが生きていれば keyTarget を使う', (tester) async {
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: SizedBox(key: key, width: 40, height: 24),
+      ),
+    );
+    expect(
+      CoachMarkLauncher.shouldUseKeyTarget(
+        key: key,
+        hole: const Rect.fromLTWH(0, 0, 40, 24),
+      ),
+      isTrue,
+    );
+    expect(CoachMarkLauncher.shouldUseKeyTarget(key: key, hole: null), isFalse);
+    expect(
+      CoachMarkLauncher.shouldUseKeyTarget(
+        key: GlobalKey(),
+        hole: const Rect.fromLTWH(0, 0, 40, 24),
+      ),
+      isFalse,
+    );
   });
 
   // テスト対象:
