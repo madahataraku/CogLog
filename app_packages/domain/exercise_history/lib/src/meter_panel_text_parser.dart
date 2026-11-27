@@ -5,12 +5,12 @@ import 'meter_reading_values.dart';
 
 /// OCR／LLM の生テキストからメーター計測値を取り出す。
 ///
-/// JSON（`distance` / `time-hour` / `time-min` / `time-sec` / `calories`）を優先し、
+/// JSON（`distance` / `time` / `time-hour` / `time-min` / `time-sec` / `calories`）を優先し、
 /// 取れないときは従来のラベル付き断片へフォールバックする。
 ///
 /// Example:
 /// ```dart
-/// MeterPanelTextParser.parse('{"distance":12.3,"time-hour":1,"time-min":0,"time-sec":0,"calories":200}');
+/// MeterPanelTextParser.parse('{"distance":12.3,"time":"1:00:00","calories":200}');
 /// ```
 abstract final class MeterPanelTextParser {
   /// 項目ラベル（次ラベル境界の検出にも使う）。
@@ -81,7 +81,14 @@ abstract final class MeterPanelTextParser {
   /// _hasMeterJsonKeys({'distance': 1}); // true
   /// ```
   static bool _hasMeterJsonKeys(Map<String, Object?> map) {
-    const keys = {'distance', 'time-hour', 'time-min', 'time-sec', 'calories'};
+    const keys = {
+      'distance',
+      'time',
+      'time-hour',
+      'time-min',
+      'time-sec',
+      'calories',
+    };
     for (final key in map.keys) {
       if (keys.contains(key)) {
         return true;
@@ -191,7 +198,7 @@ abstract final class MeterPanelTextParser {
   ///
   /// Example:
   /// ```dart
-  /// _valuesFromJsonMap({'distance': 1, 'time-min': 30, 'calories': 10});
+  /// _valuesFromJsonMap({'distance': 1, 'time': '0:30:00', 'calories': 10});
   /// ```
   static MeterReadingValues _valuesFromJsonMap(Map<String, Object?> map) {
     final distance = _plausibleNumber(map['distance']);
@@ -203,15 +210,20 @@ abstract final class MeterPanelTextParser {
     );
   }
 
-  /// JSON の時分秒から [Duration] を作る。範囲外は未取得。
+  /// JSON の時刻から [Duration] を作る。範囲外は未取得。
   ///
+  /// `time` 文字列（`mm:ss` / `HH:mm:ss`）を優先し、無ければ時分秒フィールドを使う。
   /// 時は 0〜99、分・秒は 0〜59。欠損は 0 とみなし、いずれかが不正なら全体を捨てる。
   ///
   /// Example:
   /// ```dart
-  /// _durationFromJson({'time-hour': 1, 'time-min': 0, 'time-sec': 0});
+  /// _durationFromJson({'time': '30:34'});
   /// ```
   static Duration? _durationFromJson(Map<String, Object?> map) {
+    final fromDisplay = _durationFromTimeString(map['time']);
+    if (fromDisplay != null) {
+      return fromDisplay;
+    }
     final hoursRaw = map['time-hour'];
     final minutesRaw = map['time-min'];
     final secondsRaw = map['time-sec'];
@@ -231,6 +243,23 @@ abstract final class MeterPanelTextParser {
       return null;
     }
     return Duration(hours: hours, minutes: minutes, seconds: seconds);
+  }
+
+  /// 表示どおりの時刻文字列から [Duration] を取る。
+  ///
+  /// Example:
+  /// ```dart
+  /// _durationFromTimeString('30:34'); // 30分34秒
+  /// ```
+  static Duration? _durationFromTimeString(Object? raw) {
+    if (raw == null) {
+      return null;
+    }
+    final text = raw.toString().trim();
+    if (text.isEmpty || text.toLowerCase() == 'null') {
+      return null;
+    }
+    return MeterDurationParser.parseColonOnly(text);
   }
 
   /// 有限かつ妥当な数値だけを返す。

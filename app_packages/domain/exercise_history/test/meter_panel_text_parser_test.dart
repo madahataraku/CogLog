@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   test('JSON の全項目', () {
     final values = MeterPanelTextParser.parse(
-      '{"distance":12.3,"time-hour":1,"time-min":0,"time-sec":0,"calories":200}',
+      '{"distance":12.3,"time":"1:00:00","time-hour":1,"time-min":0,"time-sec":0,"calories":200}',
     );
     expect(values.distanceKm, 12.3);
     expect(values.duration, const Duration(hours: 1));
@@ -14,11 +14,34 @@ void main() {
 
   test('JSON で平均速度キーは無くてもよい', () {
     final values = MeterPanelTextParser.parse(
-      '{"distance":5,"time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
+      '{"distance":5,"time":"0:30:00","time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
     );
     expect(values.distanceKm, 5);
     expect(values.duration, const Duration(minutes: 30));
     expect(values.caloriesKcal, 80);
+  });
+
+  test('JSON の time 文字列 mm:ss を優先する', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":8.14,"time":"30:34","time-hour":null,"time-min":null,"time-sec":null,"calories":260}',
+    );
+    expect(values.distanceKm, 8.14);
+    expect(values.duration, const Duration(minutes: 30, seconds: 34));
+    expect(values.caloriesKcal, 260);
+  });
+
+  test('JSON の time 文字列が分解フィールドより優先される', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":1,"time":"30:34","time-hour":0,"time-min":0,"time-sec":0,"calories":10}',
+    );
+    expect(values.duration, const Duration(minutes: 30, seconds: 34));
+  });
+
+  test('JSON の time が無いときだけ時分秒フィールドを使う', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":1,"time":null,"time-hour":0,"time-min":12,"time-sec":5,"calories":10}',
+    );
+    expect(values.duration, const Duration(minutes: 12, seconds: 5));
   });
 
   test('コードフェンス付き JSON を読む', () {
