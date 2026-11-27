@@ -63,7 +63,13 @@ abstract final class MeterPanelTextParser {
       if (decoded == null || !_hasMeterJsonKeys(decoded)) {
         continue;
       }
-      return _valuesFromJsonMap(decoded);
+      final values = _valuesFromJsonMap(decoded);
+      if (values.distanceKm == null &&
+          values.duration == null &&
+          values.caloriesKcal == null) {
+        continue;
+      }
+      return values;
     }
     return null;
   }
@@ -85,6 +91,11 @@ abstract final class MeterPanelTextParser {
   }
 
   /// 生文から JSON っぽい候補文字列を列挙する。
+  ///
+  /// Example:
+  /// ```dart
+  /// _jsonCandidates('```json\n{"distance":1}\n```');
+  /// ```
   static List<String> _jsonCandidates(String rawText) {
     final trimmed = rawText.trim();
     if (trimmed.isEmpty) {
@@ -112,6 +123,11 @@ abstract final class MeterPanelTextParser {
   }
 
   /// 破損しやすい箇所を直しながら [Map] へデコードする。
+  ///
+  /// Example:
+  /// ```dart
+  /// _decodeJsonObject('{"distance": 1,}');
+  /// ```
   static Map<String, Object?>? _decodeJsonObject(String source) {
     var current = source.trim();
     for (var attempt = 0; attempt < 4; attempt++) {
@@ -172,28 +188,57 @@ abstract final class MeterPanelTextParser {
   }
 
   /// JSON マップから計測値を組み立てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// _valuesFromJsonMap({'distance': 1, 'time-min': 30, 'calories': 10});
+  /// ```
   static MeterReadingValues _valuesFromJsonMap(Map<String, Object?> map) {
     final distance = _plausibleNumber(map['distance']);
     final calories = _plausibleNumber(map['calories']);
-    final hours = _nonNegativeInt(map['time-hour']);
-    final minutes = _nonNegativeInt(map['time-min']);
-    final seconds = _nonNegativeInt(map['time-sec']);
-    Duration? duration;
-    if (hours != null || minutes != null || seconds != null) {
-      duration = Duration(
-        hours: hours ?? 0,
-        minutes: minutes ?? 0,
-        seconds: seconds ?? 0,
-      );
-    }
     return MeterReadingValues(
       distanceKm: distance,
-      duration: duration,
+      duration: _durationFromJson(map),
       caloriesKcal: calories,
     );
   }
 
+  /// JSON の時分秒から [Duration] を作る。範囲外は未取得。
+  ///
+  /// 時は 0〜99、分・秒は 0〜59。欠損は 0 とみなし、いずれかが不正なら全体を捨てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// _durationFromJson({'time-hour': 1, 'time-min': 0, 'time-sec': 0});
+  /// ```
+  static Duration? _durationFromJson(Map<String, Object?> map) {
+    final hoursRaw = map['time-hour'];
+    final minutesRaw = map['time-min'];
+    final secondsRaw = map['time-sec'];
+    if (hoursRaw == null && minutesRaw == null && secondsRaw == null) {
+      return null;
+    }
+    final hours = hoursRaw == null
+        ? 0
+        : _boundedTimeComponent(hoursRaw, max: 99);
+    final minutes = minutesRaw == null
+        ? 0
+        : _boundedTimeComponent(minutesRaw, max: 59);
+    final seconds = secondsRaw == null
+        ? 0
+        : _boundedTimeComponent(secondsRaw, max: 59);
+    if (hours == null || minutes == null || seconds == null) {
+      return null;
+    }
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
+  }
+
   /// 有限かつ妥当な数値だけを返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _plausibleNumber(12.3); // 12.3
+  /// ```
   static double? _plausibleNumber(Object? raw) {
     final value = _asDouble(raw);
     if (value == null || !_isPlausibleMetric(value)) {
@@ -202,16 +247,26 @@ abstract final class MeterPanelTextParser {
     return value;
   }
 
-  /// 0 以上の整数へ丸める。不正は null。
-  static int? _nonNegativeInt(Object? raw) {
+  /// 0 以上 [max] 以下の整数へ丸める。範囲外・不正は null。
+  ///
+  /// Example:
+  /// ```dart
+  /// _boundedTimeComponent(1.6, max: 59); // 2
+  /// ```
+  static int? _boundedTimeComponent(Object? raw, {required int max}) {
     final value = _asDouble(raw);
-    if (value == null || value < 0 || !value.isFinite) {
+    if (value == null || !value.isFinite || value < 0 || value > max) {
       return null;
     }
     return value.round();
   }
 
   /// JSON 値を double へ写す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _asDouble('12.3'); // 12.3
+  /// ```
   static double? _asDouble(Object? raw) {
     if (raw == null) {
       return null;
@@ -226,6 +281,11 @@ abstract final class MeterPanelTextParser {
   }
 
   /// ラベル付き断片から計測値を取る（JSON 失敗時のフォールバック）。
+  ///
+  /// Example:
+  /// ```dart
+  /// _parseLabeledText('距離 12.3 km');
+  /// ```
   static MeterReadingValues _parseLabeledText(String rawText) {
     final normalized = _normalize(rawText);
     if (normalized.isEmpty) {

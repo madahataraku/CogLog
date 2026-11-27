@@ -118,6 +118,47 @@ void main() {
     expect(values.caloriesKcal, 80);
   });
 
+  test('全項目 null の JSON のあとのラベル値へフォールバックする', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":null,"time-hour":null,"time-min":null,"time-sec":null,"calories":null} '
+      'Distance 5.0km Time 0:30:00 Calorie 80',
+    );
+    expect(values.distanceKm, 5);
+    expect(values.duration, const Duration(minutes: 30));
+    expect(values.caloriesKcal, 80);
+  });
+
+  test('距離・カロリー 0 と時間 0 を受け入れる', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":0,"time-hour":0,"time-min":0,"time-sec":0,"calories":0}',
+    );
+    expect(values.distanceKm, 0);
+    expect(values.duration, Duration.zero);
+    expect(values.caloriesKcal, 0);
+  });
+
+  test('時間の上限境界を受け入れる', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":1,"time-hour":99,"time-min":59,"time-sec":59,"calories":1}',
+    );
+    expect(
+      values.duration,
+      const Duration(hours: 99, minutes: 59, seconds: 59),
+    );
+  });
+
+  test('時間の上限超過は未取得', () {
+    final overMinute = MeterPanelTextParser.parse(
+      '{"distance":1,"time-hour":0,"time-min":60,"time-sec":0,"calories":1}',
+    );
+    expect(overMinute.duration, isNull);
+    expect(overMinute.distanceKm, 1);
+    final overHour = MeterPanelTextParser.parse(
+      '{"distance":1,"time-hour":100,"time-min":0,"time-sec":0,"calories":1}',
+    );
+    expect(overHour.duration, isNull);
+  });
+
   test('日本語ラベルの全項目', () {
     final values = MeterPanelTextParser.parse(
       '距離 12.3 km\n時間 1:00:00\n消費 200 kcal\n平均速度 12.3 km/h',
