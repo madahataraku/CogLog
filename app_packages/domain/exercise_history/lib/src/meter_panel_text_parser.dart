@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'meter_duration_parser.dart';
 import 'meter_reading_values.dart';
 
 /// OCR／LLM の生テキストからメーター計測値を取り出す。
 ///
+/// JSON（`distance` / `time-hour` / `time-min` / `time-sec` / `calories`）を優先し、
+/// 取れないときは従来のラベル付き断片へフォールバックする。
+///
 /// Example:
 /// ```dart
-/// MeterPanelTextParser.parse('DISTANCE_KM=12.3\nDURATION=1:00:00');
+/// MeterPanelTextParser.parse('{"distance":12.3,"time-hour":1,"time-min":0,"time-sec":0,"calories":200}');
 /// ```
 abstract final class MeterPanelTextParser {
   /// 項目ラベル（次ラベル境界の検出にも使う）。
@@ -38,6 +43,250 @@ abstract final class MeterPanelTextParser {
   /// MeterPanelTextParser.parse('距離 12.3 km');
   /// ```
   static MeterReadingValues parse(String rawText) {
+    final fromJson = _tryParseJson(rawText);
+    if (fromJson != null) {
+      return fromJson;
+    }
+    return _parseLabeledText(rawText);
+  }
+
+  /// JSON 応答を試し、軽微な破損は修復してから読む。
+  ///
+  /// Example:
+  /// ```dart
+  /// _tryParseJson('{"distance": 5,}');
+  /// ```
+  static MeterReadingValues? _tryParseJson(String rawText) {
+    final candidates = _jsonCandidates(rawText);
+    for (final candidate in candidates) {
+      final decoded = _decodeJsonObject(candidate);
+      if (decoded == null || !_hasMeterJsonKeys(decoded)) {
+        continue;
+      }
+      final values = _valuesFromJsonMap(decoded);
+      if (values.distanceKm == null &&
+          values.duration == null &&
+          values.caloriesKcal == null) {
+        continue;
+      }
+      return values;
+    }
+    return null;
+  }
+
+  /// メーター JSON として認識するキーが 1 つ以上あるか。
+  ///
+  /// Example:
+  /// ```dart
+  /// _hasMeterJsonKeys({'distance': 1}); // true
+  /// ```
+  static bool _hasMeterJsonKeys(Map<String, Object?> map) {
+    const keys = {'distance', 'time-hour', 'time-min', 'time-sec', 'calories'};
+    for (final key in map.keys) {
+      if (keys.contains(key)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// 生文から JSON っぽい候補文字列を列挙する。
+  ///
+  /// Example:
+  /// ```dart
+  /// _jsonCandidates('```json\n{"distance":1}\n```');
+  /// ```
+  static List<String> _jsonCandidates(String rawText) {
+    final trimmed = rawText.trim();
+    if (trimmed.isEmpty) {
+      return const [];
+    }
+    final candidates = <String>{};
+    candidates.add(trimmed);
+
+    final fenced = RegExp(
+      r'```(?:json)?\s*([\s\S]*?)```',
+      caseSensitive: false,
+    ).firstMatch(trimmed);
+    if (fenced != null) {
+      candidates.add(fenced.group(1)!.trim());
+    }
+
+    final start = trimmed.indexOf('{');
+    final end = trimmed.lastIndexOf('}');
+    if (start != -1 && end > start) {
+      candidates.add(trimmed.substring(start, end + 1));
+    } else if (start != -1) {
+      candidates.add(trimmed.substring(start));
+    }
+    return candidates.toList(growable: false);
+  }
+
+  /// 破損しやすい箇所を直しながら [Map] へデコードする。
+  ///
+  /// Example:
+  /// ```dart
+  /// _decodeJsonObject('{"distance": 1,}');
+  /// ```
+  static Map<String, Object?>? _decodeJsonObject(String source) {
+    var current = source.trim();
+    for (var attempt = 0; attempt < 4; attempt++) {
+      try {
+        final decoded = jsonDecode(current);
+        if (decoded is Map) {
+          return decoded.map((key, value) => MapEntry(key.toString(), value));
+        }
+        return null;
+      } on FormatException {
+        final repaired = _repairJson(current);
+        if (repaired == current) {
+          return null;
+        }
+        current = repaired;
+      }
+    }
+    return null;
+  }
+
+  /// よくある JSON 破損を軽く直す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _repairJson("{'distance': 1,}");
+  /// ```
+  static String _repairJson(String source) {
+    var text = source.trim();
+    text = text
+        .replaceAll('\u201c', '"')
+        .replaceAll('\u201d', '"')
+        .replaceAll('\u2018', "'")
+        .replaceAll('\u2019', "'");
+    text = text.replaceAllMapped(
+      RegExp(r',\s*([}\]])'),
+      (match) => match.group(1)!,
+    );
+    text = text.replaceAllMapped(
+      RegExp(r"'([^'\\]*(?:\\.[^'\\]*)*)'"),
+      (match) => '"${match.group(1)!}"',
+    );
+    text = text.replaceAllMapped(
+      RegExp(r'([{,]\s*)([A-Za-z_][\w-]*)(\s*:)'),
+      (match) => '${match.group(1)}"${match.group(2)}"${match.group(3)}',
+    );
+    text = text.replaceAllMapped(
+      RegExp(
+        r'''((?:"(?:\\.|[^"\\])*"|-?\d+(?:\.\d+)?|true|false|null))\s+(?=")''',
+      ),
+      (match) => '${match.group(1)}, ',
+    );
+    final open = '{'.allMatches(text).length;
+    final close = '}'.allMatches(text).length;
+    if (open > close) {
+      text = '$text${'}' * (open - close)}';
+    }
+    return text;
+  }
+
+  /// JSON マップから計測値を組み立てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// _valuesFromJsonMap({'distance': 1, 'time-min': 30, 'calories': 10});
+  /// ```
+  static MeterReadingValues _valuesFromJsonMap(Map<String, Object?> map) {
+    final distance = _plausibleNumber(map['distance']);
+    final calories = _plausibleNumber(map['calories']);
+    return MeterReadingValues(
+      distanceKm: distance,
+      duration: _durationFromJson(map),
+      caloriesKcal: calories,
+    );
+  }
+
+  /// JSON の時分秒から [Duration] を作る。範囲外は未取得。
+  ///
+  /// 時は 0〜99、分・秒は 0〜59。欠損は 0 とみなし、いずれかが不正なら全体を捨てる。
+  ///
+  /// Example:
+  /// ```dart
+  /// _durationFromJson({'time-hour': 1, 'time-min': 0, 'time-sec': 0});
+  /// ```
+  static Duration? _durationFromJson(Map<String, Object?> map) {
+    final hoursRaw = map['time-hour'];
+    final minutesRaw = map['time-min'];
+    final secondsRaw = map['time-sec'];
+    if (hoursRaw == null && minutesRaw == null && secondsRaw == null) {
+      return null;
+    }
+    final hours = hoursRaw == null
+        ? 0
+        : _boundedTimeComponent(hoursRaw, max: 99);
+    final minutes = minutesRaw == null
+        ? 0
+        : _boundedTimeComponent(minutesRaw, max: 59);
+    final seconds = secondsRaw == null
+        ? 0
+        : _boundedTimeComponent(secondsRaw, max: 59);
+    if (hours == null || minutes == null || seconds == null) {
+      return null;
+    }
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
+  }
+
+  /// 有限かつ妥当な数値だけを返す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _plausibleNumber(12.3); // 12.3
+  /// ```
+  static double? _plausibleNumber(Object? raw) {
+    final value = _asDouble(raw);
+    if (value == null || !_isPlausibleMetric(value)) {
+      return null;
+    }
+    return value;
+  }
+
+  /// 0 以上 [max] 以下の整数へ丸める。範囲外・不正は null。
+  ///
+  /// Example:
+  /// ```dart
+  /// _boundedTimeComponent(1.6, max: 59); // 2
+  /// ```
+  static int? _boundedTimeComponent(Object? raw, {required int max}) {
+    final value = _asDouble(raw);
+    if (value == null || !value.isFinite || value < 0 || value > max) {
+      return null;
+    }
+    return value.round();
+  }
+
+  /// JSON 値を double へ写す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _asDouble('12.3'); // 12.3
+  /// ```
+  static double? _asDouble(Object? raw) {
+    if (raw == null) {
+      return null;
+    }
+    if (raw is num) {
+      return raw.toDouble();
+    }
+    if (raw is String) {
+      return double.tryParse(raw.trim().replaceAll(',', ''));
+    }
+    return null;
+  }
+
+  /// ラベル付き断片から計測値を取る（JSON 失敗時のフォールバック）。
+  ///
+  /// Example:
+  /// ```dart
+  /// _parseLabeledText('距離 12.3 km');
+  /// ```
+  static MeterReadingValues _parseLabeledText(String rawText) {
     final normalized = _normalize(rawText);
     if (normalized.isEmpty) {
       return const MeterReadingValues();

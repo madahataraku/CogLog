@@ -8,7 +8,7 @@ import 'package:infra_meter_vl/infra_meter_vl.dart';
 /// Example:
 /// ```dart
 /// FakeMeterVlVision(
-///   response: 'DISTANCE_KM=1\nDURATION=0:10:00\nCALORIES_KCAL=10',
+///   response: '{"distance":1,"time-hour":0,"time-min":10,"time-sec":0,"calories":10}',
 /// );
 /// ```
 final class FakeMeterVlVision implements MeterVlVision {
@@ -22,7 +22,8 @@ final class FakeMeterVlVision implements MeterVlVision {
   /// ```
   FakeMeterVlVision({
     this.readinessValue = MeterVlReadiness.ready,
-    this.response = 'DISTANCE_KM=1\nDURATION=0:10:00\nCALORIES_KCAL=10',
+    this.response =
+        '{"distance":1,"time-hour":0,"time-min":10,"time-sec":0,"calories":10}',
     this.throwOnGenerate = false,
     this.throwOnPrepare = false,
     this.throwOnAvailabilitySnapshot = false,
