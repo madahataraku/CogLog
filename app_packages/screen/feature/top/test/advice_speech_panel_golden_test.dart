@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:material_ui/material_ui.dart';

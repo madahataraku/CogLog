@@ -330,14 +330,4 @@ final class CoachMarkLauncher {
     }
   }
 
-  /// [_active] / Completer 参照だけ消す（onFinish 用）。
-  ///
-  /// Example:
-  /// ```dart
-  /// _clearActiveRefs();
-  /// ```
-  static void _clearActiveRefs() {
-    _active = null;
-    _activeCompleter = null;
-  }
 }
