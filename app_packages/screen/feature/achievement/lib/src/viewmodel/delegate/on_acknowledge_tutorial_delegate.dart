@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 
 import '../state/achievement_screen_state.dart';
@@ -8,6 +9,7 @@ import '../state/achievement_screen_state.dart';
 /// ```dart
 /// OnAcknowledgeTutorialDelegate(state: state).execute();
 /// ```
+@internal
 final class OnAcknowledgeTutorialDelegate {
   /// [state] を受け取る。
   ///

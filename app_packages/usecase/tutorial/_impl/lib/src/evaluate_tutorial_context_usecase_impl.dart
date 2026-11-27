@@ -58,6 +58,10 @@ final class EvaluateTutorialContextUsecaseImpl
     }
 
     final progress = await repository.read();
+    // 読込待ち中に別評価が進んでいたら二重提示しない。
+    if (session.hasContextPresentedThisProcess(kind)) {
+      return const EvaluateTutorialContextResult(shouldShow: false);
+    }
     if (_alreadySeen(progress, kind)) {
       return const EvaluateTutorialContextResult(shouldShow: false);
     }

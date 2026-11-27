@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 
@@ -12,6 +13,7 @@ import '../state/achievement_screen_state.dart';
 ///   markSeen: markSeen,
 /// ).execute();
 /// ```
+@internal
 final class OnDismissTutorialDelegate {
   /// 依存を受け取る。
   ///

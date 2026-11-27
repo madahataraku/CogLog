@@ -113,6 +113,11 @@ class AchievementScreen extends HookConsumerWidget {
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!context.mounted) {
+          rollbackAchievementTutorialSession(session);
+          return;
+        }
+        if (!(ModalRoute.of(context)?.isCurrent ?? false)) {
+          rollbackAchievementTutorialSession(session);
           return;
         }
         try {

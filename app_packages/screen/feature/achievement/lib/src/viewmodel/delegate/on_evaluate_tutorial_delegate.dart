@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 
@@ -16,6 +17,7 @@ import '../state/achievement_screen_state.dart';
 ///   session: session,
 /// ).execute();
 /// ```
+@internal
 final class OnEvaluateTutorialDelegate {
   /// [state]・文脈判定・[session] を受け取る。
   ///

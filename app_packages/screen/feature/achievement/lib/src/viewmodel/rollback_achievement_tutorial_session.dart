@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 /// アチーブメント文脈の session 提示済み／表示中だけを戻す。
@@ -6,6 +7,7 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 /// ```dart
 /// rollbackAchievementTutorialSession(session);
 /// ```
+@internal
 void rollbackAchievementTutorialSession(TutorialRuntimeSession session) {
   if (session.activeKind == TutorialKind.achievement) {
     session.clearActive();
