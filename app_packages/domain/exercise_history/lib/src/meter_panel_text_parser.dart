@@ -60,12 +60,28 @@ abstract final class MeterPanelTextParser {
     final candidates = _jsonCandidates(rawText);
     for (final candidate in candidates) {
       final decoded = _decodeJsonObject(candidate);
-      if (decoded == null) {
+      if (decoded == null || !_hasMeterJsonKeys(decoded)) {
         continue;
       }
       return _valuesFromJsonMap(decoded);
     }
     return null;
+  }
+
+  /// メーター JSON として認識するキーが 1 つ以上あるか。
+  ///
+  /// Example:
+  /// ```dart
+  /// _hasMeterJsonKeys({'distance': 1}); // true
+  /// ```
+  static bool _hasMeterJsonKeys(Map<String, Object?> map) {
+    const keys = {'distance', 'time-hour', 'time-min', 'time-sec', 'calories'};
+    for (final key in map.keys) {
+      if (keys.contains(key)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// 生文から JSON っぽい候補文字列を列挙する。

@@ -47,6 +47,7 @@ void main() {
     expect(llm.generateWithImageCallCount, 1);
     expect(llm.lastImageBytes, bytes);
     expect(llm.lastPrompt, contains('Reply with JSON only'));
+    expect(llm.lastPrompt, contains('use null for that field'));
     expect(llm.lastPrompt, contains('"distance"'));
     expect(llm.lastPrompt, contains('"time-hour"'));
     expect(llm.lastPrompt, contains('"calories"'));
