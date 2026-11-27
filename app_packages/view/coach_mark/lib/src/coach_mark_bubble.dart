@@ -35,8 +35,8 @@ final class CoachMarkBubble extends StatelessWidget {
     super.key,
   });
 
-  /// 外周 padding。
-  static const double padding = 8;
+  /// 内容外周と要素間の余白（確認ダイアログなどと同値の 16）。
+  static const double padding = 16;
 
   /// 表示内容。
   final CoachMarkStep step;

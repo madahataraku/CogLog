@@ -163,6 +163,62 @@ void main() {
   });
 
   // テスト対象:
+  // CoachMarkLauncher.show / enableTargetTab
+  //
+  // テスト内容:
+  // 穴タップは主ボタンと同じ primary。
+  testWidgets('穴タップは primary', (tester) async {
+    final registry = CoachMarkRegistry();
+    late BuildContext savedContext;
+    final targetKey = GlobalKey();
+
+    await tester.pumpWidget(
+      _wrap(
+        registry: registry,
+        child: Builder(
+          builder: (context) {
+            savedContext = context;
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                key: targetKey,
+                width: 120,
+                height: 48,
+                child: const ColoredBox(color: Color(0xFF88AAFF)),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    registry.register(CoachMarkTargetId.homeAdvisor, targetKey);
+
+    final future = CoachMarkLauncher.show(
+      savedContext,
+      step: const CoachMarkStep(
+        targetId: CoachMarkTargetId.homeAdvisor,
+        title: '穴',
+        body: '本文',
+        primaryLabel: '次へ',
+      ),
+    );
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('穴'), findsOneWidget);
+
+    // 穴上のオーバーレイ（enableTargetTab）が受ける。下の Widget には届かない。
+    final holeCenter = tester.getCenter(find.byKey(targetKey));
+    await tester.tapAt(holeCenter);
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(await future, CoachMarkDismissReason.primary);
+    expect(find.text('穴'), findsNothing);
+  });
+
+  // テスト対象:
   // CoachMarkLauncher.contentAlignFor / resolveContentPlacement
   //
   // テスト内容:

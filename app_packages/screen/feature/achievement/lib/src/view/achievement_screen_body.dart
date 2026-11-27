@@ -67,15 +67,21 @@ class AchievementScreenBody extends ConsumerWidget {
             ],
           ),
         ),
-        AchievementScreenReadyEntity(:final rows) => CoachMarkTarget(
-          id: CoachMarkTargetId.achievementList,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            itemCount: rows.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemBuilder: (context, index) =>
-                _AchievementRowView(row: rows[index]),
-          ),
+        AchievementScreenReadyEntity(:final rows) => ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          itemCount: rows.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final row = _AchievementRowView(row: rows[index]);
+            // 文脈チュートリアルは先頭行だけを穴にする。
+            if (index == 0) {
+              return CoachMarkTarget(
+                id: CoachMarkTargetId.achievementList,
+                child: row,
+              );
+            }
+            return row;
+          },
         ),
       },
     );
