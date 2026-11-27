@@ -11,7 +11,7 @@ void main() {
   test('Fake 応答をパースする', () async {
     final log = AppLogStore();
     final meterVl = FakeMeterVlVision(
-      response: '{"distance":5,"time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
+      response: '{"distance":5,"time":"0:30:00","time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
     );
     final engine = MeterVlReadingEngine(meterVl: meterVl, log: log);
     expect(engine.kind, MeterReadingEngineKind.lfmVl);

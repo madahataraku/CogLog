@@ -34,7 +34,7 @@ void main() {
   test('read は固定プロンプトで generateWithImage しパースする', () async {
     final log = AppLogStore();
     final llm = FakeOnDeviceLlm(
-      response: '{"distance":5,"time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
+      response: '{"distance":5,"time":"0:30:00","time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
       supportsVisionValue: true,
     );
     final engine = LlmMeterReadingEngine(
@@ -47,7 +47,13 @@ void main() {
     expect(llm.generateWithImageCallCount, 1);
     expect(llm.lastImageBytes, bytes);
     expect(llm.lastPrompt, contains('Reply with JSON only'));
-    expect(llm.lastPrompt, contains('use null for that field'));
+    expect(llm.lastPrompt, contains('Unreadable fields must be null'));
+    expect(llm.lastPrompt, contains('"time"'));
+    expect(
+      llm.lastPrompt,
+      contains('Prefer the colon-separated readout nearest'),
+    );
+    expect(llm.lastPrompt, contains('above, below, or beside'));
     expect(llm.lastPrompt, contains('"distance"'));
     expect(llm.lastPrompt, contains('"time-hour"'));
     expect(llm.lastPrompt, contains('"calories"'));
