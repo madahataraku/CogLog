@@ -128,4 +128,93 @@ void main() {
       CoachMarkDismissReason.primary,
     ]);
   });
+
+  // テスト対象:
+  // CoachMarkLauncher 穴タップ完了直後の連鎖 show
+  //
+  // テスト内容:
+  // 穴タップ完了の直後に次段階 show しても欠落しない（onFinish 同期 complete の回帰）。
+  testWidgets('穴タップ直後の連鎖でも次段階が出る', (tester) async {
+    final registry = CoachMarkRegistry();
+    late BuildContext ctx;
+    final firstKey = GlobalKey();
+
+    await tester.pumpWidget(
+      _wrap(
+        registry: registry,
+        child: Builder(
+          builder: (context) {
+            ctx = context;
+            return Column(
+              children: [
+                CoachMarkTarget(
+                  id: CoachMarkTargetId.homePeriodTotals,
+                  child: SizedBox(
+                    key: firstKey,
+                    width: 100,
+                    height: 40,
+                    child: const Text('a'),
+                  ),
+                ),
+                CoachMarkTarget(
+                  id: CoachMarkTargetId.homeGoalRings,
+                  child: const SizedBox(
+                    width: 100,
+                    height: 40,
+                    child: Text('b'),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final reasons = <CoachMarkDismissReason>[];
+    final done = Completer<void>();
+    unawaited(() async {
+      final r1 = await CoachMarkLauncher.show(
+        ctx,
+        step: const CoachMarkStep(
+          targetId: CoachMarkTargetId.homePeriodTotals,
+          title: 's1',
+          body: 'b1',
+          primaryLabel: '次へ',
+        ),
+      );
+      reasons.add(r1);
+      final r2 = await CoachMarkLauncher.show(
+        ctx,
+        step: const CoachMarkStep(
+          targetId: CoachMarkTargetId.homeGoalRings,
+          title: 's2',
+          body: 'b2',
+          primaryLabel: '次へ',
+        ),
+      );
+      reasons.add(r2);
+      done.complete();
+    }());
+
+    await _pumpFrames(tester);
+    expect(find.text('s1'), findsOneWidget);
+
+    await tester.tapAt(tester.getCenter(find.byKey(firstKey)));
+    await tester.pump();
+    await tester.pump(Duration.zero);
+    await tester.pump(Duration.zero);
+    await _pumpFrames(tester);
+
+    expect(find.text('s2'), findsOneWidget, reason: 'reasons=$reasons');
+
+    await tester.tap(find.text('次へ'));
+    await _pumpFrames(tester, count: 5);
+    await done.future;
+    expect(reasons, [
+      CoachMarkDismissReason.primary,
+      CoachMarkDismissReason.primary,
+    ]);
+  });
 }

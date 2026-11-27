@@ -138,12 +138,9 @@ final class CoachMarkLauncher {
         if (!identical(_active, tutorial)) {
           return;
         }
-        // finish() 経由（穴タップ含む）で外されたとき、未完了なら primary 相当として閉じる。
-        final pending = _activeCompleter;
-        if (pending != null && !pending.isCompleted) {
-          pending.complete(CoachMarkDismissReason.primary);
-        }
-        _clearActiveRefs();
+        // finish() 経由（穴タップ含む）も主ボタンと同じく removeRoute 後始末を待つ。
+        // 同期 complete だと直後の連鎖 show の Navigator.push と競合する。
+        _finishActive(CoachMarkDismissReason.primary);
       },
     );
     _active = tutorial;
