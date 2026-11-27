@@ -349,6 +349,13 @@ class L10nJa extends L10n {
   String get screen_feature_achievement_title => 'アチーブメント';
 
   @override
+  String get screen_feature_achievement_tutorial_body =>
+      '運動を続けていくと、内容に応じて称号が付与されます。全部集めてみましょう！';
+
+  @override
+  String get screen_feature_achievement_tutorial_title => 'アチーブメントについて';
+
+  @override
   String get screen_feature_app_settings_back_semantics => '戻る';
 
   @override
@@ -1298,13 +1305,6 @@ class L10nJa extends L10n {
   String get screen_feature_top_today => '本日';
 
   @override
-  String get screen_feature_top_tutorial_achievement_body =>
-      'アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。';
-
-  @override
-  String get screen_feature_top_tutorial_achievement_title => 'たくさんの称号を取得しよう';
-
-  @override
   String get screen_feature_top_tutorial_main_1_body =>
       '本日・今週・今月の運動記録の合計値を確認できます。タブから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。';
 
@@ -1352,6 +1352,13 @@ class L10nJa extends L10n {
 
   @override
   String get screen_feature_top_tutorial_main_7_title => 'たくさんの称号を取得しよう';
+
+  @override
+  String get screen_feature_top_tutorial_main_intro_body =>
+      'はじめまして！\nエアロバイク運動記録アプリCogLogの機能紹介を行います';
+
+  @override
+  String get screen_feature_top_tutorial_main_intro_title => '使い方説明';
 
   @override
   String get screen_feature_top_unset_prompt => '目標設定で一日あたりの目標を設定しましょう';

@@ -240,18 +240,6 @@ mixin class L10nStringsMixin {
   String get screen_feature_top_today =>
       LocalizeStringDelegate.get('screen_feature_top_today');
 
-  /// 段階7互換キー
-  String get screen_feature_top_tutorial_achievement_body =>
-      LocalizeStringDelegate.get(
-        'screen_feature_top_tutorial_achievement_body',
-      );
-
-  /// 段階7互換キー
-  String get screen_feature_top_tutorial_achievement_title =>
-      LocalizeStringDelegate.get(
-        'screen_feature_top_tutorial_achievement_title',
-      );
-
   /// 段階1本文
   String get screen_feature_top_tutorial_main_1_body =>
       LocalizeStringDelegate.get('screen_feature_top_tutorial_main_1_body');
@@ -307,6 +295,16 @@ mixin class L10nStringsMixin {
   /// 段階7タイトル
   String get screen_feature_top_tutorial_main_7_title =>
       LocalizeStringDelegate.get('screen_feature_top_tutorial_main_7_title');
+
+  /// 導入本文
+  String get screen_feature_top_tutorial_main_intro_body =>
+      LocalizeStringDelegate.get('screen_feature_top_tutorial_main_intro_body');
+
+  /// 導入タイトル
+  String get screen_feature_top_tutorial_main_intro_title =>
+      LocalizeStringDelegate.get(
+        'screen_feature_top_tutorial_main_intro_title',
+      );
 
   /// 目標未設定時の設定促進
   String get screen_feature_top_unset_prompt =>

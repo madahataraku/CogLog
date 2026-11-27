@@ -3,7 +3,7 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import '../state/top_screen_state.dart';
 
-/// 旧アチーブメント文脈閉じ。案内はメイン段階7へ移したため pending だけ下ろす。
+/// ホーム側の旧アチーブメント文脈閉じ。案内はアチーブメント画面文脈へ移したため pending だけ下ろす。
 ///
 /// Example:
 /// ```dart

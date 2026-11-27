@@ -390,6 +390,13 @@ class L10nEn extends L10n {
   String get screen_feature_achievement_title => 'Achievements';
 
   @override
+  String get screen_feature_achievement_tutorial_body =>
+      'Keep exercising and you\'ll earn titles based on what you do. Try collecting them all!';
+
+  @override
+  String get screen_feature_achievement_tutorial_title => 'About Achievements';
+
+  @override
   String get screen_feature_app_settings_back_semantics => 'Back';
 
   @override
@@ -1382,14 +1389,6 @@ class L10nEn extends L10n {
   String get screen_feature_top_today => 'Today';
 
   @override
-  String get screen_feature_top_tutorial_achievement_body =>
-      'From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.';
-
-  @override
-  String get screen_feature_top_tutorial_achievement_title =>
-      'Earn many trophies';
-
-  @override
   String get screen_feature_top_tutorial_main_1_body =>
       'You can check the total exercise values for today, this week, and this month. Use the tabs to switch among calories, distance, and duration.';
 
@@ -1440,6 +1439,13 @@ class L10nEn extends L10n {
 
   @override
   String get screen_feature_top_tutorial_main_7_title => 'Earn many trophies';
+
+  @override
+  String get screen_feature_top_tutorial_main_intro_body =>
+      'Hello!\nWe\'ll introduce the features of CogLog, an exercise log app for stationary bikes.';
+
+  @override
+  String get screen_feature_top_tutorial_main_intro_title => 'How to use';
 
   @override
   String get screen_feature_top_unset_prompt => 'Set a daily goal in Goals';

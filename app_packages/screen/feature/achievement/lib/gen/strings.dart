@@ -564,4 +564,12 @@ mixin class L10nStringsMixin {
   /// 画面タイトル
   String get screen_feature_achievement_title =>
       LocalizeStringDelegate.get('screen_feature_achievement_title');
+
+  /// 文脈コーチマーク本文
+  String get screen_feature_achievement_tutorial_body =>
+      LocalizeStringDelegate.get('screen_feature_achievement_tutorial_body');
+
+  /// 文脈コーチマークタイトル
+  String get screen_feature_achievement_tutorial_title =>
+      LocalizeStringDelegate.get('screen_feature_achievement_tutorial_title');
 }

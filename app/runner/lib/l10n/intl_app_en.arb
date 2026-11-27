@@ -417,6 +417,14 @@
   "@screen_feature_achievement_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_achievement_tutorial_body": "Keep exercising and you'll earn titles based on what you do. Try collecting them all!",
+  "@screen_feature_achievement_tutorial_body": {
+    "description": "文脈コーチマーク本文"
+  },
+  "screen_feature_achievement_tutorial_title": "About Achievements",
+  "@screen_feature_achievement_tutorial_title": {
+    "description": "文脈コーチマークタイトル"
+  },
   "screen_feature_app_settings_back_semantics": "Back",
   "@screen_feature_app_settings_back_semantics": {
     "description": "戻るボタンの代替テキスト"
@@ -1606,14 +1614,6 @@
   "@screen_feature_top_today": {
     "description": "集計期間"
   },
-  "screen_feature_top_tutorial_achievement_body": "From Achievements you can review trophies for what you have achieved. A dot appears on the icon when you have new unlocks.",
-  "@screen_feature_top_tutorial_achievement_body": {
-    "description": "段階7互換キー"
-  },
-  "screen_feature_top_tutorial_achievement_title": "Earn many trophies",
-  "@screen_feature_top_tutorial_achievement_title": {
-    "description": "段階7互換キー"
-  },
   "screen_feature_top_tutorial_main_1_body": "You can check the total exercise values for today, this week, and this month. Use the tabs to switch among calories, distance, and duration.",
   "@screen_feature_top_tutorial_main_1_body": {
     "description": "段階1本文"
@@ -1669,6 +1669,14 @@
   "screen_feature_top_tutorial_main_7_title": "Earn many trophies",
   "@screen_feature_top_tutorial_main_7_title": {
     "description": "段階7タイトル"
+  },
+  "screen_feature_top_tutorial_main_intro_body": "Hello!\nWe'll introduce the features of CogLog, an exercise log app for stationary bikes.",
+  "@screen_feature_top_tutorial_main_intro_body": {
+    "description": "導入本文"
+  },
+  "screen_feature_top_tutorial_main_intro_title": "How to use",
+  "@screen_feature_top_tutorial_main_intro_title": {
+    "description": "導入タイトル"
   },
   "screen_feature_top_unset_prompt": "Set a daily goal in Goals",
   "@screen_feature_top_unset_prompt": {

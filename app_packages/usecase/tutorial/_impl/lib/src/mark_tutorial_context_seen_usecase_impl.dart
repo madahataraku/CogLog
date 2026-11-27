@@ -57,6 +57,9 @@ final class MarkTutorialContextSeenUsecaseImpl
         TutorialKind.meterEdit => current.copyWith(meterEditContextSeen: true),
         TutorialKind.trends => current.copyWith(trendsContextSeen: true),
         TutorialKind.history => current.copyWith(historyContextSeen: true),
+        TutorialKind.achievement => current.copyWith(
+          achievementContextSeen: true,
+        ),
         TutorialKind.main => current,
       };
       await repository.write(next);

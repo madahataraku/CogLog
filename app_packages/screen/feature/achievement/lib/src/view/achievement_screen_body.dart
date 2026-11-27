@@ -2,6 +2,7 @@ import 'package:forui/forui.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 import '../strings.dart';
 import '../viewmodel/achievement_screen_view_model.dart';
@@ -66,12 +67,15 @@ class AchievementScreenBody extends ConsumerWidget {
             ],
           ),
         ),
-        AchievementScreenReadyEntity(:final rows) => ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemCount: rows.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-          itemBuilder: (context, index) =>
-              _AchievementRowView(row: rows[index]),
+        AchievementScreenReadyEntity(:final rows) => CoachMarkTarget(
+          id: CoachMarkTargetId.achievementList,
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            itemCount: rows.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
+            itemBuilder: (context, index) =>
+                _AchievementRowView(row: rows[index]),
+          ),
         ),
       },
     );

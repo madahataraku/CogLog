@@ -5,7 +5,7 @@
 /// TutorialKind.main;
 /// ```
 enum TutorialKind {
-  /// メイン導線（段階1〜7）。
+  /// メイン導線（導入＋段階1〜7）。
   main,
 
   /// 目標設定文脈（一日あたり／週間日数／自動更新）。
@@ -22,4 +22,7 @@ enum TutorialKind {
 
   /// 運動履歴文脈。
   history,
+
+  /// アチーブメント文脈。
+  achievement,
 }

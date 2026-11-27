@@ -64,7 +64,7 @@ final class TutorialProgress {
   /// 運動履歴文脈を表示済みか。
   final bool historyContextSeen;
 
-  /// 旧アチーブメント文脈の表示済み（互換用。案内はメイン段階7へ移した）。
+  /// アチーブメント文脈を表示済みか。
   final bool achievementContextSeen;
 
   /// すべて未表示の [initial] を返す。

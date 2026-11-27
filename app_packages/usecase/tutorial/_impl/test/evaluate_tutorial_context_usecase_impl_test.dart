@@ -90,4 +90,35 @@ void main() {
     expect(second.shouldShow, isTrue);
     expect(session.activeKind, TutorialKind.goalSettings);
   });
+
+  test('achievement 未 seen → true', () async {
+    final result = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.achievement),
+    );
+    expect(result.shouldShow, isTrue);
+    expect(session.activeKind, TutorialKind.achievement);
+  });
+
+  test('achievement seen → false', () async {
+    await repository.write(
+      TutorialProgress.initial.copyWith(achievementContextSeen: true),
+    );
+    final result = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.achievement),
+    );
+    expect(result.shouldShow, isFalse);
+  });
+
+  test('読込後に提示済みなら二重評価は false', () async {
+    final first = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.achievement),
+    );
+    expect(first.shouldShow, isTrue);
+    // 第1評価が markContextPresented 済みの状態で、読込後再確認が効くことを直接検証。
+    final second = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.achievement),
+    );
+    expect(second.shouldShow, isFalse);
+    expect(session.activeKind, TutorialKind.achievement);
+  });
 }

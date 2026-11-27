@@ -460,6 +460,14 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_achievement_title;
       },
+      'screen_feature_achievement_tutorial_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_tutorial_body;
+      },
+      'screen_feature_achievement_tutorial_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_achievement_tutorial_title;
+      },
       'screen_feature_app_settings_back_semantics': (source) {
         // No Placeholders
         return l10n.screen_feature_app_settings_back_semantics;
@@ -1629,14 +1637,6 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_top_today;
       },
-      'screen_feature_top_tutorial_achievement_body': (source) {
-        // No Placeholders
-        return l10n.screen_feature_top_tutorial_achievement_body;
-      },
-      'screen_feature_top_tutorial_achievement_title': (source) {
-        // No Placeholders
-        return l10n.screen_feature_top_tutorial_achievement_title;
-      },
       'screen_feature_top_tutorial_main_1_body': (source) {
         // No Placeholders
         return l10n.screen_feature_top_tutorial_main_1_body;
@@ -1692,6 +1692,14 @@ final class L10nHelper {
       'screen_feature_top_tutorial_main_7_title': (source) {
         // No Placeholders
         return l10n.screen_feature_top_tutorial_main_7_title;
+      },
+      'screen_feature_top_tutorial_main_intro_body': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_intro_body;
+      },
+      'screen_feature_top_tutorial_main_intro_title': (source) {
+        // No Placeholders
+        return l10n.screen_feature_top_tutorial_main_intro_title;
       },
       'screen_feature_top_unset_prompt': (source) {
         // No Placeholders

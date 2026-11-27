@@ -715,6 +715,18 @@ abstract class L10n {
   /// **'アチーブメント'**
   String get screen_feature_achievement_title;
 
+  /// 文脈コーチマーク本文
+  ///
+  /// In ja, this message translates to:
+  /// **'運動を続けていくと、内容に応じて称号が付与されます。全部集めてみましょう！'**
+  String get screen_feature_achievement_tutorial_body;
+
+  /// 文脈コーチマークタイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'アチーブメントについて'**
+  String get screen_feature_achievement_tutorial_title;
+
   /// 戻るボタンの代替テキスト
   ///
   /// In ja, this message translates to:
@@ -2364,18 +2376,6 @@ abstract class L10n {
   /// **'本日'**
   String get screen_feature_top_today;
 
-  /// 段階7互換キー
-  ///
-  /// In ja, this message translates to:
-  /// **'アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。'**
-  String get screen_feature_top_tutorial_achievement_body;
-
-  /// 段階7互換キー
-  ///
-  /// In ja, this message translates to:
-  /// **'たくさんの称号を取得しよう'**
-  String get screen_feature_top_tutorial_achievement_title;
-
   /// 段階1本文
   ///
   /// In ja, this message translates to:
@@ -2459,6 +2459,18 @@ abstract class L10n {
   /// In ja, this message translates to:
   /// **'たくさんの称号を取得しよう'**
   String get screen_feature_top_tutorial_main_7_title;
+
+  /// 導入本文
+  ///
+  /// In ja, this message translates to:
+  /// **'はじめまして！\nエアロバイク運動記録アプリCogLogの機能紹介を行います'**
+  String get screen_feature_top_tutorial_main_intro_body;
+
+  /// 導入タイトル
+  ///
+  /// In ja, this message translates to:
+  /// **'使い方説明'**
+  String get screen_feature_top_tutorial_main_intro_title;
 
   /// 目標未設定時の設定促進
   ///

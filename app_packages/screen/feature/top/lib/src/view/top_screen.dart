@@ -155,7 +155,7 @@ class TopScreen extends HookConsumerWidget {
       ],
     );
 
-    // pending 立ち上がりだけを契機に表示を始める。段階1→2→3は同一コールバック内で
+    // pending 立ち上がりだけを契機に表示を始める。導入→段階1→2→3は同一コールバック内で
     // 連鎖し、tutorialMainStep 変更による effect 再入と二重 show を避ける。
     useEffect(() {
       if (!entity.pendingTutorialMain) {
@@ -404,6 +404,12 @@ Future<void> _navigateAfterMain(
 /// ```
 CoachMarkStep _mainCoachMarkStep(TutorialMainStep step) {
   return switch (step) {
+    TutorialMainStep.usageIntro => CoachMarkStep(
+      targetId: CoachMarkTargetId.homeBody,
+      title: strings.screen_feature_top_tutorial_main_intro_title,
+      body: strings.screen_feature_top_tutorial_main_intro_body,
+      primaryLabel: strings.view_coach_mark_next,
+    ),
     TutorialMainStep.homeIntro => CoachMarkStep(
       targetId: CoachMarkTargetId.homePeriodTotals,
       title: strings.screen_feature_top_tutorial_main_1_title,
@@ -426,25 +432,25 @@ CoachMarkStep _mainCoachMarkStep(TutorialMainStep step) {
       targetId: CoachMarkTargetId.navMeterCapture,
       title: strings.screen_feature_top_tutorial_main_4_title,
       body: strings.screen_feature_top_tutorial_main_4_body,
-      primaryLabel: strings.view_coach_mark_close,
+      primaryLabel: strings.view_coach_mark_next,
     ),
     TutorialMainStep.trendsRecommend => CoachMarkStep(
       targetId: CoachMarkTargetId.navTrends,
       title: strings.screen_feature_top_tutorial_main_5_title,
       body: strings.screen_feature_top_tutorial_main_5_body,
-      primaryLabel: strings.view_coach_mark_close,
+      primaryLabel: strings.view_coach_mark_next,
     ),
     TutorialMainStep.historyRecommend => CoachMarkStep(
       targetId: CoachMarkTargetId.navExerciseHistory,
       title: strings.screen_feature_top_tutorial_main_6_title,
       body: strings.screen_feature_top_tutorial_main_6_body,
-      primaryLabel: strings.view_coach_mark_close,
+      primaryLabel: strings.view_coach_mark_next,
     ),
     TutorialMainStep.achievementRecommend => CoachMarkStep(
       targetId: CoachMarkTargetId.homeAchievementTrophy,
       title: strings.screen_feature_top_tutorial_main_7_title,
       body: strings.screen_feature_top_tutorial_main_7_body,
-      primaryLabel: strings.view_coach_mark_close,
+      primaryLabel: strings.view_coach_mark_next,
     ),
   };
 }

@@ -32,21 +32,21 @@ void main() {
     session = TutorialRuntimeSession();
   });
 
-  test('start → homeIntro', () async {
+  test('start → usageIntro', () async {
     final result = await usecase().execute(
       const AdvanceTutorialMainRequest.start(),
     );
     expect(
       result,
       isA<AdvanceTutorialMainShowResult>()
-          .having((e) => e.step, 'step', TutorialMainStep.homeIntro)
+          .having((e) => e.step, 'step', TutorialMainStep.usageIntro)
           .having(
             (e) => e.navigation,
             'nav',
             AdvanceTutorialMainNavigation.none,
           ),
     );
-    expect(session.mainStep, TutorialMainStep.homeIntro);
+    expect(session.mainStep, TutorialMainStep.usageIntro);
   });
 
   test('メイン表示中の start は noop（二重連鎖防止）', () async {
@@ -55,7 +55,7 @@ void main() {
       const AdvanceTutorialMainRequest.start(),
     );
     expect(second, isA<AdvanceTutorialMainNoopResult>());
-    expect(session.mainStep, TutorialMainStep.homeIntro);
+    expect(session.mainStep, TutorialMainStep.usageIntro);
   });
 
   test('読込み後に文脈が有効なら start は noop', () async {
@@ -68,9 +68,15 @@ void main() {
     expect(session.mainStep, isNull);
   });
 
-  test('1→2→3', () async {
+  test('導入→1→2→3', () async {
     final u = usecase();
     await u.execute(const AdvanceTutorialMainRequest.start());
+    final r1 = await u.execute(const AdvanceTutorialMainRequest.next());
+    expect(
+      (r1 as AdvanceTutorialMainShowResult).step,
+      TutorialMainStep.homeIntro,
+    );
+    expect((await repository.read()).mainReachedStep, 0);
     final r2 = await u.execute(const AdvanceTutorialMainRequest.next());
     expect(
       (r2 as AdvanceTutorialMainShowResult).step,
@@ -89,6 +95,7 @@ void main() {
     await u.execute(const AdvanceTutorialMainRequest.start());
     await u.execute(const AdvanceTutorialMainRequest.next());
     await u.execute(const AdvanceTutorialMainRequest.next());
+    await u.execute(const AdvanceTutorialMainRequest.next());
     final r = await u.execute(const AdvanceTutorialMainRequest.next());
     expect(
       (r as AdvanceTutorialMainShowResult).navigation,
@@ -105,6 +112,7 @@ void main() {
       session: session,
     );
     await failing.execute(const AdvanceTutorialMainRequest.start());
+    await failing.execute(const AdvanceTutorialMainRequest.next());
     await failing.execute(const AdvanceTutorialMainRequest.next());
     await failing.execute(const AdvanceTutorialMainRequest.next());
     final r = await failing.execute(const AdvanceTutorialMainRequest.next());

@@ -50,7 +50,7 @@ final class AdvanceTutorialMainUsecaseImpl
     };
   }
 
-  /// 未完了なら段階1〜3開始、または段階4〜7を再開する。
+  /// 未完了なら導入〜段階3開始、または段階4〜7を再開する。
   Future<AdvanceTutorialMainResult> _startOrResume() async {
     session.manualStartGuard = false;
     final progress = await repository.read();
@@ -58,7 +58,7 @@ final class AdvanceTutorialMainUsecaseImpl
     if (session.activeKind != null && session.activeKind != TutorialKind.main) {
       return const AdvanceTutorialMainResult.noop();
     }
-    // 既にメイン表示中なら段階1へ戻さず、二重連鎖を避ける。
+    // 既にメイン表示中なら導入へ戻さず、二重連鎖を避ける。
     if (session.activeKind == TutorialKind.main) {
       return const AdvanceTutorialMainResult.noop();
     }
@@ -67,7 +67,7 @@ final class AdvanceTutorialMainUsecaseImpl
     }
     if (progress.mainReachedStep < 3) {
       return _show(
-        TutorialMainStep.homeIntro,
+        TutorialMainStep.usageIntro,
         navigation: AdvanceTutorialMainNavigation.none,
       );
     }
@@ -107,6 +107,10 @@ final class AdvanceTutorialMainUsecaseImpl
       return const AdvanceTutorialMainResult.noop();
     }
     return switch (step) {
+      TutorialMainStep.usageIntro => _show(
+        TutorialMainStep.homeIntro,
+        navigation: AdvanceTutorialMainNavigation.none,
+      ),
       TutorialMainStep.homeIntro => _show(
         TutorialMainStep.goalProgressIntro,
         navigation: AdvanceTutorialMainNavigation.none,
@@ -152,7 +156,7 @@ final class AdvanceTutorialMainUsecaseImpl
     );
   }
 
-  /// 段階4〜6を閉じたあと到達段階を残し、対応タブへ誘導する。
+  /// 段階4〜6の次へのあと到達段階を残し、対応タブへ誘導する。
   Future<AdvanceTutorialMainResult> _persistReachedAndNavigate(
     int reached,
     TutorialMainStep step,

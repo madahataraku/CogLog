@@ -5,9 +5,13 @@ import 'package:riverpod/riverpod.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:state_stream/state_stream.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import 'delegate/achievement_state_to_entity_delegate.dart';
+import 'delegate/on_acknowledge_tutorial_delegate.dart';
 import 'delegate/on_back_delegate.dart';
+import 'delegate/on_dismiss_tutorial_delegate.dart';
+import 'delegate/on_evaluate_tutorial_delegate.dart';
 import 'delegate/on_initialize_delegate.dart';
 import 'delegate/on_retry_delegate.dart';
 import 'entity/achievement_screen_entity.dart';
@@ -36,6 +40,9 @@ final class AchievementScreenViewModel {
         state: MutableStateStream(AchievementScreenState.initial),
         loadUsecase: ref.watch(LoadAchievementsUsecase.provider),
         markViewed: ref.watch(MarkAchievementsViewedUsecase.provider),
+        evaluateTutorial: ref.watch(EvaluateTutorialContextUsecase.provider),
+        markTutorialSeen: ref.watch(MarkTutorialContextSeenUsecase.provider),
+        tutorialSession: ref.watch(tutorialRuntimeSessionProvider),
         navigation: ref.watch(screenNavigationProvider),
         stateToEntity: const AchievementStateToEntityDelegate(),
         now: () => DateTime.now(),
@@ -49,6 +56,9 @@ final class AchievementScreenViewModel {
       appDataImportRefreshProvider,
       LoadAchievementsUsecase.provider,
       MarkAchievementsViewedUsecase.provider,
+      EvaluateTutorialContextUsecase.provider,
+      MarkTutorialContextSeenUsecase.provider,
+      tutorialRuntimeSessionProvider,
       screenNavigationProvider,
     ],
   );
@@ -64,6 +74,18 @@ final class AchievementScreenViewModel {
   /// Ready 後の最終閲覧更新。
   @visibleForTesting
   final MarkAchievementsViewedUsecase markViewed;
+
+  /// 文脈表示要否。
+  @visibleForTesting
+  final EvaluateTutorialContextUsecase evaluateTutorial;
+
+  /// 文脈表示済み。
+  @visibleForTesting
+  final MarkTutorialContextSeenUsecase markTutorialSeen;
+
+  /// プロセス内のチュートリアル実行状態。
+  @visibleForTesting
+  final TutorialRuntimeSession tutorialSession;
 
   /// 画面遷移。
   @visibleForTesting
@@ -87,6 +109,9 @@ final class AchievementScreenViewModel {
     required this.state,
     required this.loadUsecase,
     required this.markViewed,
+    required this.evaluateTutorial,
+    required this.markTutorialSeen,
+    required this.tutorialSession,
     required this.navigation,
     required this.stateToEntity,
     required this.now,

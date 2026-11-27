@@ -4,7 +4,7 @@ import 'package:usecase_tutorial/usecase_tutorial.dart';
 
 import '../state/top_screen_state.dart';
 
-/// 旧アチーブメント文脈用。案内はメイン段階7へ移したため常に何もしない。
+/// ホーム側の旧アチーブメント文脈口。案内はアチーブメント画面文脈へ移したため常に何もしない。
 ///
 /// Example:
 /// ```dart

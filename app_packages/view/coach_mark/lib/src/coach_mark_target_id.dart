@@ -5,6 +5,9 @@
 /// CoachMarkTargetId.homePeriodTotals;
 /// ```
 enum CoachMarkTargetId {
+  /// ホーム: 本文全体（メイン導入）。
+  homeBody,
+
   /// ホーム: 期間集計と指標切替の外カード（メイン段階1）。
   homePeriodTotals,
 
@@ -49,4 +52,7 @@ enum CoachMarkTargetId {
 
   /// 運動履歴: カレンダースタンプ領域。
   historyCalendar,
+
+  /// アチーブメント: 一覧領域。
+  achievementList,
 }
