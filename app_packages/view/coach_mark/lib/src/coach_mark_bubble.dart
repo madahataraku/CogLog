@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:meta/meta.dart';
@@ -44,9 +46,13 @@ final class CoachMarkBubble extends StatelessWidget {
   /// 閉じたときの理由通知。
   final ValueChanged<CoachMarkDismissReason> onDismiss;
 
+  /// 主ボタン 1 個分の概算高さ（余白込み。帯が狭いとき本文側の上限計算に使う）。
+  static const double _primaryButtonBlock = 48;
+
   /// 文言と主／副ボタンを描く。
   ///
-  /// 画面高さの約半分を上限にし、大きな穴の上に載せてもボタンが画面外へ出ない。
+  /// 親（SafeArea 内の Positioned 帯）の高さ上限と画面高さの約半分の小さい方に収める。
+  /// 本文だけをスクロールし、主／副ボタンは常に見える位置に残す。
   ///
   /// Example:
   /// ```dart
@@ -56,48 +62,80 @@ final class CoachMarkBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final secondary = step.secondaryLabel;
     final screen = MediaQuery.sizeOf(context);
-    final maxWidth = screen.width - padding * 2;
-    final maxHeight = screen.height * 0.45;
-    return Semantics(
-      label: step.title,
-      liveRegion: true,
-      child: Padding(
-        padding: const EdgeInsets.all(padding),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.theme.colors.background,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(padding),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: padding,
-                  children: [
-                    Text(step.title),
-                    Text(step.body),
-                    if (secondary != null)
-                      FButton(
-                        variant: .secondary,
-                        onPress: () =>
-                            onDismiss(CoachMarkDismissReason.secondary),
-                        child: Text(secondary),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = math.min(
+          screen.width - padding * 2,
+          constraints.maxWidth.isFinite
+              ? constraints.maxWidth
+              : screen.width - padding * 2,
+        );
+        final parentMax = constraints.hasBoundedHeight
+            ? constraints.maxHeight
+            : screen.height * 0.45;
+        final outerMax = math.max(
+          0.0,
+          math.min(screen.height * 0.45, parentMax) - padding * 2,
+        );
+        // 枠内余白・ボタン列を除いた本文の上限。
+        final buttonBlock =
+            _primaryButtonBlock +
+            (secondary != null ? _primaryButtonBlock + padding : 0) +
+            padding;
+        final textMax = math.max(0.0, outerMax - padding * 2 - buttonBlock);
+        return Semantics(
+          label: step.title,
+          liveRegion: true,
+          child: Padding(
+            padding: const EdgeInsets.all(padding),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: maxWidth,
+                maxHeight: outerMax,
+              ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: context.theme.colors.background,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(padding),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: padding,
+                    children: [
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: textMax),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            spacing: padding,
+                            children: [Text(step.title), Text(step.body)],
+                          ),
+                        ),
                       ),
-                    FButton(
-                      onPress: () => onDismiss(CoachMarkDismissReason.primary),
-                      child: Text(step.primaryLabel),
-                    ),
-                  ],
+                      if (secondary != null)
+                        FButton(
+                          variant: .secondary,
+                          onPress: () =>
+                              onDismiss(CoachMarkDismissReason.secondary),
+                          child: Text(secondary),
+                        ),
+                      FButton(
+                        onPress: () =>
+                            onDismiss(CoachMarkDismissReason.primary),
+                        child: Text(step.primaryLabel),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

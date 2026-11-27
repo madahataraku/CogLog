@@ -99,11 +99,14 @@ final class CoachMarkLauncher {
       _finishActive(reason);
     }
 
-    // keyTarget ではなく表示時点の矩形を渡す（root Overlay でも座標解決できる）。
+    // キーが生きていれば keyTarget で毎フレーム再計測し、なければ矩形スナップショット／中央。
+    // root Overlay 基準の rectFor と keyTarget(rootOverlay: true) は同系。
     final fallback = TargetPosition(
       Size(size.width * 0.6, 48),
       Offset(size.width * 0.2, size.height * 0.4),
     );
+    final key = registry.keyFor(step.targetId);
+    final keyReady = key?.currentContext != null && hole != null;
     final position = hole == null
         ? fallback
         : TargetPosition(hole.size, hole.topLeft);
@@ -116,6 +119,7 @@ final class CoachMarkLauncher {
 
     final target = TargetFocus(
       identify: step.targetId.name,
+      keyTarget: keyReady ? key : null,
       targetPosition: position,
       shape: ShapeLightFocus.RRect,
       radius: focusRadiusFor(step.targetId),
@@ -179,9 +183,9 @@ final class CoachMarkLauncher {
     _finishActive(CoachMarkDismissReason.forced);
   }
 
-  /// 穴と画面サイズから吹き出しの [ContentAlign] を決める（余白十分時）。
+  /// 穴と画面サイズから吹き出しの [ContentAlign] を決める。
   ///
-  /// 大きな穴で画面外へ出る場合は [resolveContentPlacement] を使う。
+  /// 実装は常に [ContentAlign.custom]（SafeArea 帯）。詳細は [resolveContentPlacement]。
   ///
   /// Example:
   /// ```dart
@@ -195,7 +199,11 @@ final class CoachMarkLauncher {
     return resolveContentPlacement(hole: hole, screenSize: screenSize).align;
   }
 
-  /// 穴の外に十分な余白があれば top／bottom、なければ画面内へ custom 固定する。
+  /// 穴の上下どちらに載せるかを決め、常に SafeArea 内の custom 帯へ固定する。
+  ///
+  /// `tutorial_coach_mark` の ContentAlign.top／bottom は高さ上限がなく、
+  /// custom で top か bottom だけ指定すると吹き出しが SafeArea 外へ伸びる。
+  /// そのため top と bottom の両方を指定し、Positioned の帯内に収める。
   ///
   /// Example:
   /// ```dart
@@ -211,78 +219,76 @@ final class CoachMarkLauncher {
     required Size screenSize,
     EdgeInsets safePadding = EdgeInsets.zero,
   }) {
-    if (hole == null || screenSize.height <= 0) {
-      return (align: ContentAlign.bottom, customPosition: null);
-    }
+    final bandTop = safePadding.top + _gap;
+    final bandBottom = safePadding.bottom + _gap;
 
-    final centerY = hole.center.dy;
-    final haloH = hole.height * 0.6 + _focusPad;
-    final spaceIfBottom =
-        screenSize.height - (centerY + haloH) - safePadding.bottom;
-    final topBottomInset = haloH + (screenSize.height - centerY);
-    final spaceIfTop = screenSize.height - topBottomInset - safePadding.top;
-    final preferTop = centerY > screenSize.height * 0.55;
-
-    if (preferTop) {
-      if (spaceIfTop >= minContentHeight) {
-        return (align: ContentAlign.top, customPosition: null);
-      }
-      if (spaceIfBottom >= minContentHeight) {
-        return (align: ContentAlign.bottom, customPosition: null);
-      }
-    } else {
-      if (spaceIfBottom >= minContentHeight) {
-        return (align: ContentAlign.bottom, customPosition: null);
-      }
-      if (spaceIfTop >= minContentHeight) {
-        return (align: ContentAlign.top, customPosition: null);
-      }
-    }
-
-    final spaceAbove = math.max(0.0, hole.top - safePadding.top);
-    final spaceBelow = math.max(
-      0.0,
-      screenSize.height - hole.bottom - safePadding.bottom,
-    );
-
-    if (spaceBelow >= minContentHeight) {
-      return (
-        align: ContentAlign.custom,
-        customPosition: CustomTargetContentPosition(
-          left: 0,
-          right: 0,
-          top: hole.bottom + _gap,
-        ),
+    CustomTargetContentPosition safeBand({
+      required double top,
+      required double bottom,
+    }) {
+      final clampedTop = math.max(
+        bandTop,
+        math.min(top, screenSize.height - bandBottom),
       );
-    }
-    if (spaceAbove >= minContentHeight) {
-      return (
-        align: ContentAlign.custom,
-        customPosition: CustomTargetContentPosition(
-          left: 0,
-          right: 0,
-          bottom: screenSize.height - hole.top + _gap,
-        ),
+      final clampedBottom = math.max(
+        bandBottom,
+        math.min(bottom, screenSize.height - clampedTop),
       );
-    }
-
-    // 穴がほぼ全画面: 端帯に載せてボタン操作を確保する。
-    if (spaceAbove >= spaceBelow) {
-      return (
-        align: ContentAlign.custom,
-        customPosition: CustomTargetContentPosition(
-          left: 0,
-          right: 0,
-          top: safePadding.top + _gap,
-        ),
-      );
-    }
-    return (
-      align: ContentAlign.custom,
-      customPosition: CustomTargetContentPosition(
+      return CustomTargetContentPosition(
         left: 0,
         right: 0,
-        bottom: safePadding.bottom + _gap,
+        top: clampedTop,
+        bottom: clampedBottom,
+      );
+    }
+
+    if (hole == null || screenSize.height <= 0) {
+      return (
+        align: ContentAlign.custom,
+        customPosition: safeBand(top: bandTop, bottom: bandBottom),
+      );
+    }
+
+    final preferTop = hole.center.dy > screenSize.height * 0.55;
+    final spaceAbove = math.max(0.0, hole.top - bandTop);
+    final spaceBelow = math.max(
+      0.0,
+      screenSize.height - hole.bottom - bandBottom,
+    );
+
+    // 穴がほぼ全画面で上下とも足りないときは、SafeArea 全体を帯にして操作を確保する。
+    if (spaceAbove < minContentHeight && spaceBelow < minContentHeight) {
+      return (
+        align: ContentAlign.custom,
+        customPosition: safeBand(top: bandTop, bottom: bandBottom),
+      );
+    }
+
+    final bool placeAbove;
+    if (preferTop) {
+      placeAbove = spaceAbove >= minContentHeight || spaceAbove >= spaceBelow;
+    } else if (spaceBelow >= minContentHeight) {
+      placeAbove = false;
+    } else {
+      placeAbove = true;
+    }
+
+    if (placeAbove) {
+      // 穴の直上〜 SafeArea 上端。両方指定して帯内に収める。
+      final bottomFromScreen =
+          screenSize.height - math.max(hole.top - _gap, bandTop);
+      return (
+        align: ContentAlign.custom,
+        customPosition: safeBand(top: bandTop, bottom: bottomFromScreen),
+      );
+    }
+
+    // 穴の直下〜 SafeArea 下端。
+    return (
+      align: ContentAlign.custom,
+      customPosition: safeBand(
+        top: math.min(hole.bottom + _gap, screenSize.height - bandBottom),
+        bottom: bandBottom,
       ),
     );
   }
