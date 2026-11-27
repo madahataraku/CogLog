@@ -50,9 +50,11 @@ final class CoachMarkRegistry {
   /// ```
   GlobalKey? keyFor(CoachMarkTargetId id) => _keys[id];
 
-  /// [id] の画面座標矩形。取得失敗時は null。
+  /// [id] の Overlay 基準矩形。取得失敗時は null。
   ///
-  /// [overlayContext] は Overlay 側の文脈。座標はグローバル原点基準。
+  /// [overlayContext] から root Overlay を探し、その座標系へ変換する。
+  /// `tutorial_coach_mark` の `getTargetCurrent(rootOverlay: true)` と同じ基準にし、
+  /// グローバル原点とのズレで穴が外れるのを防ぐ。
   ///
   /// Example:
   /// ```dart
@@ -71,7 +73,11 @@ final class CoachMarkRegistry {
     if (renderObject is! RenderBox || !renderObject.hasSize) {
       return null;
     }
-    final topLeft = renderObject.localToGlobal(Offset.zero);
+    final overlay = Overlay.maybeOf(overlayContext, rootOverlay: true);
+    final ancestor = overlay?.context.findRenderObject();
+    final topLeft = ancestor != null
+        ? renderObject.localToGlobal(Offset.zero, ancestor: ancestor)
+        : renderObject.localToGlobal(Offset.zero);
     return topLeft & renderObject.size;
   }
 }
