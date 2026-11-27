@@ -405,7 +405,7 @@ Future<void> _navigateAfterMain(
 CoachMarkStep _mainCoachMarkStep(TutorialMainStep step) {
   return switch (step) {
     TutorialMainStep.usageIntro => CoachMarkStep(
-      targetId: CoachMarkTargetId.homeBody,
+      targetId: CoachMarkTargetId.homeAdvisor,
       title: strings.screen_feature_top_tutorial_main_intro_title,
       body: strings.screen_feature_top_tutorial_main_intro_body,
       primaryLabel: strings.view_coach_mark_next,

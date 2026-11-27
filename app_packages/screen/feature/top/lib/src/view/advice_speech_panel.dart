@@ -2,6 +2,7 @@ import 'package:forui/forui.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:meta/meta.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 /// 吹き出し（左）とアドバイザー画像（右）でワンポイントを示す。
 ///
@@ -79,14 +80,17 @@ class AdviceSpeechPanel extends StatelessWidget {
             ),
           ),
         ),
-        Semantics(
-          label: semanticsLabel,
-          image: true,
-          child: Image.asset(
-            'assets/advisor/${tone.name}.png',
-            package: 'screen_feature_top',
-            height: 144,
-            fit: BoxFit.contain,
+        CoachMarkTarget(
+          id: CoachMarkTargetId.homeAdvisor,
+          child: Semantics(
+            label: semanticsLabel,
+            image: true,
+            child: Image.asset(
+              'assets/advisor/${tone.name}.png',
+              package: 'screen_feature_top',
+              height: 144,
+              fit: BoxFit.contain,
+            ),
           ),
         ),
       ],

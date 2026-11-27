@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' show BlendMode, ColorFilter, ImageFilter;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -100,7 +101,8 @@ final class CoachMarkLauncher {
       radius: 8,
       paddingFocus: _focusPad,
       enableOverlayTab: false,
-      enableTargetTab: false,
+      // 穴タップは主ボタン（閉じる／次へ）と同じ primary 完了にする。
+      enableTargetTab: true,
       contents: [
         TargetContent(
           align: placement.align,
@@ -119,7 +121,13 @@ final class CoachMarkLauncher {
       targets: [target],
       hideSkip: true,
       pulseEnable: false,
-      opacityShadow: 0.6,
+      // 影色は imageFilter の ColorFilter（Forui ダイアログ障壁と同系）に任せる。
+      opacityShadow: 0,
+      // Forui `FDialogRouteStyle.defaultBarrierFilter` の定常値（sigma 5 + barrier）。
+      imageFilter: ImageFilter.compose(
+        outer: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        inner: ColorFilter.mode(theme.colors.barrier, BlendMode.srcOver),
+      ),
       paddingFocus: _focusPad,
       focusAnimationDuration: const Duration(milliseconds: 300),
       unFocusAnimationDuration: const Duration(milliseconds: 200),
@@ -130,12 +138,9 @@ final class CoachMarkLauncher {
         if (!identical(_active, tutorial)) {
           return;
         }
-        // finish() 経由で外されたとき、未完了なら primary 相当として閉じる。
-        final pending = _activeCompleter;
-        if (pending != null && !pending.isCompleted) {
-          pending.complete(CoachMarkDismissReason.primary);
-        }
-        _clearActiveRefs();
+        // finish() 経由（穴タップ含む）も主ボタンと同じく removeRoute 後始末を待つ。
+        // 同期 complete だと直後の連鎖 show の Navigator.push と競合する。
+        _finishActive(CoachMarkDismissReason.primary);
       },
     );
     _active = tutorial;
@@ -323,16 +328,5 @@ final class CoachMarkLauncher {
     } on Object {
       // dispose 中の Navigator.of 失敗など。参照は呼び出し側で既に外している。
     }
-  }
-
-  /// [_active] / Completer 参照だけ消す（onFinish 用）。
-  ///
-  /// Example:
-  /// ```dart
-  /// _clearActiveRefs();
-  /// ```
-  static void _clearActiveRefs() {
-    _active = null;
-    _activeCompleter = null;
   }
 }

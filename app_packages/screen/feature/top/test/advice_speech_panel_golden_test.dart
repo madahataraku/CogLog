@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:foundation_resources/gen/strings_test_helper.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:monolith_localization_runtime/monolith_localization_runtime.dart';
 import 'package:screen_feature_top/src/view/advice_speech_panel.dart';
 import 'package:usecase_generate_top_advice/usecase_generate_top_advice.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
 
 const _fixedAdviceText = '水分をこまめに取りましょう。';
 
@@ -40,14 +42,21 @@ void main() {
 
     try {
       await tester.pumpWidget(
-        MaterialApp(
-          locale: const Locale('ja'),
-          home: FTheme(
-            data: FThemeData(touch: true, colors: FColors.neutralLight),
-            child: AdviceSpeechPanel(
-              adviceText: _fixedAdviceText,
-              tone: AdviceTone.fun,
-              semanticsLabel: 'アドバイザー',
+        ProviderScope(
+          overrides: [
+            CoachMarkProviders.registry.overrideWith(
+              (ref) => CoachMarkRegistry(),
+            ),
+          ],
+          child: MaterialApp(
+            locale: const Locale('ja'),
+            home: FTheme(
+              data: FThemeData(touch: true, colors: FColors.neutralLight),
+              child: AdviceSpeechPanel(
+                adviceText: _fixedAdviceText,
+                tone: AdviceTone.fun,
+                semanticsLabel: 'アドバイザー',
+              ),
             ),
           ),
         ),
@@ -88,19 +97,26 @@ Future<void> _pumpPanelGolden(
 
   try {
     await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('ja'),
-        home: FTheme(
-          data: FThemeData(touch: true, colors: colors),
-          child: ColoredBox(
-            color: colors.background,
-            child: Center(
-              child: SizedBox(
-                width: 360,
-                child: AdviceSpeechPanel(
-                  adviceText: _fixedAdviceText,
-                  tone: tone,
-                  semanticsLabel: 'アドバイザー',
+      ProviderScope(
+        overrides: [
+          CoachMarkProviders.registry.overrideWith(
+            (ref) => CoachMarkRegistry(),
+          ),
+        ],
+        child: MaterialApp(
+          locale: const Locale('ja'),
+          home: FTheme(
+            data: FThemeData(touch: true, colors: colors),
+            child: ColoredBox(
+              color: colors.background,
+              child: Center(
+                child: SizedBox(
+                  width: 360,
+                  child: AdviceSpeechPanel(
+                    adviceText: _fixedAdviceText,
+                    tone: tone,
+                    semanticsLabel: 'アドバイザー',
+                  ),
                 ),
               ),
             ),
