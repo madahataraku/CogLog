@@ -67,26 +67,38 @@ class AchievementScreenBody extends ConsumerWidget {
             ],
           ),
         ),
-        // 穴は先頭行の枠（DecoratedBox）だけ。一覧の水平・先頭上 inset は
-        // CoachMarkTarget の外側 Padding に置き、矩形に余白を混ぜない。
-        AchievementScreenReadyEntity(:final rows) => ListView.separated(
-          padding: const EdgeInsets.only(bottom: 8),
-          itemCount: rows.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-          itemBuilder: (context, index) {
-            final row = _AchievementRowView(row: rows[index]);
-            final child = index == 0
-                ? CoachMarkTarget(
-                    id: CoachMarkTargetId.achievementList,
-                    child: row,
-                  )
-                : row;
-            return Padding(
-              padding: EdgeInsets.fromLTRB(16, index == 0 ? 8 : 0, 16, 0),
-              child: child,
-            );
-          },
-        ),
+        // 穴は先頭行の枠だけ。ListView.builder 内だと遅延生成でキーが外れうるため、
+        // 先頭行は常時ビルドの SliverToBoxAdapter に置き、残りだけ lazy にする。
+        // 水平・先頭上 inset は CoachMarkTarget の外側 Padding（矩形に余白を混ぜない）。
+        AchievementScreenReadyEntity(:final rows) =>
+          rows.isEmpty
+              ? const SizedBox.shrink()
+              : CustomScrollView(
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      sliver: SliverToBoxAdapter(
+                        child: CoachMarkTarget(
+                          id: CoachMarkTargetId.achievementList,
+                          child: _AchievementRowView(row: rows.first),
+                        ),
+                      ),
+                    ),
+                    if (rows.length > 1)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        sliver: SliverList.separated(
+                          itemCount: rows.length - 1,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 16),
+                          itemBuilder: (context, index) =>
+                              _AchievementRowView(row: rows[index + 1]),
+                        ),
+                      )
+                    else
+                      const SliverToBoxAdapter(child: SizedBox(height: 8)),
+                  ],
+                ),
       },
     );
   }

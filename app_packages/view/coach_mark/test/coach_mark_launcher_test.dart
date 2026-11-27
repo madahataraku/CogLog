@@ -239,26 +239,35 @@ void main() {
   // CoachMarkLauncher.contentAlignFor / resolveContentPlacement
   //
   // テスト内容:
-  // 穴が下半分なら top、上半分なら bottom。
-  test('吹き出し配置は穴の上下で切り替わる', () {
+  // 常に custom。穴が下寄りなら上帯、上寄りなら下帯（SafeArea 内で top+bottom）。
+  test('吹き出し配置は穴の上下で帯を切り替える', () {
     const size = Size(360, 640);
-    expect(
-      CoachMarkLauncher.contentAlignFor(
-        hole: const Rect.fromLTWH(10, 500, 100, 40),
-        screenSize: size,
-      ),
-      ContentAlign.top,
+    const safe = EdgeInsets.only(top: 20, bottom: 20, left: 12, right: 16);
+    final above = CoachMarkLauncher.resolveContentPlacement(
+      hole: const Rect.fromLTWH(10, 500, 100, 40),
+      screenSize: size,
+      safePadding: safe,
     );
-    expect(
-      CoachMarkLauncher.contentAlignFor(
-        hole: const Rect.fromLTWH(10, 80, 100, 40),
-        screenSize: size,
-      ),
-      ContentAlign.bottom,
+    expect(above.align, ContentAlign.custom);
+    expect(above.customPosition?.top, 20 + 8);
+    expect(above.customPosition?.bottom, greaterThan(20));
+    expect(above.customPosition?.left, 12 + 8);
+    expect(above.customPosition?.right, 16 + 8);
+    expect(above.bubbleAlignment, Alignment.bottomCenter);
+
+    final below = CoachMarkLauncher.resolveContentPlacement(
+      hole: const Rect.fromLTWH(10, 80, 100, 40),
+      screenSize: size,
+      safePadding: safe,
     );
+    expect(below.align, ContentAlign.custom);
+    expect(below.customPosition?.top, greaterThan(80));
+    expect(below.customPosition?.bottom, 20 + 8);
+    expect(below.bubbleAlignment, Alignment.topCenter);
+
     expect(
       CoachMarkLauncher.contentAlignFor(hole: null, screenSize: size),
-      ContentAlign.bottom,
+      ContentAlign.custom,
     );
   });
 
@@ -266,38 +275,77 @@ void main() {
   // CoachMarkLauncher.resolveContentPlacement
   //
   // テスト内容:
-  // 大きな穴で top／bottom 余白が足りないとき custom で画面内に固定する。
-  test('大きな穴は custom で画面内に固定する', () {
+  // 大きな穴でも custom の top と bottom が両方入り SafeArea 帯になる。
+  test('大きな穴は custom で SafeArea 帯に固定する', () {
     const size = Size(360, 640);
     // ほぼ全画面の穴（撮影プレビュー／グラフ／カレンダー想定）。
     final placement = CoachMarkLauncher.resolveContentPlacement(
       hole: const Rect.fromLTWH(0, 40, 360, 520),
       screenSize: size,
-      safePadding: const EdgeInsets.only(top: 20, bottom: 20),
+      safePadding: const EdgeInsets.only(
+        top: 20,
+        bottom: 20,
+        left: 10,
+        right: 10,
+      ),
     );
     expect(placement.align, ContentAlign.custom);
     expect(placement.customPosition, isNotNull);
     final custom = placement.customPosition!;
-    expect(custom.left, 0);
-    expect(custom.right, 0);
-    // top か bottom のどちらかで画面端に固定される。
-    expect(custom.top != null || custom.bottom != null, isTrue);
+    expect(custom.left, 10 + 8);
+    expect(custom.right, 10 + 8);
+    expect(custom.top, isNotNull);
+    expect(custom.bottom, isNotNull);
+    expect(placement.bubbleAlignment, Alignment.bottomCenter);
   });
 
   // テスト対象:
   // CoachMarkLauncher.resolveContentPlacement
   //
   // テスト内容:
-  // ライブラリ top／bottom では足りず、穴下に余白があるとき穴直下へ custom。
-  test('穴の下に余白があれば穴直下へ custom 配置する', () {
+  // 穴下に十分余白があるとき穴直下〜 SafeArea 下端の帯（top と bottom 両方）。
+  test('穴の下に余白があれば穴直下の SafeArea 帯へ custom 配置する', () {
     const size = Size(360, 640);
+    // 下余白が minContentHeight 以上になる穴（480 だと下 118 で全画面帯に落ちる）。
     final placement = CoachMarkLauncher.resolveContentPlacement(
-      hole: const Rect.fromLTWH(0, 0, 360, 480),
+      hole: const Rect.fromLTWH(0, 0, 360, 400),
       screenSize: size,
+      safePadding: const EdgeInsets.only(bottom: 34),
     );
     expect(placement.align, ContentAlign.custom);
-    expect(placement.customPosition?.top, greaterThan(480));
-    expect(placement.customPosition?.bottom, isNull);
+    expect(placement.customPosition?.top, greaterThan(400));
+    expect(placement.customPosition?.bottom, 34 + 8);
+    expect(placement.bubbleAlignment, Alignment.topCenter);
+  });
+
+  // テスト対象:
+  // CoachMarkLauncher.shouldUseKeyTarget
+  //
+  // テスト内容:
+  // キーがマウント済みかつ矩形があるときだけ keyTarget を使う。
+  testWidgets('登録キーが生きていれば keyTarget を使う', (tester) async {
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: SizedBox(key: key, width: 40, height: 24),
+      ),
+    );
+    expect(
+      CoachMarkLauncher.shouldUseKeyTarget(
+        key: key,
+        hole: const Rect.fromLTWH(0, 0, 40, 24),
+      ),
+      isTrue,
+    );
+    expect(CoachMarkLauncher.shouldUseKeyTarget(key: key, hole: null), isFalse);
+    expect(
+      CoachMarkLauncher.shouldUseKeyTarget(
+        key: GlobalKey(),
+        hole: const Rect.fromLTWH(0, 0, 40, 24),
+      ),
+      isFalse,
+    );
   });
 
   // テスト対象:

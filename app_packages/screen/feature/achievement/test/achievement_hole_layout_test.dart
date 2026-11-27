@@ -162,21 +162,22 @@ void main() {
       );
       expect(hole, isNotNull);
 
-      final list = find.byType(ListView);
-      expect(list, findsOneWidget);
-      final listRect = tester.getRect(list);
+      final scroll = find.byType(CustomScrollView);
+      expect(scroll, findsOneWidget);
+      final scrollRect = tester.getRect(scroll);
 
       // 水平 16・先頭上 8 の inset は穴の外。
-      expect(hole!.left, closeTo(listRect.left + 16, 0.5));
-      expect(hole.right, closeTo(listRect.right - 16, 0.5));
-      expect(hole.top, closeTo(listRect.top + 8, 0.5));
+      expect(hole!.left, closeTo(scrollRect.left + 16, 0.5));
+      expect(hole.right, closeTo(scrollRect.right - 16, 0.5));
+      expect(hole.top, closeTo(scrollRect.top + 8, 0.5));
 
-      final firstDecorated = find.descendant(
-        of: list,
+      // 先頭行は SliverToBoxAdapter 上の CoachMarkTarget → 行枠 DecoratedBox。
+      final firstRow = find.descendant(
+        of: find.byType(CoachMarkTarget),
         matching: find.byType(DecoratedBox),
       );
-      expect(firstDecorated, findsWidgets);
-      final rowRect = tester.getRect(firstDecorated.first);
+      expect(firstRow, findsWidgets);
+      final rowRect = tester.getRect(firstRow.first);
       expect(hole, rowRect);
     } finally {
       debugDefaultTargetPlatformOverride = null;
