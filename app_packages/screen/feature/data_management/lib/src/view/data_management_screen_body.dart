@@ -93,6 +93,31 @@ class DataManagementScreenBody extends HookConsumerWidget {
           // MediaQuery top padding による AppBar 直下の空きを抑える。
           padding: EdgeInsets.zero,
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: DefaultTextStyle.merge(
+                style: context.theme.typography.body.sm.copyWith(
+                  color: context.theme.colors.mutedForeground,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: 12,
+                  children: [
+                    Text(
+                      strings
+                          .screen_feature_data_management_description_overview,
+                    ),
+                    Text(
+                      strings.screen_feature_data_management_description_manual,
+                    ),
+                    Text(
+                      strings
+                          .screen_feature_data_management_description_privacy,
+                    ),
+                  ],
+                ),
+              ),
+            ),
             FTileGroup(
               children: [
                 FTile(

@@ -516,6 +516,18 @@ final class L10nHelper {
         // No Placeholders
         return l10n.screen_feature_data_management_back_semantics;
       },
+      'screen_feature_data_management_description_manual': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_description_manual;
+      },
+      'screen_feature_data_management_description_overview': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_description_overview;
+      },
+      'screen_feature_data_management_description_privacy': (source) {
+        // No Placeholders
+        return l10n.screen_feature_data_management_description_privacy;
+      },
       'screen_feature_data_management_error_corrupt': (source) {
         // No Placeholders
         return l10n.screen_feature_data_management_error_corrupt;

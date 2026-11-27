@@ -473,6 +473,18 @@
   "@screen_feature_data_management_back_semantics": {
     "description": "戻るボタンの代替テキスト"
   },
+  "screen_feature_data_management_description_manual": "With this feature you can manually export and import a data backup. Use it when changing devices, for example.",
+  "@screen_feature_data_management_description_manual": {
+    "description": "画面説明（手動バックアップ）"
+  },
+  "screen_feature_data_management_description_overview": "You can export and import exercise records and photo data. Data is usually backed up by the iOS/Android system, but depending on your iCloud or Google account status, that backup may not run.",
+  "@screen_feature_data_management_description_overview": {
+    "description": "画面説明（概要）"
+  },
+  "screen_feature_data_management_description_privacy": "Exercise records and photos are not stored in any cloud or on the network beyond the iOS/Android system backups above, so privacy is protected as much as possible.",
+  "@screen_feature_data_management_description_privacy": {
+    "description": "画面説明（プライバシー）"
+  },
   "screen_feature_data_management_error_corrupt": "The file is corrupt or unreadable.",
   "@screen_feature_data_management_error_corrupt": {
     "description": "破損"
