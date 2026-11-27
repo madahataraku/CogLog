@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'meter_duration_parser.dart';
 import 'meter_reading_values.dart';
 
 /// OCR／LLM の生テキストからメーター計測値を取り出す。
 ///
+/// JSON（`distance` / `time-hour` / `time-min` / `time-sec` / `calories`）を優先し、
+/// 取れないときは従来のラベル付き断片へフォールバックする。
+///
 /// Example:
 /// ```dart
-/// MeterPanelTextParser.parse('DISTANCE_KM=12.3\nDURATION=1:00:00');
+/// MeterPanelTextParser.parse('{"distance":12.3,"time-hour":1,"time-min":0,"time-sec":0,"calories":200}');
 /// ```
 abstract final class MeterPanelTextParser {
   /// 項目ラベル（次ラベル境界の検出にも使う）。
@@ -38,6 +43,174 @@ abstract final class MeterPanelTextParser {
   /// MeterPanelTextParser.parse('距離 12.3 km');
   /// ```
   static MeterReadingValues parse(String rawText) {
+    final fromJson = _tryParseJson(rawText);
+    if (fromJson != null) {
+      return fromJson;
+    }
+    return _parseLabeledText(rawText);
+  }
+
+  /// JSON 応答を試し、軽微な破損は修復してから読む。
+  ///
+  /// Example:
+  /// ```dart
+  /// _tryParseJson('{"distance": 5,}');
+  /// ```
+  static MeterReadingValues? _tryParseJson(String rawText) {
+    final candidates = _jsonCandidates(rawText);
+    for (final candidate in candidates) {
+      final decoded = _decodeJsonObject(candidate);
+      if (decoded == null) {
+        continue;
+      }
+      return _valuesFromJsonMap(decoded);
+    }
+    return null;
+  }
+
+  /// 生文から JSON っぽい候補文字列を列挙する。
+  static List<String> _jsonCandidates(String rawText) {
+    final trimmed = rawText.trim();
+    if (trimmed.isEmpty) {
+      return const [];
+    }
+    final candidates = <String>{};
+    candidates.add(trimmed);
+
+    final fenced = RegExp(
+      r'```(?:json)?\s*([\s\S]*?)```',
+      caseSensitive: false,
+    ).firstMatch(trimmed);
+    if (fenced != null) {
+      candidates.add(fenced.group(1)!.trim());
+    }
+
+    final start = trimmed.indexOf('{');
+    final end = trimmed.lastIndexOf('}');
+    if (start != -1 && end > start) {
+      candidates.add(trimmed.substring(start, end + 1));
+    } else if (start != -1) {
+      candidates.add(trimmed.substring(start));
+    }
+    return candidates.toList(growable: false);
+  }
+
+  /// 破損しやすい箇所を直しながら [Map] へデコードする。
+  static Map<String, Object?>? _decodeJsonObject(String source) {
+    var current = source.trim();
+    for (var attempt = 0; attempt < 4; attempt++) {
+      try {
+        final decoded = jsonDecode(current);
+        if (decoded is Map) {
+          return decoded.map((key, value) => MapEntry(key.toString(), value));
+        }
+        return null;
+      } on FormatException {
+        final repaired = _repairJson(current);
+        if (repaired == current) {
+          return null;
+        }
+        current = repaired;
+      }
+    }
+    return null;
+  }
+
+  /// よくある JSON 破損を軽く直す。
+  ///
+  /// Example:
+  /// ```dart
+  /// _repairJson("{'distance': 1,}");
+  /// ```
+  static String _repairJson(String source) {
+    var text = source.trim();
+    text = text
+        .replaceAll('\u201c', '"')
+        .replaceAll('\u201d', '"')
+        .replaceAll('\u2018', "'")
+        .replaceAll('\u2019', "'");
+    text = text.replaceAllMapped(
+      RegExp(r',\s*([}\]])'),
+      (match) => match.group(1)!,
+    );
+    text = text.replaceAllMapped(
+      RegExp(r"'([^'\\]*(?:\\.[^'\\]*)*)'"),
+      (match) => '"${match.group(1)!}"',
+    );
+    text = text.replaceAllMapped(
+      RegExp(r'([{,]\s*)([A-Za-z_][\w-]*)(\s*:)'),
+      (match) => '${match.group(1)}"${match.group(2)}"${match.group(3)}',
+    );
+    text = text.replaceAllMapped(
+      RegExp(
+        r'''((?:"(?:\\.|[^"\\])*"|-?\d+(?:\.\d+)?|true|false|null))\s+(?=")''',
+      ),
+      (match) => '${match.group(1)}, ',
+    );
+    final open = '{'.allMatches(text).length;
+    final close = '}'.allMatches(text).length;
+    if (open > close) {
+      text = '$text${'}' * (open - close)}';
+    }
+    return text;
+  }
+
+  /// JSON マップから計測値を組み立てる。
+  static MeterReadingValues _valuesFromJsonMap(Map<String, Object?> map) {
+    final distance = _plausibleNumber(map['distance']);
+    final calories = _plausibleNumber(map['calories']);
+    final hours = _nonNegativeInt(map['time-hour']);
+    final minutes = _nonNegativeInt(map['time-min']);
+    final seconds = _nonNegativeInt(map['time-sec']);
+    Duration? duration;
+    if (hours != null || minutes != null || seconds != null) {
+      duration = Duration(
+        hours: hours ?? 0,
+        minutes: minutes ?? 0,
+        seconds: seconds ?? 0,
+      );
+    }
+    return MeterReadingValues(
+      distanceKm: distance,
+      duration: duration,
+      caloriesKcal: calories,
+    );
+  }
+
+  /// 有限かつ妥当な数値だけを返す。
+  static double? _plausibleNumber(Object? raw) {
+    final value = _asDouble(raw);
+    if (value == null || !_isPlausibleMetric(value)) {
+      return null;
+    }
+    return value;
+  }
+
+  /// 0 以上の整数へ丸める。不正は null。
+  static int? _nonNegativeInt(Object? raw) {
+    final value = _asDouble(raw);
+    if (value == null || value < 0 || !value.isFinite) {
+      return null;
+    }
+    return value.round();
+  }
+
+  /// JSON 値を double へ写す。
+  static double? _asDouble(Object? raw) {
+    if (raw == null) {
+      return null;
+    }
+    if (raw is num) {
+      return raw.toDouble();
+    }
+    if (raw is String) {
+      return double.tryParse(raw.trim().replaceAll(',', ''));
+    }
+    return null;
+  }
+
+  /// ラベル付き断片から計測値を取る（JSON 失敗時のフォールバック）。
+  static MeterReadingValues _parseLabeledText(String rawText) {
     final normalized = _normalize(rawText);
     if (normalized.isEmpty) {
       return const MeterReadingValues();

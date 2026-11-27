@@ -11,7 +11,7 @@ void main() {
   test('Fake 応答をパースする', () async {
     final log = AppLogStore();
     final meterVl = FakeMeterVlVision(
-      response: 'DISTANCE_KM=5\nDURATION=0:30:00\nCALORIES_KCAL=80',
+      response: '{"distance":5,"time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
     );
     final engine = MeterVlReadingEngine(meterVl: meterVl, log: log);
     expect(engine.kind, MeterReadingEngineKind.lfmVl);
@@ -27,7 +27,7 @@ void main() {
     expect(log.entries, hasLength(2));
     expect(log.entries.first.tag, 'meter.lfm');
     expect(log.entries.first.message, contains('rawLength='));
-    expect(log.entries.first.message, isNot(contains('DISTANCE_KM=')));
+    expect(log.entries.first.message, isNot(contains('"distance":5')));
     expect(log.entries.last.message, contains('present=[distanceKm'));
     expect(log.entries.last.message, isNot(contains('distanceKm=5')));
   });

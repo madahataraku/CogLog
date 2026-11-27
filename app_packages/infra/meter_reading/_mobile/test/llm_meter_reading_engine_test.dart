@@ -34,7 +34,7 @@ void main() {
   test('read は固定プロンプトで generateWithImage しパースする', () async {
     final log = AppLogStore();
     final llm = FakeOnDeviceLlm(
-      response: 'DISTANCE_KM=5\nDURATION=0:30:00\nCALORIES_KCAL=80',
+      response: '{"distance":5,"time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
       supportsVisionValue: true,
     );
     final engine = LlmMeterReadingEngine(
@@ -46,16 +46,10 @@ void main() {
     final values = await engine.read(bytes);
     expect(llm.generateWithImageCallCount, 1);
     expect(llm.lastImageBytes, bytes);
-    expect(
-      llm.lastPrompt,
-      'You extract stationary bike meter panel values from the image.\n'
-      'Reply with ONLY these lines (omit unknown):\n'
-      'DISTANCE_KM=<number>\n'
-      'DURATION=H:MM:SS\n'
-      'CALORIES_KCAL=<number>\n'
-      'AVERAGE_SPEED_KMH=<number>\n'
-      'Use ASCII digits. No other text.',
-    );
+    expect(llm.lastPrompt, contains('Reply with JSON only'));
+    expect(llm.lastPrompt, contains('"distance"'));
+    expect(llm.lastPrompt, contains('"time-hour"'));
+    expect(llm.lastPrompt, contains('"calories"'));
     expect(values.distanceKm, 5);
     expect(values.duration, const Duration(minutes: 30));
     expect(values.caloriesKcal, 80);
@@ -63,7 +57,7 @@ void main() {
     expect(log.entries, hasLength(2));
     expect(log.entries.first.tag, 'meter.llm');
     expect(log.entries.first.message, contains('rawLength='));
-    expect(log.entries.first.message, isNot(contains('DISTANCE_KM=')));
+    expect(log.entries.first.message, isNot(contains('"distance":5')));
     expect(log.entries.last.message, contains('present=[distanceKm'));
     expect(log.entries.last.message, isNot(contains('distanceKm=5')));
   });

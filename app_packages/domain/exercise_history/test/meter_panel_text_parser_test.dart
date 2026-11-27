@@ -2,6 +2,61 @@ import 'package:domain_exercise_history/domain_exercise_history.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('JSON の全項目', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":12.3,"time-hour":1,"time-min":0,"time-sec":0,"calories":200}',
+    );
+    expect(values.distanceKm, 12.3);
+    expect(values.duration, const Duration(hours: 1));
+    expect(values.caloriesKcal, 200);
+    expect(values.averageSpeedKmh, isNull);
+  });
+
+  test('JSON で平均速度キーは無くてもよい', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance":5,"time-hour":0,"time-min":30,"time-sec":0,"calories":80}',
+    );
+    expect(values.distanceKm, 5);
+    expect(values.duration, const Duration(minutes: 30));
+    expect(values.caloriesKcal, 80);
+  });
+
+  test('コードフェンス付き JSON を読む', () {
+    final values = MeterPanelTextParser.parse(
+      '```json\n{"distance": 3, "time-hour": 0, "time-min": 10, "time-sec": 5, "calories": 40}\n```',
+    );
+    expect(values.distanceKm, 3);
+    expect(values.duration, const Duration(minutes: 10, seconds: 5));
+    expect(values.caloriesKcal, 40);
+  });
+
+  test('末尾カンマや単一引用符の JSON を修復する', () {
+    final values = MeterPanelTextParser.parse(
+      "{'distance': 7.5, 'time-hour': 0, 'time-min': 20, 'time-sec': 0, 'calories': 90,}",
+    );
+    expect(values.distanceKm, 7.5);
+    expect(values.duration, const Duration(minutes: 20));
+    expect(values.caloriesKcal, 90);
+  });
+
+  test('閉じ括弧欠けの JSON を補う', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance": 2, "time-hour": 0, "time-min": 5, "time-sec": 0, "calories": 15',
+    );
+    expect(values.distanceKm, 2);
+    expect(values.duration, const Duration(minutes: 5));
+    expect(values.caloriesKcal, 15);
+  });
+
+  test('JSON の負の距離は未取得', () {
+    final values = MeterPanelTextParser.parse(
+      '{"distance": -1, "time-hour": 0, "time-min": 1, "time-sec": 0, "calories": 10}',
+    );
+    expect(values.distanceKm, isNull);
+    expect(values.duration, const Duration(minutes: 1));
+    expect(values.caloriesKcal, 10);
+  });
+
   test('日本語ラベルの全項目', () {
     final values = MeterPanelTextParser.parse(
       '距離 12.3 km\n時間 1:00:00\n消費 200 kcal\n平均速度 12.3 km/h',
