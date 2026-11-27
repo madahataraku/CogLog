@@ -392,6 +392,18 @@ class L10nJa extends L10n {
   String get screen_feature_data_management_back_semantics => '戻る';
 
   @override
+  String get screen_feature_data_management_description_manual =>
+      'この機能では手動でデータバックアップのエクスポート、インポートが行えます。機種変更などの際にご利用ください。';
+
+  @override
+  String get screen_feature_data_management_description_overview =>
+      '運動記録と写真データのエクスポートとインポートが行えます。データは通常iOS/Androidシステムによりバックアップされますが、iCloudやGoogleアカウントの状況によっては行われない場合があります。';
+
+  @override
+  String get screen_feature_data_management_description_privacy =>
+      'なお、運動記録と写真のデータは上記iOS/Androidシステムのバックアップ以外にはクラウド環境、ネットワーク上に保存せず、プライバシーを最大限守る作りになっています。';
+
+  @override
   String get screen_feature_data_management_error_corrupt =>
       'ファイルが壊れているか読めません。';
 

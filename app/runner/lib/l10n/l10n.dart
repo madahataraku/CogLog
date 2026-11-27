@@ -799,6 +799,24 @@ abstract class L10n {
   /// **'戻る'**
   String get screen_feature_data_management_back_semantics;
 
+  /// 画面説明（手動バックアップ）
+  ///
+  /// In ja, this message translates to:
+  /// **'この機能では手動でデータバックアップのエクスポート、インポートが行えます。機種変更などの際にご利用ください。'**
+  String get screen_feature_data_management_description_manual;
+
+  /// 画面説明（概要）
+  ///
+  /// In ja, this message translates to:
+  /// **'運動記録と写真データのエクスポートとインポートが行えます。データは通常iOS/Androidシステムによりバックアップされますが、iCloudやGoogleアカウントの状況によっては行われない場合があります。'**
+  String get screen_feature_data_management_description_overview;
+
+  /// 画面説明（プライバシー）
+  ///
+  /// In ja, this message translates to:
+  /// **'なお、運動記録と写真のデータは上記iOS/Androidシステムのバックアップ以外にはクラウド環境、ネットワーク上に保存せず、プライバシーを最大限守る作りになっています。'**
+  String get screen_feature_data_management_description_privacy;
+
   /// 破損
   ///
   /// In ja, this message translates to:

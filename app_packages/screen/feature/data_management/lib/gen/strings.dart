@@ -15,6 +15,24 @@ mixin class L10nStringsMixin {
         'screen_feature_data_management_back_semantics',
       );
 
+  /// 画面説明（手動バックアップ）
+  String get screen_feature_data_management_description_manual =>
+      LocalizeStringDelegate.get(
+        'screen_feature_data_management_description_manual',
+      );
+
+  /// 画面説明（概要）
+  String get screen_feature_data_management_description_overview =>
+      LocalizeStringDelegate.get(
+        'screen_feature_data_management_description_overview',
+      );
+
+  /// 画面説明（プライバシー）
+  String get screen_feature_data_management_description_privacy =>
+      LocalizeStringDelegate.get(
+        'screen_feature_data_management_description_privacy',
+      );
+
   /// 破損
   String get screen_feature_data_management_error_corrupt =>
       LocalizeStringDelegate.get(

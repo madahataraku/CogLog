@@ -436,6 +436,18 @@ class L10nEn extends L10n {
   String get screen_feature_data_management_back_semantics => 'Back';
 
   @override
+  String get screen_feature_data_management_description_manual =>
+      'With this feature you can manually export and import a data backup. Use it when changing devices, for example.';
+
+  @override
+  String get screen_feature_data_management_description_overview =>
+      'You can export and import exercise records and photo data. Data is usually backed up by the iOS/Android system, but depending on your iCloud or Google account status, that backup may not run.';
+
+  @override
+  String get screen_feature_data_management_description_privacy =>
+      'Exercise records and photos are not stored in any cloud or on the network beyond the iOS/Android system backups above, so privacy is protected as much as possible.';
+
+  @override
   String get screen_feature_data_management_error_corrupt =>
       'The file is corrupt or unreadable.';
 

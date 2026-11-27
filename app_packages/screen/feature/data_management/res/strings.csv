@@ -1,5 +1,8 @@
 id,ja,en,description
 title,データ管理,Data management,画面タイトル
+description_overview,運動記録と写真データのエクスポートとインポートが行えます。データは通常iOS/Androidシステムによりバックアップされますが、iCloudやGoogleアカウントの状況によっては行われない場合があります。,"You can export and import exercise records and photo data. Data is usually backed up by the iOS/Android system, but depending on your iCloud or Google account status, that backup may not run.",画面説明（概要）
+description_manual,この機能では手動でデータバックアップのエクスポート、インポートが行えます。機種変更などの際にご利用ください。,"With this feature you can manually export and import a data backup. Use it when changing devices, for example.",画面説明（手動バックアップ）
+description_privacy,なお、運動記録と写真のデータは上記iOS/Androidシステムのバックアップ以外にはクラウド環境、ネットワーク上に保存せず、プライバシーを最大限守る作りになっています。,"Exercise records and photos are not stored in any cloud or on the network beyond the iOS/Android system backups above, so privacy is protected as much as possible.",画面説明（プライバシー）
 export_item,データをエクスポート,Export data,エクスポート操作
 import_item,データをインポート,Import data,インポート操作
 export_empty_message,保存する運動履歴がありません。設定のみのファイルを書き出します。,There are no exercise records. Settings-only file will be exported.,空エクスポート案内
