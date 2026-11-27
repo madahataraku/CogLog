@@ -42,4 +42,41 @@ extension AchievementScreenViewModelActions on AchievementScreenViewModel {
   void onBack() {
     OnBackDelegate(navigation: navigation).execute();
   }
+
+  /// アチーブメント文脈の表示要否を評価する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onEvaluateTutorial();
+  /// ```
+  Future<void> onEvaluateTutorial() {
+    return OnEvaluateTutorialDelegate(
+      state: state,
+      evaluateContext: evaluateTutorial,
+      session: tutorialSession,
+    ).execute();
+  }
+
+  /// アチーブメント文脈の表示予約を消費する。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onAcknowledgeTutorial();
+  /// ```
+  Future<void> onAcknowledgeTutorial() {
+    return OnAcknowledgeTutorialDelegate(state: state).execute();
+  }
+
+  /// アチーブメント文脈を閉じ、表示済みにする。
+  ///
+  /// Example:
+  /// ```dart
+  /// await viewModel.onDismissTutorial();
+  /// ```
+  Future<void> onDismissTutorial() {
+    return OnDismissTutorialDelegate(
+      state: state,
+      markSeen: markTutorialSeen,
+    ).execute();
+  }
 }

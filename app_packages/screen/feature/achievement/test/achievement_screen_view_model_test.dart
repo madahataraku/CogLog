@@ -4,6 +4,19 @@ import 'package:screen_feature_achievement/src/viewmodel/achievement_screen_view
 import 'package:screen_feature_achievement/src/viewmodel/state/achievement_screen_state.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+
+final class _EvaluateTutorialNever implements EvaluateTutorialContextUsecase {
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async => const EvaluateTutorialContextResult(shouldShow: false);
+}
+
+final class _MarkTutorialNever implements MarkTutorialContextSeenUsecase {
+  @override
+  Future<void> execute(MarkTutorialContextSeenRequest request) async {}
+}
 
 final class _Nav implements ScreenNavigation {
   var popCalls = 0;
@@ -96,6 +109,15 @@ void main() {
         MarkAchievementsViewedUsecase.provider.overrideWith(
           (ref) => _FakeMark(),
         ),
+        EvaluateTutorialContextUsecase.provider.overrideWith(
+          (ref) => _EvaluateTutorialNever(),
+        ),
+        MarkTutorialContextSeenUsecase.provider.overrideWith(
+          (ref) => _MarkTutorialNever(),
+        ),
+        tutorialRuntimeSessionProvider.overrideWith(
+          (ref) => TutorialRuntimeSession(),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -148,6 +170,15 @@ void main() {
         MarkAchievementsViewedUsecase.provider.overrideWith(
           (ref) => _FakeMark(),
         ),
+        EvaluateTutorialContextUsecase.provider.overrideWith(
+          (ref) => _EvaluateTutorialNever(),
+        ),
+        MarkTutorialContextSeenUsecase.provider.overrideWith(
+          (ref) => _MarkTutorialNever(),
+        ),
+        tutorialRuntimeSessionProvider.overrideWith(
+          (ref) => TutorialRuntimeSession(),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -182,6 +213,15 @@ void main() {
         LoadAchievementsUsecase.provider.overrideWith((ref) => load),
         MarkAchievementsViewedUsecase.provider.overrideWith(
           (ref) => _FakeMark(),
+        ),
+        EvaluateTutorialContextUsecase.provider.overrideWith(
+          (ref) => _EvaluateTutorialNever(),
+        ),
+        MarkTutorialContextSeenUsecase.provider.overrideWith(
+          (ref) => _MarkTutorialNever(),
+        ),
+        tutorialRuntimeSessionProvider.overrideWith(
+          (ref) => TutorialRuntimeSession(),
         ),
       ],
     );

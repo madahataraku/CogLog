@@ -40,10 +40,13 @@ final class AchievementScreenReadyEntity extends AchievementScreenEntity {
   /// ```dart
   /// const AchievementScreenReadyEntity([]);
   /// ```
-  const AchievementScreenReadyEntity(this.rows);
+  const AchievementScreenReadyEntity(this.rows, {this.pendingTutorial = false});
 
   /// カタログ順の行。
   final List<AchievementRowEntity> rows;
+
+  /// アチーブメント文脈コーチマークを表示予約しているとき true。
+  final bool pendingTutorial;
 }
 
 /// 読込失敗の表示。

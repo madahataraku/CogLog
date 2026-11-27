@@ -417,6 +417,14 @@
   "@screen_feature_achievement_title": {
     "description": "画面タイトル"
   },
+  "screen_feature_achievement_tutorial_body": "運動を続けていくと、内容に応じて称号が付与されます。全部集めてみましょう！",
+  "@screen_feature_achievement_tutorial_body": {
+    "description": "文脈コーチマーク本文"
+  },
+  "screen_feature_achievement_tutorial_title": "アチーブメントについて",
+  "@screen_feature_achievement_tutorial_title": {
+    "description": "文脈コーチマークタイトル"
+  },
   "screen_feature_app_settings_back_semantics": "戻る",
   "@screen_feature_app_settings_back_semantics": {
     "description": "戻るボタンの代替テキスト"
@@ -1606,14 +1614,6 @@
   "@screen_feature_top_today": {
     "description": "集計期間"
   },
-  "screen_feature_top_tutorial_achievement_body": "アチーブメント画面から、あなたの運動内容に応じた達成内容に応じた称号の確認が行えます。新たに獲得した称号がある場合、アイコンにドットが表示されます。",
-  "@screen_feature_top_tutorial_achievement_body": {
-    "description": "段階7互換キー"
-  },
-  "screen_feature_top_tutorial_achievement_title": "たくさんの称号を取得しよう",
-  "@screen_feature_top_tutorial_achievement_title": {
-    "description": "段階7互換キー"
-  },
   "screen_feature_top_tutorial_main_1_body": "本日・今週・今月の運動記録の合計値を確認できます。タブから表示する指標を、消費カロリー、走行距離、運動時間のうちから選べます。",
   "@screen_feature_top_tutorial_main_1_body": {
     "description": "段階1本文"
@@ -1669,6 +1669,14 @@
   "screen_feature_top_tutorial_main_7_title": "たくさんの称号を取得しよう",
   "@screen_feature_top_tutorial_main_7_title": {
     "description": "段階7タイトル"
+  },
+  "screen_feature_top_tutorial_main_intro_body": "はじめまして！\nエアロバイク運動記録アプリCogLogの機能紹介を行います",
+  "@screen_feature_top_tutorial_main_intro_body": {
+    "description": "導入本文"
+  },
+  "screen_feature_top_tutorial_main_intro_title": "使い方説明",
+  "@screen_feature_top_tutorial_main_intro_title": {
+    "description": "導入タイトル"
   },
   "screen_feature_top_unset_prompt": "目標設定で一日あたりの目標を設定しましょう",
   "@screen_feature_top_unset_prompt": {

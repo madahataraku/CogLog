@@ -5,6 +5,9 @@
 /// TutorialMainStep.homeIntro;
 /// ```
 enum TutorialMainStep {
+  /// 導入: 使い方説明（既存段階1の前。到達段階は進めない）。
+  usageIntro,
+
   /// 段階1: ホーム画面の見かた（期間合計と指標切替）。
   homeIntro,
 
@@ -23,6 +26,6 @@ enum TutorialMainStep {
   /// 段階6: 運動履歴案内。
   historyRecommend,
 
-  /// 段階7: アチーブメント案内（閉じるとメイン完了）。
+  /// 段階7: アチーブメント案内（次へでメイン完了）。
   achievementRecommend,
 }

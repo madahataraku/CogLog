@@ -31,19 +31,20 @@ final class AchievementStateToEntityDelegate {
     return switch (state) {
       AchievementScreenLoading() => const AchievementScreenLoadingEntity(),
       AchievementScreenFailed() => const AchievementScreenFailedEntity(),
-      AchievementScreenReady(:final rows) => AchievementScreenReadyEntity([
-        for (final row in rows)
-          AchievementRowEntity(
-            id: row.id,
-            name: row.unlocked
-                ? resolveAchievementName(row.id)
-                : strings.screen_feature_achievement_locked_name,
-            condition: resolveAchievementCondition(row.id),
-            unlocked: row.unlocked,
-            progressRatio: row.progressRatio,
-            isNew: row.isNew,
-          ),
-      ]),
+      AchievementScreenReady(:final rows, :final pendingTutorial) =>
+        AchievementScreenReadyEntity([
+          for (final row in rows)
+            AchievementRowEntity(
+              id: row.id,
+              name: row.unlocked
+                  ? resolveAchievementName(row.id)
+                  : strings.screen_feature_achievement_locked_name,
+              condition: resolveAchievementCondition(row.id),
+              unlocked: row.unlocked,
+              progressRatio: row.progressRatio,
+              isNew: row.isNew,
+            ),
+        ], pendingTutorial: pendingTutorial),
     };
   }
 }

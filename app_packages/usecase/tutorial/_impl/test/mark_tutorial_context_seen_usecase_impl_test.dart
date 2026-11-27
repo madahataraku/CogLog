@@ -28,4 +28,24 @@ void main() {
     );
     expect(session.isShowing, isFalse, reason: 'session が非表示になること');
   });
+
+  test('achievement を seen にし session を clear', () async {
+    final repository = MemoryTutorialRepository();
+    final session = TutorialRuntimeSession()
+      ..activeKind = TutorialKind.achievement
+      ..markContextPresented(TutorialKind.achievement);
+    final usecase = MarkTutorialContextSeenUsecaseImpl(
+      repository: repository,
+      session: session,
+    );
+    await usecase.execute(
+      const MarkTutorialContextSeenRequest(kind: TutorialKind.achievement),
+    );
+    expect(
+      (await repository.read()).achievementContextSeen,
+      isTrue,
+      reason: 'achievementContextSeen が true になること',
+    );
+    expect(session.isShowing, isFalse, reason: 'session が非表示になること');
+  });
 }

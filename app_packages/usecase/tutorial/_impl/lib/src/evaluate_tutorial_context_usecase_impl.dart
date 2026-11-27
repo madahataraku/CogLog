@@ -86,6 +86,7 @@ final class EvaluateTutorialContextUsecaseImpl
       TutorialKind.meterEdit => progress.meterEditContextSeen,
       TutorialKind.trends => progress.trendsContextSeen,
       TutorialKind.history => progress.historyContextSeen,
+      TutorialKind.achievement => progress.achievementContextSeen,
       TutorialKind.main => true,
     };
   }

@@ -126,128 +126,131 @@ class TopScreenBody extends HookConsumerWidget {
         ],
       ),
       child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 16,
-          children: [
-            CoachMarkTarget(
-              id: CoachMarkTargetId.homePeriodTotals,
-              child: FCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    spacing: 12,
-                    children: [
-                      FTabs(
-                        control: .lifted(
-                          index: PeriodTotalMetric.values.indexOf(
-                            entity.metric,
-                          ),
-                          onChange: (index) async {
-                            final metric = PeriodTotalMetric.values[index];
-                            if (metric == entity.metric || saving.value) {
-                              return;
-                            }
-                            saving.value = true;
-                            try {
-                              await ref
-                                  .read(TopScreenViewModel.provider)
-                                  .onSelectMetric(metric);
-                            } on Object {
-                              // 保存に失敗したときは State を変えない。未処理のエラーにしない。
-                            } finally {
-                              saving.value = false;
-                            }
-                          },
-                        ),
-                        children: [
-                          for (final metric in PeriodTotalMetric.values)
-                            FTabEntry(
-                              label: Text(_metricLabel(metric)),
-                              child: const SizedBox.shrink(),
+        child: CoachMarkTarget(
+          id: CoachMarkTargetId.homeBody,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 16,
+            children: [
+              CoachMarkTarget(
+                id: CoachMarkTargetId.homePeriodTotals,
+                child: FCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: 12,
+                      children: [
+                        FTabs(
+                          control: .lifted(
+                            index: PeriodTotalMetric.values.indexOf(
+                              entity.metric,
                             ),
-                        ],
-                      ),
-                      _PeriodTotalsRow(
-                        todayLabel: strings.screen_feature_top_today,
-                        weekLabel: strings.screen_feature_top_this_week,
-                        monthLabel: strings.screen_feature_top_this_month,
-                        todayValue: entity.todayText,
-                        weekValue: entity.weekText,
-                        monthValue: entity.monthText,
-                        metric: entity.metric,
-                      ),
-                    ],
+                            onChange: (index) async {
+                              final metric = PeriodTotalMetric.values[index];
+                              if (metric == entity.metric || saving.value) {
+                                return;
+                              }
+                              saving.value = true;
+                              try {
+                                await ref
+                                    .read(TopScreenViewModel.provider)
+                                    .onSelectMetric(metric);
+                              } on Object {
+                                // 保存に失敗したときは State を変えない。未処理のエラーにしない。
+                              } finally {
+                                saving.value = false;
+                              }
+                            },
+                          ),
+                          children: [
+                            for (final metric in PeriodTotalMetric.values)
+                              FTabEntry(
+                                label: Text(_metricLabel(metric)),
+                                child: const SizedBox.shrink(),
+                              ),
+                          ],
+                        ),
+                        _PeriodTotalsRow(
+                          todayLabel: strings.screen_feature_top_today,
+                          weekLabel: strings.screen_feature_top_this_week,
+                          monthLabel: strings.screen_feature_top_this_month,
+                          todayValue: entity.todayText,
+                          weekValue: entity.weekText,
+                          monthValue: entity.monthText,
+                          metric: entity.metric,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (entity.adviceText.isNotEmpty)
-              AdviceSpeechPanel(
-                adviceText: entity.adviceText,
-                tone: entity.adviceTone,
-                semanticsLabel: strings.screen_feature_top_advisor_semantics,
-              ),
-            CoachMarkTarget(
-              id: CoachMarkTargetId.homeGoalRings,
-              child: FCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    spacing: 12,
-                    children: [
-                      Text(
-                        strings.screen_feature_top_achievement_title,
-                        style: titleStyle,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 8,
-                        children: [
-                          Expanded(
-                            child: _ring(
-                              title: strings.screen_feature_top_duration,
-                              ring: entity.duration,
+              if (entity.adviceText.isNotEmpty)
+                AdviceSpeechPanel(
+                  adviceText: entity.adviceText,
+                  tone: entity.adviceTone,
+                  semanticsLabel: strings.screen_feature_top_advisor_semantics,
+                ),
+              CoachMarkTarget(
+                id: CoachMarkTargetId.homeGoalRings,
+                child: FCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: 12,
+                      children: [
+                        Text(
+                          strings.screen_feature_top_achievement_title,
+                          style: titleStyle,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
+                          children: [
+                            Expanded(
+                              child: _ring(
+                                title: strings.screen_feature_top_duration,
+                                ring: entity.duration,
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: _ring(
-                              title: strings.screen_feature_top_calories,
-                              ring: entity.calories,
+                            Expanded(
+                              child: _ring(
+                                title: strings.screen_feature_top_calories,
+                                ring: entity.calories,
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: _ring(
-                              title: strings.screen_feature_top_distance,
-                              ring: entity.distance,
+                            Expanded(
+                              child: _ring(
+                                title: strings.screen_feature_top_distance,
+                                ring: entity.distance,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      FCard(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: WeeklyGoalAchievementBar(
-                            title: strings
-                                .screen_feature_top_weekly_achievement_title,
-                            showGuidance: showGuidance,
-                            guidanceText: strings
-                                .screen_feature_top_weekly_achievement_guidance,
-                            ratioText: ratioText,
-                            statusText: statusText,
-                            progress: entity.weeklyProgress,
-                            semanticsLabel: semanticsLabel,
+                          ],
+                        ),
+                        FCard(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: WeeklyGoalAchievementBar(
+                              title: strings
+                                  .screen_feature_top_weekly_achievement_title,
+                              showGuidance: showGuidance,
+                              guidanceText: strings
+                                  .screen_feature_top_weekly_achievement_guidance,
+                              ratioText: ratioText,
+                              statusText: statusText,
+                              progress: entity.weeklyProgress,
+                              semanticsLabel: semanticsLabel,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

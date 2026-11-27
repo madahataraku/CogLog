@@ -90,4 +90,22 @@ void main() {
     expect(second.shouldShow, isTrue);
     expect(session.activeKind, TutorialKind.goalSettings);
   });
+
+  test('achievement 未 seen → true', () async {
+    final result = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.achievement),
+    );
+    expect(result.shouldShow, isTrue);
+    expect(session.activeKind, TutorialKind.achievement);
+  });
+
+  test('achievement seen → false', () async {
+    await repository.write(
+      TutorialProgress.initial.copyWith(achievementContextSeen: true),
+    );
+    final result = await usecase.execute(
+      const EvaluateTutorialContextRequest(kind: TutorialKind.achievement),
+    );
+    expect(result.shouldShow, isFalse);
+  });
 }

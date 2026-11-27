@@ -8,6 +8,20 @@ import 'package:monolith_localization_runtime/monolith_localization_runtime.dart
 import 'package:screen_feature_achievement/screen_feature_achievement.dart';
 import 'package:screen_navigation/screen_navigation.dart';
 import 'package:usecase_load_achievements/usecase_load_achievements.dart';
+import 'package:usecase_tutorial/usecase_tutorial.dart';
+import 'package:view_coach_mark/view_coach_mark.dart';
+
+final class _EvaluateTutorialNever implements EvaluateTutorialContextUsecase {
+  @override
+  Future<EvaluateTutorialContextResult> execute(
+    EvaluateTutorialContextRequest request,
+  ) async => const EvaluateTutorialContextResult(shouldShow: false);
+}
+
+final class _MarkTutorialNever implements MarkTutorialContextSeenUsecase {
+  @override
+  Future<void> execute(MarkTutorialContextSeenRequest request) async {}
+}
 
 final class _Nav implements ScreenNavigation {
   @override
@@ -166,6 +180,16 @@ Future<void> _pumpAchievement(
         MarkAchievementsViewedUsecase.provider.overrideWith(
           (ref) => _FakeMark(),
         ),
+        EvaluateTutorialContextUsecase.provider.overrideWith(
+          (ref) => _EvaluateTutorialNever(),
+        ),
+        MarkTutorialContextSeenUsecase.provider.overrideWith(
+          (ref) => _MarkTutorialNever(),
+        ),
+        tutorialRuntimeSessionProvider.overrideWith(
+          (ref) => TutorialRuntimeSession(),
+        ),
+        CoachMarkProviders.registry.overrideWith((ref) => CoachMarkRegistry()),
       ],
       child: MaterialApp(
         locale: const Locale('ja'),

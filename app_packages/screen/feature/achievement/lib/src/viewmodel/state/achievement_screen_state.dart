@@ -43,10 +43,27 @@ final class AchievementScreenReady extends AchievementScreenState {
   /// ```dart
   /// const AchievementScreenReady([]);
   /// ```
-  const AchievementScreenReady(this.rows);
+  const AchievementScreenReady(this.rows, {this.pendingTutorial = false});
 
   /// 表示用の行。並びはカタログ順。
   final List<AchievementRow> rows;
+
+  /// アチーブメント文脈コーチマークを表示予約しているとき true。
+  final bool pendingTutorial;
+
+  /// 指定フィールドだけ差し替える。
+  ///
+  /// Example:
+  /// ```dart
+  /// ready.copyWith(pendingTutorial: true);
+  /// ```
+  AchievementScreenReady copyWith({
+    List<AchievementRow>? rows,
+    bool? pendingTutorial,
+  }) => AchievementScreenReady(
+    rows ?? this.rows,
+    pendingTutorial: pendingTutorial ?? this.pendingTutorial,
+  );
 }
 
 /// 一覧の読込失敗。
